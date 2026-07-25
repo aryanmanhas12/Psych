@@ -95,29 +95,78 @@
   button.danger{background:var(--stamp);}
   button:disabled{opacity:.45;cursor:not-allowed;transform:none;box-shadow:none;}
 
-  /* ── test view ── */
-  .testhead{margin-bottom:26px;}
+  /* ── test view: one question at a time ── */
+  .testhead{margin-bottom:20px;}
   .testhead .period{
     background:var(--ink);color:var(--paper);display:inline-block;
     font-family:'IBM Plex Mono',monospace;font-size:13px;padding:6px 12px;margin-top:10px;
   }
-  .progress{font-family:'IBM Plex Mono',monospace;font-size:13px;color:var(--muted);margin:14px 0 22px;}
-  fieldset.q{
-    border:2px solid var(--ink);background:#fff;padding:18px 20px;margin-bottom:14px;
+  .progress{font-family:'IBM Plex Mono',monospace;font-size:13px;color:var(--muted);margin:8px 0 18px;}
+  .pbar{height:10px;background:#fff;border:2px solid var(--ink);max-width:760px;margin-top:18px;}
+  .pfill{height:100%;background:var(--heal);width:0%;transition:width .25s ease;}
+  .qbox{background:#fff;border:2px solid var(--ink);padding:26px;max-width:760px;animation:qin .28s ease;}
+  @keyframes qin{from{opacity:0;transform:translateX(18px);}to{opacity:1;transform:none;}}
+  .qtext{font-size:20px;font-weight:600;margin-bottom:18px;}
+  .qtext .qnum{font-family:'IBM Plex Mono',monospace;color:var(--heal);font-size:14px;margin-right:8px;}
+  .bigopts{display:flex;flex-direction:column;gap:10px;}
+  .bigopts button{
+    font-family:'Public Sans',sans-serif;text-transform:none;letter-spacing:0;
+    font-size:16.5px;background:var(--paper);color:var(--ink);
+    border:2px solid var(--line);padding:13px 16px;text-align:left;
+    display:flex;align-items:center;gap:12px;cursor:pointer;
+    transition:border-color .12s, background .12s;
   }
-  fieldset.q legend{
-    font-weight:600;font-size:16px;padding:0 8px;background:#fff;
+  .bigopts button:hover{border-color:var(--ink);transform:none;box-shadow:none;}
+  .bigopts button.sel{border-color:var(--heal);background:#e9f1ee;font-weight:600;}
+  .bigopts .kbd{
+    font-family:'IBM Plex Mono',monospace;font-size:12px;border:1.5px solid var(--line);
+    padding:1px 7px;color:var(--muted);flex:none;
   }
-  fieldset.q .qnum{font-family:'IBM Plex Mono',monospace;color:var(--heal);font-size:13px;margin-right:6px;}
-  .opts{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;}
-  .opts label{
-    border:2px solid var(--line);padding:8px 14px;font-size:14.5px;cursor:pointer;
-    display:flex;align-items:center;gap:8px;background:var(--paper);
+  .bigopts button.sel .kbd{border-color:var(--heal);color:var(--heal);}
+
+  /* ── severity scale ── */
+  .sevscale{max-width:760px;margin:-4px 0 26px;position:relative;padding-top:24px;}
+  .sevmarker{
+    position:absolute;top:0;transform:translateX(-50%);text-align:center;
+    font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:700;
+    transition:left .5s ease;
   }
-  .opts label:hover{border-color:var(--ink);}
-  .opts input{accent-color:var(--heal);width:16px;height:16px;}
-  .opts label:has(input:checked){border-color:var(--heal);background:#e9f1ee;font-weight:600;}
-  .opts label:has(input:focus-visible){outline:3px solid var(--heal);outline-offset:2px;}
+  .sevtri{width:0;height:0;border-left:6px solid transparent;border-right:6px solid transparent;border-top:7px solid var(--ink);margin:0 auto;}
+  .sevtrack{display:flex;height:14px;border:2px solid var(--ink);background:#fff;}
+  .sevseg{border-right:2px solid var(--ink);}
+  .sevseg:last-child{border-right:none;}
+  .sevseg.s0{background:#A9C9BB;}
+  .sevseg.s1{background:#E8D08E;}
+  .sevseg.s2{background:#E0A878;}
+  .sevseg.s3{background:#D68C83;}
+  .sevlabels{display:flex;font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:var(--muted);margin-top:4px;}
+  .sevlabels div{text-align:center;}
+
+  /* ── mood check-in ── */
+  .mood{background:#fff;border:2px solid var(--ink);border-left:8px solid var(--marigold);padding:18px 22px;max-width:760px;margin-bottom:34px;}
+  .moodbtns{display:flex;gap:10px;margin:12px 0 4px;flex-wrap:wrap;}
+  .moodbtns button{font-size:26px;background:var(--paper);border:2px solid var(--line);padding:8px 12px;line-height:1;}
+  .moodbtns button:hover{border-color:var(--ink);box-shadow:none;transform:none;}
+  .moodbtns button.sel{border-color:var(--heal);background:#e9f1ee;}
+  .moodstrip{display:flex;gap:4px;align-items:flex-end;height:36px;margin-top:10px;}
+  .moodcell{width:14px;background:var(--line);}
+  .moodcell.v1{background:var(--stamp);}
+  .moodcell.v2{background:#C4671F;}
+  .moodcell.v3{background:var(--marigold);}
+  .moodcell.v4{background:#7FA491;}
+  .moodcell.v5{background:var(--heal);}
+
+  /* ── chart tooltip ── */
+  .ctip{
+    position:absolute;pointer-events:none;background:var(--ink);color:var(--paper);
+    font-family:'IBM Plex Mono',monospace;font-size:12px;padding:5px 9px;
+    transform:translate(-50%,-120%);white-space:nowrap;display:none;z-index:5;
+  }
+
+  .card{transition:transform .15s, box-shadow .15s;}
+  .card:hover{transform:translate(-2px,-2px);box-shadow:5px 5px 0 var(--heal);}
+  .view.active{animation:vin .25s ease;}
+  @keyframes vin{from{opacity:0;}to{opacity:1;}}
 
   /* ── results ── */
   .scoreboard{
@@ -210,6 +259,7 @@
     <a onclick="showView('home')" href="#home">Screeners</a>
     <a onclick="showView('history')" href="#history">My History</a>
     <a onclick="showView('resources')" href="#resources">Get Help</a>
+    <a href="evidence.html">Evidence</a>
     <a href="manifesto.html">Manifesto</a>
   </div>
 </nav>
@@ -225,6 +275,13 @@
       <b>⚠ This is a screening tool, not a diagnosis.</b><br>
       Only a qualified clinician can diagnose a mental illness. A high score means "talk to a professional," never "you have X." A low score with ongoing distress still deserves attention.
       <span class="mono" style="display:block;margin-top:8px;font-size:12px;color:var(--heal);">🔒 Privacy: everything runs in your browser. Your answers never leave this device.</span>
+    </div>
+
+    <div class="mood">
+      <b>Daily one-tap mood check-in</b> <span class="mono" style="font-size:12px;color:var(--muted);">· private · this device only</span>
+      <div class="moodbtns" id="moodBtns" role="group" aria-label="How are you feeling today?"></div>
+      <div class="moodstrip" id="moodStrip" aria-hidden="true"></div>
+      <div class="mono" id="moodMsg" style="font-size:12.5px;color:var(--muted);margin-top:8px;"></div>
     </div>
 
     <h2 class="display">Choose a screener</h2>
@@ -274,10 +331,11 @@
       <p class="lede" id="testIntro" style="margin-bottom:0;"></p>
       <div class="period" id="testPeriod"></div>
     </div>
+    <div class="pbar" aria-hidden="true"><div class="pfill" id="pfill"></div></div>
     <div class="progress" aria-live="polite" id="progress"></div>
-    <form id="testForm"></form>
+    <div id="qcard"></div>
     <div class="actionrow">
-      <button id="scoreBtn" onclick="scoreTest()" disabled>See my result</button>
+      <button class="secondary" id="backBtn" onclick="prevQ()">← Back</button>
       <button class="secondary" onclick="showView('home')">Cancel</button>
     </div>
   </div>
@@ -310,8 +368,11 @@
       <div class="verdict">
         <span class="band" id="resBand"></span>
         <p id="resMeaning"></p>
+        <p class="mono noprint" style="font-size:12px;margin-top:10px;"><a href="evidence.html" style="color:var(--heal);">Why trust this score? See the evidence register →</a></p>
       </div>
     </div>
+
+    <div class="sevscale" id="sevScale" aria-hidden="true"></div>
 
     <div class="nextsteps" id="resSteps"></div>
 
@@ -521,56 +582,74 @@ function showView(name){
 /* ════════════════ TEST FLOW ════════════════ */
 function startTest(id){
   const inst = INSTRUMENTS[id];
-  current = {id, inst};
+  current = {id, inst, answers:new Array(inst.questions.length).fill(null), idx:0};
   document.getElementById("testTag").textContent = inst.tag + " · " + inst.name;
   document.getElementById("testTitle").textContent = inst.name;
   document.getElementById("testIntro").textContent = inst.intro;
   document.getElementById("testPeriod").textContent = inst.period;
-
-  const form = document.getElementById("testForm");
-  form.innerHTML = "";
-  inst.questions.forEach((q,i)=>{
-    const fs = document.createElement("fieldset");
-    fs.className = "q";
-    const lg = document.createElement("legend");
-    lg.innerHTML = '<span class="qnum">Q'+(i+1)+'</span>' + escapeHtml(q.t);
-    fs.appendChild(lg);
-    const opts = document.createElement("div");
-    opts.className = "opts";
-    q.o.forEach(([label,val])=>{
-      const l = document.createElement("label");
-      const r = document.createElement("input");
-      r.type="radio"; r.name="q"+i; r.value=val;
-      r.addEventListener("change", updateProgress);
-      l.appendChild(r);
-      l.appendChild(document.createTextNode(label));
-      opts.appendChild(l);
-    });
-    fs.appendChild(opts);
-    form.appendChild(fs);
-  });
-  updateProgress();
+  renderQ();
   showView("test");
 }
 
-function updateProgress(){
-  if(!current) return;
-  const n = current.inst.questions.length;
-  let answered = 0;
-  for(let i=0;i<n;i++){
-    if(document.querySelector('input[name="q'+i+'"]:checked')) answered++;
-  }
-  document.getElementById("progress").textContent = "Answered "+answered+" of "+n;
-  document.getElementById("scoreBtn").disabled = answered < n;
+function renderQ(){
+  const inst = current.inst, i = current.idx, q = inst.questions[i], n = inst.questions.length;
+  document.getElementById("pfill").style.width = (i/n*100) + "%";
+  document.getElementById("progress").textContent =
+    "Question "+(i+1)+" of "+n+" — tap an answer to continue (or press 1–"+q.o.length+")";
+  document.getElementById("backBtn").style.visibility = i===0 ? "hidden" : "visible";
+  const card = document.createElement("div");
+  card.className = "qbox";
+  card.innerHTML = '<div class="qtext"><span class="qnum">Q'+(i+1)+'</span>'+escapeHtml(q.t)+'</div>';
+  const opts = document.createElement("div");
+  opts.className = "bigopts";
+  q.o.forEach(([label,val],oi)=>{
+    const b = document.createElement("button");
+    b.type = "button";
+    b.innerHTML = '<span class="kbd">'+(oi+1)+'</span>'+escapeHtml(label);
+    if(current.answers[i]===val) b.classList.add("sel");
+    b.addEventListener("click", ()=>selectOpt(val,b));
+    opts.appendChild(b);
+  });
+  card.appendChild(opts);
+  const holder = document.getElementById("qcard");
+  holder.innerHTML = "";
+  holder.appendChild(card);
 }
+
+let advancing = false;
+function selectOpt(val, btn){
+  if(advancing) return;
+  advancing = true;
+  current.answers[current.idx] = val;
+  btn.parentElement.querySelectorAll("button").forEach(b=>b.classList.remove("sel"));
+  btn.classList.add("sel");
+  setTimeout(()=>{
+    advancing = false;
+    if(current.idx < current.inst.questions.length-1){ current.idx++; renderQ(); }
+    else scoreTest();
+  }, 240);
+}
+
+function prevQ(){
+  if(current && current.idx>0){ current.idx--; renderQ(); }
+}
+
+document.addEventListener("keydown", e=>{
+  if(!current) return;
+  if(!document.getElementById("view-test").classList.contains("active")) return;
+  const k = parseInt(e.key,10);
+  const q = current.inst.questions[current.idx];
+  if(k>=1 && k<=q.o.length){
+    const btn = document.querySelectorAll("#qcard .bigopts button")[k-1];
+    if(btn) btn.click();
+  }
+});
 
 function scoreTest(){
   const inst = current.inst;
   let score = 0, safetyFlag = false;
-  const answers = [];
   inst.questions.forEach((q,i)=>{
-    const v = parseInt(document.querySelector('input[name="q'+i+'"]:checked').value,10);
-    answers.push(v);
+    const v = current.answers[i];
     score += v;
     if(q.safety && v > 0) safetyFlag = true;
   });
@@ -599,6 +678,8 @@ function renderResults(){
   const bandEl = document.getElementById("resBand");
   bandEl.textContent = r.label;
   bandEl.className = "band b"+r.sev;
+  renderSevScale(inst, r.score);
+  animateScore(r.score);
 
   const meanings = {
     0:"This range is below the clinical concern threshold on this screener.",
@@ -622,6 +703,28 @@ function renderResults(){
   document.getElementById("resRescreen").innerHTML =
     "<b>📅 Recommended re-screen: " + d.toLocaleDateString("en-IN",{weekday:"long",day:"numeric",month:"long"}) +
     "</b> ("+r.rescreenDays+" days from now). Tracking the trend is the follow-up care most OPDs can't give you — use the reminder button below.";
+}
+
+function renderSevScale(inst, score){
+  const total = inst.max + 1;
+  const segs = inst.bands.map(([lo,hi,sev])=>({w:(hi-lo+1)/total*100, sev, lo, hi}));
+  const pos = Math.min(98.5, Math.max(1.5, (score+0.5)/total*100));
+  let html = '<div class="sevmarker" style="left:'+pos.toFixed(2)+'%;"><span>'+score+'</span><div class="sevtri"></div></div>';
+  html += '<div class="sevtrack">'+segs.map(s=>'<div class="sevseg s'+s.sev+'" style="width:'+s.w.toFixed(2)+'%"></div>').join("")+'</div>';
+  html += '<div class="sevlabels">'+segs.map(s=>'<div style="width:'+s.w.toFixed(2)+'%">'+s.lo+'–'+s.hi+'</div>').join("")+'</div>';
+  document.getElementById("sevScale").innerHTML = html;
+}
+
+function animateScore(target){
+  const el = document.getElementById("resScore");
+  if(window.matchMedia("(prefers-reduced-motion: reduce)").matches || target===0){ el.textContent = target; return; }
+  const t0 = performance.now(), dur = 650;
+  function tick(t){
+    const p = Math.min(1,(t-t0)/dur);
+    el.textContent = Math.round(target * (1-Math.pow(1-p,3)));
+    if(p<1) requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
 }
 
 /* ════════════════ REMINDER (.ics) ════════════════ */
@@ -670,9 +773,22 @@ function renderHistory(){
     block.innerHTML =
       "<h3>"+inst.name+" — latest: "+latest.score+"/"+inst.max+" ("+escapeHtml(latest.label)+")</h3>" +
       '<div class="sub">'+entries.length+" screening"+(entries.length===1?"":"s")+(trend?" · "+trend:"")+"</div>" +
-      (entries.length>1 ? '<div class="chartwrap">'+chartSVG(entries, inst)+"</div>" : "") +
+      (entries.length>1 ? '<div class="chartwrap">'+chartSVG(entries, inst)+'<div class="ctip"></div></div>' : "") +
       historyTable(entries, inst);
     el.appendChild(block);
+  });
+  el.querySelectorAll(".chartwrap").forEach(w=>{
+    const tip = w.querySelector(".ctip");
+    w.addEventListener("pointerover", ev=>{
+      const c = ev.target.closest("circle[data-d]");
+      if(!c){ tip.style.display="none"; return; }
+      tip.textContent = c.dataset.d+" · "+c.dataset.s+" — "+c.dataset.l;
+      const wr = w.getBoundingClientRect(), cr = c.getBoundingClientRect();
+      tip.style.left = (cr.left - wr.left + cr.width/2 + w.scrollLeft)+"px";
+      tip.style.top = (cr.top - wr.top)+"px";
+      tip.style.display = "block";
+    });
+    w.addEventListener("pointerleave", ()=>{ tip.style.display="none"; });
   });
 }
 
@@ -716,8 +832,8 @@ function chartSVG(entries, inst){
   // series line + points
   svg += '<path d="'+path+'" fill="none" stroke="#151C2E" stroke-width="2" stroke-linejoin="round"/>';
   entries.forEach((e,i)=>{
-    svg += '<circle cx="'+pts[i][0].toFixed(1)+'" cy="'+pts[i][1].toFixed(1)+'" r="4.5" fill="#151C2E" stroke="#F6F4EE" stroke-width="2">'+
-           '<title>'+fmt(e.date)+": "+e.score+"/"+inst.max+" — "+escapeHtml(e.label)+'</title></circle>';
+    svg += '<circle cx="'+pts[i][0].toFixed(1)+'" cy="'+pts[i][1].toFixed(1)+'" r="4.5" fill="#151C2E" stroke="#F6F4EE" stroke-width="2" style="pointer-events:none;"/>';
+    svg += '<circle cx="'+pts[i][0].toFixed(1)+'" cy="'+pts[i][1].toFixed(1)+'" r="12" fill="transparent" data-d="'+fmt(e.date)+'" data-s="'+e.score+'/'+inst.max+'" data-l="'+escapeHtml(e.label)+'"/>';
   });
   // direct label on latest point
   svg += '<text x="'+(pts[n-1][0]+8)+'" y="'+(pts[n-1][1]-8)+'" font-size="12" font-weight="700" fill="#151C2E" font-family="monospace">'+last.score+'</text>';
@@ -743,6 +859,51 @@ function clearData(){
     renderHistory();
   }
 }
+
+/* ════════════════ DAILY MOOD CHECK-IN ════════════════ */
+const MOOD_KEY = "psych-mood";
+const MOODS = [["😞","Very low"],["😕","Low"],["😐","Okay"],["🙂","Good"],["😄","Great"]];
+function loadMood(){ try{ return JSON.parse(localStorage.getItem(MOOD_KEY))||{}; }catch(e){ return {}; } }
+function dkey(d){ return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0"); }
+function setMood(v){
+  const m = loadMood(); m[dkey(new Date())] = v;
+  try{ localStorage.setItem(MOOD_KEY, JSON.stringify(m)); }catch(e){}
+  renderMood();
+}
+function renderMood(){
+  const m = loadMood(), today = dkey(new Date());
+  const btns = document.getElementById("moodBtns");
+  btns.innerHTML = "";
+  MOODS.forEach(([emo,label],i)=>{
+    const b = document.createElement("button");
+    b.type = "button"; b.textContent = emo;
+    b.title = label; b.setAttribute("aria-label", label);
+    b.setAttribute("aria-pressed", m[today]===i+1 ? "true" : "false");
+    if(m[today]===i+1) b.classList.add("sel");
+    b.addEventListener("click", ()=>setMood(i+1));
+    btns.appendChild(b);
+  });
+  const strip = document.getElementById("moodStrip");
+  strip.innerHTML = "";
+  for(let i=13;i>=0;i--){
+    const d = new Date(); d.setDate(d.getDate()-i);
+    const v = m[dkey(d)];
+    const c = document.createElement("div");
+    c.className = "moodcell"+(v ? " v"+v : "");
+    c.style.height = (v ? 8+v*5 : 4)+"px";
+    c.title = dkey(d)+(v ? " — "+MOODS[v-1][1] : " — no entry");
+    strip.appendChild(c);
+  }
+  let streak = 0;
+  for(let i=0;;i++){
+    const d = new Date(); d.setDate(d.getDate()-i);
+    if(m[dkey(d)]) streak++; else break;
+  }
+  document.getElementById("moodMsg").textContent = m[today]
+    ? "Logged for today · "+streak+"-day streak. A daily record beats a memory in any consultation."
+    : "How are you feeling today? One tap builds a 14-day picture you can show a doctor.";
+}
+renderMood();
 
 function escapeHtml(s){
   return String(s).replace(/[&<>"']/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));

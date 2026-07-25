@@ -13,6 +13,7 @@ care reduced to prescription refills, and follow-ups that never happen.
 |---|---|
 | `index.html` | **The screener app** — validated instruments, guidance, history tracking, follow-up reminders |
 | `manifesto.html` | **The Waiting Room is Full** — a citizen's manifesto on India's mental-health treatment gap |
+| `evidence.html` | **The Evidence Register** — peer-reviewed citations (sourced via Consensus & PubMed) behind every instrument and design decision |
 
 Both are plain HTML/CSS/JS with zero build step and zero backend. Open them in any
 browser, or host them on GitHub Pages.
