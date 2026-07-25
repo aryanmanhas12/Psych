@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Evidence Register — Why This Screener Works</title>
+<meta name="description" content="Peer-reviewed evidence behind every instrument and design decision in the Psych screener, sourced via Consensus and PubMed.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=IBM+Plex+Mono:wght@400;500&family=Public+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#151C2E;
+    --paper:#F6F4EE;
+    --marigold:#E6A11C;
+    --stamp:#B23A2E;
+    --heal:#2F6E5E;
+    --line:#D8D3C6;
+    --muted:#5a5f6e;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{background:var(--paper);color:var(--ink);font-family:'Public Sans',sans-serif;line-height:1.65;font-size:17px;}
+  @media (prefers-reduced-motion: reduce){
+    *,*::before,*::after{animation:none!important;transition:none!important;}
+    html{scroll-behavior:auto;}
+  }
+  .display{font-family:'Anton',sans-serif;letter-spacing:.01em;line-height:1.08;text-transform:uppercase;}
+  .mono{font-family:'IBM Plex Mono',monospace;}
+  .wrap{max-width:960px;margin:0 auto;padding:0 22px;}
+
+  .topstrip{background:var(--ink);color:var(--paper);font-family:'IBM Plex Mono',monospace;font-size:12.5px;padding:8px 0;letter-spacing:.04em;}
+  .topstrip .wrap{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;}
+  .topstrip a{color:var(--marigold);text-decoration:none;}
+
+  nav{background:var(--ink);padding:0 0 14px;}
+  nav .wrap{display:flex;align-items:center;gap:18px;flex-wrap:wrap;}
+  nav .brand{font-family:'Anton',sans-serif;color:var(--paper);font-size:19px;text-transform:uppercase;letter-spacing:.04em;margin-right:auto;}
+  nav .brand .accent{color:var(--marigold);}
+  nav a{color:var(--paper);text-decoration:none;font-family:'IBM Plex Mono',monospace;font-size:13px;letter-spacing:.06em;text-transform:uppercase;padding:4px 2px;border-bottom:2px solid transparent;}
+  nav a:hover,nav a:focus-visible{border-bottom-color:var(--marigold);outline:none;}
+
+  header.hero{padding:56px 0 42px;border-bottom:3px solid var(--ink);}
+  .eyebrow{display:inline-block;font-family:'IBM Plex Mono',monospace;font-size:13px;letter-spacing:.12em;text-transform:uppercase;border:1.5px solid var(--heal);color:var(--heal);padding:4px 10px;transform:rotate(-1.2deg);margin-bottom:20px;}
+  h1{font-size:clamp(36px,7vw,68px);}
+  h1 .accent{color:var(--heal);}
+  .lede{max-width:660px;font-size:18px;margin-top:18px;}
+  .method{
+    font-family:'IBM Plex Mono',monospace;font-size:13px;color:var(--muted);
+    border:2px dashed var(--ink);padding:14px 18px;max-width:660px;margin-top:24px;background:#fff;
+  }
+  .method b{color:var(--ink);}
+
+  section{padding:52px 0 8px;}
+  .sec-label{font-family:'IBM Plex Mono',monospace;font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--stamp);margin-bottom:12px;}
+  h2{font-size:clamp(26px,4.5vw,42px);margin-bottom:8px;}
+  .sec-sub{max-width:660px;color:var(--muted);font-size:15.5px;margin-bottom:26px;}
+
+  .claim{
+    background:#fff;border:2px solid var(--ink);margin-bottom:18px;max-width:860px;
+    display:grid;grid-template-columns:190px 1fr;
+  }
+  @media(max-width:640px){.claim{grid-template-columns:1fr;}}
+  .claim .stat{
+    background:var(--ink);color:var(--paper);padding:20px;display:flex;flex-direction:column;justify-content:center;
+  }
+  .claim .stat .num{font-family:'Anton',sans-serif;font-size:38px;line-height:1;color:var(--marigold);}
+  .claim .stat .cap{font-family:'IBM Plex Mono',monospace;font-size:11.5px;margin-top:8px;opacity:.85;}
+  .claim .body{padding:20px 24px;}
+  .claim .body h3{font-size:18px;font-weight:700;margin-bottom:6px;}
+  .claim .body p{font-size:15px;margin-bottom:10px;}
+  .claim .refs{font-family:'IBM Plex Mono',monospace;font-size:12.5px;color:var(--heal);}
+  .claim .refs a{color:var(--heal);}
+
+  .honesty{
+    background:#fff;border:2px solid var(--ink);border-left:8px solid var(--marigold);
+    padding:18px 22px;max-width:860px;margin:8px 0 20px;font-size:15px;
+  }
+  .honesty b{text-transform:uppercase;font-size:13px;letter-spacing:.06em;}
+
+  .reflist{max-width:860px;margin-top:10px;}
+  .reflist ol{margin-left:22px;}
+  .reflist li{font-size:14px;margin-bottom:10px;color:var(--muted);}
+  .reflist li a{color:var(--ink);font-weight:600;}
+  .reflist li .mono{font-size:12px;color:var(--heal);}
+
+  footer{padding:44px 0 60px;font-size:14px;color:var(--muted);border-top:3px solid var(--ink);margin-top:48px;}
+  footer .mono{font-size:12px;display:block;margin-top:12px;color:#8a8f9c;}
+</style>
+</head>
+<body>
+
+<div class="topstrip">
+  <div class="wrap">
+    <span>EVIDENCE REGISTER · SOURCED VIA CONSENSUS &amp; PUBMED</span>
+    <span>IN DISTRESS? TELE-MANAS <a href="tel:14416">14416</a></span>
+  </div>
+</div>
+<nav>
+  <div class="wrap">
+    <span class="brand">Psych <span class="accent">Screener</span></span>
+    <a href="index.html">Screeners</a>
+    <a href="index.html#history">My History</a>
+    <a href="index.html#resources">Get Help</a>
+    <a href="manifesto.html">Manifesto</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="wrap">
+    <span class="eyebrow">Receipts, Not Reassurance</span>
+    <h1 class="display">Every question here has <span class="accent">a paper trail.</span></h1>
+    <p class="lede">This screener invents nothing. Every instrument in it is a published, validated questionnaire; every design decision — screen early, track scores, share therapy tasks beyond specialists — follows peer-reviewed trials, several of them run in India. This page is the register.</p>
+    <div class="method"><b>Method:</b> literature identified through the Consensus research engine (200M+ papers) and PubMed (NLM). Each entry below links to the paper. Diagnostic accuracy figures are quoted directly from the cited studies. Compiled 25 July 2026 — re-verify before formal or clinical use.</div>
+  </div>
+</header>
+
+<section id="phq9">
+  <div class="wrap">
+    <p class="sec-label">Exhibit A — Depression</p>
+    <h2 class="display">PHQ-9</h2>
+    <p class="sec-sub">The nine questions map one-to-one onto the DSM criteria for major depression. They are the most-validated depression screening items in existence — including in Indian primary care, administered by non-specialist health workers.</p>
+
+    <div class="claim">
+      <div class="stat"><span class="num">88%</span><span class="cap">SENSITIVITY &amp; SPECIFICITY AT CUTOFF ≥10 (ORIGINAL VALIDATION, N=6,000)</span></div>
+      <div class="body">
+        <h3>The original validation</h3>
+        <p>Across 6,000 primary-care and obstetrics patients, a PHQ-9 score of 10 or more detected major depression with 88% sensitivity and 88% specificity, and scores of 5/10/15/20 defined the mild/moderate/moderately-severe/severe bands this app uses.</p>
+        <p class="refs">Kroenke, Spitzer &amp; Williams, 2001 — J Gen Intern Med [1]</p>
+      </div>
+    </div>
+
+    <div class="claim">
+      <div class="stat"><span class="num">44,503</span><span class="cap">PARTICIPANTS IN THE LARGEST ACCURACY META-ANALYSIS</span></div>
+      <div class="body">
+        <h3>Confirmed at scale</h3>
+        <p>Individual-participant-data meta-analyses in The BMJ (100 studies, 44,503 participants) confirm the ≥10 cutoff maximises combined sensitivity and specificity (0.85/0.85), which is why this app draws its clinical-cutoff line at 10.</p>
+        <p class="refs">Levis et al., 2019 [2]; Negeri et al., 2021 [3]; Costantini et al., 2020 [4]</p>
+      </div>
+    </div>
+
+    <div class="claim">
+      <div class="stat"><span class="num">0.92</span><span class="cap">AUC WHEN ADMINISTERED BY HEALTH WORKERS IN KERALA, INDIA</span></div>
+      <div class="body">
+        <h3>Validated in India, by non-specialists</h3>
+        <p>In Kerala primary care, PHQ-9 administered by public-health workers — not psychiatrists — achieved an area-under-curve of 0.92, with 82.5% sensitivity and 90.1% specificity. Hindi cultural adaptation work is also published, which anchors this project's translation roadmap.</p>
+        <p class="refs">Indu et al., 2018 — Asian J Psychiatry [5]; Bhardwaj et al., 2023 — Indian J Palliative Care [6]</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="gad7">
+  <div class="wrap">
+    <p class="sec-label">Exhibit B — Anxiety</p>
+    <h2 class="display">GAD-7</h2>
+    <p class="sec-sub">Seven questions developed in 2,740 primary-care patients, since tested in 24 languages across 27 countries — and one of the two most-validated anxiety tools in low- and middle-income countries.</p>
+
+    <div class="claim">
+      <div class="stat"><span class="num">89/82</span><span class="cap">% SENSITIVITY / SPECIFICITY AT THE OPTIMAL CUT POINT (ORIGINAL STUDY)</span></div>
+      <div class="body">
+        <h3>The original validation</h3>
+        <p>The GAD-7's cut point optimised sensitivity (89%) and specificity (82%), and rising scores tracked functional impairment across every domain measured. Meta-analysis pools acceptable accuracy at cutoffs 7–10, and a 2025 Cochrane review across 48 studies confirms acceptable-to-good accuracy.</p>
+        <p class="refs">Spitzer et al., 2006 — Arch Intern Med [7]; Plummer et al., 2016 [8]; Aktürk et al., 2025 — Cochrane [9]</p>
+      </div>
+    </div>
+
+    <div class="claim">
+      <div class="stat"><span class="num">−0.41</span><span class="cap">EFFECT SIZE OF PSYCHOLOGICAL TREATMENT ON ANXIETY IN PRIMARY CARE (USPSTF REVIEW)</span></div>
+      <div class="body">
+        <h3>Why screening for anxiety is worth it</h3>
+        <p>The US Preventive Services Task Force evidence review found clear evidence that anxiety treatment works — including psychological therapy alone — and that GAD-7/GAD-2 are the instruments with adequate accuracy to find the people who need it. Finding anxiety early is finding something treatable.</p>
+        <p class="refs">O'Connor et al., 2023 — JAMA [10]; Mughal et al., 2020 — LMIC validation review [11]</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="brief">
+  <div class="wrap">
+    <p class="sec-label">Exhibit C — Quick &amp; Alcohol Screens</p>
+    <h2 class="display">PHQ-4 &amp; AUDIT-C</h2>
+    <p class="sec-sub">Triage first, full screen second — the two-stage strategy this app uses is itself evidence-based.</p>
+
+    <div class="claim">
+      <div class="stat"><span class="num">57%</span><span class="cap">REDUCTION IN FULL-QUESTIONNAIRE BURDEN USING A 2-STAGE SCREEN (JAMA)</span></div>
+      <div class="body">
+        <h3>Ultra-brief screens earn their place</h3>
+        <p>The PHQ-4 (validated in 2,149 patients) reliably flags probable depression and anxiety in under a minute. A JAMA individual-participant meta-analysis showed a two-step approach — brief screen, then full PHQ-9 — keeps sensitivity while cutting respondent burden by more than half. That's exactly this app's PHQ-4 → PHQ-9/GAD-7 flow.</p>
+        <p class="refs">Kroenke et al., 2009 — Psychosomatics [12]; Levis et al., 2020 — JAMA [13]; Arroll et al., 2010 [14]</p>
+      </div>
+    </div>
+
+    <div class="claim">
+      <div class="stat"><span class="num">0.891</span><span class="cap">AUROC FOR DETECTING HEAVY DRINKING (AUDIT-C VALIDATION)</span></div>
+      <div class="body">
+        <h3>Three questions on alcohol, well-tested</h3>
+        <p>The WHO-derived AUDIT-C detected heavy drinking with an area-under-curve of 0.891 — marginally better than the full 10-item AUDIT — making it a practical, valid primary-care screen for hazardous alcohol use, one of India's most under-recognised mental-health burdens.</p>
+        <p class="refs">Bush et al., 1998 — Arch Intern Med [15]</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="followup">
+  <div class="wrap">
+    <p class="sec-label">Exhibit D — The Follow-Up Problem</p>
+    <h2 class="display">Tracking scores changes outcomes</h2>
+    <p class="sec-sub">The core complaint this project exists to answer — prescriptions without follow-up — has a tested remedy: measurement-based care, where repeated symptom scores drive treatment decisions. This app's private score history is that practice, put in the patient's own hands.</p>
+
+    <div class="claim">
+      <div class="stat"><span class="num">74 v 29</span><span class="cap">% REMISSION: MEASUREMENT-BASED CARE VS USUAL CARE (BLIND-RATED RCT)</span></div>
+      <div class="body">
+        <h3>The landmark trial</h3>
+        <p>In a randomized trial with blinded raters, depressed outpatients whose treatment was guided by repeated rating scales remitted at 73.8% versus 28.8% with clinician judgement alone — and got there in half the time. Meta-analysis across RCTs confirms measurement-based care increases remission and medication adherence.</p>
+        <p class="refs">Guo et al., 2015 — Am J Psychiatry [16]; Zhu et al., 2021 — meta-analysis [17]</p>
+      </div>
+    </div>
+
+    <div class="claim">
+      <div class="stat"><span class="num">2 v 4</span><span class="cap">WEEKS MEDIAN TIME-TO-RESPONSE, MBC VS STANDARD CARE, IN A SOUTH-ASIAN LMIC</span></div>
+      <div class="body">
+        <h3>Proven in our part of the world</h3>
+        <p>A 2025 multicentre RCT across seven Pakistani cities — a health system facing the same specialist scarcity as India — found measurement-based care halved median time to response and remission. Enhanced, measurement-driven care models show the same pattern across 29 trials and 15,255 participants.</p>
+        <p class="refs">Husain et al., 2025 — JAMA Network Open [18]; Xiao et al., 2021 — Transl Psychiatry [19]</p>
+      </div>
+    </div>
+
+    <div class="honesty">
+      <b>⚖ An honest caveat:</b> simply collecting scores isn't magic. A Cochrane review found little benefit when questionnaire results are merely fed back without acting on them [20]. The evidence favours scores that <em>drive decisions</em> — which is why this app pairs every result with severity-matched next steps, a fixed re-screen date, and a printable summary designed to change what happens inside the consultation.
+    </div>
+  </div>
+</section>
+
+<section id="tasksharing">
+  <div class="wrap">
+    <p class="sec-label">Exhibit E — Beyond the Psychiatrist</p>
+    <h2 class="display">Task-sharing works — proven in India</h2>
+    <p class="sec-sub">The manifesto's central claim — that trained non-specialists can deliver real mental healthcare — is not a hope. It carries two Lancet randomized trials from Goa.</p>
+
+    <div class="claim">
+      <div class="stat"><span class="num">64 v 39</span><span class="cap">% REMISSION: LAY-COUNSELLOR THERAPY VS USUAL CARE (LANCET RCT, GOA)</span></div>
+      <div class="body">
+        <h3>The Healthy Activity Program</h3>
+        <p>Lay counsellors delivering brief behavioural-activation therapy in Goan primary health centres nearly doubled remission from moderately-severe depression (64% vs 39%), reduced suicidal thoughts, and was cost-effective. Entry to the trial was a PHQ-9 score — the same instrument, used the same way, as in this app.</p>
+        <p class="refs">Patel et al., 2016/17 — The Lancet [21]</p>
+      </div>
+    </div>
+
+    <div class="claim">
+      <div class="stat"><span class="num">66 v 43</span><span class="cap">% RECOVERY IN PUBLIC CLINICS: COLLABORATIVE STEPPED CARE VS USUAL CARE</span></div>
+      <div class="body">
+        <h3>The MANAS trial</h3>
+        <p>Across 24 primary-care facilities in Goa, lay-counsellor-led collaborative stepped care — screen, counsel, escalate to a doctor only when needed — significantly improved recovery from common mental disorders, with the strongest effect in government facilities. India's care-cascade policy literature now builds on exactly this model, alongside Tele-MANAS and the DMHP.</p>
+        <p class="refs">Patel et al., 2010 — The Lancet [22]; Debnath, Sagar &amp; Salve, 2025 — Indian J Psychiatry [23]</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="references">
+  <div class="wrap">
+    <p class="sec-label">The Register</p>
+    <h2 class="display">Full references</h2>
+    <div class="reflist">
+      <ol>
+        <li><a href="https://consensus.app/papers/details/d3e353bcc2645d8594e5f2fc249641c0/?utm_source=claude_desktop">The PHQ-9: validity of a brief depression severity measure</a> — Kroenke, Spitzer &amp; Williams, 2001, J Gen Intern Med. <span class="mono">via Consensus</span></li>
+        <li><a href="https://consensus.app/papers/details/41c86a797089561cb20840f667ca9221/?utm_source=claude_desktop">Accuracy of PHQ-9 for screening to detect major depression: individual participant data meta-analysis</a> — Levis et al., 2019, The BMJ. <span class="mono">via Consensus</span></li>
+        <li><a href="https://consensus.app/papers/details/00aa770758d357b3abbe43f5395be920/?utm_source=claude_desktop">Accuracy of the PHQ-9: updated systematic review and IPD meta-analysis</a> — Negeri et al., 2021, The BMJ. <span class="mono">via Consensus</span></li>
+        <li><a href="https://consensus.app/papers/details/487cffa920e451a097391ae0ad070134/?utm_source=claude_desktop">Screening for depression in primary care with PHQ-9: a systematic review</a> — Costantini et al., 2020, J Affective Disorders. <span class="mono">via Consensus</span></li>
+        <li><a href="https://consensus.app/papers/details/59920917692f55458f77a1bfe1ec5035/?utm_source=claude_desktop">Reliability and validity of PHQ-9 when administered by health workers for depression screening among women in primary care</a> — Indu et al., 2018, Asian J Psychiatry (Kerala, India). <span class="mono">via Consensus</span></li>
+        <li><a href="https://doi.org/10.25259/IJPC_96_2023">Cultural adaptation of PHQ-9 in Hindi for use with patients in community palliative care settings</a> — Bhardwaj et al., 2023, Indian J Palliative Care. <span class="mono">via PubMed · DOI 10.25259/IJPC_96_2023</span></li>
+        <li><a href="https://doi.org/10.1001/archinte.166.10.1092">A brief measure for assessing generalized anxiety disorder: the GAD-7</a> — Spitzer, Kroenke, Williams &amp; Löwe, 2006, Arch Intern Med. <span class="mono">via PubMed · DOI 10.1001/archinte.166.10.1092</span></li>
+        <li><a href="https://consensus.app/papers/details/7d7b8dc07550508e84476caf2042c541/?utm_source=claude_desktop">Screening for anxiety disorders with the GAD-7 and GAD-2: systematic review and diagnostic meta-analysis</a> — Plummer et al., 2016, Gen Hosp Psychiatry. <span class="mono">via Consensus</span></li>
+        <li><a href="https://consensus.app/papers/details/6070436168555086a1d80f7da3d7739e/?utm_source=claude_desktop">GAD-7 and GAD-2 scales for detecting anxiety disorders in adults</a> — Aktürk et al., 2025, Cochrane Database Syst Rev. <span class="mono">via Consensus</span></li>
+        <li><a href="https://consensus.app/papers/details/7d9b04ebef045156ae6201d4f5aa86b4/?utm_source=claude_desktop">Anxiety screening: evidence report for the US Preventive Services Task Force</a> — O'Connor et al., 2023, JAMA. <span class="mono">via Consensus</span></li>
+        <li><a href="https://consensus.app/papers/details/e951551e37995799ac387b838912a7e8/?utm_source=claude_desktop">A systematic review of validated screening tools for anxiety disorders and PTSD in low- to middle-income countries</a> — Mughal et al., 2020, BMC Psychiatry. <span class="mono">via Consensus</span></li>
+        <li><a href="https://doi.org/10.1176/appi.psy.50.6.613">An ultra-brief screening scale for anxiety and depression: the PHQ-4</a> — Kroenke et al., 2009, Psychosomatics. <span class="mono">via PubMed · DOI 10.1176/appi.psy.50.6.613</span></li>
+        <li><a href="https://consensus.app/papers/details/6ceb082f92f259f59c2fa9d8fa960712/?utm_source=claude_desktop">Accuracy of the PHQ-2 alone and in combination with the PHQ-9: systematic review and meta-analysis</a> — Levis et al., 2020, JAMA. <span class="mono">via Consensus</span></li>
+        <li><a href="https://consensus.app/papers/details/6852943a14a1589c97870ab0f861a680/?utm_source=claude_desktop">Validation of PHQ-2 and PHQ-9 to screen for major depression in the primary care population</a> — Arroll et al., 2010, Ann Fam Med. <span class="mono">via Consensus</span></li>
+        <li><a href="https://doi.org/10.1001/archinte.158.16.1789">The AUDIT alcohol consumption questions (AUDIT-C): an effective brief screening test for problem drinking</a> — Bush et al., 1998, Arch Intern Med. <span class="mono">via PubMed · DOI 10.1001/archinte.158.16.1789</span></li>
+        <li><a href="https://consensus.app/papers/details/e9ec41b7402558b992846482b80f62f8/?utm_source=claude_desktop">Measurement-based care versus standard care for major depression: a randomized controlled trial with blind raters</a> — Guo et al., 2015, Am J Psychiatry. <span class="mono">via Consensus</span></li>
+        <li><a href="https://consensus.app/papers/details/29132b061cdd50ca91cb526aeff7cd27/?utm_source=claude_desktop">The efficacy of measurement-based care for depressive disorders: systematic review and meta-analysis of RCTs</a> — Zhu et al., 2021, J Clin Psychiatry. <span class="mono">via Consensus</span></li>
+        <li><a href="https://consensus.app/papers/details/a1c9a0c859d9550798a1521751b660e4/?utm_source=claude_desktop">Measurement-based care to enhance antidepressant treatment outcomes in major depressive disorder</a> — Husain et al., 2025, JAMA Network Open (Pakistan, multicentre RCT). <span class="mono">via Consensus</span></li>
+        <li><a href="https://consensus.app/papers/details/f13eee269d615a74984de66437bde15c/?utm_source=claude_desktop">The effectiveness of enhanced evidence-based care for depressive disorders: a meta-analysis of RCTs</a> — Xiao et al., 2021, Translational Psychiatry. <span class="mono">via Consensus</span></li>
+        <li><a href="https://consensus.app/papers/details/912c722a0fae58cfbf62d38eb805d09e/?utm_source=claude_desktop">Routine use of patient-reported outcome measures for improving treatment of common mental health disorders</a> — Kendrick et al., 2016, Cochrane Database Syst Rev. <span class="mono">via Consensus</span></li>
+        <li><a href="https://doi.org/10.1016/S0140-6736(16)31589-6">The Healthy Activity Program (HAP), a lay counsellor-delivered brief psychological treatment for severe depression in primary care in India: an RCT</a> — Patel et al., The Lancet. <span class="mono">via PubMed · DOI 10.1016/S0140-6736(16)31589-6</span></li>
+        <li><a href="https://doi.org/10.1016/S0140-6736(10)61508-5">Effectiveness of an intervention led by lay health counsellors for depressive and anxiety disorders in primary care in Goa, India (MANAS): a cluster RCT</a> — Patel et al., 2010, The Lancet. <span class="mono">via PubMed · DOI 10.1016/S0140-6736(10)61508-5</span></li>
+        <li><a href="https://doi.org/10.4103/indianjpsychiatry_640_25">Bridging the mental health treatment gap in India: a policy-oriented framework using the care cascade approach</a> — Debnath, Sagar &amp; Salve, 2025, Indian J Psychiatry. <span class="mono">via PubMed · DOI 10.4103/indianjpsychiatry_640_25</span></li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <p>Literature sourced through the Consensus research engine and PubMed (U.S. National Library of Medicine). Links lead to the papers or their DOIs; figures are quoted from the cited studies and should be re-verified against the originals before clinical or formal use. This page is education, not medical advice.</p>
+    <span class="mono">THE EVIDENCE REGISTER · PSYCH SCREENER · 2026 · <a href="index.html" style="color:inherit;">BACK TO THE SCREENER</a></span>
+  </div>
+</footer>
+
+</body>
+</html>

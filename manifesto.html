@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Waiting Room — A Manifesto for India's Mental Health Crisis</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=IBM+Plex+Mono:wght@400;500&family=Public+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#151C2E;
+    --paper:#F6F4EE;
+    --marigold:#E6A11C;
+    --stamp:#B23A2E;
+    --heal:#2F6E5E;
+    --line:#D8D3C6;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'Public Sans',sans-serif;
+    line-height:1.65;
+    font-size:17px;
+  }
+  @media (prefers-reduced-motion: reduce){
+    *,*::before,*::after{animation:none!important;transition:none!important;}
+    html{scroll-behavior:auto;}
+  }
+  .display{font-family:'Anton',sans-serif;letter-spacing:.01em;line-height:1.05;text-transform:uppercase;}
+  .mono{font-family:'IBM Plex Mono',monospace;}
+  .wrap{max-width:960px;margin:0 auto;padding:0 22px;}
+
+  /* ── top strip ── */
+  .topstrip{
+    background:var(--ink);color:var(--paper);
+    font-family:'IBM Plex Mono',monospace;font-size:12.5px;
+    padding:8px 0;letter-spacing:.04em;
+  }
+  .topstrip .wrap{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;}
+
+  /* ── hero ── */
+  .hero{padding:64px 0 48px;border-bottom:3px solid var(--ink);}
+  .eyebrow{
+    display:inline-block;font-family:'IBM Plex Mono',monospace;font-size:13px;
+    letter-spacing:.12em;text-transform:uppercase;
+    border:1.5px solid var(--stamp);color:var(--stamp);
+    padding:4px 10px;transform:rotate(-1.2deg);margin-bottom:22px;
+  }
+  h1{font-size:clamp(44px,9vw,96px);}
+  h1 .accent{color:var(--stamp);}
+  .hero p.lede{max-width:620px;font-size:19px;margin-top:22px;}
+
+  /* dot grid signature */
+  .dotfield{margin:40px 0 8px;}
+  .dotgrid{display:flex;flex-wrap:wrap;gap:5px;max-width:820px;}
+  .dot{
+    width:9px;height:9px;border-radius:50%;
+    background:var(--ink);opacity:.28;flex:none;
+    transition:opacity .2s;
+  }
+  .dot.psy{
+    background:var(--marigold);opacity:1;
+    box-shadow:0 0 0 3px rgba(230,161,28,.35);
+    animation:pulse 2.2s ease-in-out infinite;
+  }
+  @keyframes pulse{0%,100%{box-shadow:0 0 0 3px rgba(230,161,28,.35);}50%{box-shadow:0 0 0 7px rgba(230,161,28,.12);}}
+  .dotcaption{font-family:'IBM Plex Mono',monospace;font-size:13px;margin-top:14px;color:#4a4f5e;max-width:640px;}
+  .dotcaption b{color:var(--ink);}
+
+  /* ── section scaffolding ── */
+  section{padding:64px 0;}
+  .sec-label{
+    font-family:'IBM Plex Mono',monospace;font-size:13px;letter-spacing:.14em;
+    text-transform:uppercase;color:var(--stamp);margin-bottom:14px;
+  }
+  h2{font-size:clamp(30px,5vw,52px);margin-bottom:26px;}
+
+  /* ── crisis stats ── */
+  .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:0;border:2px solid var(--ink);}
+  .stat{padding:22px 20px;border-right:2px solid var(--ink);border-bottom:2px solid var(--ink);background:#fff;}
+  .stat:last-child{border-right:none;}
+  @media(max-width:700px){.stat{border-right:none;}}
+  .stat .num{font-family:'Anton',sans-serif;font-size:44px;line-height:1;color:var(--stamp);}
+  .stat .lbl{font-size:14.5px;margin-top:8px;}
+  .stat .src{font-family:'IBM Plex Mono',monospace;font-size:11px;color:#7a7f8d;margin-top:10px;}
+  .crisis-copy{max-width:660px;margin-top:30px;}
+  .crisis-copy p{margin-bottom:16px;}
+
+  /* ── manifesto ── */
+  .manifesto{background:var(--ink);color:var(--paper);}
+  .manifesto .sec-label{color:var(--marigold);}
+  .declaration{
+    border-top:1px solid rgba(246,244,238,.22);
+    padding:26px 0;display:grid;grid-template-columns:88px 1fr;gap:18px;align-items:start;
+  }
+  .declaration:last-of-type{border-bottom:1px solid rgba(246,244,238,.22);}
+  .declaration .roman{
+    font-family:'Anton',sans-serif;font-size:34px;color:var(--marigold);line-height:1;
+  }
+  .declaration h3{font-family:'Anton',sans-serif;font-size:22px;letter-spacing:.02em;text-transform:uppercase;margin-bottom:8px;}
+  .declaration p{font-size:16px;color:rgba(246,244,238,.82);max-width:640px;}
+  @media(max-width:560px){.declaration{grid-template-columns:1fr;gap:6px;}}
+
+  /* ── solutions ── */
+  .solutions h2 .accent{color:var(--heal);}
+  .solutions .sec-label{color:var(--heal);}
+  .sol{
+    background:#fff;border:2px solid var(--ink);border-left:8px solid var(--heal);
+    padding:22px 24px;margin-bottom:16px;
+  }
+  .sol h3{font-size:19px;font-weight:700;margin-bottom:6px;}
+  .sol .who{
+    font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.08em;
+    text-transform:uppercase;color:var(--heal);margin-bottom:8px;
+  }
+  .sol p{font-size:15.5px;}
+
+  /* ── pledge ── */
+  .pledge{background:var(--marigold);border-top:3px solid var(--ink);border-bottom:3px solid var(--ink);}
+  .pledge h2{color:var(--ink);}
+  .pledge .sec-label{color:var(--stamp);}
+  .pledge-card{background:var(--paper);border:2px solid var(--ink);padding:28px;max-width:640px;}
+  .pledge-lines{list-style:none;margin:0 0 22px;}
+  .pledge-lines li{padding:8px 0;border-bottom:1px dashed var(--line);font-size:16px;display:flex;gap:10px;}
+  .pledge-lines li::before{content:"☐";color:var(--heal);font-size:18px;}
+  .pledge-lines li.done::before{content:"☑";}
+  button{
+    font-family:'Anton',sans-serif;text-transform:uppercase;letter-spacing:.05em;
+    font-size:18px;background:var(--ink);color:var(--paper);border:none;
+    padding:14px 28px;cursor:pointer;transition:transform .12s;
+  }
+  button:hover{transform:translate(-2px,-2px);box-shadow:4px 4px 0 var(--stamp);}
+  button:focus-visible{outline:3px solid var(--stamp);outline-offset:3px;}
+  .pledge-count{font-family:'IBM Plex Mono',monospace;font-size:14px;margin-top:14px;}
+  .sharebox{
+    display:none;margin-top:18px;background:#fff;border:2px dashed var(--ink);
+    padding:16px;font-size:14.5px;
+  }
+  .sharebox.show{display:block;}
+  .sharebox .mono{font-size:12px;color:var(--heal);margin-top:10px;display:block;}
+
+  /* ── screener banner ── */
+  .screenerlink{background:var(--heal);color:var(--paper);padding:34px 0;}
+  .screenerlink .wrap{display:flex;justify-content:space-between;align-items:center;gap:18px;flex-wrap:wrap;}
+  .screenerlink h3{font-family:'Anton',sans-serif;font-size:24px;text-transform:uppercase;letter-spacing:.03em;}
+  .screenerlink p{font-size:15px;opacity:.9;max-width:520px;}
+  .screenerlink a{
+    font-family:'Anton',sans-serif;text-transform:uppercase;letter-spacing:.05em;
+    font-size:17px;background:var(--paper);color:var(--ink);text-decoration:none;
+    padding:13px 26px;display:inline-block;transition:transform .12s;
+  }
+  .screenerlink a:hover{transform:translate(-2px,-2px);box-shadow:4px 4px 0 var(--ink);}
+
+  /* ── footer ── */
+  footer{padding:44px 0 60px;font-size:14px;color:#5a5f6e;}
+  footer .mono{font-size:12px;display:block;margin-top:14px;color:#8a8f9c;}
+  .stampmark{
+    display:inline-block;font-family:'Anton',sans-serif;text-transform:uppercase;
+    border:3px double var(--stamp);color:var(--stamp);padding:6px 14px;
+    transform:rotate(-2deg);font-size:15px;letter-spacing:.08em;margin-bottom:16px;
+  }
+</style>
+</head>
+<body>
+
+<div class="topstrip">
+  <div class="wrap">
+    <span>OPD REGISTER · PSYCHIATRY · INDIA</span>
+    <span id="tokenTicker">TOKEN NO. 001 — NOW SERVING</span>
+  </div>
+</div>
+
+<header class="hero">
+  <div class="wrap">
+    <span class="eyebrow">Public Notice · Mental Health</span>
+    <h1 class="display">The Waiting<br>Room is <span class="accent">Full.</span></h1>
+    <p class="lede">In India, one psychiatrist serves a population the size of a small city. The result is three-minute consultations, missed diagnoses, and care reduced to a prescription refill. This is a manifesto for changing that.</p>
+
+    <div class="dotfield" aria-label="Visualization: one psychiatrist among roughly 133,000 people">
+      <div class="dotgrid" id="dotgrid"></div>
+      <p class="dotcaption">Each grey dot ≈ <b>1,000 people</b>. The gold dot is their <b>one psychiatrist</b>. India has roughly <b>0.75 psychiatrists per 100,000 people</b> — the WHO recommends at least 3. Tap the gold dot to see the day's arithmetic.</p>
+      <p class="dotcaption mono" id="dotmath" style="display:none;"><b>The arithmetic:</b> 100+ patients per OPD day ÷ 8 working hours ≈ under 5 minutes per person — history, diagnosis, prescription, counselling, all of it.</p>
+    </div>
+  </div>
+</header>
+
+<section class="crisis" id="crisis">
+  <div class="wrap">
+    <p class="sec-label">Part I — The Crisis</p>
+    <h2 class="display">Negligence by arithmetic, not by intent</h2>
+    <div class="stats">
+      <div class="stat"><div class="num">~0.75</div><div class="lbl">psychiatrists per 100,000 people — vs WHO's recommended 3+</div><div class="src">SRC: Indian J Psychiatry</div></div>
+      <div class="stat"><div class="num">10.6%</div><div class="lbl">of Indian adults live with a mental disorder at any given time</div><div class="src">SRC: NMHS 2015–16</div></div>
+      <div class="stat"><div class="num">70–92%</div><div class="lbl">treatment gap — those who need care and never receive it</div><div class="src">SRC: NMHS 2015–16</div></div>
+      <div class="stat"><div class="num">&lt;5 min</div><div class="lbl">typical consultation time in an overloaded government psychiatry OPD</div><div class="src">SRC: OPD workload studies</div></div>
+    </div>
+    <div class="crisis-copy">
+      <p>When one doctor sees a hundred patients before lunch, "negligence" stops being a personal failing and becomes a structural certainty. Diagnoses get compressed into checklists. Psychotherapy — the actual treatment for much of psychiatry — becomes a luxury no public hospital can afford to offer. Follow-ups collapse into refills.</p>
+      <p>The patient is blamed for not coming back. The doctor is blamed for not listening. The system that made both inevitable is blamed by no one.</p>
+    </div>
+  </div>
+</section>
+
+<section class="manifesto" id="manifesto">
+  <div class="wrap">
+    <p class="sec-label">Part II — The Manifesto</p>
+    <h2 class="display">Five declarations</h2>
+
+    <div class="declaration">
+      <div class="roman">I</div>
+      <div>
+        <h3>Time is a treatment</h3>
+        <p>A psychiatric consultation compressed below the minimum time needed for a mental state examination is not care — it is triage pretending to be care. Minimum consultation time must be treated as a quality metric, audited like infection rates.</p>
+      </div>
+    </div>
+
+    <div class="declaration">
+      <div class="roman">II</div>
+      <div>
+        <h3>The psychiatrist cannot work alone</h3>
+        <p>No country has ever closed a mental-health treatment gap by producing psychiatrists alone. Psychologists, psychiatric social workers, nurses, and trained community health workers are not assistants to the system — they are the system.</p>
+      </div>
+    </div>
+
+    <div class="declaration">
+      <div class="roman">III</div>
+      <div>
+        <h3>Primary care is the front line</h3>
+        <p>Most depression, anxiety, and substance use should be identified and initially managed by trained general physicians at PHCs — as the District Mental Health Programme intended — reserving specialists for complexity, not volume.</p>
+      </div>
+    </div>
+
+    <div class="declaration">
+      <div class="roman">IV</div>
+      <div>
+        <h3>Distance is no longer an excuse</h3>
+        <p>Tele-MANAS and telepsychiatry can put a specialist's judgement into every district hospital and every panchayat. A phone line staffed well beats a clinic that exists only on paper.</p>
+      </div>
+    </div>
+
+    <div class="declaration">
+      <div class="roman">V</div>
+      <div>
+        <h3>Rights on paper must become rights in practice</h3>
+        <p>The Mental Healthcare Act 2017 promises every Indian the right to affordable, quality mental healthcare. A right that cannot be exercised in the average district is not a right — it is a press release. Budgets must follow the law.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="solutions" id="solutions">
+  <div class="wrap">
+    <p class="sec-label">Part III — The Way Out</p>
+    <h2 class="display">Solutions that <span class="accent">scale</span></h2>
+
+    <div class="sol">
+      <div class="who">Policy · Central & State</div>
+      <h3>Task-sharing, formalized</h3>
+      <p>Train and certify non-specialist health workers (ASHAs, PHC nurses, counsellors) to screen, deliver brief psychological interventions, and follow up — a model proven in Indian trials like the Healthy Activity Program. Specialists supervise; they don't gatekeep.</p>
+    </div>
+
+    <div class="sol">
+      <div class="who">Medical Education</div>
+      <h3>More seats, better exposure</h3>
+      <p>Expand psychiatry PG seats and make undergraduate psychiatry postings meaningful — not a two-week formality. Every MBBS graduate should leave able to diagnose depression, start first-line treatment, and know when to refer.</p>
+    </div>
+
+    <div class="sol">
+      <div class="who">Technology</div>
+      <h3>Telepsychiatry as default, not backup</h3>
+      <p>Strengthen Tele-MANAS with guaranteed staffing, regional languages, and referral pathways that actually end in a bed or a prescription — not just a helpline number read out twice.</p>
+    </div>
+
+    <div class="sol">
+      <div class="who">Hospitals</div>
+      <h3>Fix the OPD, not the doctor</h3>
+      <p>Appointment slotting, triage by trained nurses, group psychoeducation for stable patients, and separate refill counters — operational changes that return minutes to the consultations that need them.</p>
+    </div>
+
+    <div class="sol">
+      <div class="who">Society · You</div>
+      <h3>Kill the stigma that delays the visit</h3>
+      <p>The treatment gap isn't only supply — it's silence. Every conversation that treats a psychiatric illness like the medical illness it is shortens someone's path to the clinic by months or years.</p>
+    </div>
+  </div>
+</section>
+
+<section class="screenerlink" id="screener">
+  <div class="wrap">
+    <div>
+      <h3>Screen early. Act early.</h3>
+      <p>This project ships a free, private, on-device mental-health screener — PHQ-9, GAD-7 and more — built for India, with guidance on what to do next and how to get real follow-up care.</p>
+    </div>
+    <a href="index.html">Open the screener →</a>
+  </div>
+</section>
+
+<section class="pledge" id="pledge">
+  <div class="wrap">
+    <p class="sec-label">Part IV — Act</p>
+    <h2 class="display">Take the pledge</h2>
+    <div class="pledge-card">
+      <ul class="pledge-lines" id="pledgeLines">
+        <li>I will talk about mental illness the way I talk about diabetes.</li>
+        <li>I will share the Tele-MANAS helpline — 14416 — with anyone who needs it.</li>
+        <li>I will not judge a doctor or a patient for a broken system — I will name the system.</li>
+        <li>I will push for mental-health budgets, staffing, and time — wherever my voice reaches.</li>
+      </ul>
+      <button id="pledgeBtn" onclick="takePledge()">I take this pledge</button>
+      <div class="pledge-count" id="pledgeCount">Join the count. Every signature is an argument.</div>
+      <div class="sharebox" id="sharebox">
+        <strong>Spread it.</strong> Copy this and post it:
+        <em>"India has ~0.75 psychiatrists per 100,000 people. The waiting room is full. I've pledged to name the system, not blame the people in it. #TheWaitingRoomIsFull"</em>
+        <span class="mono" id="copyStatus"></span>
+        <button style="font-size:14px;padding:8px 16px;margin-top:10px;" onclick="copyShare()">Copy text</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <span class="stampmark">Urgent — For Public Circulation</span>
+    <p>If you or someone you know is struggling, call <strong>Tele-MANAS: 14416</strong> (toll-free, 24×7, multiple Indian languages). Figures cited from the National Mental Health Survey 2015–16 and published workforce estimates; verify current numbers before formal use.</p>
+    <span class="mono">THE WAITING ROOM IS FULL · A CITIZEN'S MANIFESTO · 2026</span>
+  </div>
+</footer>
+
+<script>
+  // ── dot grid: ~133 dots ≈ 133,000 people per psychiatrist ──
+  const grid = document.getElementById('dotgrid');
+  const TOTAL = 133;
+  const psyIndex = 61;
+  for(let i=0;i<TOTAL;i++){
+    const d = document.createElement('div');
+    d.className = 'dot' + (i===psyIndex ? ' psy' : '');
+    if(i===psyIndex){
+      d.style.cursor='pointer';
+      d.title='The psychiatrist';
+      d.setAttribute('role','button');
+      d.setAttribute('tabindex','0');
+      d.setAttribute('aria-label','The one psychiatrist — activate to see the workload arithmetic');
+      const reveal = ()=>{ document.getElementById('dotmath').style.display='block'; };
+      d.addEventListener('click', reveal);
+      d.addEventListener('keydown', e=>{ if(e.key==='Enter'||e.key===' '){e.preventDefault();reveal();} });
+    }
+    grid.appendChild(d);
+  }
+
+  // ── token ticker ──
+  let token = 1;
+  setInterval(()=>{
+    token = token >= 120 ? 1 : token + 1;
+    document.getElementById('tokenTicker').textContent =
+      'TOKEN NO. ' + String(token).padStart(3,'0') + ' — NOW SERVING';
+  }, 3000);
+
+  // ── pledge: shared storage when available (artifact runtime), localStorage fallback ──
+  const KEY = 'pledge-total';
+  let localPledged = false;
+  const hasShared = typeof window.storage !== 'undefined' && window.storage;
+
+  async function getCount(){
+    if(hasShared){
+      const r = await window.storage.get(KEY, true);
+      return r ? parseInt(r.value,10) : 0;
+    }
+    return parseInt(localStorage.getItem(KEY) || '0', 10);
+  }
+  async function setCount(n){
+    if(hasShared){ await window.storage.set(KEY, String(n), true); }
+    else{ localStorage.setItem(KEY, String(n)); }
+  }
+
+  async function refreshCount(){
+    try{
+      const n = await getCount();
+      document.getElementById('pledgeCount').textContent =
+        n > 0 ? n + ' pledge' + (n===1?'':'s') + ' taken so far.' : 'Be the first to sign.';
+    }catch(e){
+      document.getElementById('pledgeCount').textContent = 'Be the first to sign.';
+    }
+  }
+
+  async function takePledge(){
+    if(localPledged) return;
+    localPledged = true;
+    document.querySelectorAll('#pledgeLines li').forEach(li=>li.classList.add('done'));
+    document.getElementById('pledgeBtn').textContent = 'Pledged ✓';
+    document.getElementById('sharebox').classList.add('show');
+    try{
+      let n = 0;
+      try{ n = await getCount(); }catch(e){ n = 0; }
+      await setCount(n+1);
+    }catch(e){ /* storage unavailable — pledge still counts locally */ }
+    refreshCount();
+  }
+
+  function copyShare(){
+    const text = 'India has ~0.75 psychiatrists per 100,000 people. The waiting room is full. I\'ve pledged to name the system, not blame the people in it. #TheWaitingRoomIsFull';
+    navigator.clipboard.writeText(text).then(()=>{
+      document.getElementById('copyStatus').textContent = 'Copied ✓';
+    }).catch(()=>{
+      document.getElementById('copyStatus').textContent = 'Select and copy the text above manually.';
+    });
+  }
+
+  refreshCount();
+</script>
+</body>
+</html>

@@ -1,0 +1,919 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Psych Screener — Early Mental Health Screening for India</title>
+<meta name="description" content="Free, private, on-device mental health screening (PHQ-9, GAD-7, PHQ-4, AUDIT-C) with guidance on getting real care in India. Not a diagnosis.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=IBM+Plex+Mono:wght@400;500&family=Public+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#151C2E;
+    --paper:#F6F4EE;
+    --marigold:#E6A11C;
+    --stamp:#B23A2E;
+    --heal:#2F6E5E;
+    --line:#D8D3C6;
+    --muted:#5a5f6e;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--paper);color:var(--ink);
+    font-family:'Public Sans',sans-serif;line-height:1.65;font-size:17px;
+  }
+  @media (prefers-reduced-motion: reduce){
+    *,*::before,*::after{animation:none!important;transition:none!important;}
+    html{scroll-behavior:auto;}
+  }
+  .display{font-family:'Anton',sans-serif;letter-spacing:.01em;line-height:1.08;text-transform:uppercase;}
+  .mono{font-family:'IBM Plex Mono',monospace;}
+  .wrap{max-width:960px;margin:0 auto;padding:0 22px;}
+
+  /* ── crisis strip (always visible) ── */
+  .topstrip{
+    background:var(--stamp);color:#fff;
+    font-family:'IBM Plex Mono',monospace;font-size:12.5px;
+    padding:8px 0;letter-spacing:.03em;
+  }
+  .topstrip .wrap{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;}
+  .topstrip a{color:#fff;font-weight:700;text-decoration:underline;}
+
+  /* ── nav ── */
+  nav{background:var(--ink);padding:14px 0;}
+  nav .wrap{display:flex;align-items:center;gap:18px;flex-wrap:wrap;}
+  nav .brand{font-family:'Anton',sans-serif;color:var(--paper);font-size:19px;text-transform:uppercase;letter-spacing:.04em;margin-right:auto;}
+  nav .brand .accent{color:var(--marigold);}
+  nav a{
+    color:var(--paper);text-decoration:none;font-family:'IBM Plex Mono',monospace;
+    font-size:13px;letter-spacing:.06em;text-transform:uppercase;
+    padding:4px 2px;border-bottom:2px solid transparent;cursor:pointer;
+  }
+  nav a:hover,nav a:focus-visible{border-bottom-color:var(--marigold);outline:none;}
+
+  /* ── views ── */
+  .view{display:none;padding:48px 0 64px;}
+  .view.active{display:block;}
+
+  .eyebrow{
+    display:inline-block;font-family:'IBM Plex Mono',monospace;font-size:13px;
+    letter-spacing:.12em;text-transform:uppercase;
+    border:1.5px solid var(--heal);color:var(--heal);
+    padding:4px 10px;transform:rotate(-1.2deg);margin-bottom:20px;
+  }
+  h1{font-size:clamp(36px,7vw,68px);margin-bottom:18px;}
+  h1 .accent{color:var(--heal);}
+  h2{font-size:clamp(24px,4vw,38px);margin-bottom:18px;}
+  .lede{max-width:640px;font-size:18px;margin-bottom:28px;}
+
+  .notice{
+    background:#fff;border:2px solid var(--ink);border-left:8px solid var(--marigold);
+    padding:16px 20px;font-size:15px;max-width:760px;margin-bottom:34px;
+  }
+  .notice b{text-transform:uppercase;font-size:13px;letter-spacing:.06em;}
+
+  /* ── screener cards ── */
+  .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;}
+  .card{
+    background:#fff;border:2px solid var(--ink);padding:22px;
+    display:flex;flex-direction:column;gap:8px;
+  }
+  .card .tag{font-family:'IBM Plex Mono',monospace;font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--heal);}
+  .card h3{font-size:20px;font-weight:700;}
+  .card p{font-size:14.5px;color:var(--muted);flex:1;}
+  .card .meta{font-family:'IBM Plex Mono',monospace;font-size:12px;color:#8a8f9c;}
+
+  button,.btn{
+    font-family:'Anton',sans-serif;text-transform:uppercase;letter-spacing:.05em;
+    font-size:16px;background:var(--ink);color:var(--paper);border:none;
+    padding:12px 22px;cursor:pointer;transition:transform .12s;text-decoration:none;display:inline-block;
+  }
+  button:hover,.btn:hover{transform:translate(-2px,-2px);box-shadow:4px 4px 0 var(--heal);}
+  button:focus-visible,.btn:focus-visible{outline:3px solid var(--heal);outline-offset:3px;}
+  button.secondary{background:transparent;color:var(--ink);border:2px solid var(--ink);}
+  button.danger{background:var(--stamp);}
+  button:disabled{opacity:.45;cursor:not-allowed;transform:none;box-shadow:none;}
+
+  /* ── test view: one question at a time ── */
+  .testhead{margin-bottom:20px;}
+  .testhead .period{
+    background:var(--ink);color:var(--paper);display:inline-block;
+    font-family:'IBM Plex Mono',monospace;font-size:13px;padding:6px 12px;margin-top:10px;
+  }
+  .progress{font-family:'IBM Plex Mono',monospace;font-size:13px;color:var(--muted);margin:8px 0 18px;}
+  .pbar{height:10px;background:#fff;border:2px solid var(--ink);max-width:760px;margin-top:18px;}
+  .pfill{height:100%;background:var(--heal);width:0%;transition:width .25s ease;}
+  .qbox{background:#fff;border:2px solid var(--ink);padding:26px;max-width:760px;animation:qin .28s ease;}
+  @keyframes qin{from{opacity:0;transform:translateX(18px);}to{opacity:1;transform:none;}}
+  .qtext{font-size:20px;font-weight:600;margin-bottom:18px;}
+  .qtext .qnum{font-family:'IBM Plex Mono',monospace;color:var(--heal);font-size:14px;margin-right:8px;}
+  .bigopts{display:flex;flex-direction:column;gap:10px;}
+  .bigopts button{
+    font-family:'Public Sans',sans-serif;text-transform:none;letter-spacing:0;
+    font-size:16.5px;background:var(--paper);color:var(--ink);
+    border:2px solid var(--line);padding:13px 16px;text-align:left;
+    display:flex;align-items:center;gap:12px;cursor:pointer;
+    transition:border-color .12s, background .12s;
+  }
+  .bigopts button:hover{border-color:var(--ink);transform:none;box-shadow:none;}
+  .bigopts button.sel{border-color:var(--heal);background:#e9f1ee;font-weight:600;}
+  .bigopts .kbd{
+    font-family:'IBM Plex Mono',monospace;font-size:12px;border:1.5px solid var(--line);
+    padding:1px 7px;color:var(--muted);flex:none;
+  }
+  .bigopts button.sel .kbd{border-color:var(--heal);color:var(--heal);}
+
+  /* ── severity scale ── */
+  .sevscale{max-width:760px;margin:-4px 0 26px;position:relative;padding-top:24px;}
+  .sevmarker{
+    position:absolute;top:0;transform:translateX(-50%);text-align:center;
+    font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:700;
+    transition:left .5s ease;
+  }
+  .sevtri{width:0;height:0;border-left:6px solid transparent;border-right:6px solid transparent;border-top:7px solid var(--ink);margin:0 auto;}
+  .sevtrack{display:flex;height:14px;border:2px solid var(--ink);background:#fff;}
+  .sevseg{border-right:2px solid var(--ink);}
+  .sevseg:last-child{border-right:none;}
+  .sevseg.s0{background:#A9C9BB;}
+  .sevseg.s1{background:#E8D08E;}
+  .sevseg.s2{background:#E0A878;}
+  .sevseg.s3{background:#D68C83;}
+  .sevlabels{display:flex;font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:var(--muted);margin-top:4px;}
+  .sevlabels div{text-align:center;}
+
+  /* ── mood check-in ── */
+  .mood{background:#fff;border:2px solid var(--ink);border-left:8px solid var(--marigold);padding:18px 22px;max-width:760px;margin-bottom:34px;}
+  .moodbtns{display:flex;gap:10px;margin:12px 0 4px;flex-wrap:wrap;}
+  .moodbtns button{font-size:26px;background:var(--paper);border:2px solid var(--line);padding:8px 12px;line-height:1;}
+  .moodbtns button:hover{border-color:var(--ink);box-shadow:none;transform:none;}
+  .moodbtns button.sel{border-color:var(--heal);background:#e9f1ee;}
+  .moodstrip{display:flex;gap:4px;align-items:flex-end;height:36px;margin-top:10px;}
+  .moodcell{width:14px;background:var(--line);}
+  .moodcell.v1{background:var(--stamp);}
+  .moodcell.v2{background:#C4671F;}
+  .moodcell.v3{background:var(--marigold);}
+  .moodcell.v4{background:#7FA491;}
+  .moodcell.v5{background:var(--heal);}
+
+  /* ── chart tooltip ── */
+  .ctip{
+    position:absolute;pointer-events:none;background:var(--ink);color:var(--paper);
+    font-family:'IBM Plex Mono',monospace;font-size:12px;padding:5px 9px;
+    transform:translate(-50%,-120%);white-space:nowrap;display:none;z-index:5;
+  }
+
+  .card{transition:transform .15s, box-shadow .15s;}
+  .card:hover{transform:translate(-2px,-2px);box-shadow:5px 5px 0 var(--heal);}
+  .view.active{animation:vin .25s ease;}
+  @keyframes vin{from{opacity:0;}to{opacity:1;}}
+
+  /* ── results ── */
+  .scoreboard{
+    display:grid;grid-template-columns:200px 1fr;gap:0;border:2px solid var(--ink);
+    background:#fff;margin-bottom:24px;max-width:760px;
+  }
+  @media(max-width:600px){.scoreboard{grid-template-columns:1fr;}}
+  .scorebox{
+    background:var(--ink);color:var(--paper);padding:24px;text-align:center;
+    display:flex;flex-direction:column;justify-content:center;
+  }
+  .scorebox .num{font-family:'Anton',sans-serif;font-size:56px;line-height:1;}
+  .scorebox .of{font-family:'IBM Plex Mono',monospace;font-size:13px;opacity:.75;margin-top:6px;}
+  .verdict{padding:22px 24px;}
+  .band{
+    display:inline-block;font-family:'Anton',sans-serif;text-transform:uppercase;
+    letter-spacing:.04em;font-size:18px;padding:5px 14px;border:2px solid;margin-bottom:10px;
+  }
+  .band.b0{color:var(--heal);border-color:var(--heal);}
+  .band.b1{color:#8a6d00;border-color:#B8912A;}
+  .band.b2{color:#a4530a;border-color:#C4671F;}
+  .band.b3{color:var(--stamp);border-color:var(--stamp);}
+  .verdict p{font-size:15.5px;}
+
+  .safety{
+    background:var(--stamp);color:#fff;padding:22px 24px;margin-bottom:24px;
+    border:2px solid var(--ink);max-width:760px;
+  }
+  .safety h3{font-family:'Anton',sans-serif;text-transform:uppercase;font-size:20px;margin-bottom:10px;letter-spacing:.03em;}
+  .safety p{font-size:15.5px;margin-bottom:8px;}
+  .safety a{color:#fff;font-weight:700;}
+  .safety .lines{font-family:'IBM Plex Mono',monospace;font-size:14px;margin-top:10px;}
+
+  .nextsteps{max-width:760px;}
+  .nextsteps h3{font-size:19px;margin:22px 0 10px;font-weight:700;}
+  .nextsteps ul{margin:0 0 18px 22px;}
+  .nextsteps li{margin-bottom:8px;font-size:15.5px;}
+  .rescreen{
+    background:#fff;border:2px dashed var(--heal);padding:16px 20px;margin:20px 0;
+    font-size:15px;max-width:760px;
+  }
+  .rescreen b{color:var(--heal);}
+  .actionrow{display:flex;gap:12px;flex-wrap:wrap;margin-top:26px;}
+
+  /* ── history ── */
+  .histempty{color:var(--muted);font-size:15.5px;}
+  .histblock{background:#fff;border:2px solid var(--ink);padding:22px;margin-bottom:20px;max-width:820px;}
+  .histblock h3{font-size:19px;font-weight:700;margin-bottom:4px;}
+  .histblock .sub{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--muted);margin-bottom:14px;}
+  .chartwrap{overflow-x:auto;}
+  table.histtable{border-collapse:collapse;width:100%;margin-top:14px;font-size:14px;}
+  table.histtable th,table.histtable td{border:1px solid var(--line);padding:7px 10px;text-align:left;}
+  table.histtable th{font-family:'IBM Plex Mono',monospace;font-size:11.5px;text-transform:uppercase;letter-spacing:.06em;background:var(--paper);}
+  .histctl{display:flex;gap:12px;flex-wrap:wrap;margin-top:8px;}
+
+  /* ── resources ── */
+  .res{background:#fff;border:2px solid var(--ink);border-left:8px solid var(--heal);padding:20px 22px;margin-bottom:14px;max-width:820px;}
+  .res h3{font-size:18px;font-weight:700;margin-bottom:6px;}
+  .res p,.res li{font-size:15px;}
+  .res ul{margin:8px 0 0 20px;}
+  .res .mono{font-size:13px;color:var(--heal);}
+
+  /* ── footer ── */
+  footer{padding:40px 0 56px;font-size:14px;color:var(--muted);border-top:3px solid var(--ink);}
+  footer .mono{font-size:12px;display:block;margin-top:12px;color:#8a8f9c;}
+
+  /* ── print summary ── */
+  .printonly{display:none;}
+  @media print{
+    body{background:#fff;font-size:13px;}
+    .topstrip,nav,footer,.actionrow,.noprint{display:none!important;}
+    .printonly{display:block;font-family:'IBM Plex Mono',monospace;font-size:12px;margin-bottom:14px;}
+    .view{padding:0;}
+    .scoreboard,.safety,.notice{max-width:none;border-width:1px;}
+  }
+</style>
+</head>
+<body>
+
+<div class="topstrip noprint">
+  <div class="wrap">
+    <span>IN DISTRESS? TELE-MANAS <a href="tel:14416">14416</a> · KIRAN <a href="tel:18005990019">1800-599-0019</a> · EMERGENCY <a href="tel:112">112</a></span>
+    <span>FREE · 24×7 · CONFIDENTIAL</span>
+  </div>
+</div>
+
+<nav class="noprint">
+  <div class="wrap">
+    <span class="brand">Psych <span class="accent">Screener</span></span>
+    <a onclick="showView('home')" href="#home">Screeners</a>
+    <a onclick="showView('history')" href="#history">My History</a>
+    <a onclick="showView('resources')" href="#resources">Get Help</a>
+    <a href="evidence.html">Evidence</a>
+    <a href="manifesto.html">Manifesto</a>
+  </div>
+</nav>
+
+<!-- ══════════ HOME ══════════ -->
+<section class="view active" id="view-home">
+  <div class="wrap">
+    <span class="eyebrow">Screen Early · Act Early</span>
+    <h1 class="display">Five minutes now beats <span class="accent">five years of silence.</span></h1>
+    <p class="lede">India's treatment gap for mental illness is 70–92% — most people who need care never reach it, and many who do get a prescription refill instead of a plan. This tool uses the same validated questionnaires doctors use, tells you what your score means, and shows you how to get <em>real</em> care and real follow-up.</p>
+
+    <div class="notice">
+      <b>⚠ This is a screening tool, not a diagnosis.</b><br>
+      Only a qualified clinician can diagnose a mental illness. A high score means "talk to a professional," never "you have X." A low score with ongoing distress still deserves attention.
+      <span class="mono" style="display:block;margin-top:8px;font-size:12px;color:var(--heal);">🔒 Privacy: everything runs in your browser. Your answers never leave this device.</span>
+    </div>
+
+    <div class="mood">
+      <b>Daily one-tap mood check-in</b> <span class="mono" style="font-size:12px;color:var(--muted);">· private · this device only</span>
+      <div class="moodbtns" id="moodBtns" role="group" aria-label="How are you feeling today?"></div>
+      <div class="moodstrip" id="moodStrip" aria-hidden="true"></div>
+      <div class="mono" id="moodMsg" style="font-size:12.5px;color:var(--muted);margin-top:8px;"></div>
+    </div>
+
+    <h2 class="display">Choose a screener</h2>
+    <div class="cards">
+      <div class="card">
+        <div class="tag">Quick Check · Start Here</div>
+        <h3>PHQ-4</h3>
+        <p>A 4-question ultra-brief check for both depression and anxiety. If it flags anything, it points you to the full screeners below.</p>
+        <div class="meta">4 questions · ~1 min</div>
+        <button onclick="startTest('phq4')">Start PHQ-4</button>
+      </div>
+      <div class="card">
+        <div class="tag">Depression</div>
+        <h3>PHQ-9</h3>
+        <p>The standard depression screener used in clinics worldwide and in India's District Mental Health Programme.</p>
+        <div class="meta">9 questions · ~3 min</div>
+        <button onclick="startTest('phq9')">Start PHQ-9</button>
+      </div>
+      <div class="card">
+        <div class="tag">Anxiety</div>
+        <h3>GAD-7</h3>
+        <p>The standard screener for generalised anxiety, also sensitive to panic and social anxiety symptoms.</p>
+        <div class="meta">7 questions · ~2 min</div>
+        <button onclick="startTest('gad7')">Start GAD-7</button>
+      </div>
+      <div class="card">
+        <div class="tag">Alcohol Use</div>
+        <h3>AUDIT-C</h3>
+        <p>The WHO's brief screen for hazardous drinking — one of India's most under-recognised mental-health burdens.</p>
+        <div class="meta">3 questions · ~1 min</div>
+        <button onclick="startTest('auditc')">Start AUDIT-C</button>
+      </div>
+    </div>
+
+    <div class="rescreen" style="margin-top:34px;">
+      <b>Why re-screen?</b> Scores are snapshots. Tracking them every 2–4 weeks is how clinicians measure whether treatment is working — this app saves your scores privately on this device and reminds you when it's time to check again. That's the follow-up the system forgets; do it for yourself.
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ TEST ══════════ -->
+<section class="view" id="view-test">
+  <div class="wrap">
+    <div class="testhead">
+      <span class="eyebrow" id="testTag"></span>
+      <h1 class="display" id="testTitle" style="font-size:clamp(28px,5vw,48px);"></h1>
+      <p class="lede" id="testIntro" style="margin-bottom:0;"></p>
+      <div class="period" id="testPeriod"></div>
+    </div>
+    <div class="pbar" aria-hidden="true"><div class="pfill" id="pfill"></div></div>
+    <div class="progress" aria-live="polite" id="progress"></div>
+    <div id="qcard"></div>
+    <div class="actionrow">
+      <button class="secondary" id="backBtn" onclick="prevQ()">← Back</button>
+      <button class="secondary" onclick="showView('home')">Cancel</button>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ RESULTS ══════════ -->
+<section class="view" id="view-results">
+  <div class="wrap">
+    <div class="printonly" id="printHead"></div>
+    <span class="eyebrow noprint">Your Result</span>
+    <h1 class="display" id="resTitle" style="font-size:clamp(28px,5vw,48px);"></h1>
+
+    <div class="safety" id="safetyBox" style="display:none;" role="alert">
+      <h3>⚠ Please read this first</h3>
+      <p>You said you've had thoughts of being better off dead or of hurting yourself. Those thoughts are a symptom — they are treatable, and they are more common than you think. You do not have to handle this alone or wait for it to pass.</p>
+      <p><strong>Talk to someone today:</strong></p>
+      <div class="lines">
+        TELE-MANAS: <a href="tel:14416">14416</a> (24×7, free, many Indian languages)<br>
+        KIRAN: <a href="tel:18005990019">1800-599-0019</a> (24×7, free)<br>
+        Emergency: <a href="tel:112">112</a> — if you are in immediate danger
+      </div>
+      <p style="margin-top:10px;">Tell one person you trust, today. If you can, don't be alone tonight.</p>
+    </div>
+
+    <div class="scoreboard">
+      <div class="scorebox">
+        <div class="num" id="resScore"></div>
+        <div class="of" id="resOf"></div>
+      </div>
+      <div class="verdict">
+        <span class="band" id="resBand"></span>
+        <p id="resMeaning"></p>
+        <p class="mono noprint" style="font-size:12px;margin-top:10px;"><a href="evidence.html" style="color:var(--heal);">Why trust this score? See the evidence register →</a></p>
+      </div>
+    </div>
+
+    <div class="sevscale" id="sevScale" aria-hidden="true"></div>
+
+    <div class="nextsteps" id="resSteps"></div>
+
+    <div class="rescreen" id="resRescreen"></div>
+
+    <div class="nextsteps">
+      <h3>If you see a doctor: get care, not just a prescription</h3>
+      <ul>
+        <li><b>Ask for your diagnosis by name</b> — and what the score/assessment behind it was.</li>
+        <li><b>Ask about non-drug options</b> — psychotherapy (CBT, counselling) is first-line treatment for mild–moderate depression and anxiety, not a luxury add-on.</li>
+        <li><b>If medication is prescribed:</b> ask what it's for, how long until it works, side effects, and how long you'll take it.</li>
+        <li><b>Before leaving, fix a follow-up date.</b> "When should I come back, and what should improve by then?" If the OPD can't book one, book your own re-screen here.</li>
+        <li><b>Bring your score history</b> — use "Print summary" below. Numbers over time are exactly what a rushed OPD consultation is missing.</li>
+      </ul>
+    </div>
+
+    <div class="actionrow noprint">
+      <button onclick="window.print()">Print summary for your doctor</button>
+      <button class="secondary" onclick="downloadReminder()">📅 Add re-screen reminder</button>
+      <button class="secondary" onclick="showView('history')">View my history</button>
+      <button class="secondary" onclick="showView('home')">Back to screeners</button>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ HISTORY ══════════ -->
+<section class="view" id="view-history">
+  <div class="wrap">
+    <span class="eyebrow">Follow-Up</span>
+    <h1 class="display" style="font-size:clamp(28px,5vw,48px);">My score history</h1>
+    <p class="lede">Saved privately in this browser only. This is your follow-up record — the trend matters more than any single score. Bring it to appointments.</p>
+    <div id="histContent"></div>
+    <div class="histctl noprint">
+      <button class="secondary" onclick="exportData()">Export data (JSON)</button>
+      <button class="danger" onclick="clearData()">Delete all my data</button>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ RESOURCES ══════════ -->
+<section class="view" id="view-resources">
+  <div class="wrap">
+    <span class="eyebrow">Get Help · India</span>
+    <h1 class="display" style="font-size:clamp(28px,5vw,48px);">Where to turn</h1>
+
+    <div class="res">
+      <h3>☎ Tele-MANAS — 14416 or 1-800-891-4416</h3>
+      <p>The Government of India's national tele-mental-health service. Free, 24×7, confidential, available in 20+ languages. Trained counsellors handle the call and can escalate to mental-health specialists and link you to services in your district. <span class="mono">This is the single best first call for most people.</span></p>
+    </div>
+    <div class="res">
+      <h3>☎ KIRAN — 1800-599-0019</h3>
+      <p>National toll-free mental-health rehabilitation helpline, 24×7, 13 languages. Support for anxiety, depression, substance use, and crisis.</p>
+    </div>
+    <div class="res">
+      <h3>🚨 Emergency — 112</h3>
+      <p>If you or someone else is in immediate danger of harm, call 112 or go to the nearest hospital emergency department. Say the words "psychiatric emergency."</p>
+    </div>
+    <div class="res">
+      <h3>🏥 District Mental Health Programme (DMHP)</h3>
+      <p>Most districts run a DMHP clinic at the district hospital with a psychiatrist or trained medical officer, free or near-free medicines, and counselling. Ask at your district hospital or any government health facility for the "mental health clinic" / <em>manasik swasthya</em> clinic. Under the Mental Healthcare Act 2017, affordable mental healthcare is your legal right.</p>
+    </div>
+    <div class="res">
+      <h3>🩺 Your nearest PHC or family doctor</h3>
+      <p>You don't need a psychiatrist to start. General physicians can diagnose and begin first-line treatment for depression and anxiety, and refer when needed. Bring your printed score summary from this app — it gives a rushed consultation a head start.</p>
+    </div>
+    <div class="res">
+      <h3>🧠 Psychotherapy — ask for it by name</h3>
+      <p>For mild-to-moderate depression and anxiety, talking therapies (CBT, behavioural activation, counselling) are first-line, evidence-based treatment — medication is not the only option. Ask any doctor: <em>"Is psychotherapy appropriate for me, and where can I get it?"</em> Tele-MANAS can also point you to counselling services.</p>
+    </div>
+    <div class="res">
+      <h3>📱 What "good follow-up" looks like</h3>
+      <ul>
+        <li>A named diagnosis (or an honest "we're not sure yet — here's the plan").</li>
+        <li>A treatment plan with a review date — typically 2–4 weeks after starting or changing treatment.</li>
+        <li>Symptom scores repeated over time (that's what this app's history does).</li>
+        <li>A clear answer on therapy, not just tablets.</li>
+        <li>Someone to call between visits — save 14416 in your phone.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <p><strong>Disclaimer:</strong> This tool uses public-domain screening instruments (PHQ-4, PHQ-9, GAD-7 — Kroenke, Spitzer &amp; Williams; AUDIT-C — WHO). It provides education and screening only; it does not provide medical advice, diagnosis, or treatment, and it is not a substitute for consultation with a qualified health professional. All data stays on your device.</p>
+    <span class="mono">PSYCH SCREENER · PART OF "THE WAITING ROOM IS FULL" · 2026 · <a href="manifesto.html" style="color:inherit;">READ THE MANIFESTO</a></span>
+  </div>
+</footer>
+
+<script>
+/* ════════════════ INSTRUMENT DEFINITIONS ════════════════ */
+const FREQ_OPTS = [
+  ["Not at all",0],["Several days",1],["More than half the days",2],["Nearly every day",3]
+];
+
+const INSTRUMENTS = {
+  phq4: {
+    name:"PHQ-4", tag:"Quick Check", max:12,
+    intro:"Over the last 2 weeks, how often have you been bothered by the following problems?",
+    period:"OVER THE LAST 2 WEEKS",
+    questions:[
+      {t:"Feeling nervous, anxious, or on edge", o:FREQ_OPTS},
+      {t:"Not being able to stop or control worrying", o:FREQ_OPTS},
+      {t:"Feeling down, depressed, or hopeless", o:FREQ_OPTS},
+      {t:"Little interest or pleasure in doing things", o:FREQ_OPTS}
+    ],
+    bands:[[0,2,0,"No significant distress"],[3,5,1,"Mild distress"],[6,8,2,"Moderate distress"],[9,12,3,"Severe distress"]],
+    cutoff:6, cutoffLabel:"Moderate (6+)"
+  },
+  phq9: {
+    name:"PHQ-9", tag:"Depression", max:27,
+    intro:"Over the last 2 weeks, how often have you been bothered by any of the following problems?",
+    period:"OVER THE LAST 2 WEEKS",
+    questions:[
+      {t:"Little interest or pleasure in doing things", o:FREQ_OPTS},
+      {t:"Feeling down, depressed, or hopeless", o:FREQ_OPTS},
+      {t:"Trouble falling or staying asleep, or sleeping too much", o:FREQ_OPTS},
+      {t:"Feeling tired or having little energy", o:FREQ_OPTS},
+      {t:"Poor appetite or overeating", o:FREQ_OPTS},
+      {t:"Feeling bad about yourself — or that you are a failure or have let yourself or your family down", o:FREQ_OPTS},
+      {t:"Trouble concentrating on things, such as reading the newspaper or watching television", o:FREQ_OPTS},
+      {t:"Moving or speaking so slowly that other people could have noticed? Or the opposite — being so fidgety or restless that you have been moving around a lot more than usual", o:FREQ_OPTS},
+      {t:"Thoughts that you would be better off dead or of hurting yourself in some way", o:FREQ_OPTS, safety:true}
+    ],
+    bands:[[0,4,0,"Minimal depression"],[5,9,1,"Mild depression"],[10,14,2,"Moderate depression"],[15,19,3,"Moderately severe depression"],[20,27,3,"Severe depression"]],
+    cutoff:10, cutoffLabel:"Clinical cutoff (10+)"
+  },
+  gad7: {
+    name:"GAD-7", tag:"Anxiety", max:21,
+    intro:"Over the last 2 weeks, how often have you been bothered by the following problems?",
+    period:"OVER THE LAST 2 WEEKS",
+    questions:[
+      {t:"Feeling nervous, anxious, or on edge", o:FREQ_OPTS},
+      {t:"Not being able to stop or control worrying", o:FREQ_OPTS},
+      {t:"Worrying too much about different things", o:FREQ_OPTS},
+      {t:"Trouble relaxing", o:FREQ_OPTS},
+      {t:"Being so restless that it is hard to sit still", o:FREQ_OPTS},
+      {t:"Becoming easily annoyed or irritable", o:FREQ_OPTS},
+      {t:"Feeling afraid, as if something awful might happen", o:FREQ_OPTS}
+    ],
+    bands:[[0,4,0,"Minimal anxiety"],[5,9,1,"Mild anxiety"],[10,14,2,"Moderate anxiety"],[15,21,3,"Severe anxiety"]],
+    cutoff:10, cutoffLabel:"Clinical cutoff (10+)"
+  },
+  auditc: {
+    name:"AUDIT-C", tag:"Alcohol Use", max:12,
+    intro:"Please answer about your alcohol use in the past year. One \"drink\" = roughly 30 ml spirits, 100 ml wine, or 285 ml of regular beer.",
+    period:"OVER THE PAST YEAR",
+    questions:[
+      {t:"How often do you have a drink containing alcohol?",
+       o:[["Never",0],["Monthly or less",1],["2–4 times a month",2],["2–3 times a week",3],["4 or more times a week",4]]},
+      {t:"How many drinks containing alcohol do you have on a typical day when you are drinking?",
+       o:[["1 or 2",0],["3 or 4",1],["5 or 6",2],["7 to 9",3],["10 or more",4]]},
+      {t:"How often do you have six or more drinks on one occasion?",
+       o:[["Never",0],["Less than monthly",1],["Monthly",2],["Weekly",3],["Daily or almost daily",4]]}
+    ],
+    bands:[[0,2,0,"Lower risk"],[3,3,1,"Possible risk (above cutoff for women)"],[4,7,2,"Hazardous drinking likely"],[8,12,3,"High risk / possible dependence"]],
+    cutoff:4, cutoffLabel:"Positive screen (4+; 3+ for women)"
+  }
+};
+
+/* Guidance by band severity (0..3) */
+const GUIDANCE = {
+  0:{rescreenDays:28, steps:[
+    "Your score doesn't suggest a significant problem right now. If you still feel something is wrong, trust that feeling — screeners miss things, and a conversation with a doctor or counsellor is never wasted.",
+    "Protect the basics: sleep, movement, sunlight, and real conversation are genuinely protective.",
+    "Re-screen in about 4 weeks, or sooner if things change."]},
+  1:{rescreenDays:14, steps:[
+    "Your score suggests mild symptoms. Many people at this level improve with support and self-care — but don't ignore it: mild is the cheapest stage to act at.",
+    "Tell someone you trust how you've been feeling. Silence is what turns mild into severe.",
+    "Consider calling Tele-MANAS (14416) — talking to a trained counsellor is free and confidential.",
+    "Re-screen in 2 weeks. If your score is rising, or this is your third mild result in a row, see a doctor."]},
+  2:{rescreenDays:14, steps:[
+    "Your score suggests moderate symptoms — the level at which clinical guidelines recommend professional care, and at which treatment (psychotherapy and/or medication) clearly helps.",
+    "See a doctor within the next 1–2 weeks: your PHC, family doctor, or the District Mental Health Programme clinic at your district hospital. You do not need a psychiatrist to start.",
+    "Call Tele-MANAS (14416) — they can counsel you now and tell you exactly where to go in your district.",
+    "Ask specifically about psychotherapy, not only medication (see below).",
+    "Re-screen in 2 weeks to see whether treatment is working."]},
+  3:{rescreenDays:7, steps:[
+    "Your score suggests severe symptoms. This deserves professional attention this week — not someday. Severe symptoms are highly treatable, and people recover.",
+    "See a doctor within days: district hospital psychiatry OPD / DMHP clinic, or any doctor who can refer you urgently.",
+    "Call Tele-MANAS (14416) today — 24×7 — to be connected to a specialist and local services.",
+    "Involve one person you trust in getting to the appointment. You shouldn't have to organise care while carrying this.",
+    "Re-screen in 1 week and bring both scores to your appointment."]}
+};
+
+/* ════════════════ STATE & STORAGE ════════════════ */
+const STORE_KEY = "psych-screener-history";
+let current = null;   // {id, inst}
+let lastResult = null;
+
+function loadHistory(){
+  try{ return JSON.parse(localStorage.getItem(STORE_KEY)) || []; }catch(e){ return []; }
+}
+function saveEntry(entry){
+  const h = loadHistory(); h.push(entry);
+  try{ localStorage.setItem(STORE_KEY, JSON.stringify(h)); }catch(e){}
+}
+
+/* ════════════════ VIEWS ════════════════ */
+function showView(name){
+  document.querySelectorAll(".view").forEach(v=>v.classList.remove("active"));
+  document.getElementById("view-"+name).classList.add("active");
+  if(name==="history") renderHistory();
+  window.scrollTo(0,0);
+}
+
+/* ════════════════ TEST FLOW ════════════════ */
+function startTest(id){
+  const inst = INSTRUMENTS[id];
+  current = {id, inst, answers:new Array(inst.questions.length).fill(null), idx:0};
+  document.getElementById("testTag").textContent = inst.tag + " · " + inst.name;
+  document.getElementById("testTitle").textContent = inst.name;
+  document.getElementById("testIntro").textContent = inst.intro;
+  document.getElementById("testPeriod").textContent = inst.period;
+  renderQ();
+  showView("test");
+}
+
+function renderQ(){
+  const inst = current.inst, i = current.idx, q = inst.questions[i], n = inst.questions.length;
+  document.getElementById("pfill").style.width = (i/n*100) + "%";
+  document.getElementById("progress").textContent =
+    "Question "+(i+1)+" of "+n+" — tap an answer to continue (or press 1–"+q.o.length+")";
+  document.getElementById("backBtn").style.visibility = i===0 ? "hidden" : "visible";
+  const card = document.createElement("div");
+  card.className = "qbox";
+  card.innerHTML = '<div class="qtext"><span class="qnum">Q'+(i+1)+'</span>'+escapeHtml(q.t)+'</div>';
+  const opts = document.createElement("div");
+  opts.className = "bigopts";
+  q.o.forEach(([label,val],oi)=>{
+    const b = document.createElement("button");
+    b.type = "button";
+    b.innerHTML = '<span class="kbd">'+(oi+1)+'</span>'+escapeHtml(label);
+    if(current.answers[i]===val) b.classList.add("sel");
+    b.addEventListener("click", ()=>selectOpt(val,b));
+    opts.appendChild(b);
+  });
+  card.appendChild(opts);
+  const holder = document.getElementById("qcard");
+  holder.innerHTML = "";
+  holder.appendChild(card);
+}
+
+let advancing = false;
+function selectOpt(val, btn){
+  if(advancing) return;
+  advancing = true;
+  current.answers[current.idx] = val;
+  btn.parentElement.querySelectorAll("button").forEach(b=>b.classList.remove("sel"));
+  btn.classList.add("sel");
+  setTimeout(()=>{
+    advancing = false;
+    if(current.idx < current.inst.questions.length-1){ current.idx++; renderQ(); }
+    else scoreTest();
+  }, 240);
+}
+
+function prevQ(){
+  if(current && current.idx>0){ current.idx--; renderQ(); }
+}
+
+document.addEventListener("keydown", e=>{
+  if(!current) return;
+  if(!document.getElementById("view-test").classList.contains("active")) return;
+  const k = parseInt(e.key,10);
+  const q = current.inst.questions[current.idx];
+  if(k>=1 && k<=q.o.length){
+    const btn = document.querySelectorAll("#qcard .bigopts button")[k-1];
+    if(btn) btn.click();
+  }
+});
+
+function scoreTest(){
+  const inst = current.inst;
+  let score = 0, safetyFlag = false;
+  inst.questions.forEach((q,i)=>{
+    const v = current.answers[i];
+    score += v;
+    if(q.safety && v > 0) safetyFlag = true;
+  });
+  const band = inst.bands.find(([lo,hi])=>score>=lo && score<=hi);
+  const sev = band[2], label = band[3];
+
+  lastResult = {
+    inst: current.id, name: inst.name, score, max: inst.max,
+    sev, label, safetyFlag,
+    date: new Date().toISOString(),
+    rescreenDays: GUIDANCE[sev].rescreenDays
+  };
+  saveEntry({inst: current.id, score, sev, label, safetyFlag, date: lastResult.date});
+  renderResults();
+  showView("results");
+}
+
+function renderResults(){
+  const r = lastResult, inst = INSTRUMENTS[r.inst];
+  document.getElementById("resTitle").textContent = r.name + " Result";
+  document.getElementById("printHead").textContent =
+    "PSYCH SCREENER SUMMARY · " + r.name + " · " + new Date(r.date).toLocaleDateString("en-IN",{day:"numeric",month:"long",year:"numeric"}) +
+    " · Self-administered screening — not a diagnosis. For clinical correlation.";
+  document.getElementById("resScore").textContent = r.score;
+  document.getElementById("resOf").textContent = "out of " + r.max;
+  const bandEl = document.getElementById("resBand");
+  bandEl.textContent = r.label;
+  bandEl.className = "band b"+r.sev;
+  renderSevScale(inst, r.score);
+  animateScore(r.score);
+
+  const meanings = {
+    0:"This range is below the clinical concern threshold on this screener.",
+    1:"This range suggests mild symptoms worth monitoring and acting on early.",
+    2:"This range is at or above the level where clinical guidelines recommend professional assessment.",
+    3:"This range indicates significant symptoms that warrant prompt professional care."
+  };
+  let extra = "";
+  if(r.inst==="auditc") extra = " Note: the positive-screen cutoff is 4+ for men and 3+ for women.";
+  if(r.inst==="phq4") extra = " The PHQ-4 is a quick triage tool — if you scored 3+ on the first two questions, take the GAD-7; if 3+ on the last two, take the PHQ-9.";
+  document.getElementById("resMeaning").textContent = meanings[r.sev] + extra;
+
+  document.getElementById("safetyBox").style.display = r.safetyFlag ? "block" : "none";
+
+  const steps = GUIDANCE[r.sev].steps;
+  document.getElementById("resSteps").innerHTML =
+    "<h3>What to do with this score</h3><ul>" +
+    steps.map(s=>"<li>"+s+"</li>").join("") + "</ul>";
+
+  const d = new Date(); d.setDate(d.getDate()+r.rescreenDays);
+  document.getElementById("resRescreen").innerHTML =
+    "<b>📅 Recommended re-screen: " + d.toLocaleDateString("en-IN",{weekday:"long",day:"numeric",month:"long"}) +
+    "</b> ("+r.rescreenDays+" days from now). Tracking the trend is the follow-up care most OPDs can't give you — use the reminder button below.";
+}
+
+function renderSevScale(inst, score){
+  const total = inst.max + 1;
+  const segs = inst.bands.map(([lo,hi,sev])=>({w:(hi-lo+1)/total*100, sev, lo, hi}));
+  const pos = Math.min(98.5, Math.max(1.5, (score+0.5)/total*100));
+  let html = '<div class="sevmarker" style="left:'+pos.toFixed(2)+'%;"><span>'+score+'</span><div class="sevtri"></div></div>';
+  html += '<div class="sevtrack">'+segs.map(s=>'<div class="sevseg s'+s.sev+'" style="width:'+s.w.toFixed(2)+'%"></div>').join("")+'</div>';
+  html += '<div class="sevlabels">'+segs.map(s=>'<div style="width:'+s.w.toFixed(2)+'%">'+s.lo+'–'+s.hi+'</div>').join("")+'</div>';
+  document.getElementById("sevScale").innerHTML = html;
+}
+
+function animateScore(target){
+  const el = document.getElementById("resScore");
+  if(window.matchMedia("(prefers-reduced-motion: reduce)").matches || target===0){ el.textContent = target; return; }
+  const t0 = performance.now(), dur = 650;
+  function tick(t){
+    const p = Math.min(1,(t-t0)/dur);
+    el.textContent = Math.round(target * (1-Math.pow(1-p,3)));
+    if(p<1) requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
+}
+
+/* ════════════════ REMINDER (.ics) ════════════════ */
+function downloadReminder(){
+  if(!lastResult) return;
+  const d = new Date(); d.setDate(d.getDate()+lastResult.rescreenDays);
+  const stamp = d.toISOString().slice(0,10).replace(/-/g,"");
+  const now = new Date().toISOString().replace(/[-:]/g,"").slice(0,15)+"Z";
+  const ics = [
+    "BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//PsychScreener//EN",
+    "BEGIN:VEVENT",
+    "UID:"+Date.now()+"@psych-screener",
+    "DTSTAMP:"+now,
+    "DTSTART;VALUE=DATE:"+stamp,
+    "SUMMARY:Mental health re-screen ("+lastResult.name+")",
+    "DESCRIPTION:Re-take the "+lastResult.name+" screener and compare with your last score ("+lastResult.score+"/"+lastResult.max+"). If it isn't improving\\, see a doctor or call Tele-MANAS 14416.",
+    "BEGIN:VALARM","TRIGGER:-PT1H","ACTION:DISPLAY","DESCRIPTION:Re-screen reminder","END:VALARM",
+    "END:VEVENT","END:VCALENDAR"
+  ].join("\r\n");
+  const blob = new Blob([ics],{type:"text/calendar"});
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "rescreen-reminder.ics";
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+
+/* ════════════════ HISTORY ════════════════ */
+function renderHistory(){
+  const h = loadHistory();
+  const el = document.getElementById("histContent");
+  if(h.length===0){
+    el.innerHTML = '<p class="histempty">No screenings saved yet. Take a screener and your scores will appear here — privately, on this device only.</p>';
+    return;
+  }
+  const byInst = {};
+  h.forEach(e=>{ (byInst[e.inst] = byInst[e.inst]||[]).push(e); });
+  el.innerHTML = "";
+  Object.keys(byInst).forEach(id=>{
+    const inst = INSTRUMENTS[id]; if(!inst) return;
+    const entries = byInst[id].sort((a,b)=>new Date(a.date)-new Date(b.date));
+    const block = document.createElement("div");
+    block.className = "histblock";
+    const latest = entries[entries.length-1];
+    const trend = entries.length>1 ? trendText(entries) : "";
+    block.innerHTML =
+      "<h3>"+inst.name+" — latest: "+latest.score+"/"+inst.max+" ("+escapeHtml(latest.label)+")</h3>" +
+      '<div class="sub">'+entries.length+" screening"+(entries.length===1?"":"s")+(trend?" · "+trend:"")+"</div>" +
+      (entries.length>1 ? '<div class="chartwrap">'+chartSVG(entries, inst)+'<div class="ctip"></div></div>' : "") +
+      historyTable(entries, inst);
+    el.appendChild(block);
+  });
+  el.querySelectorAll(".chartwrap").forEach(w=>{
+    const tip = w.querySelector(".ctip");
+    w.addEventListener("pointerover", ev=>{
+      const c = ev.target.closest("circle[data-d]");
+      if(!c){ tip.style.display="none"; return; }
+      tip.textContent = c.dataset.d+" · "+c.dataset.s+" — "+c.dataset.l;
+      const wr = w.getBoundingClientRect(), cr = c.getBoundingClientRect();
+      tip.style.left = (cr.left - wr.left + cr.width/2 + w.scrollLeft)+"px";
+      tip.style.top = (cr.top - wr.top)+"px";
+      tip.style.display = "block";
+    });
+    w.addEventListener("pointerleave", ()=>{ tip.style.display="none"; });
+  });
+}
+
+function trendText(entries){
+  const a = entries[entries.length-2].score, b = entries[entries.length-1].score;
+  if(b<a) return "↓ improving since last screen";
+  if(b>a) return "↑ higher than last screen";
+  return "→ unchanged since last screen";
+}
+
+function historyTable(entries, inst){
+  let rows = entries.slice().reverse().map(e=>
+    "<tr><td>"+new Date(e.date).toLocaleDateString("en-IN",{day:"numeric",month:"short",year:"numeric"})+"</td>"+
+    "<td>"+e.score+" / "+inst.max+"</td><td>"+escapeHtml(e.label)+(e.safetyFlag?' <span style="color:var(--stamp);font-weight:700;">⚠</span>':"")+"</td></tr>"
+  ).join("");
+  return '<table class="histtable"><thead><tr><th>Date</th><th>Score</th><th>Result</th></tr></thead><tbody>'+rows+"</tbody></table>";
+}
+
+/* Single-series trend chart: ink line on paper, labeled cutoff, direct-labeled endpoint */
+function chartSVG(entries, inst){
+  const W=640, H=180, padL=34, padR=52, padT=16, padB=28;
+  const iw = W-padL-padR, ih = H-padT-padB;
+  const n = entries.length;
+  const x = i => padL + (n===1 ? iw/2 : i*(iw/(n-1)));
+  const y = v => padT + ih - (v/inst.max)*ih;
+  const pts = entries.map((e,i)=>[x(i), y(e.score)]);
+  const path = pts.map((p,i)=>(i===0?"M":"L")+p[0].toFixed(1)+","+p[1].toFixed(1)).join(" ");
+  const cutY = y(inst.cutoff);
+  const first = entries[0], last = entries[n-1];
+  const fmt = d => new Date(d).toLocaleDateString("en-IN",{day:"numeric",month:"short"});
+
+  let svg = '<svg viewBox="0 0 '+W+' '+H+'" width="100%" style="min-width:420px;max-width:'+W+'px;display:block;" role="img" aria-label="'+inst.name+' scores over time; clinical cutoff at '+inst.cutoff+'">';
+  // recessive gridlines at 0, cutoff, max
+  svg += '<line x1="'+padL+'" y1="'+y(0)+'" x2="'+(W-padR)+'" y2="'+y(0)+'" stroke="#D8D3C6" stroke-width="1"/>';
+  svg += '<line x1="'+padL+'" y1="'+y(inst.max)+'" x2="'+(W-padR)+'" y2="'+y(inst.max)+'" stroke="#D8D3C6" stroke-width="1"/>';
+  svg += '<text x="'+(padL-6)+'" y="'+(y(0)+4)+'" text-anchor="end" font-size="11" fill="#8a8f9c" font-family="monospace">0</text>';
+  svg += '<text x="'+(padL-6)+'" y="'+(y(inst.max)+4)+'" text-anchor="end" font-size="11" fill="#8a8f9c" font-family="monospace">'+inst.max+'</text>';
+  // cutoff line
+  svg += '<line x1="'+padL+'" y1="'+cutY+'" x2="'+(W-padR)+'" y2="'+cutY+'" stroke="#B23A2E" stroke-width="1.5" stroke-dasharray="5 4"/>';
+  svg += '<text x="'+(W-padR+4)+'" y="'+(cutY+4)+'" font-size="10.5" fill="#B23A2E" font-family="monospace">'+escapeHtml(inst.cutoffLabel)+'</text>';
+  // series line + points
+  svg += '<path d="'+path+'" fill="none" stroke="#151C2E" stroke-width="2" stroke-linejoin="round"/>';
+  entries.forEach((e,i)=>{
+    svg += '<circle cx="'+pts[i][0].toFixed(1)+'" cy="'+pts[i][1].toFixed(1)+'" r="4.5" fill="#151C2E" stroke="#F6F4EE" stroke-width="2" style="pointer-events:none;"/>';
+    svg += '<circle cx="'+pts[i][0].toFixed(1)+'" cy="'+pts[i][1].toFixed(1)+'" r="12" fill="transparent" data-d="'+fmt(e.date)+'" data-s="'+e.score+'/'+inst.max+'" data-l="'+escapeHtml(e.label)+'"/>';
+  });
+  // direct label on latest point
+  svg += '<text x="'+(pts[n-1][0]+8)+'" y="'+(pts[n-1][1]-8)+'" font-size="12" font-weight="700" fill="#151C2E" font-family="monospace">'+last.score+'</text>';
+  // x labels first/last
+  svg += '<text x="'+padL+'" y="'+(H-8)+'" font-size="11" fill="#5a5f6e" font-family="monospace">'+fmt(first.date)+'</text>';
+  svg += '<text x="'+(W-padR)+'" y="'+(H-8)+'" text-anchor="end" font-size="11" fill="#5a5f6e" font-family="monospace">'+fmt(last.date)+'</text>';
+  svg += "</svg>";
+  return svg;
+}
+
+/* ════════════════ DATA CONTROLS ════════════════ */
+function exportData(){
+  const blob = new Blob([JSON.stringify(loadHistory(),null,2)],{type:"application/json"});
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "psych-screener-history.json";
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+function clearData(){
+  if(confirm("Delete all saved screening history from this device? This cannot be undone.")){
+    localStorage.removeItem(STORE_KEY);
+    renderHistory();
+  }
+}
+
+/* ════════════════ DAILY MOOD CHECK-IN ════════════════ */
+const MOOD_KEY = "psych-mood";
+const MOODS = [["😞","Very low"],["😕","Low"],["😐","Okay"],["🙂","Good"],["😄","Great"]];
+function loadMood(){ try{ return JSON.parse(localStorage.getItem(MOOD_KEY))||{}; }catch(e){ return {}; } }
+function dkey(d){ return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0"); }
+function setMood(v){
+  const m = loadMood(); m[dkey(new Date())] = v;
+  try{ localStorage.setItem(MOOD_KEY, JSON.stringify(m)); }catch(e){}
+  renderMood();
+}
+function renderMood(){
+  const m = loadMood(), today = dkey(new Date());
+  const btns = document.getElementById("moodBtns");
+  btns.innerHTML = "";
+  MOODS.forEach(([emo,label],i)=>{
+    const b = document.createElement("button");
+    b.type = "button"; b.textContent = emo;
+    b.title = label; b.setAttribute("aria-label", label);
+    b.setAttribute("aria-pressed", m[today]===i+1 ? "true" : "false");
+    if(m[today]===i+1) b.classList.add("sel");
+    b.addEventListener("click", ()=>setMood(i+1));
+    btns.appendChild(b);
+  });
+  const strip = document.getElementById("moodStrip");
+  strip.innerHTML = "";
+  for(let i=13;i>=0;i--){
+    const d = new Date(); d.setDate(d.getDate()-i);
+    const v = m[dkey(d)];
+    const c = document.createElement("div");
+    c.className = "moodcell"+(v ? " v"+v : "");
+    c.style.height = (v ? 8+v*5 : 4)+"px";
+    c.title = dkey(d)+(v ? " — "+MOODS[v-1][1] : " — no entry");
+    strip.appendChild(c);
+  }
+  let streak = 0;
+  for(let i=0;;i++){
+    const d = new Date(); d.setDate(d.getDate()-i);
+    if(m[dkey(d)]) streak++; else break;
+  }
+  document.getElementById("moodMsg").textContent = m[today]
+    ? "Logged for today · "+streak+"-day streak. A daily record beats a memory in any consultation."
+    : "How are you feeling today? One tap builds a 14-day picture you can show a doctor.";
+}
+renderMood();
+
+function escapeHtml(s){
+  return String(s).replace(/[&<>"']/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+}
+
+/* deep-link support: #history / #resources */
+if(location.hash){
+  const v = location.hash.slice(1);
+  if(["home","history","resources"].includes(v)) showView(v);
+}
+</script>
+</body>
+</html>
