@@ -1,66 +1,102 @@
-# Psych — Screen Early. Act Early.
+# Psych Screener — Screen Early. Act Early.
 
-**A free, private, on-device mental-health screener built for India** — plus a public
-manifesto about the crisis it answers: too few psychiatrists, three-minute consultations,
-care reduced to prescription refills, and follow-ups that never happen.
+**A free, private, multilingual mental-health screening web app built for India** — plus
+the manifesto and evidence register that justify it.
+
+**Live site:** https://aryanmanhas12.github.io/Psych/
+**Built by:** [Aryan Manhas](https://github.com/aryanmanhas12) · MIT licensed
 
 > If you or someone you know is struggling right now:
 > **Tele-MANAS 14416** · **KIRAN 1800-599-0019** · **Emergency 112** (all free, 24×7)
+
+---
+
+## Why this exists
+
+India has roughly **0.75 psychiatrists per 100,000 people** against a WHO recommendation
+of 3+, and a **70–92% treatment gap**. The result is three-minute consultations, missed
+diagnoses, care reduced to a prescription refill, and follow-ups that never happen. This
+project attacks the two ends of that problem a website actually can reach: **finding
+people earlier**, and **giving them the follow-up record the system doesn't**.
 
 ## What's here
 
 | File | What it is |
 |---|---|
-| `index.html` | **The screener app** — validated instruments, guidance, history tracking, follow-up reminders |
-| `manifesto.html` | **The Waiting Room is Full** — a citizen's manifesto on India's mental-health treatment gap |
-| `evidence.html` | **The Evidence Register** — peer-reviewed citations (sourced via Consensus & PubMed) behind every instrument and design decision |
+| `index.html` | **The screener app** — instruments, guidance, history, follow-up reminders |
+| `i18n.js` | **Translation layer** — every UI string and instrument item in 6 languages |
+| `evidence.html` | **The Evidence Register** — 23 peer-reviewed citations behind every design decision |
+| `manifesto.html` | **The Waiting Room is Full** — a citizen's manifesto on the treatment gap |
+| `LICENSE` | MIT, plus a not-a-medical-device notice |
 
-Both are plain HTML/CSS/JS with zero build step and zero backend. Open them in any
-browser, or host them on GitHub Pages.
+Plain HTML/CSS/JS. **No build step, no framework, no backend, no tracking.** Open any
+file in a browser or host the folder anywhere static.
 
-## The screener
+## Features
 
-The app uses the same public-domain instruments clinicians use:
+**Four validated instruments** — PHQ-4 (quick triage), PHQ-9 (depression), GAD-7
+(anxiety), AUDIT-C (alcohol use), all public-domain and scored with published cutoffs.
 
-- **PHQ-4** — 4-question quick triage for depression + anxiety
-- **PHQ-9** — the standard depression screener (with a safety net: any response on the
-  self-harm item immediately surfaces crisis helplines)
-- **GAD-7** — the standard generalised-anxiety screener
-- **AUDIT-C** — the WHO's brief screen for hazardous alcohol use
+**Six languages** — English, हिन्दी, मराठी, বাংলা, தமிழ், తెలుగు (roughly 70% of India by
+first language). The choice persists between visits.
 
-For every result it gives:
+**A safety net** — any non-zero answer on the PHQ-9 self-harm item immediately surfaces a
+crisis panel before the score is even discussed. Crisis lines are pinned on every page in
+every language.
 
-- **Score + severity band** with a plain-language explanation of what it means
-- **Severity-matched next steps** for India — PHC/family doctor, District Mental Health
-  Programme clinics, Tele-MANAS, when to go this week vs. watch and wait
-- **A "get care, not just a refill" checklist** — questions to ask the doctor about
-  diagnosis, psychotherapy, medication, and a fixed follow-up date
-- **Follow-up built in** — scores are saved privately in the browser (localStorage,
-  nothing leaves the device), charted over time, exportable, and printable as a summary
-  to hand to a doctor; a downloadable `.ics` reminder schedules the next re-screen
-  (1–4 weeks depending on severity)
+**Guidance, not just a number** — severity-matched next steps written for Indian care
+pathways (PHC, District Mental Health Programme, Tele-MANAS), plus a "get care, not just
+a refill" checklist of questions to ask the doctor.
+
+**Follow-up built in** — scores saved privately on-device, charted over time against the
+clinical cutoff, exportable/importable as JSON, printable as a doctor summary, and a
+downloadable `.ics` reminder for the next re-screen (1–4 weeks by severity). Plus a daily
+one-tap mood check-in with a 14-day strip and streak.
+
+**Accessible by design** — text-size and high-contrast controls, full keyboard operation
+(number keys and arrow keys answer questions), ARIA radiogroups and live regions, focus
+management on view changes, a skip link, 44px+ touch targets, `prefers-reduced-motion`
+support, and semantic tables.
+
+**Private by architecture** — everything runs in the browser. There is no server, no
+account, and no analytics; answers are stored only in `localStorage` on the user's own
+device, and the user can export or delete all of it at any time.
 
 ### What it is not
 
-This is a **screening and education tool, not a diagnostic instrument**. A high score
-means "talk to a professional," never "you have X." It does not replace clinical
-assessment and it stores no data on any server.
+A **screening and education tool, not a diagnostic instrument**. A high score means "talk
+to a professional," never "you have X." It does not replace clinical assessment.
 
-## Hosting on GitHub Pages
+## Editing it
 
-Settings → Pages → deploy from branch → `/ (root)`. The site is fully static.
+Everything is plain text — edit on GitHub in the browser (open a file → pencil icon →
+commit) or clone and edit locally. Changes to `main` go live on GitHub Pages in ~1 minute.
+
+| To change… | Edit |
+|---|---|
+| Wording, questions, guidance, resources | `i18n.js` — find the language block, edit the string |
+| Add a language | Copy any language block in `i18n.js`, translate the values, keep the keys |
+| Add an instrument | Add scoring to `META` in `index.html`, then add its text to every language in `i18n.js` |
+| Colours, spacing, layout | The `:root` variables and CSS at the top of each HTML file |
+| Citations | `evidence.html` |
+
+Run it locally with any static server, e.g. `python3 -m http.server`, then open
+`http://localhost:8000`.
 
 ## Roadmap
 
-- Hindi and regional-language versions of the instruments (validated translations exist
-  for PHQ-9/GAD-7)
+- Professionally validated translations for the instruments (published Hindi/Malayalam
+  validations exist and should replace the working translations)
 - More instruments: perceived stress (PSS-4), postpartum (EPDS), adolescent screeners
-- Optional caregiver mode for ASHA / community health workers doing assisted screening
+- Caregiver mode for ASHA / community health workers doing assisted screening
 - PWA packaging for offline use in low-connectivity areas
+- Field feedback from a DMHP clinic or college counselling centre
 
 ## Credits & licences
 
-PHQ-4, PHQ-9, GAD-7 developed by Drs. Kroenke, Spitzer, Williams and colleagues — free
-to use, no permission required. AUDIT-C derives from the WHO AUDIT. Statistics cited in
-the manifesto are from the National Mental Health Survey of India 2015–16 and published
-workforce estimates.
+Code © 2026 Aryan Manhas, MIT licensed. PHQ-4, PHQ-9 and GAD-7 were developed by Drs.
+Kroenke, Spitzer, Williams and colleagues and are free to use without permission; AUDIT-C
+derives from the WHO AUDIT. Statistics cited come from the National Mental Health Survey
+of India 2015–16 and the published literature indexed in `evidence.html`. Indian-language
+instrument items here are working translations for accessibility, not the officially
+validated language versions.
