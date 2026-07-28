@@ -138,6 +138,13 @@
     </div>
 
     <div class="rule">
+      <h3>The offline cache, disclosed</h3>
+      <p>Installing the app, or simply visiting it, registers a service worker that stores this site's own files — HTML, scripts, the font, the icons — in your browser's cache so everything keeps working with no connection. That is the point: someone on a patchy network should still be able to screen themselves and read a helpline number.</p>
+      <p>It caches <strong>only our own static files</strong>, never your answers or scores, and it is written to ignore cross-origin requests entirely so the live helpline directories are never served to you stale. Clearing site data removes it.</p>
+      <span class="check">Verifiable: DevTools → Application → Cache Storage lists exactly these files. Read <code>sw.js</code> — it is 40 lines.</span>
+    </div>
+
+    <div class="rule">
       <h3>Regulatory position</h3>
       <p>Because no personal data is collected, transmitted, or processed by any operator, this tool does not act as a data controller or processor under the <strong>EU GDPR</strong>, and does not undertake data-fiduciary obligations under <strong>India's DPDP Act 2023</strong>. Data you store stays under your sole control on your own device.</p>
       <p>If you fork and deploy this with analytics, a backend, or any transmission of answers, that changes immediately — and you become responsible for the consent, lawful-basis and security duties that follow.</p>
