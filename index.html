@@ -7,8 +7,14 @@
 <meta name="description" content="Free, private, on-device mental health screening (PHQ-9, GAD-7, PHQ-4, AUDIT-C) in six Indian languages, with guidance on getting real care in India. Not a diagnosis.">
 <meta name="author" content="Aryan Manhas">
 <meta name="theme-color" content="#151C2E">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Anton&family=IBM+Plex+Mono:wght@400;500&family=Public+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+/* Self-hosted so the page makes ZERO third-party requests — the privacy
+   claim on this site is only true if nothing phones home, fonts included. */
+@font-face{
+  font-family:'Anton';font-style:normal;font-weight:400;font-display:swap;
+  src:url('anton.woff2') format('woff2');
+}
+</style>
 <style>
   :root{
     --ink:#151C2E;
@@ -47,9 +53,9 @@
   .display{font-family:'Anton',sans-serif;letter-spacing:.01em;line-height:1.08;text-transform:uppercase;text-wrap:balance;}
   /* Indic scripts have no Anton coverage — keep them in the body face, heavy */
   :lang(hi) .display,:lang(mr) .display,:lang(bn) .display,:lang(ta) .display,:lang(te) .display{
-    font-family:'Public Sans','Noto Sans',sans-serif;font-weight:700;text-transform:none;line-height:1.25;
+    font-family:system-ui,-apple-system,'Segoe UI','Noto Sans',Roboto,Arial,sans-serif;font-weight:700;text-transform:none;line-height:1.25;
   }
-  .mono{font-family:'IBM Plex Mono',ui-monospace,monospace;}
+  .mono{font-family:ui-monospace,'Cascadia Mono',Menlo,Consolas,monospace;}
   .wrap{max-width:min(60rem, 100%);margin:0 auto;padding:0 1.3rem;}
 
   /* skip link */
@@ -62,7 +68,7 @@
   /* ── crisis strip ── */
   .topstrip{
     background:var(--stamp);color:#fff;
-    font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:.76rem;
+    font-family:ui-monospace,'Cascadia Mono',Menlo,Consolas,monospace;font-size:.76rem;
     padding:.5rem 0;letter-spacing:.03em;
   }
   .topstrip .wrap{display:flex;justify-content:space-between;gap:.8rem;flex-wrap:wrap;}
@@ -74,7 +80,7 @@
   .brand{font-family:'Anton',sans-serif;color:var(--paper);font-size:1.15rem;text-transform:uppercase;letter-spacing:.04em;margin-right:auto;}
   .brand .accent{color:var(--marigold);}
   nav a.navlink{
-    color:var(--paper);text-decoration:none;font-family:'IBM Plex Mono',ui-monospace,monospace;
+    color:var(--paper);text-decoration:none;font-family:ui-monospace,'Cascadia Mono',Menlo,Consolas,monospace;
     font-size:.79rem;letter-spacing:.06em;text-transform:uppercase;
     padding:.5rem .15rem;border-bottom:2px solid transparent;cursor:pointer;display:inline-block;
   }
@@ -83,7 +89,7 @@
 
   /* ── settings popover (replaces the old full-width a11y bar) ── */
   .setbtn{
-    font-family:'IBM Plex Mono',ui-monospace,monospace;text-transform:none;letter-spacing:.04em;
+    font-family:ui-monospace,'Cascadia Mono',Menlo,Consolas,monospace;text-transform:none;letter-spacing:.04em;
     background:transparent;color:var(--paper);border:1.5px solid rgba(246,244,238,.45);
     padding:.3rem .7rem;font-size:.78rem;min-height:2rem;cursor:pointer;
   }
@@ -100,16 +106,16 @@
   .setrow{display:flex;flex-direction:column;gap:.4rem;margin-bottom:.9rem;}
   .setrow:last-child{margin-bottom:0;}
   .setrow .lbl{
-    font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:.68rem;letter-spacing:.08em;
+    font-family:ui-monospace,'Cascadia Mono',Menlo,Consolas,monospace;font-size:.68rem;letter-spacing:.08em;
     text-transform:uppercase;color:var(--muted);
   }
   .setrow .btns{display:flex;gap:.4rem;}
   select.langsel{
-    font-family:'Public Sans',sans-serif;font-size:.9rem;padding:.45rem .5rem;width:100%;
+    font-family:system-ui,-apple-system,'Segoe UI','Noto Sans',Roboto,Arial,sans-serif;font-size:.9rem;padding:.45rem .5rem;width:100%;
     background:var(--paper);color:var(--ink);border:2px solid var(--ink);cursor:pointer;
   }
   .setpanel button{
-    font-family:'IBM Plex Mono',ui-monospace,monospace;text-transform:none;letter-spacing:0;
+    font-family:ui-monospace,'Cascadia Mono',Menlo,Consolas,monospace;text-transform:none;letter-spacing:0;
     background:var(--paper);color:var(--ink);border:2px solid var(--line);
     padding:.35rem .7rem;font-size:.85rem;min-height:2.2rem;flex:1;cursor:pointer;
   }
@@ -153,7 +159,7 @@
   .view:focus{outline:none;}
 
   .eyebrow{
-    display:inline-block;font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:.79rem;
+    display:inline-block;font-family:ui-monospace,'Cascadia Mono',Menlo,Consolas,monospace;font-size:.79rem;
     letter-spacing:.12em;text-transform:uppercase;
     border:1.5px solid var(--heal);color:var(--heal);
     padding:.25rem .6rem;margin-bottom:1.1rem;
@@ -178,7 +184,7 @@
   details.notice[open] summary::before{transform:rotate(90deg);}
   details.notice .inner{padding-top:.6rem;animation:slidedown .25s var(--e-out2);}
   @keyframes slidedown{from{opacity:0;transform:translateY(-6px);}to{opacity:1;transform:none;}}
-  .notice .sub{display:block;margin-top:.5rem;font-size:.78rem;color:var(--heal);font-family:'IBM Plex Mono',ui-monospace,monospace;}
+  .notice .sub{display:block;margin-top:.5rem;font-size:.78rem;color:var(--heal);font-family:ui-monospace,'Cascadia Mono',Menlo,Consolas,monospace;}
 
   /* ── mood: collapsed to a single compact row ── */
   .mood{
@@ -212,15 +218,15 @@
     transition:transform .17s var(--e-out1), box-shadow .17s var(--e-out1), border-color .17s var(--e-out1);
   }
   .card:hover,.card:focus-visible{transform:translate(-2px,-2px);box-shadow:4px 4px 0 var(--heal);border-color:var(--heal);}
-  .card .tag{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:.66rem;letter-spacing:.08em;text-transform:uppercase;color:var(--heal);grid-column:1;}
+  .card .tag{font-family:ui-monospace,'Cascadia Mono',Menlo,Consolas,monospace;font-size:.66rem;letter-spacing:.08em;text-transform:uppercase;color:var(--heal);grid-column:1;}
   .card h3{font-size:1.15rem;font-weight:700;grid-column:1;}
   .card p{font-size:.82rem;color:var(--muted);grid-column:1/-1;margin-top:.2rem;}
   .card .meta{
-    font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:.7rem;color:var(--muted);
+    font-family:ui-monospace,'Cascadia Mono',Menlo,Consolas,monospace;font-size:.7rem;color:var(--muted);
     grid-column:2;grid-row:1/3;text-align:right;white-space:nowrap;
   }
   .card .go{
-    grid-column:2;grid-row:3;text-align:right;font-family:'IBM Plex Mono',ui-monospace,monospace;
+    grid-column:2;grid-row:3;text-align:right;font-family:ui-monospace,'Cascadia Mono',Menlo,Consolas,monospace;
     font-size:.75rem;color:var(--heal);font-weight:600;white-space:nowrap;
     transition:transform .17s var(--e-out1);
   }
@@ -234,7 +240,7 @@
   }
   :lang(hi) button,:lang(mr) button,:lang(bn) button,:lang(ta) button,:lang(te) button,
   :lang(hi) .btn,:lang(mr) .btn,:lang(bn) .btn,:lang(ta) .btn,:lang(te) .btn{
-    font-family:'Public Sans','Noto Sans',sans-serif;font-weight:700;text-transform:none;letter-spacing:0;
+    font-family:system-ui,-apple-system,'Segoe UI','Noto Sans',Roboto,Arial,sans-serif;font-weight:700;text-transform:none;letter-spacing:0;
   }
   button:hover,.btn:hover{transform:translate(-2px,-2px);box-shadow:4px 4px 0 var(--heal);}
   :where(button,a,select,input,[tabindex]):focus-visible{outline:3px solid var(--stamp);outline-offset:3px;}
@@ -249,28 +255,28 @@
   }
   .tokenbar .wrap{display:flex;align-items:center;gap:.8rem;flex-wrap:wrap;}
   .tokenbar .tk{
-    font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:.72rem;letter-spacing:.12em;
+    font-family:ui-monospace,'Cascadia Mono',Menlo,Consolas,monospace;font-size:.72rem;letter-spacing:.12em;
     border:1.5px solid var(--marigold);color:var(--marigold);padding:.15rem .5rem;white-space:nowrap;
   }
-  .tokenbar .tkname{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:.78rem;opacity:.85;margin-right:auto;}
-  .tokenbar .tkclock{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:.72rem;opacity:.55;font-variant-numeric:tabular-nums;}
+  .tokenbar .tkname{font-family:ui-monospace,'Cascadia Mono',Menlo,Consolas,monospace;font-size:.78rem;opacity:.85;margin-right:auto;}
+  .tokenbar .tkclock{font-family:ui-monospace,'Cascadia Mono',Menlo,Consolas,monospace;font-size:.72rem;opacity:.55;font-variant-numeric:tabular-nums;}
   .pbar{height:.35rem;background:rgba(246,244,238,.2);width:100%;margin-top:.5rem;}
   .pfill{height:100%;background:var(--marigold);width:0%;transition:width .32s var(--e-out2);}
   .testhead{margin-bottom:.9rem;}
   .testhead .period{
     background:var(--ink);color:var(--paper);display:inline-block;
-    font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:.74rem;padding:.25rem .6rem;margin-top:.5rem;
+    font-family:ui-monospace,'Cascadia Mono',Menlo,Consolas,monospace;font-size:.74rem;padding:.25rem .6rem;margin-top:.5rem;
   }
-  .progress{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:.78rem;color:var(--muted);margin:.3rem 0 .8rem;}
+  .progress{font-family:ui-monospace,'Cascadia Mono',Menlo,Consolas,monospace;font-size:.78rem;color:var(--muted);margin:.3rem 0 .8rem;}
   .qbox{background:var(--card);border:2px solid var(--ink);padding:1.2rem 1.3rem;max-width:48rem;animation:qin .3s var(--e-out2);}
   @keyframes qin{from{opacity:0;transform:translateX(14px);}to{opacity:1;transform:none;}}
   .qbox.back{animation:qinback .3s var(--e-out2);}
   @keyframes qinback{from{opacity:0;transform:translateX(-14px);}to{opacity:1;transform:none;}}
   .qtext{font-size:1.12rem;font-weight:600;margin-bottom:.9rem;text-wrap:balance;}
-  .qtext .qnum{font-family:'IBM Plex Mono',ui-monospace,monospace;color:var(--heal);font-size:.85rem;margin-right:.5rem;}
+  .qtext .qnum{font-family:ui-monospace,'Cascadia Mono',Menlo,Consolas,monospace;color:var(--heal);font-size:.85rem;margin-right:.5rem;}
   .bigopts{display:flex;flex-direction:column;gap:.6rem;}
   .bigopts button{
-    font-family:'Public Sans',sans-serif;font-weight:400;text-transform:none;letter-spacing:0;
+    font-family:system-ui,-apple-system,'Segoe UI','Noto Sans',Roboto,Arial,sans-serif;font-weight:400;text-transform:none;letter-spacing:0;
     font-size:.98rem;background:var(--paper);color:var(--ink);
     border:2px solid var(--line);padding:.65rem .9rem;text-align:left;
     display:flex;align-items:center;gap:.7rem;cursor:pointer;min-height:2.9rem;
@@ -283,7 +289,7 @@
   .bigopts button[aria-checked="true"]{border-color:var(--heal);border-width:3px;background:#e9f1ee;font-weight:600;}
   :root[data-contrast="high"] .bigopts button[aria-checked="true"]{background:#d7e8e1;}
   .bigopts .kbd{
-    font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:.75rem;border:1.5px solid var(--line);
+    font-family:ui-monospace,'Cascadia Mono',Menlo,Consolas,monospace;font-size:.75rem;border:1.5px solid var(--line);
     padding:.05rem .45rem;color:var(--muted);flex:none;
   }
   .bigopts button[aria-checked="true"] .kbd{border-color:var(--heal);color:var(--heal);}
@@ -299,7 +305,7 @@
     display:flex;flex-direction:column;justify-content:center;
   }
   .scorebox .num{font-family:'Anton',sans-serif;font-size:2.7rem;line-height:1;font-variant-numeric:tabular-nums;}
-  .scorebox .of{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:.75rem;opacity:.8;margin-top:.25rem;}
+  .scorebox .of{font-family:ui-monospace,'Cascadia Mono',Menlo,Consolas,monospace;font-size:.75rem;opacity:.8;margin-top:.25rem;}
   .verdict{padding:1rem 1.1rem;}
 
   /* the reveal that lands the manifesto's argument at the moment it bites */
@@ -308,7 +314,7 @@
     background:var(--card);padding:.85rem 1.1rem;
   }
   .timecard .t{
-    font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:.82rem;color:var(--ink);
+    font-family:ui-monospace,'Cascadia Mono',Menlo,Consolas,monospace;font-size:.82rem;color:var(--ink);
     font-weight:600;font-variant-numeric:tabular-nums;
   }
   .timecard .c{font-size:.86rem;color:var(--muted);margin-top:.3rem;}
@@ -331,7 +337,7 @@
     letter-spacing:.04em;font-size:1.05rem;padding:.25rem .8rem;border:2px solid;margin-bottom:.6rem;
   }
   :lang(hi) .band,:lang(mr) .band,:lang(bn) .band,:lang(ta) .band,:lang(te) .band{
-    font-family:'Public Sans','Noto Sans',sans-serif;font-weight:700;text-transform:none;letter-spacing:0;
+    font-family:system-ui,-apple-system,'Segoe UI','Noto Sans',Roboto,Arial,sans-serif;font-weight:700;text-transform:none;letter-spacing:0;
   }
   .band.b0{color:var(--heal);border-color:var(--heal);}
   .band.b1{color:#7A5A00;border-color:#7A5A00;}
@@ -342,7 +348,7 @@
   .sevscale{max-width:48rem;margin:-.2rem 0 1.6rem;position:relative;padding-top:1.5rem;}
   .sevmarker{
     position:absolute;top:0;transform:translateX(-50%);text-align:center;
-    font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:.78rem;font-weight:700;
+    font-family:ui-monospace,'Cascadia Mono',Menlo,Consolas,monospace;font-size:.78rem;font-weight:700;
     font-variant-numeric:tabular-nums;transition:left .5s ease;
   }
   .sevtri{width:0;height:0;border-left:.38rem solid transparent;border-right:.38rem solid transparent;border-top:.45rem solid var(--ink);margin:0 auto;}
@@ -351,7 +357,7 @@
   .sevseg:last-child{border-right:none;}
   .sevseg.s0{background:#A9C9BB;} .sevseg.s1{background:#E8D08E;}
   .sevseg.s2{background:#E0A878;} .sevseg.s3{background:#D68C83;}
-  .sevlabels{display:flex;font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:.68rem;color:var(--muted);margin-top:.25rem;font-variant-numeric:tabular-nums;}
+  .sevlabels{display:flex;font-family:ui-monospace,'Cascadia Mono',Menlo,Consolas,monospace;font-size:.68rem;color:var(--muted);margin-top:.25rem;font-variant-numeric:tabular-nums;}
   .sevlabels div{text-align:center;}
 
   .safety{
@@ -360,11 +366,11 @@
   }
   .safety h3{font-family:'Anton',sans-serif;text-transform:uppercase;font-size:1.2rem;margin-bottom:.6rem;letter-spacing:.03em;}
   :lang(hi) .safety h3,:lang(mr) .safety h3,:lang(bn) .safety h3,:lang(ta) .safety h3,:lang(te) .safety h3{
-    font-family:'Public Sans','Noto Sans',sans-serif;text-transform:none;letter-spacing:0;
+    font-family:system-ui,-apple-system,'Segoe UI','Noto Sans',Roboto,Arial,sans-serif;text-transform:none;letter-spacing:0;
   }
   .safety p{font-size:.95rem;margin-bottom:.5rem;}
   .safety a{color:#fff;font-weight:700;}
-  .safety .lines{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:.85rem;margin-top:.6rem;line-height:2;}
+  .safety .lines{font-family:ui-monospace,'Cascadia Mono',Menlo,Consolas,monospace;font-size:.85rem;margin-top:.6rem;line-height:2;}
 
   .nextsteps{max-width:62ch;}
   .nextsteps h3{font-size:1.12rem;margin:1.3rem 0 .6rem;font-weight:700;}
@@ -381,17 +387,17 @@
   .histempty{color:var(--muted);font-size:.95rem;}
   .histblock{background:var(--card);border:2px solid var(--ink);padding:1.3rem;margin-bottom:1.2rem;max-width:52rem;}
   .histblock h3{font-size:1.12rem;font-weight:700;margin-bottom:.2rem;}
-  .histblock .sub{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:.75rem;color:var(--muted);margin-bottom:.9rem;}
+  .histblock .sub{font-family:ui-monospace,'Cascadia Mono',Menlo,Consolas,monospace;font-size:.75rem;color:var(--muted);margin-bottom:.9rem;}
   .chartwrap{overflow-x:auto;position:relative;}
   table.histtable{border-collapse:collapse;width:100%;margin-top:.9rem;font-size:.85rem;}
   table.histtable th,table.histtable td{border:1px solid var(--line);padding:.45rem .65rem;text-align:left;}
-  table.histtable th{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;background:var(--paper);}
+  table.histtable th{font-family:ui-monospace,'Cascadia Mono',Menlo,Consolas,monospace;font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;background:var(--paper);}
   table.histtable td:nth-child(2){font-variant-numeric:tabular-nums;}
   table.histtable caption{text-align:left;font-size:.78rem;color:var(--muted);padding-bottom:.4rem;}
   .histctl{display:flex;gap:.75rem;flex-wrap:wrap;margin-top:.6rem;}
   .ctip{
     position:absolute;pointer-events:none;background:var(--ink);color:var(--paper);
-    font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:.75rem;padding:.3rem .55rem;
+    font-family:ui-monospace,'Cascadia Mono',Menlo,Consolas,monospace;font-size:.75rem;padding:.3rem .55rem;
     transform:translate(-50%,-120%);white-space:nowrap;display:none;z-index:5;
   }
 
@@ -400,13 +406,86 @@
   .res h3{font-size:1.1rem;font-weight:700;margin-bottom:.35rem;}
   .res p{font-size:.93rem;}
 
+  /* ── global stat band: the eye-opening numbers ── */
+  .statband{
+    display:grid;grid-template-columns:repeat(auto-fit,minmax(11rem,1fr));
+    border:2px solid var(--ink);background:var(--ink);gap:2px;margin:1.2rem 0 1.4rem;max-width:64rem;
+  }
+  .stat{background:var(--ink);color:var(--paper);padding:1rem .9rem;}
+  .stat .n{
+    font-family:'Anton',sans-serif;font-size:2.1rem;line-height:1;color:var(--marigold);
+    font-variant-numeric:tabular-nums;display:block;
+  }
+  :lang(hi) .stat .n,:lang(mr) .stat .n,:lang(bn) .stat .n,:lang(ta) .stat .n,:lang(te) .stat .n{
+    font-family:system-ui,-apple-system,'Segoe UI','Noto Sans',Roboto,Arial,sans-serif;font-weight:700;
+  }
+  .stat .l{font-size:.8rem;line-height:1.45;margin-top:.4rem;opacity:.92;}
+  .stat .s{font-family:ui-monospace,'Cascadia Mono',Menlo,Consolas,monospace;font-size:.62rem;opacity:.55;margin-top:.45rem;display:block;}
+
+  /* ── global helplines ── */
+  .dirlist{display:grid;gap:.6rem;max-width:52rem;margin-bottom:1.2rem;}
+  .dir{
+    background:var(--card);border:2px solid var(--ink);border-left:.5rem solid var(--stamp);
+    padding:.85rem 1.1rem;
+  }
+  .dir a{font-weight:700;font-size:1rem;color:var(--stamp);}
+  .dir p{font-size:.86rem;color:var(--muted);margin-top:.2rem;}
+  .regiontabs{display:flex;gap:.4rem;flex-wrap:wrap;margin-bottom:.8rem;}
+  .regiontabs button{
+    font-family:ui-monospace,'Cascadia Mono',Menlo,Consolas,monospace;text-transform:none;letter-spacing:.02em;
+    font-size:.78rem;background:var(--card);color:var(--ink);border:2px solid var(--ink);
+    padding:.35rem .7rem;min-height:2.2rem;
+  }
+  .regiontabs button:hover{transform:none;box-shadow:none;background:var(--paper);}
+  .regiontabs button[aria-pressed="true"]{background:var(--ink);color:var(--paper);}
+  table.lines{border-collapse:collapse;width:100%;max-width:52rem;font-size:.86rem;background:var(--card);}
+  table.lines th,table.lines td{border:1px solid var(--line);padding:.5rem .65rem;text-align:left;vertical-align:top;}
+  table.lines th{font-family:ui-monospace,'Cascadia Mono',Menlo,Consolas,monospace;font-size:.68rem;text-transform:uppercase;letter-spacing:.06em;background:var(--paper);}
+  table.lines td a{font-weight:700;white-space:nowrap;}
+  .reviewed{font-family:ui-monospace,'Cascadia Mono',Menlo,Consolas,monospace;font-size:.72rem;color:var(--muted);margin-top:.6rem;}
+
+  /* ── guided conversation ── */
+  .guidewrap{max-width:44rem;}
+  .guidenote{
+    background:var(--card);border:2px dashed var(--ink);padding:.75rem 1rem;
+    font-size:.83rem;color:var(--muted);margin-bottom:.9rem;
+  }
+  .transcript{display:flex;flex-direction:column;gap:.6rem;margin-bottom:1rem;}
+  .bub{
+    padding:.8rem 1rem;max-width:90%;border:2px solid var(--ink);font-size:.97rem;
+    animation:bubin .32s var(--e-out2);
+  }
+  @media (prefers-reduced-motion: reduce){ .bub{animation:none;} }
+  @keyframes bubin{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:none;}}
+  .bub.g{background:var(--card);align-self:flex-start;border-left:.4rem solid var(--heal);}
+  .bub.u{background:var(--ink);color:var(--paper);align-self:flex-end;text-align:right;}
+  .bub.crisis{background:var(--stamp);color:#fff;border-color:var(--ink);align-self:stretch;max-width:100%;}
+  .bub.crisis a{color:#fff;font-weight:700;}
+  .bub .lines{font-family:ui-monospace,'Cascadia Mono',Menlo,Consolas,monospace;font-size:.85rem;line-height:2;margin-top:.5rem;}
+  .typing{display:inline-flex;gap:.22rem;align-items:center;padding:.15rem 0;}
+  .typing i{width:.36rem;height:.36rem;border-radius:50%;background:var(--muted);animation:blink 1.1s infinite;}
+  .typing i:nth-child(2){animation-delay:.18s;} .typing i:nth-child(3){animation-delay:.36s;}
+  @keyframes blink{0%,60%,100%{opacity:.25;}30%{opacity:1;}}
+  @media (prefers-reduced-motion: reduce){ .typing i{animation:none;opacity:.6;} }
+  .choices{display:flex;flex-direction:column;gap:.5rem;}
+  .choices button{
+    font-family:system-ui,-apple-system,'Segoe UI','Noto Sans',Roboto,Arial,sans-serif;font-weight:400;text-transform:none;letter-spacing:0;
+    background:var(--paper);color:var(--ink);border:2px solid var(--line);
+    padding:.7rem .9rem;text-align:left;font-size:.95rem;min-height:2.9rem;
+    transition:border-color .17s var(--e-out1), transform .17s var(--e-out1);
+  }
+  .choices button:hover{border-color:var(--heal);transform:translateX(2px);box-shadow:none;}
+  .choices button.now{border-color:var(--stamp);color:var(--stamp);font-weight:700;}
+  .choices button.go{background:var(--heal);color:#fff;border-color:var(--heal);font-weight:700;}
+  .guidebar{display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:.9rem;}
+
   /* ── footer ── */
   footer{padding:2.5rem 0 3.5rem;font-size:.87rem;color:var(--muted);border-top:3px solid var(--ink);}
   footer p{max-width:70ch;}
   .byline{
     margin-top:1.1rem;padding-top:1rem;border-top:1px solid var(--line);
     display:flex;gap:.8rem;flex-wrap:wrap;align-items:baseline;
-    font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:.78rem;
+    font-family:ui-monospace,'Cascadia Mono',Menlo,Consolas,monospace;font-size:.78rem;
   }
   .byline strong{color:var(--ink);font-size:.85rem;}
   .byline a{color:var(--heal);}
@@ -456,7 +535,7 @@
 <div class="topstrip noprint">
   <div class="wrap">
     <span><span data-i18n="crisis">IN DISTRESS? TELE-MANAS 14416 · KIRAN 1800-599-0019 · EMERGENCY 112</span></span>
-    <span data-i18n="crisisMeta">FREE · 24×7 · CONFIDENTIAL</span>
+    <span><a href="https://findahelpline.com" target="_blank" rel="noopener">🌐 findahelpline.com</a> — 130+ countries</span>
   </div>
 </div>
 
@@ -464,10 +543,11 @@
   <div class="wrap">
     <span class="brand">Psych <span class="accent">Screener</span></span>
     <a class="navlink" href="#home" data-view="home" data-i18n="navScreeners">Screeners</a>
+    <a class="navlink" href="#guide" data-view="guide" data-i18n="navGuide">Talk it through</a>
     <a class="navlink" href="#history" data-view="history" data-i18n="navHistory">My History</a>
     <a class="navlink" href="#resources" data-view="resources" data-i18n="navHelp">Get Help</a>
     <a class="navlink" href="evidence.html" data-i18n="navEvidence">Evidence</a>
-    <a class="navlink" href="manifesto.html" data-i18n="navManifesto">Manifesto</a>
+    <a class="navlink" href="ethics.html" data-i18n="navEthics">Ethics</a>
     <div class="setwrap">
       <button type="button" class="setbtn" id="setBtn" aria-expanded="false" aria-controls="setPanel">
         <span aria-hidden="true">⚙</span> <span data-i18n="settings">Settings</span>
@@ -506,7 +586,7 @@
     <div class="dotrule reveal" id="dotrule" aria-hidden="true"></div>
     <p class="lede reveal clamped" id="homeLede" data-i18n="homeLede"></p>
     <button type="button" id="ledeMore" class="secondary"
-            style="display:none;font-family:'IBM Plex Mono',ui-monospace,monospace;text-transform:none;letter-spacing:0;font-size:.76rem;padding:.2rem .5rem;min-height:0;border-width:1.5px;margin-bottom:.8rem;"
+            style="display:none;font-family:ui-monospace,'Cascadia Mono',Menlo,Consolas,monospace;text-transform:none;letter-spacing:0;font-size:.76rem;padding:.2rem .5rem;min-height:0;border-width:1.5px;margin-bottom:.8rem;"
             aria-expanded="false" aria-controls="homeLede" data-i18n="readMore"></button>
 
     <details class="notice reveal">
@@ -518,6 +598,8 @@
         <span class="sub" data-i18n="transNote"></span>
       </div>
     </details>
+
+    <div class="statband reveal" id="statBand" aria-label="Global mental health figures"></div>
 
     <h2 class="display reveal" data-i18n="chooseScreener">Choose a screener</h2>
     <div class="cards" id="cardGrid"></div>
@@ -622,6 +704,21 @@
   </div>
 </section>
 
+<!-- ══════════ GUIDED CONVERSATION ══════════ -->
+<section class="view" id="view-guide" tabindex="-1" aria-labelledby="guideH1">
+  <div class="wrap guidewrap">
+    <span class="eyebrow" data-i18n="guideEyebrow"></span>
+    <h1 class="display" id="guideH1" style="font-size:clamp(1.6rem,4.5vw,2.6rem);" data-i18n="guideTitle"></h1>
+    <p class="guidenote" data-i18n="guideHonest"></p>
+    <div class="guidebar">
+      <button type="button" class="danger" id="guideNowBtn" data-i18n="guideNow"></button>
+      <button type="button" class="secondary" id="guideResetBtn" data-i18n="guideRestart"></button>
+    </div>
+    <div class="transcript" id="transcript" aria-live="polite" aria-atomic="false"></div>
+    <div class="choices" id="choices"></div>
+  </div>
+</section>
+
 <!-- ══════════ HISTORY ══════════ -->
 <section class="view" id="view-history" tabindex="-1" aria-labelledby="histH1">
   <div class="wrap">
@@ -668,6 +765,7 @@
 </footer>
 
 <script src="i18n.js"></script>
+<script src="helplines.js"></script>
 <script>
 /* ════════ language-independent instrument structure ════════ */
 const META = {
@@ -714,6 +812,7 @@ function setLang(code){
   document.getElementById("moodBtns").setAttribute("aria-label", T.ui.moodTitle);
 
   renderCards(); renderMood(); renderResources();
+  if(document.getElementById("transcript").childElementCount) guideStart();
   if(typeof syncLede === "function") setTimeout(syncLede, 30);
   if(document.getElementById("view-history").classList.contains("active")) renderHistory();
   if(current) renderQ();
@@ -751,6 +850,7 @@ function showView(name){
   document.querySelectorAll("nav a[data-view]").forEach(a=>
     a.setAttribute("aria-current", a.dataset.view === name ? "page" : "false"));
   if(name === "history") renderHistory();
+  if(name === "guide" && !document.getElementById("transcript").childElementCount) guideStart();
   if(name !== "test"){ stopClock(); }
   window.scrollTo(0,0);
   v.focus();
@@ -1185,11 +1285,174 @@ function renderMood(){
     m[today] ? fmt(T.ui.moodLogged,{n:streak}) : T.ui.moodPrompt;
 }
 
-/* ════════ resources ════════ */
+/* ════════ resources: directories first, then region, then India detail ════════ */
+let activeRegion = null;
+function crisisLinesHTML(){
+  return '<a href="tel:14416">'+esc(T.ui.lineTelemanas)+'</a><br>' +
+         '<a href="tel:18005990019">'+esc(T.ui.lineKiran)+'</a><br>' +
+         '<a href="tel:112">'+esc(T.ui.lineEmergency)+'</a>';
+}
 function renderResources(){
   const el = document.getElementById("resList");
-  el.innerHTML = T.ui.resources.map(([h,b])=>
-    '<div class="res"><h3>'+esc(h)+"</h3><p>"+esc(b)+"</p></div>").join("");
+  if(!window.HELP){ el.innerHTML = T.ui.resources.map(([h,b])=>
+    '<div class="res"><h3>'+esc(h)+"</h3><p>"+esc(b)+"</p></div>").join(""); return; }
+
+  let h = '<div class="dirlist">' + HELP.directories.map(d=>
+      '<div class="dir"><a href="'+esc(d.url)+'" target="_blank" rel="noopener">'+esc(d.name)+' ↗</a>'+
+      '<p>'+esc(d.note)+'</p></div>').join("") + '</div>';
+
+  h += '<div class="res"><h3>'+esc(T.ui.lineEmergency.split("—")[0].trim())+'</h3><p>' +
+       HELP.emergency.map(e=>'<strong>'+esc(e.num)+'</strong> — '+esc(e.where)).join(' · ') +
+       '</p></div>';
+
+  if(!activeRegion) activeRegion = HELP.regions[0].id;
+  h += '<div class="regiontabs" role="group">' + HELP.regions.map(r=>
+      '<button type="button" data-region="'+r.id+'" aria-pressed="'+(r.id===activeRegion)+'">'+esc(r.label)+'</button>').join("") + '</div>';
+
+  const reg = HELP.regions.find(r=>r.id===activeRegion) || HELP.regions[0];
+  h += '<div style="overflow-x:auto;"><table class="lines"><caption class="visually-hidden">'+esc(reg.label)+'</caption><thead><tr>'+
+       '<th scope="col">Country</th><th scope="col">Service</th><th scope="col">Number</th></tr></thead><tbody>' +
+       reg.lines.map(l=>'<tr><td>'+esc(l.country)+'</td><td>'+esc(l.org)+
+         (l.note?'<br><span style="color:var(--muted);font-size:.8em;">'+esc(l.note)+'</span>':'')+
+         '</td><td><a href="tel:'+esc(l.tel)+'">'+esc(l.num)+'</a></td></tr>').join("") +
+       '</tbody></table></div>' +
+       '<p class="reviewed">Numbers reviewed '+esc(HELP.LAST_REVIEWED)+
+       '. Services change — the directories above are maintained continuously and are the reliable path if a number below does not connect.</p>';
+
+  h += '<h2 class="display" style="margin:1.6rem 0 .8rem;">India</h2>' +
+       T.ui.resources.map(([t,b])=>'<div class="res"><h3>'+esc(t)+"</h3><p>"+esc(b)+"</p></div>").join("");
+
+  el.innerHTML = h;
+  el.querySelectorAll("[data-region]").forEach(b=>
+    b.addEventListener("click", ()=>{ activeRegion = b.dataset.region; renderResources(); }));
+}
+
+/* ════════ global stat band — figures carry their source ════════ */
+const STATS = [
+  { n:"1 in 2",  k:"half",  l:"of people will develop a mental disorder at some point by age 75", s:"McGrath et al., Lancet Psychiatry 2023 · 156,331 people, 29 countries" },
+  { n:"14.5",    k:"num", to:14.5, dp:1, l:"years — the peak age at which mental disorders first begin", s:"Solmi et al., Molecular Psychiatry 2021 · meta-analysis, 192 studies" },
+  { n:"48%",     k:"num", to:48,   dp:0, suffix:"%", l:"of all mental disorders have already begun before age 18", s:"Solmi et al., Molecular Psychiatry 2021" },
+  { n:"3% / 23%",k:"gap", l:"get minimally adequate treatment for depression — low-income vs high-income countries", s:"Moitra et al., PLoS Medicine 2022 · 84 countries" }
+];
+function renderStats(){
+  const el = document.getElementById("statBand");
+  if(!el || el.childElementCount) return;
+  el.innerHTML = STATS.map((s,i)=>
+    '<div class="stat"><span class="n" data-stat="'+i+'">'+esc(s.n)+'</span>'+
+    '<span class="l">'+esc(s.l)+'</span><span class="s">'+esc(s.s)+'</span></div>').join("");
+  countUpWhenSeen(el);
+}
+/* count-up only for the numeric tiles, only once, only if motion is welcome */
+function countUpWhenSeen(band){
+  if(!REVEAL_OK) return;
+  const io = new IntersectionObserver(es=>{
+    es.forEach(e=>{
+      if(!e.isIntersecting) return;
+      io.unobserve(e.target);
+      band.querySelectorAll("[data-stat]").forEach(el=>{
+        const s = STATS[+el.dataset.stat];
+        if(s.k !== "num") return;
+        const t0 = performance.now(), dur = 900;
+        (function tick(t){
+          const p = Math.min(1,(t-t0)/dur);
+          const v = s.to * (1 - Math.pow(1-p,3));
+          el.textContent = v.toFixed(s.dp) + (s.suffix||"");
+          if(p < 1) requestAnimationFrame(tick); else el.textContent = s.n;
+        })(t0);
+      });
+    });
+  }, { threshold:0.35 });
+  io.observe(band);
+}
+
+/* ════════ guided conversation — a fixed script, never generative ════════
+   Every branch ends somewhere useful: a screener, the helplines, or
+   concrete guidance. The crisis route is reachable from every step via
+   the always-present button, so escalation never depends on parsing text. */
+function guideScript(){
+  return {
+    start: { q:()=>T.ui.qStart, opts:[
+      { label:()=>T.ui.oLost,  next:"feel" },
+      { label:()=>T.ui.oCheck, next:"feel" },
+      { label:()=>T.ui.oOther, next:"other" },
+      { label:()=>T.ui.oNow,   next:"crisis", cls:"now" }
+    ]},
+    feel: { q:()=>T.ui.qFeel, opts:[
+      { label:()=>T.ui.oLow,    next:"r_low" },
+      { label:()=>T.ui.oAnx,    next:"r_anx" },
+      { label:()=>T.ui.oDrink,  next:"r_drink" },
+      { label:()=>T.ui.oUnsure, next:"r_unsure" }
+    ]},
+    r_low:    { say:()=>T.ui.rLow,    take:"phq9"  },
+    r_anx:    { say:()=>T.ui.rAnx,    take:"gad7"  },
+    r_drink:  { say:()=>T.ui.rDrink,  take:"auditc"},
+    r_unsure: { say:()=>T.ui.rUnsure, take:"phq4"  },
+    other:    { say:()=>T.ui.rOther,  end:true },
+    crisis:   { crisis:true }
+  };
+}
+let guideNode = "start";
+
+function bubble(cls, html){
+  const d = document.createElement("div");
+  d.className = "bub " + cls;
+  d.innerHTML = html;
+  document.getElementById("transcript").appendChild(d);
+  d.scrollIntoView({ block:"nearest", behavior: REVEAL_OK ? "smooth" : "auto" });
+  return d;
+}
+function guideSay(html, cls, then){
+  const choices = document.getElementById("choices");
+  choices.innerHTML = "";
+  if(!REVEAL_OK){ bubble(cls||"g", html); then && then(); return; }
+  const t = bubble("g", '<span class="typing" aria-hidden="true"><i></i><i></i><i></i></span>');
+  setTimeout(()=>{ t.remove(); bubble(cls||"g", html); then && then(); }, 420);
+}
+function guideRender(node){
+  guideNode = node;
+  const S = guideScript(), n = S[node];
+  const choices = document.getElementById("choices");
+
+  if(n.crisis){
+    guideSay(esc(T.ui.rCrisis) + '<div class="lines">' + crisisLinesHTML() + '</div>', "crisis", ()=>{
+      choices.innerHTML = "";
+      addChoice(T.ui.guideHelplines, ()=> showView("resources"), "go");
+      addChoice(T.ui.guideRestart,   ()=> guideStart());
+    });
+    return;
+  }
+  if(n.say){
+    guideSay(esc(n.say()), "g", ()=>{
+      choices.innerHTML = "";
+      if(n.take){
+        addChoice(fmt(T.ui.guideTake,{name:T.inst[n.take].name}), ()=> startTest(n.take), "go");
+      }
+      addChoice(T.ui.guideHelplines, ()=> showView("resources"));
+      addChoice(T.ui.guideRestart,   ()=> guideStart());
+    });
+    return;
+  }
+  guideSay(esc(n.q()), "g", ()=>{
+    choices.innerHTML = "";
+    n.opts.forEach(o=> addChoice(o.label(), ()=>{
+      bubble("u", esc(o.label()));
+      guideRender(o.next);
+    }, o.cls));
+  });
+}
+function addChoice(label, fn, cls){
+  const b = document.createElement("button");
+  b.type = "button";
+  if(cls) b.className = cls;
+  b.textContent = label;
+  b.addEventListener("click", fn);
+  document.getElementById("choices").appendChild(b);
+  return b;
+}
+function guideStart(){
+  document.getElementById("transcript").innerHTML = "";
+  document.getElementById("choices").innerHTML = "";
+  guideRender("start");
 }
 
 /* ════════ wiring ════════ */
@@ -1252,12 +1515,20 @@ ledeBtn.addEventListener("click", ()=>{
 addEventListener("resize", syncLede);
 setTimeout(syncLede, 50);
 
+document.getElementById("guideNowBtn").addEventListener("click", ()=>{
+  showView("guide");
+  bubble("u", esc(T.ui.guideNow));
+  guideRender("crisis");
+});
+document.getElementById("guideResetBtn").addEventListener("click", guideStart);
+
 renderDotRule();
+renderStats();
 observeReveals();
 
 if(location.hash){
   const v = location.hash.slice(1);
-  if(["home","history","resources"].includes(v)) showView(v);
+  if(["home","guide","history","resources"].includes(v)) showView(v);
 }
 </script>
 </body>

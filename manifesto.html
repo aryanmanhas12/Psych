@@ -4,8 +4,14 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>The Waiting Room — A Manifesto for India's Mental Health Crisis</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Anton&family=IBM+Plex+Mono:wght@400;500&family=Public+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+/* Self-hosted so the page makes ZERO third-party requests — the privacy
+   claim on this site is only true if nothing phones home, fonts included. */
+@font-face{
+  font-family:'Anton';font-style:normal;font-weight:400;font-display:swap;
+  src:url('anton.woff2') format('woff2');
+}
+</style>
 <style>
   :root{
     --ink:#151C2E;
@@ -20,7 +26,7 @@
   body{
     background:var(--paper);
     color:var(--ink);
-    font-family:'Public Sans',sans-serif;
+    font-family:system-ui,-apple-system,'Segoe UI','Noto Sans',Roboto,Arial,sans-serif;
     line-height:1.65;
     font-size:17px;
   }
@@ -29,13 +35,13 @@
     html{scroll-behavior:auto;}
   }
   .display{font-family:'Anton',sans-serif;letter-spacing:.01em;line-height:1.05;text-transform:uppercase;}
-  .mono{font-family:'IBM Plex Mono',monospace;}
+  .mono{font-family:ui-monospace,'Cascadia Mono',Menlo,Consolas,monospace;}
   .wrap{max-width:960px;margin:0 auto;padding:0 22px;}
 
   /* ── top strip ── */
   .topstrip{
     background:var(--ink);color:var(--paper);
-    font-family:'IBM Plex Mono',monospace;font-size:12.5px;
+    font-family:ui-monospace,'Cascadia Mono',Menlo,Consolas,monospace;font-size:12.5px;
     padding:8px 0;letter-spacing:.04em;
   }
   .topstrip .wrap{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;}
@@ -43,7 +49,7 @@
   /* ── hero ── */
   .hero{padding:64px 0 48px;border-bottom:3px solid var(--ink);}
   .eyebrow{
-    display:inline-block;font-family:'IBM Plex Mono',monospace;font-size:13px;
+    display:inline-block;font-family:ui-monospace,'Cascadia Mono',Menlo,Consolas,monospace;font-size:13px;
     letter-spacing:.12em;text-transform:uppercase;
     border:1.5px solid var(--stamp);color:var(--stamp);
     padding:4px 10px;transform:rotate(-1.2deg);margin-bottom:22px;
@@ -66,13 +72,13 @@
     animation:pulse 2.2s ease-in-out infinite;
   }
   @keyframes pulse{0%,100%{box-shadow:0 0 0 3px rgba(230,161,28,.35);}50%{box-shadow:0 0 0 7px rgba(230,161,28,.12);}}
-  .dotcaption{font-family:'IBM Plex Mono',monospace;font-size:13px;margin-top:14px;color:#4a4f5e;max-width:640px;}
+  .dotcaption{font-family:ui-monospace,'Cascadia Mono',Menlo,Consolas,monospace;font-size:13px;margin-top:14px;color:#4a4f5e;max-width:640px;}
   .dotcaption b{color:var(--ink);}
 
   /* ── section scaffolding ── */
   section{padding:64px 0;}
   .sec-label{
-    font-family:'IBM Plex Mono',monospace;font-size:13px;letter-spacing:.14em;
+    font-family:ui-monospace,'Cascadia Mono',Menlo,Consolas,monospace;font-size:13px;letter-spacing:.14em;
     text-transform:uppercase;color:var(--stamp);margin-bottom:14px;
   }
   h2{font-size:clamp(30px,5vw,52px);margin-bottom:26px;}
@@ -84,7 +90,7 @@
   @media(max-width:700px){.stat{border-right:none;}}
   .stat .num{font-family:'Anton',sans-serif;font-size:44px;line-height:1;color:var(--stamp);}
   .stat .lbl{font-size:14.5px;margin-top:8px;}
-  .stat .src{font-family:'IBM Plex Mono',monospace;font-size:11px;color:#7a7f8d;margin-top:10px;}
+  .stat .src{font-family:ui-monospace,'Cascadia Mono',Menlo,Consolas,monospace;font-size:11px;color:#7a7f8d;margin-top:10px;}
   .crisis-copy{max-width:660px;margin-top:30px;}
   .crisis-copy p{margin-bottom:16px;}
 
@@ -112,7 +118,7 @@
   }
   .sol h3{font-size:19px;font-weight:700;margin-bottom:6px;}
   .sol .who{
-    font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.08em;
+    font-family:ui-monospace,'Cascadia Mono',Menlo,Consolas,monospace;font-size:12px;letter-spacing:.08em;
     text-transform:uppercase;color:var(--heal);margin-bottom:8px;
   }
   .sol p{font-size:15.5px;}
@@ -133,7 +139,7 @@
   }
   button:hover{transform:translate(-2px,-2px);box-shadow:4px 4px 0 var(--stamp);}
   button:focus-visible{outline:3px solid var(--stamp);outline-offset:3px;}
-  .pledge-count{font-family:'IBM Plex Mono',monospace;font-size:14px;margin-top:14px;}
+  .pledge-count{font-family:ui-monospace,'Cascadia Mono',Menlo,Consolas,monospace;font-size:14px;margin-top:14px;}
   .sharebox{
     display:none;margin-top:18px;background:#fff;border:2px dashed var(--ink);
     padding:16px;font-size:14.5px;
@@ -324,7 +330,7 @@
   <div class="wrap">
     <span class="stampmark">Urgent — For Public Circulation</span>
     <p>If you or someone you know is struggling, call <strong>Tele-MANAS: 14416</strong> (toll-free, 24×7, multiple Indian languages). Figures cited from the National Mental Health Survey 2015–16 and published workforce estimates; verify current numbers before formal use.</p>
-    <p style="margin-top:14px;padding-top:14px;border-top:1px solid var(--line);font-family:'IBM Plex Mono',monospace;font-size:12.5px;">
+    <p style="margin-top:14px;padding-top:14px;border-top:1px solid var(--line);font-family:ui-monospace,'Cascadia Mono',Menlo,Consolas,monospace;font-size:12.5px;">
       <strong style="color:var(--ink);">Built by Aryan Manhas</strong> ·
       <a href="https://github.com/aryanmanhas12/Psych" style="color:var(--heal);">github.com/aryanmanhas12/Psych</a> ·
       <a href="index.html" style="color:var(--heal);">Open the screener</a> ·

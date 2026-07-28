@@ -1,32 +1,43 @@
 # Psych Screener — Screen Early. Act Early.
 
-**A free, private, multilingual mental-health screening web app built for India** — plus
-the manifesto and evidence register that justify it.
+**A free, private, multilingual mental-health screening tool — built for India, usable
+worldwide** — plus the manifesto, evidence register and ethics charter behind it.
 
 **Live site:** https://aryanmanhas12.github.io/Psych/
 **Built by:** [Aryan Manhas](https://github.com/aryanmanhas12) · MIT licensed
 
 > If you or someone you know is struggling right now:
-> **Tele-MANAS 14416** · **KIRAN 1800-599-0019** · **Emergency 112** (all free, 24×7)
+> **Anywhere:** [findahelpline.com](https://findahelpline.com) — verified helplines in 130+ countries
+> **India:** Tele-MANAS **14416** · KIRAN **1800-599-0019** · Emergency **112** (all free, 24×7)
 
 ---
 
 ## Why this exists
 
-India has roughly **0.75 psychiatrists per 100,000 people** against a WHO recommendation
-of 3+, and a **70–92% treatment gap**. The result is three-minute consultations, missed
-diagnoses, care reduced to a prescription refill, and follow-ups that never happen. This
-project attacks the two ends of that problem a website actually can reach: **finding
-people earlier**, and **giving them the follow-up record the system doesn't**.
+Mental disorders reach their **peak age of onset at 14.5 years**, and **48% have already
+begun before 18** (Solmi et al., *Molecular Psychiatry* 2021 — 192 studies, 708,561
+people). About **half of all people** will develop one by age 75 (McGrath et al., *Lancet
+Psychiatry* 2023). Yet minimally adequate treatment for depression reaches **23% in
+high-income countries and 3% in low-income ones** (Moitra et al., *PLoS Medicine* 2022).
+
+The burden lands earliest on the young and hardest where care is scarcest. India — with
+roughly **0.75 psychiatrists per 100,000 people** against a WHO recommendation of 3+ — is
+where this project started and where it is most specific, but the arithmetic is global.
+
+This attacks the two ends of the problem a website can actually reach: **finding people
+earlier**, and **giving them the follow-up record the system doesn't**.
 
 ## What's here
 
 | File | What it is |
 |---|---|
-| `index.html` | **The screener app** — instruments, guidance, history, follow-up reminders |
+| `index.html` | **The screener app** — instruments, guided conversation, guidance, history, reminders |
 | `i18n.js` | **Translation layer** — every UI string and instrument item in 6 languages |
-| `evidence.html` | **The Evidence Register** — 23 peer-reviewed citations behind every design decision |
+| `helplines.js` | **Crisis lines worldwide** — directory-first, region tables, review-dated |
+| `ethics.html` | **Ethics & Privacy Charter** — every claim written to be independently verifiable |
+| `evidence.html` | **The Evidence Register** — peer-reviewed citations behind every design decision |
 | `manifesto.html` | **The Waiting Room is Full** — a citizen's manifesto on the treatment gap |
+| `anton.woff2` | Self-hosted display face, so the site makes zero third-party requests |
 | `LICENSE` | MIT, plus a not-a-medical-device notice |
 
 Plain HTML/CSS/JS. **No build step, no framework, no backend, no tracking.** Open any
@@ -58,9 +69,21 @@ one-tap mood check-in with a 14-day strip and streak.
 management on view changes, a skip link, 44px+ touch targets, `prefers-reduced-motion`
 support, and semantic tables.
 
+**A guided conversation, not a chatbot** — "Talk it through" walks someone from *"I don't
+know where to start"* to the right screener, the right helpline, or concrete advice on
+supporting someone else. It runs a fixed script rather than a language model: it cannot
+improvise clinical advice or miss a crisis signal in free text, and a permanent "I need
+help now" button means escalation never depends on parsing what someone typed.
+
+**Crisis lines worldwide** — maintained international directories (Find A Helpline, IASP,
+Befrienders) are always shown first because they never go stale, with region-by-region
+numbers beneath them, emergency numbers by country, and a visible review date.
+
 **Private by architecture** — everything runs in the browser. There is no server, no
 account, and no analytics; answers are stored only in `localStorage` on the user's own
-device, and the user can export or delete all of it at any time.
+device, and the user can export or delete all of it at any time. Fonts are self-hosted, so
+the site makes **zero third-party requests** — the privacy claim is literally true and
+checkable in DevTools. See [`ethics.html`](ethics.html).
 
 ### What it is not
 
@@ -79,6 +102,8 @@ commit) or clone and edit locally. Changes to `main` go live on GitHub Pages in 
 | Add an instrument | Add scoring to `META` in `index.html`, then add its text to every language in `i18n.js` |
 | Colours, spacing, layout | The `:root` variables and CSS at the top of each HTML file |
 | Citations | `evidence.html` |
+| Helpline numbers | `helplines.js` — read the safety note at the top first |
+| Ethics or privacy claims | `ethics.html` — only claim what the code actually does |
 
 Run it locally with any static server, e.g. `python3 -m http.server`, then open
 `http://localhost:8000`.
