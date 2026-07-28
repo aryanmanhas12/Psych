@@ -37,7 +37,8 @@ earlier**, and **giving them the follow-up record the system doesn't**.
 | `ethics.html` | **Ethics & Privacy Charter** — every claim written to be independently verifiable |
 | `evidence.html` | **The Evidence Register** — peer-reviewed citations behind every design decision |
 | `manifesto.html` | **The Waiting Room is Full** — a citizen's manifesto on the treatment gap |
-| `anton.woff2` | Self-hosted display face, so the site makes zero third-party requests |
+| `sw.js` + `manifest.webmanifest` | **Offline support** — installable app, works with no connection |
+| `anton.woff2`, `icon-*.png` | Self-hosted assets, so the site makes zero third-party requests |
 | `LICENSE` | MIT, plus a not-a-medical-device notice |
 
 Plain HTML/CSS/JS. **No build step, no framework, no backend, no tracking.** Open any
@@ -79,6 +80,22 @@ help now" button means escalation never depends on parsing what someone typed.
 Befrienders) are always shown first because they never go stale, with region-by-region
 numbers beneath them, emergency numbers by country, and a visible review date.
 
+**Works offline, installs like an app** — a service worker caches the whole site, so it
+keeps working with no connection at all: screeners, guidance and every helpline number
+stay available on a patchy network. On Android and desktop the browser offers an
+**Install** button; it then runs full-screen from the home screen. The cache holds only
+the site's own static files, never your answers.
+
+**Dark mode and theme control** — auto (follows your device), light, or dark. People in
+distress use their phones at 2am; a wall of white light is a usability problem, not a
+preference. Helpline links are contrast-checked in both themes (5.98:1 light, 6.60:1 dark
+— both above the WCAG AA threshold).
+
+**A grounding exercise** — paced breathing at roughly six breaths a minute (4s in, 4s
+hold, 6s out), the rate that engages the body's calming response. Offered on the crisis
+path *after* the helplines and never instead of them, with the numbers still on screen
+throughout. It degrades to text cues under `prefers-reduced-motion`.
+
 **Private by architecture** — everything runs in the browser. There is no server, no
 account, and no analytics; answers are stored only in `localStorage` on the user's own
 device, and the user can export or delete all of it at any time. Fonts are self-hosted, so
@@ -114,7 +131,6 @@ Run it locally with any static server, e.g. `python3 -m http.server`, then open
   validations exist and should replace the working translations)
 - More instruments: perceived stress (PSS-4), postpartum (EPDS), adolescent screeners
 - Caregiver mode for ASHA / community health workers doing assisted screening
-- PWA packaging for offline use in low-connectivity areas
 - Field feedback from a DMHP clinic or college counselling centre
 
 ## Credits & licences
