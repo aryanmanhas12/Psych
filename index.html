@@ -81,28 +81,73 @@
   nav a.navlink:hover,nav a.navlink:focus-visible{border-bottom-color:var(--marigold);}
   nav a.navlink[aria-current="page"]{border-bottom-color:var(--marigold);font-weight:500;}
 
-  /* ── accessibility bar ── */
-  .a11ybar{background:var(--ink);border-top:1px solid rgba(246,244,238,.18);padding:.5rem 0 .7rem;}
-  .a11ybar .wrap{display:flex;align-items:center;gap:1.4rem;flex-wrap:wrap;}
-  .a11ygroup{display:flex;align-items:center;gap:.45rem;}
-  .a11ygroup > span.lbl{
-    font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:.7rem;letter-spacing:.07em;
-    text-transform:uppercase;color:rgba(246,244,238,.65);
-  }
-  select.langsel{
-    font-family:'Public Sans',sans-serif;font-size:.85rem;padding:.35rem .5rem;
-    background:var(--paper);color:var(--ink);border:2px solid var(--paper);cursor:pointer;
-  }
-  .a11ybar button{
-    font-family:'IBM Plex Mono',ui-monospace,monospace;text-transform:none;letter-spacing:0;
+  /* ── settings popover (replaces the old full-width a11y bar) ── */
+  .setbtn{
+    font-family:'IBM Plex Mono',ui-monospace,monospace;text-transform:none;letter-spacing:.04em;
     background:transparent;color:var(--paper);border:1.5px solid rgba(246,244,238,.45);
-    padding:.3rem .6rem;font-size:.8rem;min-height:2rem;cursor:pointer;
+    padding:.3rem .7rem;font-size:.78rem;min-height:2rem;cursor:pointer;
   }
-  .a11ybar button:hover{border-color:var(--marigold);transform:none;box-shadow:none;}
-  .a11ybar button[aria-pressed="true"]{background:var(--marigold);color:var(--ink);border-color:var(--marigold);font-weight:600;}
+  .setbtn:hover{border-color:var(--marigold);transform:none;box-shadow:none;}
+  .setbtn[aria-expanded="true"]{background:var(--marigold);color:var(--ink);border-color:var(--marigold);}
+  .setwrap{position:relative;}
+  .setpanel{
+    display:none;position:absolute;right:0;top:calc(100% + .5rem);z-index:40;
+    background:var(--card);border:2px solid var(--ink);box-shadow:6px 6px 0 rgba(21,28,46,.25);
+    padding:1rem;min-width:15rem;
+  }
+  .setpanel.open{display:block;animation:pop .18s cubic-bezier(.25,.46,.45,.94);}
+  @keyframes pop{from{opacity:0;transform:translateY(-4px);}to{opacity:1;transform:none;}}
+  .setrow{display:flex;flex-direction:column;gap:.4rem;margin-bottom:.9rem;}
+  .setrow:last-child{margin-bottom:0;}
+  .setrow .lbl{
+    font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:.68rem;letter-spacing:.08em;
+    text-transform:uppercase;color:var(--muted);
+  }
+  .setrow .btns{display:flex;gap:.4rem;}
+  select.langsel{
+    font-family:'Public Sans',sans-serif;font-size:.9rem;padding:.45rem .5rem;width:100%;
+    background:var(--paper);color:var(--ink);border:2px solid var(--ink);cursor:pointer;
+  }
+  .setpanel button{
+    font-family:'IBM Plex Mono',ui-monospace,monospace;text-transform:none;letter-spacing:0;
+    background:var(--paper);color:var(--ink);border:2px solid var(--line);
+    padding:.35rem .7rem;font-size:.85rem;min-height:2.2rem;flex:1;cursor:pointer;
+  }
+  .setpanel button:hover{border-color:var(--ink);transform:none;box-shadow:none;}
+  .setpanel button[aria-pressed="true"]{background:var(--heal);color:#fff;border-color:var(--heal);font-weight:700;}
+
+  /* ── motion system ────────────────────────────────────────────
+     Specs sourced from the ui-ux-pro-max motion database:
+       scroll reveal  y 12–16px · 300–400ms · power1.out
+       stagger        ≤8 children · 80ms step · power2.out
+       hover feedback <2px displacement · 150–200ms · transform/opacity only
+     Implemented natively (no animation library) to keep the payload at
+     zero bytes for low-connectivity users.                           */
+  :root{
+    --e-out1:cubic-bezier(.25,.46,.45,.94);   /* ≈ power1.out */
+    --e-out2:cubic-bezier(.215,.61,.355,1);   /* ≈ power2.out */
+  }
+  /* Visible by default. Only a page that has proven JS runs AND has an
+     IntersectionObserver opts into hiding, so content can never be
+     stranded invisible — the failure mode the motion guidance warns about. */
+  .reveal{opacity:1;transform:none;}
+  html.reveal-ready .reveal{opacity:0;transform:translateY(14px);}
+  html.reveal-ready .reveal.in{
+    opacity:1;transform:none;
+    transition:opacity .35s var(--e-out1), transform .35s var(--e-out1);
+  }
+  html.reveal-ready .reveal.in[data-delay]{transition-delay:calc(var(--i,0) * 80ms);}
+  @media (prefers-reduced-motion: reduce){
+    html.reveal-ready .reveal{opacity:1;transform:none;}
+  }
+
+  /* dot motif — the manifesto's "1 psychiatrist among 133,000" signature */
+  .dotrule{display:flex;gap:.28rem;align-items:center;margin:.4rem 0 1.1rem;}
+  .dotrule i{width:.32rem;height:.32rem;border-radius:50%;background:var(--ink);opacity:.22;}
+  .dotrule i.on{background:var(--marigold);opacity:1;box-shadow:0 0 0 .12rem rgba(230,161,28,.3);}
 
   /* ── views ── */
-  .view{display:none;padding:2.8rem 0 3.5rem;}
+  .view{display:none;padding:1.9rem 0 3rem;}
   .view.active{display:block;animation:vin .25s ease;}
   @keyframes vin{from{opacity:0;}to{opacity:1;}}
   .view:focus{outline:none;}
@@ -113,45 +158,73 @@
     border:1.5px solid var(--heal);color:var(--heal);
     padding:.25rem .6rem;margin-bottom:1.1rem;
   }
-  h1{font-size:clamp(2rem,6vw,3.8rem);margin-bottom:1rem;}
+  h1{font-size:clamp(1.75rem,4.6vw,2.9rem);margin-bottom:.7rem;}
   h1 .accent{color:var(--heal);}
-  h2{font-size:clamp(1.5rem,4vw,2.3rem);margin-bottom:1rem;}
-  .lede{max-width:40ch;font-size:1.06rem;margin-bottom:1.6rem;}
-  @media(min-width:700px){.lede{max-width:62ch;}}
+  h2{font-size:clamp(1.3rem,3vw,1.75rem);margin-bottom:.8rem;}
+  .lede{max-width:40ch;font-size:1rem;margin-bottom:1.1rem;}
+  @media(min-width:700px){.lede{max-width:64ch;}}
 
-  .notice{
+  /* collapsed-by-default disclosure — keeps the fold clear */
+  details.notice{
     background:var(--card);border:2px solid var(--ink);border-left:.5rem solid var(--marigold);
-    padding:1rem 1.2rem;font-size:.93rem;max-width:62ch;margin-bottom:1.5rem;
+    padding:.6rem 1rem;font-size:.9rem;max-width:64ch;margin-bottom:1.1rem;
   }
-  .notice b{text-transform:uppercase;font-size:.8rem;letter-spacing:.06em;}
+  details.notice summary{
+    cursor:pointer;font-weight:700;font-size:.85rem;text-transform:uppercase;letter-spacing:.05em;
+    list-style:none;display:flex;align-items:center;gap:.5rem;padding:.15rem 0;
+  }
+  details.notice summary::-webkit-details-marker{display:none;}
+  details.notice summary::before{content:"▸";color:var(--marigold);transition:transform .2s var(--e-out1);display:inline-block;}
+  details.notice[open] summary::before{transform:rotate(90deg);}
+  details.notice .inner{padding-top:.6rem;animation:slidedown .25s var(--e-out2);}
+  @keyframes slidedown{from{opacity:0;transform:translateY(-6px);}to{opacity:1;transform:none;}}
   .notice .sub{display:block;margin-top:.5rem;font-size:.78rem;color:var(--heal);font-family:'IBM Plex Mono',ui-monospace,monospace;}
 
-  /* ── mood ── */
-  .mood{background:var(--card);border:2px solid var(--ink);border-left:.5rem solid var(--marigold);padding:1.1rem 1.3rem;max-width:62ch;margin-bottom:2.2rem;}
-  .moodbtns{display:flex;gap:.6rem;margin:.8rem 0 .2rem;flex-wrap:wrap;}
-  .moodbtns button{font-size:1.6rem;background:var(--paper);border:2px solid var(--line);padding:.4rem .7rem;line-height:1;min-width:3rem;min-height:3rem;}
-  .moodbtns button:hover{border-color:var(--ink);box-shadow:none;transform:none;}
+  /* ── mood: collapsed to a single compact row ── */
+  .mood{
+    background:var(--card);border:2px solid var(--ink);border-left:.5rem solid var(--marigold);
+    padding:.75rem 1rem;max-width:64ch;margin:1.1rem 0;
+    display:grid;grid-template-columns:1fr auto;gap:.5rem 1rem;align-items:center;
+  }
+  @media(max-width:640px){.mood{grid-template-columns:1fr;}}
+  .mood .moodhead{font-size:.85rem;font-weight:700;}
+  .moodbtns{display:flex;gap:.35rem;flex-wrap:wrap;}
+  .moodbtns button{font-size:1.25rem;background:var(--paper);border:2px solid var(--line);padding:.25rem .45rem;line-height:1;min-width:2.75rem;min-height:2.75rem;transition:transform .16s var(--e-out1),border-color .16s var(--e-out1);}
+  .moodbtns button:hover{border-color:var(--ink);box-shadow:none;transform:translateY(-2px);}
   .moodbtns button[aria-pressed="true"]{border-color:var(--heal);background:#e9f1ee;border-width:3px;}
   :root[data-contrast="high"] .moodbtns button[aria-pressed="true"]{background:#d7e8e1;}
-  .moodstrip{display:flex;gap:.25rem;align-items:flex-end;height:2.2rem;margin-top:.6rem;}
-  .moodcell{width:.9rem;background:var(--line);}
+  .moodstrip{display:flex;gap:.2rem;align-items:flex-end;height:1.6rem;grid-column:1/-1;}
+  .moodcell{width:.75rem;background:var(--line);transition:height .3s var(--e-out2);}
   .moodcell.v1{background:var(--stamp);}
   .moodcell.v2{background:#B0521A;}
   .moodcell.v3{background:var(--marigold);}
   .moodcell.v4{background:#6E9683;}
   .moodcell.v5{background:var(--heal);}
 
-  /* ── cards ── */
-  .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(16rem,1fr));gap:1rem;}
+  /* ── cards: whole card is the control, tighter grid ── */
+  .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(15rem,1fr));gap:.7rem;}
+  @media(min-width:52rem){.cards{grid-template-columns:repeat(2,1fr);}}
   .card{
-    background:var(--card);border:2px solid var(--ink);padding:1.3rem;
-    display:flex;flex-direction:column;gap:.5rem;transition:transform .15s, box-shadow .15s;
+    background:var(--card);border:2px solid var(--ink);padding:.9rem 1rem;
+    display:grid;grid-template-columns:1fr auto;gap:.15rem .8rem;align-items:center;
+    text-align:left;font-family:inherit;color:inherit;text-transform:none;letter-spacing:0;
+    cursor:pointer;width:100%;min-height:0;
+    transition:transform .17s var(--e-out1), box-shadow .17s var(--e-out1), border-color .17s var(--e-out1);
   }
-  .card:hover,.card:focus-within{transform:translate(-2px,-2px);box-shadow:5px 5px 0 var(--heal);}
-  .card .tag{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;color:var(--heal);}
-  .card h3{font-size:1.2rem;font-weight:700;}
-  .card p{font-size:.88rem;color:var(--muted);flex:1;}
-  .card .meta{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:.74rem;color:var(--muted);}
+  .card:hover,.card:focus-visible{transform:translate(-2px,-2px);box-shadow:4px 4px 0 var(--heal);border-color:var(--heal);}
+  .card .tag{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:.66rem;letter-spacing:.08em;text-transform:uppercase;color:var(--heal);grid-column:1;}
+  .card h3{font-size:1.15rem;font-weight:700;grid-column:1;}
+  .card p{font-size:.82rem;color:var(--muted);grid-column:1/-1;margin-top:.2rem;}
+  .card .meta{
+    font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:.7rem;color:var(--muted);
+    grid-column:2;grid-row:1/3;text-align:right;white-space:nowrap;
+  }
+  .card .go{
+    grid-column:2;grid-row:3;text-align:right;font-family:'IBM Plex Mono',ui-monospace,monospace;
+    font-size:.75rem;color:var(--heal);font-weight:600;white-space:nowrap;
+    transition:transform .17s var(--e-out1);
+  }
+  .card:hover .go{transform:translateX(3px);}
 
   button,.btn{
     font-family:'Anton',sans-serif;text-transform:uppercase;letter-spacing:.05em;
@@ -169,28 +242,44 @@
   button.danger{background:var(--stamp);}
   button:disabled{opacity:.45;cursor:not-allowed;transform:none;box-shadow:none;}
 
-  /* ── test ── */
-  .testhead{margin-bottom:1.2rem;}
+  /* ── test: sticky OPD-token header, everything else fits under it ── */
+  .tokenbar{
+    position:sticky;top:0;z-index:20;background:var(--ink);color:var(--paper);
+    padding:.55rem 0;margin-bottom:1rem;
+  }
+  .tokenbar .wrap{display:flex;align-items:center;gap:.8rem;flex-wrap:wrap;}
+  .tokenbar .tk{
+    font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:.72rem;letter-spacing:.12em;
+    border:1.5px solid var(--marigold);color:var(--marigold);padding:.15rem .5rem;white-space:nowrap;
+  }
+  .tokenbar .tkname{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:.78rem;opacity:.85;margin-right:auto;}
+  .tokenbar .tkclock{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:.72rem;opacity:.55;font-variant-numeric:tabular-nums;}
+  .pbar{height:.35rem;background:rgba(246,244,238,.2);width:100%;margin-top:.5rem;}
+  .pfill{height:100%;background:var(--marigold);width:0%;transition:width .32s var(--e-out2);}
+  .testhead{margin-bottom:.9rem;}
   .testhead .period{
     background:var(--ink);color:var(--paper);display:inline-block;
-    font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:.79rem;padding:.35rem .7rem;margin-top:.6rem;
+    font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:.74rem;padding:.25rem .6rem;margin-top:.5rem;
   }
-  .pbar{height:.65rem;background:var(--card);border:2px solid var(--ink);max-width:48rem;margin-top:1.1rem;}
-  .pfill{height:100%;background:var(--heal);width:0%;transition:width .25s ease;}
-  .progress{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:.8rem;color:var(--muted);margin:.5rem 0 1.1rem;}
-  .qbox{background:var(--card);border:2px solid var(--ink);padding:1.6rem;max-width:48rem;animation:qin .28s ease;}
-  @keyframes qin{from{opacity:0;transform:translateX(1rem);}to{opacity:1;transform:none;}}
-  .qtext{font-size:1.2rem;font-weight:600;margin-bottom:1.1rem;text-wrap:balance;}
+  .progress{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:.78rem;color:var(--muted);margin:.3rem 0 .8rem;}
+  .qbox{background:var(--card);border:2px solid var(--ink);padding:1.2rem 1.3rem;max-width:48rem;animation:qin .3s var(--e-out2);}
+  @keyframes qin{from{opacity:0;transform:translateX(14px);}to{opacity:1;transform:none;}}
+  .qbox.back{animation:qinback .3s var(--e-out2);}
+  @keyframes qinback{from{opacity:0;transform:translateX(-14px);}to{opacity:1;transform:none;}}
+  .qtext{font-size:1.12rem;font-weight:600;margin-bottom:.9rem;text-wrap:balance;}
   .qtext .qnum{font-family:'IBM Plex Mono',ui-monospace,monospace;color:var(--heal);font-size:.85rem;margin-right:.5rem;}
   .bigopts{display:flex;flex-direction:column;gap:.6rem;}
   .bigopts button{
     font-family:'Public Sans',sans-serif;font-weight:400;text-transform:none;letter-spacing:0;
-    font-size:1rem;background:var(--paper);color:var(--ink);
-    border:2px solid var(--line);padding:.8rem 1rem;text-align:left;
-    display:flex;align-items:center;gap:.75rem;cursor:pointer;min-height:3rem;
-    transition:border-color .12s, background .12s;
+    font-size:.98rem;background:var(--paper);color:var(--ink);
+    border:2px solid var(--line);padding:.65rem .9rem;text-align:left;
+    display:flex;align-items:center;gap:.7rem;cursor:pointer;min-height:2.9rem;
+    transition:border-color .17s var(--e-out1), background .17s var(--e-out1), transform .17s var(--e-out1);
   }
-  .bigopts button:hover{border-color:var(--ink);transform:none;box-shadow:none;}
+  .bigopts button:hover{border-color:var(--ink);transform:translateX(2px);box-shadow:none;}
+  .bigopts button.picked{animation:pick .32s var(--e-out2);}
+  @keyframes pick{0%{transform:scale(1);}40%{transform:scale(1.02);}100%{transform:scale(1);}}
+  @media (prefers-reduced-motion: reduce){ .bigopts button.picked{animation:none;} }
   .bigopts button[aria-checked="true"]{border-color:var(--heal);border-width:3px;background:#e9f1ee;font-weight:600;}
   :root[data-contrast="high"] .bigopts button[aria-checked="true"]{background:#d7e8e1;}
   .bigopts .kbd{
@@ -201,17 +290,42 @@
 
   /* ── results ── */
   .scoreboard{
-    display:grid;grid-template-columns:12rem 1fr;gap:0;border:2px solid var(--ink);
-    background:var(--card);margin-bottom:1.4rem;max-width:48rem;
+    display:grid;grid-template-columns:9.5rem 1fr;gap:0;border:2px solid var(--ink);
+    background:var(--card);margin-bottom:.9rem;max-width:48rem;
   }
   @media(max-width:600px){.scoreboard{grid-template-columns:1fr;}}
   .scorebox{
-    background:var(--ink);color:var(--paper);padding:1.4rem;text-align:center;
+    background:var(--ink);color:var(--paper);padding:1rem;text-align:center;
     display:flex;flex-direction:column;justify-content:center;
   }
-  .scorebox .num{font-family:'Anton',sans-serif;font-size:3.2rem;line-height:1;font-variant-numeric:tabular-nums;}
-  .scorebox .of{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:.8rem;opacity:.8;margin-top:.35rem;}
-  .verdict{padding:1.3rem 1.4rem;}
+  .scorebox .num{font-family:'Anton',sans-serif;font-size:2.7rem;line-height:1;font-variant-numeric:tabular-nums;}
+  .scorebox .of{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:.75rem;opacity:.8;margin-top:.25rem;}
+  .verdict{padding:1rem 1.1rem;}
+
+  /* the reveal that lands the manifesto's argument at the moment it bites */
+  .timecard{
+    max-width:48rem;margin:0 0 1.2rem;border:2px solid var(--ink);border-left:.5rem solid var(--marigold);
+    background:var(--card);padding:.85rem 1.1rem;
+  }
+  .timecard .t{
+    font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:.82rem;color:var(--ink);
+    font-weight:600;font-variant-numeric:tabular-nums;
+  }
+  .timecard .c{font-size:.86rem;color:var(--muted);margin-top:.3rem;}
+
+  /* progressive disclosure for the long guidance blocks */
+  details.acc{border:2px solid var(--ink);background:var(--card);margin-bottom:.6rem;max-width:64ch;}
+  details.acc > summary{
+    cursor:pointer;padding:.7rem 1rem;font-weight:700;font-size:.95rem;
+    list-style:none;display:flex;align-items:center;gap:.55rem;
+  }
+  details.acc > summary::-webkit-details-marker{display:none;}
+  details.acc > summary::before{content:"▸";color:var(--heal);transition:transform .2s var(--e-out1);display:inline-block;}
+  details.acc[open] > summary{border-bottom:2px solid var(--line);}
+  details.acc[open] > summary::before{transform:rotate(90deg);}
+  details.acc .accbody{padding:.8rem 1rem 1rem;animation:slidedown .25s var(--e-out2);}
+  details.acc ul{margin:0 0 0 1.2rem;}
+  details.acc li{margin-bottom:.45rem;font-size:.92rem;}
   .band{
     display:inline-block;font-family:'Anton',sans-serif;text-transform:uppercase;
     letter-spacing:.04em;font-size:1.05rem;padding:.25rem .8rem;border:2px solid;margin-bottom:.6rem;
@@ -302,6 +416,29 @@
     overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0;
   }
 
+  /* ── small screens: get the primary action above the fold ── */
+  @media(max-width:640px){
+    .view{padding:1.2rem 0 2.4rem;}
+    h1{font-size:clamp(1.5rem,7vw,1.9rem);margin-bottom:.5rem;}
+    .lede{font-size:.93rem;margin-bottom:.4rem;}
+    /* clamp the argument to 3 lines; full text one tap away */
+    #homeLede.clamped{
+      display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;
+      overflow:hidden;margin-bottom:.2rem;
+    }
+    #ledeMore{display:inline-block;}
+    .eyebrow{margin-bottom:.7rem;font-size:.72rem;}
+    .dotrule{margin:.3rem 0 .7rem;}
+    details.notice{margin-bottom:.8rem;padding:.5rem .8rem;}
+    h2{margin-bottom:.6rem;}
+    .cards{gap:.5rem;}
+    .card{padding:.75rem .85rem;}
+    .card p{display:none;}          /* description lives in the aria-label */
+    .card h3{font-size:1.05rem;}
+    .topstrip{font-size:.68rem;}
+    .scorebox .num{font-size:2.2rem;}
+  }
+
   @media print{
     .topstrip,nav,.a11ybar,footer,.actionrow,.noprint,.skip{display:none!important;}
     body{background:#fff;font-size:12px;}
@@ -331,54 +468,71 @@
     <a class="navlink" href="#resources" data-view="resources" data-i18n="navHelp">Get Help</a>
     <a class="navlink" href="evidence.html" data-i18n="navEvidence">Evidence</a>
     <a class="navlink" href="manifesto.html" data-i18n="navManifesto">Manifesto</a>
+    <div class="setwrap">
+      <button type="button" class="setbtn" id="setBtn" aria-expanded="false" aria-controls="setPanel">
+        <span aria-hidden="true">⚙</span> <span data-i18n="settings">Settings</span>
+      </button>
+      <div class="setpanel" id="setPanel" role="group" aria-labelledby="setBtn">
+        <div class="setrow">
+          <label class="lbl" for="langsel" data-i18n="langLabel">Language</label>
+          <select class="langsel" id="langsel"></select>
+        </div>
+        <div class="setrow" role="group" id="sizeGroup">
+          <span class="lbl" data-i18n="textSize">Text size</span>
+          <div class="btns">
+            <button type="button" data-size="1" aria-pressed="true">A</button>
+            <button type="button" data-size="1.15" aria-pressed="false" style="font-size:1.05rem;">A</button>
+            <button type="button" data-size="1.35" aria-pressed="false" style="font-size:1.2rem;">A</button>
+          </div>
+        </div>
+        <div class="setrow">
+          <span class="lbl" data-i18n="contrast">High contrast</span>
+          <div class="btns">
+            <button type="button" id="contrastBtn" aria-pressed="false">A<span aria-hidden="true">◐</span></button>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </nav>
-
-<div class="a11ybar noprint">
-  <div class="wrap">
-    <div class="a11ygroup">
-      <label class="lbl" for="langsel" data-i18n="langLabel">Language</label>
-      <select class="langsel" id="langsel"></select>
-    </div>
-    <div class="a11ygroup" role="group" id="sizeGroup">
-      <span class="lbl" data-i18n="textSize">Text size</span>
-      <button type="button" data-size="1" aria-pressed="true">A</button>
-      <button type="button" data-size="1.15" aria-pressed="false" style="font-size:.95rem;">A</button>
-      <button type="button" data-size="1.35" aria-pressed="false" style="font-size:1.1rem;">A</button>
-    </div>
-    <div class="a11ygroup">
-      <button type="button" id="contrastBtn" aria-pressed="false"><span data-i18n="contrast">High contrast</span></button>
-    </div>
-  </div>
-</div>
 
 <main id="main">
 
 <!-- ══════════ HOME ══════════ -->
 <section class="view active" id="view-home" tabindex="-1" aria-labelledby="homeH1">
   <div class="wrap">
-    <span class="eyebrow" data-i18n="homeEyebrow">Screen Early · Act Early</span>
-    <h1 class="display" id="homeH1"><span data-i18n="homeTitle1"></span> <span class="accent" data-i18n="homeTitle2"></span></h1>
-    <p class="lede" data-i18n="homeLede"></p>
+    <span class="eyebrow reveal" data-i18n="homeEyebrow">Screen Early · Act Early</span>
+    <h1 class="display reveal" id="homeH1"><span data-i18n="homeTitle1"></span> <span class="accent" data-i18n="homeTitle2"></span></h1>
+    <div class="dotrule reveal" id="dotrule" aria-hidden="true"></div>
+    <p class="lede reveal clamped" id="homeLede" data-i18n="homeLede"></p>
+    <button type="button" id="ledeMore" class="secondary"
+            style="display:none;font-family:'IBM Plex Mono',ui-monospace,monospace;text-transform:none;letter-spacing:0;font-size:.76rem;padding:.2rem .5rem;min-height:0;border-width:1.5px;margin-bottom:.8rem;"
+            aria-expanded="false" aria-controls="homeLede" data-i18n="readMore"></button>
 
-    <div class="notice">
-      <b data-i18n="noticeTitle"></b><br>
-      <span data-i18n="noticeBody"></span>
-      <span class="sub" data-i18n="privacy"></span>
-      <span class="sub" data-i18n="transNote"></span>
-    </div>
+    <details class="notice reveal">
+      <summary data-i18n="aboutToggle">What this is — and what it isn't</summary>
+      <div class="inner">
+        <b data-i18n="noticeTitle"></b><br>
+        <span data-i18n="noticeBody"></span>
+        <span class="sub" data-i18n="privacy"></span>
+        <span class="sub" data-i18n="transNote"></span>
+      </div>
+    </details>
 
-    <div class="mood">
-      <b data-i18n="moodTitle"></b> <span class="mono" style="font-size:.75rem;color:var(--muted);" data-i18n="moodPrivate"></span>
-      <div class="moodbtns" id="moodBtns" role="group" aria-label="Mood check-in"></div>
-      <div class="moodstrip" id="moodStrip" aria-hidden="true"></div>
-      <p class="mono" id="moodMsg" style="font-size:.78rem;color:var(--muted);margin-top:.5rem;" aria-live="polite"></p>
-    </div>
-
-    <h2 class="display" data-i18n="chooseScreener">Choose a screener</h2>
+    <h2 class="display reveal" data-i18n="chooseScreener">Choose a screener</h2>
     <div class="cards" id="cardGrid"></div>
 
-    <div class="rescreen" style="margin-top:2rem;">
+    <div class="mood reveal">
+      <div>
+        <span class="moodhead" data-i18n="moodTitle"></span>
+        <span class="mono" style="font-size:.7rem;color:var(--muted);" data-i18n="moodPrivate"></span>
+      </div>
+      <div class="moodbtns" id="moodBtns" role="group" aria-label="Mood check-in"></div>
+      <div class="moodstrip" id="moodStrip" aria-hidden="true"></div>
+      <p class="mono" id="moodMsg" style="font-size:.74rem;color:var(--muted);grid-column:1/-1;" aria-live="polite"></p>
+    </div>
+
+    <div class="rescreen reveal">
       <b data-i18n="whyRescreenTitle"></b> <span data-i18n="whyRescreen"></span>
     </div>
   </div>
@@ -386,14 +540,20 @@
 
 <!-- ══════════ TEST ══════════ -->
 <section class="view" id="view-test" tabindex="-1" aria-labelledby="testTitle">
+  <div class="tokenbar">
+    <div class="wrap">
+      <span class="tk" id="tokenNo"></span>
+      <span class="tkname" id="testTitle"></span>
+      <span class="tkclock" id="tkClock" aria-hidden="true"></span>
+    </div>
+    <div class="wrap"><div class="pbar" aria-hidden="true"><div class="pfill" id="pfill"></div></div></div>
+  </div>
   <div class="wrap">
-    <div class="testhead">
+    <div class="testhead" id="testHead">
       <span class="eyebrow" id="testTag"></span>
-      <h1 class="display" id="testTitle" style="font-size:clamp(1.6rem,4.5vw,2.8rem);"></h1>
       <p class="lede" id="testIntro" style="margin-bottom:0;"></p>
       <div class="period mono" id="testPeriod"></div>
     </div>
-    <div class="pbar" aria-hidden="true"><div class="pfill" id="pfill"></div></div>
     <p class="progress" aria-live="polite" id="progress"></p>
     <div id="qcard"></div>
     <div class="actionrow">
@@ -435,9 +595,23 @@
     </div>
 
     <div class="sevscale" id="sevScale" aria-hidden="true"></div>
-    <div class="nextsteps" id="resSteps"></div>
+
+    <div class="timecard" id="timeCard" style="display:none;">
+      <div class="t" id="timeTaken"></div>
+      <div class="c" id="timeContext"></div>
+    </div>
+
+    <details class="acc" id="accSteps" open>
+      <summary id="accStepsSum"></summary>
+      <div class="accbody"><ul id="resSteps"></ul></div>
+    </details>
+
     <div class="rescreen" id="resRescreen"></div>
-    <div class="nextsteps" id="resDoctor"></div>
+
+    <details class="acc" id="accDoctor">
+      <summary id="accDoctorSum"></summary>
+      <div class="accbody"><ul id="resDoctor"></ul></div>
+    </details>
 
     <div class="actionrow noprint">
       <button id="printBtn" data-i18n="printBtn"></button>
@@ -540,6 +714,7 @@ function setLang(code){
   document.getElementById("moodBtns").setAttribute("aria-label", T.ui.moodTitle);
 
   renderCards(); renderMood(); renderResources();
+  if(typeof syncLede === "function") setTimeout(syncLede, 30);
   if(document.getElementById("view-history").classList.contains("active")) renderHistory();
   if(current) renderQ();
   if(lastResult && document.getElementById("view-results").classList.contains("active")) renderResults(false);
@@ -576,30 +751,62 @@ function showView(name){
   document.querySelectorAll("nav a[data-view]").forEach(a=>
     a.setAttribute("aria-current", a.dataset.view === name ? "page" : "false"));
   if(name === "history") renderHistory();
+  if(name !== "test"){ stopClock(); }
   window.scrollTo(0,0);
   v.focus();
+  observeReveals();
 }
 
 /* ════════ home cards ════════ */
 function renderCards(){
   const grid = document.getElementById("cardGrid");
   grid.innerHTML = "";
-  ORDER.forEach(id=>{
+  ORDER.forEach((id,i)=>{
     const t = T.inst[id];
-    const card = document.createElement("div");
-    card.className = "card";
+    const card = document.createElement("button");
+    card.type = "button";
+    card.className = "card reveal";
+    card.dataset.delay = "1";
+    card.style.setProperty("--i", i);
+    card.setAttribute("aria-label", T.ui.start + " " + t.name + " — " + t.tag);
     card.innerHTML =
-      '<div class="tag">'+esc(t.tag)+'</div>'+
+      '<span class="tag">'+esc(t.tag)+'</span>'+
       '<h3>'+esc(t.name)+'</h3>'+
+      '<span class="meta">'+esc(t.meta)+'</span>'+
       '<p>'+esc(t.desc)+'</p>'+
-      '<div class="meta">'+esc(t.meta)+'</div>';
-    const b = document.createElement("button");
-    b.type = "button";
-    b.textContent = T.ui.start + " " + t.name;
-    b.addEventListener("click", ()=> startTest(id));
-    card.appendChild(b);
+      '<span class="go">'+esc(T.ui.start)+' →</span>';
+    card.addEventListener("click", ()=> startTest(id));
     grid.appendChild(card);
   });
+  observeReveals();
+}
+
+/* ════════ reveal-on-scroll — 14px / 350ms / power1.out, ≤8 stagger ════════ */
+let revealIO = null;
+const REVEAL_OK = "IntersectionObserver" in window &&
+  !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+if(REVEAL_OK) document.documentElement.classList.add("reveal-ready");
+
+function observeReveals(){
+  if(!REVEAL_OK) return;
+  if(!revealIO){
+    revealIO = new IntersectionObserver((entries)=>{
+      entries.forEach(en=>{
+        if(en.isIntersecting){ en.target.classList.add("in"); revealIO.unobserve(en.target); }
+      });
+    }, { rootMargin:"0px 0px -10% 0px", threshold:0.01 });
+  }
+  document.querySelectorAll(".reveal:not(.in)").forEach(el=> revealIO.observe(el));
+}
+/* dot motif: 24 dots, one gold — the manifesto's ratio, in miniature */
+function renderDotRule(){
+  const el = document.getElementById("dotrule");
+  if(!el || el.childElementCount) return;
+  for(let i=0;i<24;i++){
+    const d = document.createElement("i");
+    if(i === 11) d.className = "on";
+    el.appendChild(d);
+  }
 }
 
 /* ════════ test flow ════════ */
@@ -612,14 +819,29 @@ function optsFor(id, qi){
 
 function startTest(id){
   const t = T.inst[id];
-  current = { id, answers:new Array(t.q.length).fill(null), idx:0 };
+  current = { id, answers:new Array(t.q.length).fill(null), idx:0, t0:Date.now(), goingBack:false };
   document.getElementById("testTag").textContent = t.tag + " · " + t.name;
-  document.getElementById("testTitle").textContent = t.name;
   document.getElementById("testIntro").textContent = t.intro;
   document.getElementById("testPeriod").textContent = t.period;
+  startClock();
   renderQ();
   showView("test");
 }
+
+/* elapsed clock — quiet, monospace, no pressure; feeds the results reveal */
+let clockTimer = null;
+function mmss(ms){
+  const s = Math.max(0, Math.round(ms/1000));
+  return Math.floor(s/60) + ":" + String(s%60).padStart(2,"0");
+}
+function startClock(){
+  stopClock();
+  const el = document.getElementById("tkClock");
+  const tick = ()=>{ if(current) el.textContent = mmss(Date.now() - current.t0); };
+  tick();
+  clockTimer = setInterval(tick, 1000);
+}
+function stopClock(){ if(clockTimer){ clearInterval(clockTimer); clockTimer = null; } }
 
 function renderQ(){
   const t = T.inst[current.id], i = current.idx, n = t.q.length;
@@ -628,13 +850,19 @@ function renderQ(){
   document.getElementById("testTitle").textContent = t.name;
   document.getElementById("testIntro").textContent = t.intro;
   document.getElementById("testPeriod").textContent = t.period;
+  /* the OPD-token motif: your place in the queue, counting up as you go */
+  document.getElementById("tokenNo").textContent =
+    T.ui.tokenLabel + " " + String(i+1).padStart(2,"0") + "/" + String(n).padStart(2,"0");
   document.getElementById("pfill").style.width = (i/n*100) + "%";
   document.getElementById("progress").textContent =
     fmt(T.ui.qOf,{i:i+1,n}) + " — " + fmt(T.ui.tapOrPress,{k:opts.length});
   document.getElementById("backBtn").style.visibility = i === 0 ? "hidden" : "visible";
+  /* the intro only earns screen space on the first question */
+  document.getElementById("testHead").style.display = i === 0 ? "" : "none";
 
   const card = document.createElement("div");
-  card.className = "qbox";
+  card.className = "qbox" + (current.goingBack ? " back" : "");
+  current.goingBack = false;
   card.innerHTML = '<p class="qtext" id="qLabel"><span class="qnum">Q'+(i+1)+'</span>'+esc(t.q[i])+'</p>';
   const group = document.createElement("div");
   group.className = "bigopts";
@@ -668,8 +896,11 @@ function selectOpt(val, btn){
   if(advancing) return;
   advancing = true;
   current.answers[current.idx] = val;
-  btn.parentElement.querySelectorAll("button").forEach(b=>b.setAttribute("aria-checked","false"));
+  btn.parentElement.querySelectorAll("button").forEach(b=>{
+    b.setAttribute("aria-checked","false"); b.classList.remove("picked");
+  });
   btn.setAttribute("aria-checked","true");
+  btn.classList.add("picked");
   setTimeout(()=>{
     advancing = false;
     const n = T.inst[current.id].q.length;
@@ -695,8 +926,9 @@ function scoreTest(){
   });
   const bi = meta.bands.findIndex(([lo,hi])=> score >= lo && score <= hi);
   const sev = meta.bands[bi][2];
+  stopClock();
   lastResult = {
-    inst:id, score, sev, bandIdx:bi, safetyFlag,
+    inst:id, score, sev, bandIdx:bi, safetyFlag, elapsedMs:Date.now() - current.t0,
     date:new Date().toISOString(), rescreenDays:RESCREEN_DAYS[sev]
   };
   saveEntry({ inst:id, score, sev, bandIdx:bi, safetyFlag, date:lastResult.date });
@@ -722,12 +954,21 @@ function renderResults(animate){
   document.getElementById("resMeaning").textContent = T.ui.meanings[r.sev] + extra;
   document.getElementById("safetyBox").style.display = r.safetyFlag ? "block" : "none";
 
-  document.getElementById("resSteps").innerHTML =
-    "<h3>"+esc(T.ui.whatToDo)+"</h3><ul>" +
-    T.guidance[r.sev].map(s=>"<li>"+esc(s)+"</li>").join("") + "</ul>";
-  document.getElementById("resDoctor").innerHTML =
-    "<h3>"+esc(T.ui.doctorTitle)+"</h3><ul>" +
-    T.ui.doctorPoints.map(s=>"<li>"+s+"</li>").join("") + "</ul>";
+  document.getElementById("accStepsSum").textContent  = T.ui.whatToDo;
+  document.getElementById("accDoctorSum").textContent = T.ui.doctorTitle;
+  document.getElementById("resSteps").innerHTML  = T.guidance[r.sev].map(s=>"<li>"+esc(s)+"</li>").join("");
+  document.getElementById("resDoctor").innerHTML = T.ui.doctorPoints.map(s=>"<li>"+s+"</li>").join("");
+
+  /* the moment the manifesto's argument lands: how long you gave yourself,
+     against the <5 minutes an overloaded OPD can actually spare */
+  const tc = document.getElementById("timeCard");
+  /* only when the time is genuinely considered — praising a 6-second
+     click-through as "unhurried attention" would be false */
+  if(r.elapsedMs && r.elapsedMs > 25000){
+    document.getElementById("timeTaken").textContent   = fmt(T.ui.timeTaken,{t:mmss(r.elapsedMs)});
+    document.getElementById("timeContext").textContent = T.ui.timeContext;
+    tc.style.display = "";
+  } else tc.style.display = "none";
 
   const d = new Date(); d.setDate(d.getDate() + r.rescreenDays);
   document.getElementById("resRescreen").innerHTML =
@@ -961,9 +1202,28 @@ applyContrast(!!P.contrast);
 document.querySelectorAll("[data-view]").forEach(el=>
   el.addEventListener("click", e=>{ e.preventDefault(); showView(el.dataset.view); }));
 document.getElementById("backBtn").addEventListener("click", ()=>{
-  if(current && current.idx > 0){ current.idx--; renderQ(); document.querySelector("#qcard button").focus(); }
+  if(current && current.idx > 0){
+    current.idx--; current.goingBack = true;
+    renderQ(); document.querySelector("#qcard button").focus();
+  }
 });
-document.getElementById("cancelBtn").addEventListener("click", ()=>{ current = null; showView("home"); });
+document.getElementById("cancelBtn").addEventListener("click", ()=>{ stopClock(); current = null; showView("home"); });
+
+/* settings popover: click-outside + Escape to close, focus returned to trigger */
+const setBtn = document.getElementById("setBtn"), setPanel = document.getElementById("setPanel");
+function toggleSettings(open){
+  setPanel.classList.toggle("open", open);
+  setBtn.setAttribute("aria-expanded", String(open));
+}
+setBtn.addEventListener("click", e=>{
+  e.stopPropagation();
+  toggleSettings(setBtn.getAttribute("aria-expanded") !== "true");
+});
+setPanel.addEventListener("click", e=> e.stopPropagation());
+document.addEventListener("click", ()=> toggleSettings(false));
+document.addEventListener("keydown", e=>{
+  if(e.key === "Escape" && setPanel.classList.contains("open")){ toggleSettings(false); setBtn.focus(); }
+});
 document.getElementById("printBtn").addEventListener("click", ()=> window.print());
 document.getElementById("icsBtn").addEventListener("click", downloadReminder);
 document.getElementById("exportBtn").addEventListener("click", exportData);
@@ -977,6 +1237,23 @@ document.querySelectorAll("#sizeGroup button").forEach(b=>
   b.addEventListener("click", ()=> applySize(Number(b.dataset.size))));
 document.getElementById("contrastBtn").addEventListener("click", ()=>
   applyContrast(document.getElementById("contrastBtn").getAttribute("aria-pressed") !== "true"));
+
+/* mobile-only lede expander — only shown when the text is actually clipped */
+const ledeEl = document.getElementById("homeLede"), ledeBtn = document.getElementById("ledeMore");
+function syncLede(){
+  const clipped = ledeEl.classList.contains("clamped") && ledeEl.scrollHeight > ledeEl.clientHeight + 2;
+  ledeBtn.style.display = clipped ? "inline-block" : "none";
+}
+ledeBtn.addEventListener("click", ()=>{
+  ledeEl.classList.remove("clamped");
+  ledeBtn.setAttribute("aria-expanded","true");
+  ledeBtn.style.display = "none";
+});
+addEventListener("resize", syncLede);
+setTimeout(syncLede, 50);
+
+renderDotRule();
+observeReveals();
 
 if(location.hash){
   const v = location.hash.slice(1);
