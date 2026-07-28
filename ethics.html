@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ethics &amp; Privacy — Psych Screener</title>
+<meta name="description" content="How this mental health screening tool handles data, safety, consent, and the limits of what it claims. Written to be checkable, not reassuring.">
+<meta name="author" content="Aryan Manhas">
+<style>
+/* Self-hosted so the page makes ZERO third-party requests — the privacy
+   claim on this site is only true if nothing phones home, fonts included. */
+@font-face{
+  font-family:'Anton';font-style:normal;font-weight:400;font-display:swap;
+  src:url('anton.woff2') format('woff2');
+}
+</style>
+<style>
+  :root{
+    --ink:#151C2E; --paper:#F6F4EE; --marigold:#E6A11C;
+    --stamp:#B23A2E; --heal:#2F6E5E; --line:#D8D3C6; --muted:#54596A;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{background:var(--paper);color:var(--ink);
+    font-family:system-ui,-apple-system,'Segoe UI','Noto Sans',Roboto,Arial,sans-serif;
+    line-height:1.65;font-size:17px;}
+  @media (prefers-reduced-motion: reduce){
+    *,*::before,*::after{animation:none!important;transition:none!important;}
+    html{scroll-behavior:auto;}
+  }
+  .display{font-family:'Anton',sans-serif;letter-spacing:.01em;line-height:1.08;text-transform:uppercase;text-wrap:balance;}
+  .mono{font-family:ui-monospace,'Cascadia Mono',Menlo,Consolas,monospace;}
+  .wrap{max-width:960px;margin:0 auto;padding:0 22px;}
+
+  .topstrip{background:var(--stamp);color:#fff;font-family:ui-monospace,'Cascadia Mono',Menlo,Consolas,monospace;font-size:12.5px;padding:8px 0;letter-spacing:.03em;}
+  .topstrip .wrap{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;}
+  .topstrip a{color:#fff;font-weight:700;}
+  nav{background:var(--ink);padding:14px 0;}
+  nav .wrap{display:flex;align-items:center;gap:18px;flex-wrap:wrap;}
+  nav .brand{font-family:'Anton',sans-serif;color:var(--paper);font-size:19px;text-transform:uppercase;letter-spacing:.04em;margin-right:auto;}
+  nav .brand .accent{color:var(--marigold);}
+  nav a{color:var(--paper);text-decoration:none;font-family:ui-monospace,'Cascadia Mono',Menlo,Consolas,monospace;font-size:13px;letter-spacing:.06em;text-transform:uppercase;padding:4px 2px;border-bottom:2px solid transparent;}
+  nav a:hover,nav a:focus-visible{border-bottom-color:var(--marigold);outline:none;}
+
+  header.hero{padding:52px 0 38px;border-bottom:3px solid var(--ink);}
+  .eyebrow{display:inline-block;font-family:ui-monospace,'Cascadia Mono',Menlo,Consolas,monospace;font-size:13px;letter-spacing:.12em;text-transform:uppercase;border:1.5px solid var(--heal);color:var(--heal);padding:4px 10px;margin-bottom:18px;}
+  h1{font-size:clamp(32px,6.5vw,60px);}
+  h1 .accent{color:var(--heal);}
+  .lede{max-width:64ch;font-size:18px;margin-top:16px;}
+
+  section{padding:44px 0 4px;}
+  .sec-label{font-family:ui-monospace,'Cascadia Mono',Menlo,Consolas,monospace;font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--stamp);margin-bottom:10px;}
+  h2{font-size:clamp(24px,4vw,36px);margin-bottom:10px;}
+  .sec-sub{max-width:64ch;color:var(--muted);font-size:15.5px;margin-bottom:22px;}
+
+  .rule{background:#fff;border:2px solid var(--ink);border-left:8px solid var(--heal);padding:18px 22px;margin-bottom:14px;max-width:860px;}
+  .rule h3{font-size:18px;font-weight:700;margin-bottom:6px;}
+  .rule p{font-size:15px;margin-bottom:8px;}
+  .rule p:last-child{margin-bottom:0;}
+  .rule.warn{border-left-color:var(--marigold);}
+  .rule.hard{border-left-color:var(--stamp);}
+  .rule .check{font-family:ui-monospace,'Cascadia Mono',Menlo,Consolas,monospace;font-size:12.5px;color:var(--heal);margin-top:8px;display:block;}
+
+  table.data{border-collapse:collapse;width:100%;max-width:860px;font-size:14.5px;background:#fff;margin-bottom:14px;}
+  table.data th,table.data td{border:1px solid var(--line);padding:9px 12px;text-align:left;vertical-align:top;}
+  table.data th{font-family:ui-monospace,'Cascadia Mono',Menlo,Consolas,monospace;font-size:11.5px;text-transform:uppercase;letter-spacing:.06em;background:var(--paper);}
+  table.data td.no{color:var(--heal);font-weight:700;}
+  .scroll{overflow-x:auto;}
+
+  .pill{display:inline-block;font-family:ui-monospace,'Cascadia Mono',Menlo,Consolas,monospace;font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;border:1.5px solid var(--heal);color:var(--heal);padding:2px 8px;margin-bottom:8px;}
+  .pill.no{border-color:var(--stamp);color:var(--stamp);}
+
+  footer{padding:40px 0 56px;font-size:14px;color:var(--muted);border-top:3px solid var(--ink);margin-top:44px;}
+  footer .mono{font-size:12px;display:block;margin-top:12px;color:#8a8f9c;}
+  footer a{color:var(--heal);}
+  .visually-hidden{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;}
+</style>
+</head>
+<body>
+
+<div class="topstrip">
+  <div class="wrap">
+    <span>IN DISTRESS? FIND A HELPLINE IN YOUR COUNTRY: <a href="https://findahelpline.com" target="_blank" rel="noopener">findahelpline.com</a></span>
+    <span>FREE · 24×7 · CONFIDENTIAL</span>
+  </div>
+</div>
+<nav>
+  <div class="wrap">
+    <span class="brand">Psych <span class="accent">Screener</span></span>
+    <a href="index.html">Screeners</a>
+    <a href="index.html#guide">Talk it through</a>
+    <a href="index.html#resources">Get Help</a>
+    <a href="evidence.html">Evidence</a>
+    <a href="manifesto.html">Manifesto</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="wrap">
+    <span class="eyebrow">Ethics &amp; Privacy Charter</span>
+    <h1 class="display">Promises you can <span class="accent">check yourself.</span></h1>
+    <p class="lede">Mental health tools ask people to disclose the things they are most afraid of. That earns an unusually high standard, so this page states what the tool does, what it refuses to do, and how to verify each claim without taking our word for it. Every claim below is checkable in your browser's developer tools or in the source code.</p>
+  </div>
+</header>
+
+<section id="privacy">
+  <div class="wrap">
+    <p class="sec-label">Part I — Data</p>
+    <h2 class="display">What we collect: nothing</h2>
+    <p class="sec-sub">Not "anonymised". Not "aggregated". Nothing. There is no server to send data to — this is a static site, and every feature runs inside your browser.</p>
+
+    <div class="scroll">
+    <table class="data">
+      <caption class="visually-hidden">Data practices</caption>
+      <thead><tr><th scope="col">Practice</th><th scope="col">This site</th><th scope="col">How to verify</th></tr></thead>
+      <tbody>
+        <tr><td>Accounts or sign-in</td><td class="no">None</td><td>There is no login anywhere in the interface.</td></tr>
+        <tr><td>Analytics or tracking</td><td class="no">None</td><td>Open DevTools → Network, use the whole site. No analytics requests.</td></tr>
+        <tr><td>Cookies</td><td class="no">None</td><td>DevTools → Application → Cookies is empty.</td></tr>
+        <tr><td>Third-party requests</td><td class="no">None</td><td>Fonts are self-hosted. DevTools → Network shows requests only to this domain.</td></tr>
+        <tr><td>Your answers</td><td class="no">Never transmitted</td><td>Screening runs in JavaScript on your device. Disconnect from the internet — everything still works.</td></tr>
+        <tr><td>Where scores live</td><td>Your browser's localStorage</td><td>DevTools → Application → Local Storage. You can read, export, or delete it.</td></tr>
+      </tbody>
+    </table>
+    </div>
+
+    <div class="rule">
+      <h3>You can take your data out, and you can destroy it</h3>
+      <p>"My History" has an <strong>Export</strong> button that hands you your scores as a plain JSON file, an <strong>Import</strong> button to move them to another device, and a <strong>Delete all my data</strong> button that wipes them permanently.</p>
+      <p>Because nothing is ever uploaded, deletion is genuinely final — there is no backup, no copy, and no one who can restore it. Clearing your browser data also erases everything.</p>
+      <span class="check">Verifiable: delete, then check Application → Local Storage is empty.</span>
+    </div>
+
+    <div class="rule">
+      <h3>The shared-device problem, stated plainly</h3>
+      <p>Storing data locally protects it from us, but not from someone else holding your phone. If you share a device, use a private/incognito window — your scores will not persist after you close it — or delete your history when you finish.</p>
+      <p>We would rather tell you this than let "private" imply a safety it cannot give you in every situation.</p>
+    </div>
+
+    <div class="rule">
+      <h3>Regulatory position</h3>
+      <p>Because no personal data is collected, transmitted, or processed by any operator, this tool does not act as a data controller or processor under the <strong>EU GDPR</strong>, and does not undertake data-fiduciary obligations under <strong>India's DPDP Act 2023</strong>. Data you store stays under your sole control on your own device.</p>
+      <p>If you fork and deploy this with analytics, a backend, or any transmission of answers, that changes immediately — and you become responsible for the consent, lawful-basis and security duties that follow.</p>
+    </div>
+  </div>
+</section>
+
+<section id="safety">
+  <div class="wrap">
+    <p class="sec-label">Part II — Safety</p>
+    <h2 class="display">Where the design refuses to be clever</h2>
+    <p class="sec-sub">Some product decisions were made by deliberately giving up capability. These are the ones that matter most.</p>
+
+    <div class="rule hard">
+      <span class="pill no">Refused</span>
+      <h3>No AI chatbot, on purpose</h3>
+      <p>The "Talk it through" feature is a <strong>fixed script</strong>, not a language model. It cannot read free text and does not try to.</p>
+      <p>A generative chatbot talking unsupervised with someone in distress can miss a crisis signal, improvise clinical advice it has no standing to give, or become a substitute for the human contact that actually helps. A guided path that always ends at a validated screener, a helpline, or concrete guidance is less impressive and considerably safer.</p>
+      <p>The consequence is honest and stated in the interface itself: it will not understand you the way a person would. That is what the helplines are for, and they are one tap away from every step.</p>
+    </div>
+
+    <div class="rule hard">
+      <span class="pill no">Refused</span>
+      <h3>No engagement optimisation</h3>
+      <p>There are no streak punishments, no notifications begging you back, no badges for daily use, no infinite feed. The daily check-in shows a streak because clinicians use symptom trends, not because we want you opening the app.</p>
+      <p>The tool's stated goal is to move you toward a human clinician and out of here. A mental health product that competes for your attention is working against its own purpose.</p>
+    </div>
+
+    <div class="rule">
+      <span class="pill">Enforced</span>
+      <h3>The crisis path is never more than one tap away</h3>
+      <p>Crisis numbers sit in a fixed bar on every page, in every language. The guided conversation carries a permanent "I need help now" button on every step, so reaching help never depends on the software correctly interpreting what you typed.</p>
+      <p>Any non-zero answer to the PHQ-9 self-harm item surfaces a crisis panel <em>before</em> the score is even discussed — the number can wait, that cannot.</p>
+    </div>
+
+    <div class="rule warn">
+      <span class="pill">Enforced</span>
+      <h3>Screening is not diagnosis, and we never blur it</h3>
+      <p>A high score means "talk to a professional." It never means "you have X." Nothing in this interface names a diagnosis for you, and every result restates the limit.</p>
+      <p>Screening instruments trade precision for reach: they are built to over-identify rather than miss people. A positive screen is a reason for a conversation, not a conclusion.</p>
+    </div>
+
+    <div class="rule warn">
+      <h3>Young people</h3>
+      <p>Roughly half of all mental disorders begin before age 18, so young users are the point, not an edge case. But these instruments were validated in adults, and adolescent screening carries duties adult screening does not — around consent, confidentiality, and involving a trusted adult.</p>
+      <p>If you are under 18: this tool can still help you notice something and give you words for it, but please take the result to a parent, guardian, teacher, counsellor or doctor rather than carrying it alone. Youth-specific services are listed in the helpline directories.</p>
+    </div>
+  </div>
+</section>
+
+<section id="limits">
+  <div class="wrap">
+    <p class="sec-label">Part III — Limits</p>
+    <h2 class="display">What we know is imperfect</h2>
+    <p class="sec-sub">Stating limitations is not a disclaimer exercise. These are real, and knowing them changes how much weight to put on a result.</p>
+
+    <div class="rule warn">
+      <h3>Translations are working translations</h3>
+      <p>The English instrument items are the original published questionnaires. The Hindi, Marathi, Bengali, Tamil and Telugu versions were produced for accessibility and have <strong>not</strong> been through formal linguistic validation and back-translation.</p>
+      <p>Officially validated translations exist for several of these instruments and should be preferred for research or formal clinical use. This is stated in-app in every language rather than hidden here.</p>
+    </div>
+
+    <div class="rule warn">
+      <h3>Helpline numbers go stale</h3>
+      <p>Services merge, lose funding, and change numbers. That is why the Get Help page leads with continuously maintained directories — Find A Helpline, IASP, Befrienders — and treats the country numbers underneath as convenience, with a visible review date.</p>
+      <p>An unanswered crisis number is worse than no number, so the reliable path is always shown first.</p>
+    </div>
+
+    <div class="rule warn">
+      <h3>Screeners carry known bias</h3>
+      <p>Instrument accuracy varies by age, gender, culture and setting; somatic items in particular behave differently across cultures. Self-report also depends on insight and honesty, both of which illness affects.</p>
+      <p>The <a href="evidence.html">evidence register</a> publishes the sensitivity and specificity figures, including where they are weaker, rather than quoting only the flattering numbers.</p>
+    </div>
+
+    <div class="rule">
+      <h3>No conflicts of interest</h3>
+      <p>This project takes no funding, sells nothing, runs no advertising, has no pharmaceutical or clinic affiliation, and receives no referral fees. Nobody profits from your score. The instruments used are public-domain precisely so that access is not gated.</p>
+      <p>The code is MIT-licensed and readable in full, so these claims are auditable rather than promised.</p>
+    </div>
+  </div>
+</section>
+
+<section id="reuse">
+  <div class="wrap">
+    <p class="sec-label">Part IV — If You Reuse This</p>
+    <h2 class="display">Conditions on forking</h2>
+    <p class="sec-sub">The licence is permissive. The ethics are not optional, and the licence file says so.</p>
+    <div class="rule">
+      <h3>Keep the safety layer intact</h3>
+      <p>If you fork, translate, or deploy this anywhere, keep the crisis helplines, the not-a-diagnosis disclaimers, and the self-harm safety trigger. They are not decoration; removing them turns a screening tool into a hazard.</p>
+      <p>If you add a backend, analytics, accounts, or any transmission of answers, you must remove the privacy claims on this page — they will no longer be true — and take on the legal duties that follow.</p>
+      <p>Deploying screening tools in a clinical service should involve a qualified mental health professional in the design. Please do that.</p>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <p>This document describes the software's behaviour as of the current release and is written to be independently verifiable. If you find a claim here that the code does not support, that is a bug worth reporting — please open an issue.</p>
+    <p style="margin-top:12px;"><strong>Built by Aryan Manhas</strong> ·
+      <a href="https://github.com/aryanmanhas12/Psych">github.com/aryanmanhas12/Psych</a> ·
+      MIT licensed · 2026</p>
+    <span class="mono">ETHICS &amp; PRIVACY CHARTER · PSYCH SCREENER · <a href="index.html" style="color:inherit;">BACK TO THE SCREENER</a></span>
+  </div>
+</footer>
+
+</body>
+</html>
