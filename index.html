@@ -550,6 +550,87 @@
   /* install prompt — only appears if the browser offers it */
   #installBtn{display:none;}
 
+  /* ═══════════════════════════════════════════════════════════════
+     THE OVERTURE — a wordless opening
+     ───────────────────────────────────────────────────────────────
+     Chaplin's principle: expression crosses every language border.
+     Not one word appears in this sequence, so it reads identically
+     to a Tamil speaker, a Bengali speaker, or someone who cannot
+     read at all — which matters, because low literacy and mental
+     illness overlap most in exactly the populations this serves.
+
+     Hard safety rule: it must never stand between a person in
+     crisis and a phone number. The helpline strip stays live above
+     it, Skip is the first focusable element, and it self-dismisses.
+     ═══════════════════════════════════════════════════════════════ */
+  #overture{
+    position:fixed;inset:0;z-index:60;background:var(--paper);
+    display:grid;grid-template-rows:auto 1fr auto;
+  }
+  #overture[hidden]{display:none;}
+  #overture.closing{animation:otOut .5s var(--e-out2) forwards;}
+  @keyframes otOut{to{opacity:0;visibility:hidden;}}
+  .ot-top{padding:.55rem 0;background:var(--stamp);color:#fff;
+    font-family:ui-monospace,'Cascadia Mono',Menlo,Consolas,monospace;font-size:.72rem;}
+  .ot-top .wrap{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap;align-items:center;}
+  .ot-top a{color:#fff;font-weight:700;}
+  .ot-stage{display:grid;place-items:center;padding:1rem;min-height:0;}
+  .ot-stage svg{width:min(100%,52rem);height:auto;max-height:100%;}
+  .ot-bottom{padding:.9rem 0 1.4rem;}
+  .ot-bottom .wrap{display:flex;justify-content:space-between;align-items:center;gap:1rem;flex-wrap:wrap;}
+  #skipIntro{
+    font-family:ui-monospace,'Cascadia Mono',Menlo,Consolas,monospace;
+    text-transform:none;letter-spacing:.04em;font-size:.85rem;
+    background:transparent;color:var(--ink);border:2px solid var(--ink);padding:.5rem 1.1rem;
+  }
+  #skipIntro:hover{transform:none;box-shadow:none;background:var(--ink);color:var(--paper);}
+  .ot-progress{height:3px;background:var(--line);flex:1;min-width:6rem;max-width:14rem;}
+  .ot-progress i{display:block;height:100%;width:0;background:var(--marigold);}
+  .ot-progress i.run{width:100%;transition:width 13s linear;}
+
+  /* ── scene elements ── */
+  .ot-fig{transition:transform 1.2s var(--e-out2), opacity .8s linear;}
+  .ot-body{fill:#6B7386;transition:fill 1.4s var(--e-out2);}
+  .ot-head{fill:#6B7386;transition:fill 1.4s var(--e-out2);}
+  #otWeight{opacity:0;transform-origin:300px 96px;transition:opacity .9s linear, transform 1.1s var(--e-out2);}
+  #otWeight.on{opacity:1;}
+  #otWeight.lift{opacity:0;transform:translateY(-46px) scale(1.5);}
+  #otSlump{transition:transform 1.3s var(--e-out2);}
+  #otSlump.down{transform:translateY(13px) scaleY(.93);}
+  #otSlump.up{transform:translateY(-4px) scaleY(1.02);}
+  .ot-passer{opacity:0;}
+  .ot-passer.walk{animation:otWalk 2.4s var(--e-out1) forwards;}
+  @keyframes otWalk{
+    0%{opacity:0;transform:translateX(-260px);}
+    18%{opacity:.5;}
+    82%{opacity:.5;}
+    100%{opacity:0;transform:translateX(280px);}
+  }
+  /* The crowd fills the frame rather than the figure shrinking into a
+     speck — the point is scale, and scale reads only if it is legible. */
+  #otField{opacity:0;transition:opacity 1.2s linear;}
+  #otField.on{opacity:1;}
+  #otField circle{fill:var(--ink);opacity:.20;}
+  #otField circle.gold{fill:var(--marigold);opacity:1;}
+  #otGold{opacity:0;transition:opacity .6s linear;transform-origin:center;}
+  #otGold.on{opacity:1;animation:otPulse 1.6s ease-in-out infinite;}
+  @keyframes otPulse{0%,100%{r:9;opacity:.55;}50%{r:17;opacity:.08;}}
+  /* the figure recedes to become one of them, without vanishing */
+  #otZoom{transition:transform 1.5s var(--e-out2), opacity 1.2s linear;transform-origin:300px 168px;}
+  #otZoom.far{transform:scale(.42) translate(0,86px);opacity:.5;}
+  #otReach{opacity:0;transition:opacity .7s linear;}
+  #otReach.on{opacity:1;}
+  #otLink{stroke:var(--heal);stroke-width:3;stroke-linecap:round;
+    stroke-dasharray:120;stroke-dashoffset:120;transition:stroke-dashoffset 1s var(--e-out2);}
+  #otLink.draw{stroke-dashoffset:0;}
+  .ot-healed .ot-body,.ot-healed .ot-head{fill:var(--heal);}
+  #otGlow{opacity:0;transition:opacity 1.2s linear;}
+  #otGlow.on{opacity:.16;}
+
+  @media (prefers-reduced-motion: reduce){
+    #overture{display:none!important;}
+  }
+
   /* ── footer ── */
   footer{padding:2.5rem 0 3.5rem;font-size:.87rem;color:var(--muted);border-top:3px solid var(--ink);}
   footer p{max-width:70ch;}
@@ -601,6 +682,64 @@
 </head>
 <body>
 
+<!-- ══════════ THE OVERTURE — wordless, skippable, never blocking ══════════ -->
+<div id="overture" hidden role="dialog" aria-modal="false" aria-labelledby="otAlt">
+  <div class="ot-top">
+    <div class="wrap">
+      <span data-i18n="crisis"></span>
+      <a href="https://findahelpline.com" target="_blank" rel="noopener">findahelpline.com</a>
+    </div>
+  </div>
+
+  <div class="ot-stage">
+    <svg viewBox="0 0 600 300" aria-hidden="true">
+      <!-- warmth that arrives only at the end -->
+      <circle id="otGlow" cx="300" cy="150" r="120" fill="var(--heal)"/>
+
+      <!-- the crowd this person turns out to belong to; sits outside the
+           zoom group so it fills the frame instead of shrinking with them -->
+      <g id="otField"></g>
+      <circle id="otGold" cx="0" cy="0" r="9" fill="none" stroke="var(--marigold)" stroke-width="2.5"/>
+
+      <g id="otZoom">
+        <!-- passers-by who never stop -->
+        <g class="ot-passer" id="otP1"><circle cx="140" cy="150" r="9" fill="#6B7386"/><rect x="131" y="162" width="18" height="34" rx="9" fill="#6B7386"/></g>
+        <g class="ot-passer" id="otP2"><circle cx="200" cy="146" r="8" fill="#6B7386"/><rect x="192" y="157" width="16" height="31" rx="8" fill="#6B7386"/></g>
+        <g class="ot-passer" id="otP3"><circle cx="90"  cy="153" r="10" fill="#6B7386"/><rect x="80" y="166" width="20" height="36" rx="10" fill="#6B7386"/></g>
+
+        <!-- the one who stays -->
+        <g id="otFig" class="ot-fig">
+          <g id="otSlump">
+            <circle class="ot-head" cx="300" cy="140" r="15"/>
+            <rect  class="ot-body" x="285" y="160" width="30" height="56" rx="15"/>
+          </g>
+          <!-- the weight: pressing down, never named -->
+          <g id="otWeight">
+            <ellipse cx="300" cy="96" rx="52" ry="21" fill="var(--ink)" opacity=".55"/>
+            <ellipse cx="276" cy="88" rx="30" ry="16" fill="var(--ink)" opacity=".42"/>
+            <ellipse cx="324" cy="90" rx="26" ry="14" fill="var(--ink)" opacity=".35"/>
+          </g>
+        </g>
+
+        <!-- someone who does stop -->
+        <g id="otReach">
+          <circle class="ot-head" cx="392" cy="142" r="14" fill="var(--heal)"/>
+          <rect  class="ot-body" x="378" y="161" width="28" height="53" rx="14" fill="var(--heal)"/>
+          <line id="otLink" x1="378" y1="180" x2="318" y2="182"/>
+        </g>
+      </g>
+    </svg>
+  </div>
+
+  <div class="ot-bottom">
+    <div class="wrap">
+      <button type="button" id="skipIntro" data-i18n="skipIntro">Skip</button>
+      <span class="ot-progress" aria-hidden="true"><i id="otBar"></i></span>
+      <span id="otAlt" class="visually-hidden" data-i18n="introAlt"></span>
+    </div>
+  </div>
+</div>
+
 <a class="skip" href="#main" data-i18n="skip">Skip to main content</a>
 
 <div class="topstrip noprint">
@@ -649,6 +788,9 @@
           <div class="btns">
             <button type="button" id="contrastBtn" aria-pressed="false">A<span aria-hidden="true">◐</span></button>
           </div>
+        </div>
+        <div class="setrow">
+          <button type="button" id="replayIntro" data-i18n="replayIntro">Replay the opening</button>
         </div>
         <div class="setrow">
           <button type="button" id="installBtn" data-i18n="install">Install app</button>
@@ -1695,6 +1837,111 @@ document.getElementById("guideNowBtn").addEventListener("click", ()=>{
   guideRender("crisis");
 });
 document.getElementById("guideResetBtn").addEventListener("click", guideStart);
+
+/* ════════════════ THE OVERTURE ════════════════
+   Five beats, no words:
+     1  a person, alone, with a weight settling on them
+     2  others pass; nobody stops
+     3  pull back — they are one of 133; one point of help exists
+     4  someone reaches them; a line connects
+     5  the weight lifts, the grey warms
+   Then it gets out of the way.                                    */
+const OT_KEY = "psych-seen-overture";
+const ot = document.getElementById("overture");
+let otTimers = [];
+
+function otClear(){ otTimers.forEach(clearTimeout); otTimers = []; }
+function otAt(ms, fn){ otTimers.push(setTimeout(fn, ms)); }
+
+/* 133 dots ≈ the 133,000 people per psychiatrist in India, one of them gold.
+   Laid out to fill the frame, with the gold dot deliberately far from where
+   the figure stands — the distance is the argument. */
+function otBuildField(){
+  const g = document.getElementById("otField");
+  if(g.childElementCount) return;
+  const cols = 19, rows = 7, x0 = 42, y0 = 62, dx = 28, dy = 29;
+  const GOLD = 4 * cols + 15;                    /* lower-right, away from centre */
+  for(let i = 0; i < 133; i++){
+    const r = Math.floor(i / cols), c = i % cols;
+    const el = document.createElementNS("http://www.w3.org/2000/svg","circle");
+    const cx = x0 + c*dx, cy = y0 + r*dy;
+    el.setAttribute("cx", cx); el.setAttribute("cy", cy);
+    el.setAttribute("r", 5.5);
+    if(i === GOLD){
+      el.setAttribute("class","gold");
+      const ring = document.getElementById("otGold");
+      ring.setAttribute("cx", cx); ring.setAttribute("cy", cy);
+    }
+    g.appendChild(el);
+  }
+}
+
+function otEnd(){
+  otClear();
+  ot.classList.add("closing");
+  setTimeout(()=>{ ot.hidden = true; ot.classList.remove("closing");
+    document.getElementById("view-home").focus({preventScroll:true}); }, 500);
+  try{ localStorage.setItem(OT_KEY, "1"); }catch(e){}
+}
+
+function otPlay(){
+  otBuildField();
+  ot.hidden = false;
+  ot.classList.remove("closing");
+  const $ = id => document.getElementById(id);
+  /* reset */
+  $("otWeight").setAttribute("class","");
+  $("otGold").setAttribute("class","");
+  $("otSlump").setAttribute("class","");
+  $("otField").setAttribute("class","");
+  $("otReach").setAttribute("class","");
+  $("otGlow").setAttribute("class","");
+  $("otLink").setAttribute("class","");
+  $("otZoom").setAttribute("class","");
+  $("otFig").classList.remove("ot-healed");
+  ["otP1","otP2","otP3"].forEach(id=> $(id).setAttribute("class","ot-passer"));
+  $("otBar").classList.remove("run");
+  requestAnimationFrame(()=> $("otBar").classList.add("run"));
+
+  /* beat 1 — the weight settles */
+  otAt(500,  ()=> $("otWeight").setAttribute("class","on"));
+  otAt(1100, ()=> $("otSlump").setAttribute("class","down"));
+
+  /* beat 2 — others pass, none stop */
+  otAt(2300, ()=> $("otP1").setAttribute("class","ot-passer walk"));
+  otAt(2900, ()=> $("otP3").setAttribute("class","ot-passer walk"));
+  otAt(3500, ()=> $("otP2").setAttribute("class","ot-passer walk"));
+
+  /* beat 3 — pull back: one of 133, and help is a long way off */
+  otAt(5400, ()=>{ $("otZoom").setAttribute("class","far"); $("otField").setAttribute("class","on"); });
+  otAt(6300, ()=> $("otGold").setAttribute("class","on"));
+
+  /* beat 4 — someone reaches them */
+  otAt(7900, ()=>{ $("otZoom").setAttribute("class",""); $("otField").setAttribute("class","");
+                   $("otGold").setAttribute("class",""); });
+  otAt(9000, ()=> $("otReach").setAttribute("class","on"));
+  otAt(9500, ()=> $("otLink").setAttribute("class","draw"));
+
+  /* beat 5 — the weight lifts, the grey warms */
+  otAt(10600, ()=>{ $("otWeight").setAttribute("class","on lift"); $("otSlump").setAttribute("class","up"); });
+  otAt(11200, ()=>{ $("otFig").classList.add("ot-healed"); $("otGlow").setAttribute("class","on"); });
+
+  otAt(13000, otEnd);
+}
+
+document.getElementById("skipIntro").addEventListener("click", otEnd);
+document.getElementById("replayIntro").addEventListener("click", ()=>{
+  toggleSettings(false); otPlay();
+  setTimeout(()=> document.getElementById("skipIntro").focus(), 60);
+});
+ot.addEventListener("keydown", e=>{ if(e.key === "Escape") otEnd(); });
+
+/* Plays once per device, never for reduced-motion users, and never
+   when someone arrives via a deep link — a person heading straight
+   for #resources is looking for a phone number, not a film. */
+const otSkip = window.matchMedia("(prefers-reduced-motion: reduce)").matches ||
+               location.hash || (()=>{ try{ return localStorage.getItem(OT_KEY); }catch(e){ return true; } })();
+if(!otSkip){ otPlay(); setTimeout(()=> document.getElementById("skipIntro").focus(), 60); }
 
 renderDotRule();
 renderStats();

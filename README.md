@@ -46,6 +46,17 @@ file in a browser or host the folder anywhere static.
 
 ## Features
 
+**A wordless opening** — Chaplin's principle, that expression crosses every language
+border, applied literally: a five-beat silent animation carries the whole argument with
+**no words at all**. A person under a weight; others passing without stopping; the view
+pulling back to reveal them as one of 133 with a single distant point of gold help;
+someone reaching them; the weight lifting. It reads identically to a Tamil speaker, a
+Bengali speaker, or someone who cannot read at all — which matters, because low literacy
+and untreated mental illness overlap in exactly the populations this serves. It plays once
+per device, never for `prefers-reduced-motion` users, never on a deep link (someone
+arriving at `#resources` wants a phone number, not a film), keeps the crisis strip live
+above it, and Skip is the first focusable element.
+
 **Four validated instruments** — PHQ-4 (quick triage), PHQ-9 (depression), GAD-7
 (anxiety), AUDIT-C (alcohol use), all public-domain and scored with published cutoffs.
 
