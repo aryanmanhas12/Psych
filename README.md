@@ -37,6 +37,7 @@ earlier**, and **giving them the follow-up record the system doesn't**.
 | `ethics.html` | **Ethics & Privacy Charter** — every claim written to be independently verifiable |
 | `evidence.html` | **The Evidence Register** — peer-reviewed citations behind every design decision |
 | `manifesto.html` | **The Waiting Room is Full** — a citizen's manifesto on the treatment gap |
+| `poster.html` + `qr-site.svg` | **Printable A4 clinic poster** in six languages, with a decode-tested QR code |
 | `sw.js` + `manifest.webmanifest` | **Offline support** — installable app, works with no connection |
 | `anton.woff2`, `icon-*.png` | Self-hosted assets, so the site makes zero third-party requests |
 | `LICENSE` | MIT, plus a not-a-medical-device notice |
@@ -56,6 +57,12 @@ and untreated mental illness overlap in exactly the populations this serves. It 
 per device, never for `prefers-reduced-motion` users, never on a deep link (someone
 arriving at `#resources` wants a phone number, not a film), keeps the crisis strip live
 above it, and Skip is the first focusable element.
+
+**A printable poster for the wall** — `poster.html` renders a single A4 sheet in any of the
+six languages, with a QR code to the site. It is the bridge between "this exists" and
+"someone actually opens it": print it, pin it in a waiting room, a college corridor, a PHC.
+The QR was generated with a reference encoder and **decode-tested straight out of the
+printed PDF** at 150 dpi, and every language is verified to fit exactly one page.
 
 **Four validated instruments** — PHQ-4 (quick triage), PHQ-9 (depression), GAD-7
 (anxiety), AUDIT-C (alcohol use), all public-domain and scored with published cutoffs.
@@ -143,6 +150,7 @@ Run it locally with any static server, e.g. `python3 -m http.server`, then open
 - More instruments: perceived stress (PSS-4), postpartum (EPDS), adolescent screeners
 - Caregiver mode for ASHA / community health workers doing assisted screening
 - Field feedback from a DMHP clinic or college counselling centre
+- A custom domain, and a Play Store listing via Bubblewrap once a clinician has reviewed it
 
 ## Credits & licences
 
