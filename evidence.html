@@ -5,61 +5,13 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>The Evidence Register — Why This Screener Works</title>
 <meta name="description" content="Peer-reviewed evidence behind every instrument and design decision in the Psych screener, sourced via Consensus and PubMed.">
+<link rel="stylesheet" href="site.css">
 <style>
-/* Self-hosted so the page makes ZERO third-party requests — the privacy
-   claim on this site is only true if nothing phones home, fonts included. */
-@font-face{
-  font-family:'Anton';font-style:normal;font-weight:400;font-display:swap;
-  src:url('anton.woff2') format('woff2');
-}
-</style>
-<style>
-  :root{
-    --ink:#151C2E;
-    --paper:#F6F4EE;
-    --marigold:#E6A11C;
-    --stamp:#B23A2E;
-    --heal:#2F6E5E;
-    --line:#D8D3C6;
-    --muted:#5a5f6e;
-  }
-  *{margin:0;padding:0;box-sizing:border-box;}
-  html{scroll-behavior:smooth;}
-  body{background:var(--paper);color:var(--ink);font-family:system-ui,-apple-system,'Segoe UI','Noto Sans',Roboto,Arial,sans-serif;line-height:1.65;font-size:17px;}
-  @media (prefers-reduced-motion: reduce){
-    *,*::before,*::after{animation:none!important;transition:none!important;}
-    html{scroll-behavior:auto;}
-  }
-  .display{font-family:'Anton',sans-serif;letter-spacing:.01em;line-height:1.08;text-transform:uppercase;}
-  .mono{font-family:ui-monospace,'Cascadia Mono',Menlo,Consolas,monospace;}
-  .wrap{max-width:960px;margin:0 auto;padding:0 22px;}
-
-  .topstrip{background:var(--ink);color:var(--paper);font-family:ui-monospace,'Cascadia Mono',Menlo,Consolas,monospace;font-size:12.5px;padding:8px 0;letter-spacing:.04em;}
-  .topstrip .wrap{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;}
-  .topstrip a{color:var(--marigold);text-decoration:none;}
-
-  nav{background:var(--ink);padding:0 0 14px;}
-  nav .wrap{display:flex;align-items:center;gap:18px;flex-wrap:wrap;}
-  nav .brand{font-family:'Anton',sans-serif;color:var(--paper);font-size:19px;text-transform:uppercase;letter-spacing:.04em;margin-right:auto;}
-  nav .brand .accent{color:var(--marigold);}
-  nav a{color:var(--paper);text-decoration:none;font-family:ui-monospace,'Cascadia Mono',Menlo,Consolas,monospace;font-size:13px;letter-spacing:.06em;text-transform:uppercase;padding:4px 2px;border-bottom:2px solid transparent;}
-  nav a:hover,nav a:focus-visible{border-bottom-color:var(--marigold);outline:none;}
-
-  header.hero{padding:56px 0 42px;border-bottom:3px solid var(--ink);}
-  .eyebrow{display:inline-block;font-family:ui-monospace,'Cascadia Mono',Menlo,Consolas,monospace;font-size:13px;letter-spacing:.12em;text-transform:uppercase;border:1.5px solid var(--heal);color:var(--heal);padding:4px 10px;transform:rotate(-1.2deg);margin-bottom:20px;}
-  h1{font-size:clamp(36px,7vw,68px);}
-  h1 .accent{color:var(--heal);}
-  .lede{max-width:660px;font-size:18px;margin-top:18px;}
-  .method{
+.method{
     font-family:ui-monospace,'Cascadia Mono',Menlo,Consolas,monospace;font-size:13px;color:var(--muted);
     border:2px dashed var(--ink);padding:14px 18px;max-width:660px;margin-top:24px;background:#fff;
   }
   .method b{color:var(--ink);}
-
-  section{padding:52px 0 8px;}
-  .sec-label{font-family:ui-monospace,'Cascadia Mono',Menlo,Consolas,monospace;font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--stamp);margin-bottom:12px;}
-  h2{font-size:clamp(26px,4.5vw,42px);margin-bottom:8px;}
-  .sec-sub{max-width:660px;color:var(--muted);font-size:15.5px;margin-bottom:26px;}
 
   .claim{
     background:#fff;border:2px solid var(--ink);margin-bottom:18px;max-width:860px;
@@ -82,35 +34,27 @@
     padding:18px 22px;max-width:860px;margin:8px 0 20px;font-size:15px;
   }
   .honesty b{text-transform:uppercase;font-size:13px;letter-spacing:.06em;}
-
-  .reflist{max-width:860px;margin-top:10px;}
-  .reflist ol{margin-left:22px;}
-  .reflist li{font-size:14px;margin-bottom:10px;color:var(--muted);}
-  .reflist li a{color:var(--ink);font-weight:600;}
-  .reflist li .mono{font-size:12px;color:var(--heal);}
-
-  footer{padding:44px 0 60px;font-size:14px;color:var(--muted);border-top:3px solid var(--ink);margin-top:48px;}
-  footer .mono{font-size:12px;display:block;margin-top:12px;color:#8a8f9c;}
 </style>
 </head>
 <body>
 
-<div class="topstrip">
+<div class="topstrip noprint">
   <div class="wrap">
-    <span>EVIDENCE REGISTER · SOURCED VIA CONSENSUS &amp; PUBMED</span>
-    <span>IN DISTRESS? TELE-MANAS <a href="tel:14416">14416</a></span>
+    <span>IN DISTRESS? FIND A HELPLINE IN YOUR COUNTRY: <a href="https://findahelpline.com" target="_blank" rel="noopener">findahelpline.com</a></span>
+    <span>INDIA: TELE-MANAS <a href="tel:14416">14416</a> &middot; EMERGENCY <a href="tel:112">112</a></span>
   </div>
 </div>
-<nav>
+<nav class="site noprint" aria-label="Main">
   <div class="wrap">
-    <span class="brand">Psych <span class="accent">Screener</span></span>
-    <a href="index.html">Screeners</a>
-    <a href="index.html#history">My History</a>
-    <a href="index.html#resources">Get Help</a>
-    <a href="ethics.html">Ethics</a>
-    <a href="global.html">Global</a>
-    <a href="poster.html">Poster</a>
-    <a href="manifesto.html">Manifesto</a>
+    <a class="brand" href="index.html">Psych <span class="accent">Screener</span></a>
+    <a class="navlink" href="index.html">Screener</a>
+    <a class="navlink" href="index.html#guide">Talk it through</a>
+    <a class="navlink" href="index.html#resources">Get Help</a>
+    <a class="navlink" href="evidence.html" aria-current="page">Evidence</a>
+    <a class="navlink" href="global.html">Global</a>
+    <a class="navlink" href="ethics.html">Ethics</a>
+    <a class="navlink" href="manifesto.html">Manifesto</a>
+    <a class="navlink" href="poster.html">Poster</a>
   </div>
 </nav>
 

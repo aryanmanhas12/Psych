@@ -10,27 +10,9 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon-192.png" type="image/png">
 <link rel="apple-touch-icon" href="icon-192.png">
+<link rel="stylesheet" href="site.css">
 <style>
-/* Self-hosted so the page makes ZERO third-party requests — the privacy
-   claim on this site is only true if nothing phones home, fonts included. */
-@font-face{
-  font-family:'Anton';font-style:normal;font-weight:400;font-display:swap;
-  src:url('anton.woff2') format('woff2');
-}
-</style>
-<style>
-  :root{
-    --ink:#151C2E;
-    --paper:#F6F4EE;
-    --marigold:#E6A11C;
-    --stamp:#B23A2E;
-    --heal:#2F6E5E;
-    --line:#D8D3C6;
-    --muted:#54596A;
-    --card:#FFFFFF;
-    --scale:1;
-  }
-  /* Dark theme. People in distress use phones at 2am; a wall of light
+/* Dark theme. People in distress use phones at 2am; a wall of light
      is a real usability problem, not a preference. Tokens only —
      components never restyle themselves per theme. */
   @media (prefers-color-scheme: dark){
@@ -52,14 +34,6 @@
   :root[data-theme="dark"] .stat,
   :root[data-theme="dark"] .statband,
   :root[data-theme="dark"] .bub.u{background:#0A0D14;color:var(--ink);}
-  @media (prefers-color-scheme: dark){
-    :root:not([data-theme="light"]) .scorebox,
-    :root:not([data-theme="light"]) nav,
-    :root:not([data-theme="light"]) .tokenbar,
-    :root:not([data-theme="light"]) .stat,
-    :root:not([data-theme="light"]) .statband,
-    :root:not([data-theme="light"]) .bub.u{background:#0A0D14;color:var(--ink);}
-  }
 
   /* high-contrast mode: user-toggled, overrides tokens only */
   :root[data-contrast="high"]{
@@ -72,29 +46,15 @@
     --muted:#1A1A1A;
     --card:#FFFFFF;
   }
-  *{margin:0;padding:0;box-sizing:border-box;}
-  html{scroll-behavior:smooth;font-size:calc(17px * var(--scale));}
-  body{
-    background:var(--paper);color:var(--ink);
-    font-family:'Public Sans',-apple-system,'Segoe UI','Noto Sans',sans-serif;
-    line-height:1.65;font-size:1rem;
-  }
   :lang(hi) body,:lang(mr) body,:lang(bn) body,:lang(ta) body,:lang(te) body{line-height:1.8;}
   @media (prefers-reduced-motion: reduce){
     *,*::before,*::after{animation:none!important;transition:none!important;}
     html{scroll-behavior:auto;}
   }
-  .display{font-family:'Anton',sans-serif;letter-spacing:.01em;line-height:1.08;text-transform:uppercase;text-wrap:balance;}
   /* Indic scripts have no Anton coverage — keep them in the body face, heavy */
   :lang(hi) .display,:lang(mr) .display,:lang(bn) .display,:lang(ta) .display,:lang(te) .display{
     font-family:system-ui,-apple-system,'Segoe UI','Noto Sans',Roboto,Arial,sans-serif;font-weight:700;text-transform:none;line-height:1.25;
   }
-  .mono{font-family:ui-monospace,'Cascadia Mono',Menlo,Consolas,monospace;}
-  .wrap{max-width:min(60rem, 100%);margin:0 auto;padding:0 1.3rem;}
-  /* Links carry a theme token, never the browser default — default blue
-     on the dark surface made helpline numbers nearly unreadable. */
-  a{color:var(--heal);}
-  a:hover{text-decoration-thickness:2px;}
   .topstrip a,.safety a,.bub.crisis a,footer .byline a{color:inherit;}
   .topstrip a,.safety a,.bub.crisis a{color:#fff;}
 
@@ -104,15 +64,6 @@
     padding:.7rem 1.1rem;font-weight:700;text-decoration:none;
   }
   .skip:focus{left:.5rem;top:.5rem;}
-
-  /* ── crisis strip ── */
-  .topstrip{
-    background:var(--stamp);color:#fff;
-    font-family:ui-monospace,'Cascadia Mono',Menlo,Consolas,monospace;font-size:.76rem;
-    padding:.5rem 0;letter-spacing:.03em;
-  }
-  .topstrip .wrap{display:flex;justify-content:space-between;gap:.8rem;flex-wrap:wrap;}
-  .topstrip a{color:#fff;font-weight:700;}
 
   /* ── nav ── */
   nav{background:var(--ink);padding:.8rem 0;}
@@ -161,18 +112,6 @@
   }
   .setpanel button:hover{border-color:var(--ink);transform:none;box-shadow:none;}
   .setpanel button[aria-pressed="true"]{background:var(--heal);color:#fff;border-color:var(--heal);font-weight:700;}
-
-  /* ── motion system ────────────────────────────────────────────
-     Specs sourced from the ui-ux-pro-max motion database:
-       scroll reveal  y 12–16px · 300–400ms · power1.out
-       stagger        ≤8 children · 80ms step · power2.out
-       hover feedback <2px displacement · 150–200ms · transform/opacity only
-     Implemented natively (no animation library) to keep the payload at
-     zero bytes for low-connectivity users.                           */
-  :root{
-    --e-out1:cubic-bezier(.25,.46,.45,.94);   /* ≈ power1.out */
-    --e-out2:cubic-bezier(.215,.61,.355,1);   /* ≈ power2.out */
-  }
   /* Visible by default. Only a page that has proven JS runs AND has an
      IntersectionObserver opts into hiding, so content can never be
      stranded invisible — the failure mode the motion guidance warns about. */
@@ -197,17 +136,6 @@
   .view.active{display:block;animation:vin .25s ease;}
   @keyframes vin{from{opacity:0;}to{opacity:1;}}
   .view:focus{outline:none;}
-
-  .eyebrow{
-    display:inline-block;font-family:ui-monospace,'Cascadia Mono',Menlo,Consolas,monospace;font-size:.79rem;
-    letter-spacing:.12em;text-transform:uppercase;
-    border:1.5px solid var(--heal);color:var(--heal);
-    padding:.25rem .6rem;margin-bottom:1.1rem;
-  }
-  h1{font-size:clamp(1.75rem,4.6vw,2.9rem);margin-bottom:.7rem;}
-  h1 .accent{color:var(--heal);}
-  h2{font-size:clamp(1.3rem,3vw,1.75rem);margin-bottom:.8rem;}
-  .lede{max-width:40ch;font-size:1rem;margin-bottom:1.1rem;}
   @media(min-width:700px){.lede{max-width:64ch;}}
 
   /* collapsed-by-default disclosure — keeps the fold clear */
@@ -630,10 +558,6 @@
   @media (prefers-reduced-motion: reduce){
     #overture{display:none!important;}
   }
-
-  /* ── footer ── */
-  footer{padding:2.5rem 0 3.5rem;font-size:.87rem;color:var(--muted);border-top:3px solid var(--ink);}
-  footer p{max-width:70ch;}
   .byline{
     margin-top:1.1rem;padding-top:1rem;border-top:1px solid var(--line);
     display:flex;gap:.8rem;flex-wrap:wrap;align-items:baseline;
@@ -641,11 +565,6 @@
   }
   .byline strong{color:var(--ink);font-size:.85rem;}
   .byline a{color:var(--heal);}
-
-  .visually-hidden{
-    position:absolute;width:1px;height:1px;padding:0;margin:-1px;
-    overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0;
-  }
 
   /* ── small screens: get the primary action above the fold ── */
   @media(max-width:640px){
@@ -678,6 +597,27 @@
     .scoreboard,.safety,.notice{max-width:none;border-width:1px;}
   }
   .printonly{display:none;}
+
+  /* ── what's behind this: surfaces the rest of the site on the home page ── */
+  .behind{display:grid;grid-template-columns:repeat(auto-fit,minmax(15rem,1fr));gap:.7rem;margin-top:.8rem;}
+  .bcard{
+    background:var(--card);border:2px solid var(--ink);border-left:.4rem solid var(--heal);
+    padding:.95rem 1.1rem;text-decoration:none;color:inherit;display:block;
+    transition:transform .17s var(--e-out1), box-shadow .17s var(--e-out1), border-color .17s var(--e-out1);
+  }
+  .bcard:hover,.bcard:focus-visible{transform:translate(-2px,-2px);box-shadow:4px 4px 0 var(--heal);border-color:var(--heal);}
+  .bcard .k{
+    font-family:ui-monospace,'Cascadia Mono',Menlo,Consolas,monospace;
+    font-size:.66rem;letter-spacing:.09em;text-transform:uppercase;color:var(--heal);
+  }
+  .bcard h3{font-size:1.02rem;font-weight:700;margin:.2rem 0 .25rem;}
+  .bcard p{font-size:.83rem;color:var(--muted);}
+  .bcard .go{
+    font-family:ui-monospace,'Cascadia Mono',Menlo,Consolas,monospace;
+    font-size:.72rem;color:var(--heal);font-weight:600;margin-top:.5rem;display:inline-block;
+    transition:transform .17s var(--e-out1);
+  }
+  .bcard:hover .go{transform:translateX(3px);}
 </style>
 </head>
 <body>
@@ -749,17 +689,18 @@
   </div>
 </div>
 
-<nav class="noprint" aria-label="Main">
+<nav class="site noprint" aria-label="Main">
   <div class="wrap">
-    <span class="brand">Psych <span class="accent">Screener</span></span>
-    <a class="navlink" href="#home" data-view="home" data-i18n="navScreeners">Screeners</a>
+    <a class="brand" href="index.html">Psych <span class="accent">Screener</span></a>
+    <a class="navlink" href="#home" data-view="home" data-i18n="navScreeners">Screener</a>
     <a class="navlink" href="#guide" data-view="guide" data-i18n="navGuide">Talk it through</a>
-    <a class="navlink" href="#history" data-view="history" data-i18n="navHistory">My History</a>
     <a class="navlink" href="#resources" data-view="resources" data-i18n="navHelp">Get Help</a>
+    <a class="navlink" href="#history" data-view="history" data-i18n="navHistory">My History</a>
     <a class="navlink" href="evidence.html" data-i18n="navEvidence">Evidence</a>
     <a class="navlink" href="global.html">Global</a>
-    <a class="navlink" href="poster.html">Poster</a>
     <a class="navlink" href="ethics.html" data-i18n="navEthics">Ethics</a>
+    <a class="navlink" href="manifesto.html" data-i18n="navManifesto">Manifesto</a>
+    <a class="navlink" href="poster.html">Poster</a>
     <div class="setwrap">
       <button type="button" class="setbtn" id="setBtn" aria-expanded="false" aria-controls="setPanel">
         <span aria-hidden="true">⚙</span> <span data-i18n="settings">Settings</span>
@@ -843,6 +784,42 @@
     <div class="rescreen reveal">
       <b data-i18n="whyRescreenTitle"></b> <span data-i18n="whyRescreen"></span>
     </div>
+
+    <h2 class="display reveal" style="margin-top:1.8rem;">What's behind this</h2>
+    <p class="sec-sub reveal">Every claim this tool makes is written down and checkable. These are the working documents, not marketing pages.</p>
+    <div class="behind">
+      <a class="bcard reveal" href="evidence.html">
+        <span class="k">Peer-reviewed</span>
+        <h3>The Evidence Register</h3>
+        <p>Every instrument and design decision, with the study behind it — sensitivity, sample size, and the figures that are weaker.</p>
+        <span class="go">Read the register →</span>
+      </a>
+      <a class="bcard reveal" href="global.html">
+        <span class="k">WHO &amp; UN</span>
+        <h3>Global Frameworks</h3>
+        <p>How this maps to SDG 3.4, WHO's Action Plan, mhGAP and QualityRights — including what it cannot do.</p>
+        <span class="go">See the alignment →</span>
+      </a>
+      <a class="bcard reveal" href="ethics.html">
+        <span class="k">Verifiable</span>
+        <h3>Ethics &amp; Privacy Charter</h3>
+        <p>What is collected (nothing), how to check that yourself, and the capabilities deliberately refused.</p>
+        <span class="go">Check the claims →</span>
+      </a>
+      <a class="bcard reveal" href="manifesto.html">
+        <span class="k">The argument</span>
+        <h3>The Waiting Room is Full</h3>
+        <p>Why one psychiatrist for 133,000 people makes neglect a structural certainty, not a personal failing.</p>
+        <span class="go">Read the manifesto →</span>
+      </a>
+      <a class="bcard reveal" href="poster.html">
+        <span class="k">Printable</span>
+        <h3>Clinic Poster</h3>
+        <p>One A4 sheet in six languages with a QR code. For a waiting room, a college corridor, a PHC wall.</p>
+        <span class="go">Print a copy →</span>
+      </a>
+    </div>
+
   </div>
 </section>
 

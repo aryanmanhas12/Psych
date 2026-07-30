@@ -1,0 +1,238 @@
+/* ══════════════════════════════════════════════════════════════
+   Psych Screener — shared design system
+   ──────────────────────────────────────────────────────────────
+   One source of truth for the whole site. Before this file existed
+   each page carried its own copied base styles, which had already
+   drifted: four of six pages had no dark mode at all, and the
+   navigation appeared in a different order on every page.
+
+   Rules for editing:
+   · Change colour ONLY by editing a token here. Components read
+     tokens, never raw hex, so light and dark stay in step.
+   · Anything used by two or more pages belongs in this file.
+   · Page-specific styling stays in that page's own <style> block.
+   ══════════════════════════════════════════════════════════════ */
+
+/* Self-hosted: the site's privacy claim is only true if nothing
+   phones home, fonts included. */
+@font-face{
+  font-family:'Anton';font-style:normal;font-weight:400;font-display:swap;
+  src:url('anton.woff2') format('woff2');
+}
+
+/* ── tokens ── */
+:root{
+  --ink:#151C2E;
+  --paper:#F6F4EE;
+  --card:#FFFFFF;
+  --marigold:#E6A11C;
+  --stamp:#B23A2E;
+  --heal:#2F6E5E;
+  --line:#D8D3C6;
+  --muted:#54596A;
+  --deep:#151C2E;          /* the always-dark surface: nav, stat bands */
+  --on-deep:#F6F4EE;
+  --e-out1:cubic-bezier(.25,.46,.45,.94);
+  --e-out2:cubic-bezier(.215,.61,.355,1);
+  --scale:1;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --ink:#EDEAE2;
+    --paper:#12161F;
+    --card:#1A1F2B;
+    --line:#333B4C;
+    --muted:#9AA3B5;
+    --marigold:#F0B53C;
+    --stamp:#E4796B;
+    --heal:#5FB39C;
+    --deep:#0A0D14;
+    --on-deep:#EDEAE2;
+  }
+}
+:root[data-theme="dark"]{
+  --ink:#EDEAE2; --paper:#12161F; --card:#1A1F2B; --line:#333B4C;
+  --muted:#9AA3B5; --marigold:#F0B53C; --stamp:#E4796B; --heal:#5FB39C;
+  --deep:#0A0D14; --on-deep:#EDEAE2;
+}
+:root[data-contrast="high"]{
+  --ink:#000; --paper:#FFF; --card:#FFF; --line:#000; --muted:#1A1A1A;
+  --marigold:#8A5D00; --stamp:#8E1B10; --heal:#0F4A3C; --deep:#000; --on-deep:#FFF;
+}
+
+/* ── reset & base ── */
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;font-size:calc(17px * var(--scale));}
+body{
+  background:var(--paper);color:var(--ink);
+  font-family:system-ui,-apple-system,'Segoe UI','Noto Sans',Roboto,Arial,sans-serif;
+  line-height:1.65;font-size:1rem;
+}
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important;}
+  html{scroll-behavior:auto;}
+}
+a{color:var(--heal);}
+a:hover{text-decoration-thickness:2px;}
+:where(a,button,select,input,[tabindex]):focus-visible{
+  outline:3px solid var(--stamp);outline-offset:3px;
+}
+img,svg{max-width:100%;}
+
+.display{
+  font-family:'Anton',sans-serif;letter-spacing:.01em;line-height:1.08;
+  text-transform:uppercase;text-wrap:balance;
+}
+/* Indic scripts have no Anton coverage — keep them in the body face, heavy */
+:lang(hi) .display,:lang(mr) .display,:lang(bn) .display,:lang(ta) .display,:lang(te) .display{
+  font-family:system-ui,'Noto Sans',sans-serif;font-weight:700;
+  text-transform:none;line-height:1.25;
+}
+.mono{font-family:ui-monospace,'Cascadia Mono',Menlo,Consolas,monospace;}
+.wrap{max-width:min(60rem,100%);margin:0 auto;padding:0 1.3rem;}
+.wrap-wide{max-width:min(66rem,100%);margin:0 auto;padding:0 1.3rem;}
+.visually-hidden{
+  position:absolute;width:1px;height:1px;padding:0;margin:-1px;
+  overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0;
+}
+
+/* ── crisis strip: identical on every page, by design ── */
+.topstrip{
+  background:var(--stamp);color:#fff;
+  font-family:ui-monospace,'Cascadia Mono',Menlo,Consolas,monospace;
+  font-size:.76rem;padding:.5rem 0;letter-spacing:.03em;
+}
+.topstrip .wrap,.topstrip .wrap-wide{display:flex;justify-content:space-between;gap:.8rem;flex-wrap:wrap;}
+.topstrip a{color:#fff;font-weight:700;}
+
+/* ── navigation: one order, everywhere ── */
+nav.site{background:var(--deep);padding:.8rem 0;}
+nav.site .wrap,nav.site .wrap-wide{display:flex;align-items:center;gap:1.1rem;flex-wrap:wrap;}
+nav.site .brand{
+  font-family:'Anton',sans-serif;color:var(--on-deep);font-size:1.15rem;
+  text-transform:uppercase;letter-spacing:.04em;margin-right:auto;text-decoration:none;
+}
+nav.site .brand .accent{color:var(--marigold);}
+nav.site a.navlink{
+  color:var(--on-deep);text-decoration:none;
+  font-family:ui-monospace,'Cascadia Mono',Menlo,Consolas,monospace;
+  font-size:.79rem;letter-spacing:.06em;text-transform:uppercase;
+  padding:.5rem .15rem;border-bottom:2px solid transparent;cursor:pointer;display:inline-block;
+}
+nav.site a.navlink:hover,nav.site a.navlink:focus-visible{border-bottom-color:var(--marigold);}
+nav.site a.navlink[aria-current="page"]{border-bottom-color:var(--marigold);font-weight:500;}
+
+/* ── page furniture ── */
+header.hero{padding:3.2rem 0 2.4rem;border-bottom:3px solid var(--ink);}
+.eyebrow{
+  display:inline-block;font-family:ui-monospace,'Cascadia Mono',Menlo,Consolas,monospace;
+  font-size:.79rem;letter-spacing:.13em;text-transform:uppercase;
+  border:1.5px solid var(--heal);color:var(--heal);padding:.25rem .6rem;margin-bottom:1.1rem;
+}
+h1{font-size:clamp(1.9rem,5.5vw,3.4rem);}
+h1 .accent{color:var(--heal);}
+h2{font-size:clamp(1.4rem,3.6vw,2.2rem);margin-bottom:.6rem;}
+.lede{max-width:66ch;font-size:1.06rem;margin-top:1rem;}
+
+section{padding:2.8rem 0 .3rem;}
+.sec-label{
+  font-family:ui-monospace,'Cascadia Mono',Menlo,Consolas,monospace;
+  font-size:.79rem;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--stamp);margin-bottom:.6rem;
+}
+.sec-sub{max-width:66ch;color:var(--muted);font-size:.95rem;margin-bottom:1.4rem;}
+
+/* ── the panel: the site's single repeating content block ── */
+.panel{
+  background:var(--card);border:2px solid var(--ink);border-left:.5rem solid var(--heal);
+  padding:1.15rem 1.4rem;margin-bottom:.9rem;
+}
+.panel h3{font-size:1.1rem;font-weight:700;margin-bottom:.4rem;}
+.panel p{font-size:.94rem;margin-bottom:.5rem;}
+.panel p:last-child{margin-bottom:0;}
+.panel.warn{border-left-color:var(--marigold);}
+.panel.hard{border-left-color:var(--stamp);}
+.panel .tag{
+  font-family:ui-monospace,'Cascadia Mono',Menlo,Consolas,monospace;
+  font-size:.7rem;letter-spacing:.09em;text-transform:uppercase;
+  color:var(--heal);margin-bottom:.35rem;
+}
+
+/* ── figure band: dark, for headline numbers ── */
+.figs{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(12rem,1fr));
+  gap:2px;background:var(--ink);border:2px solid var(--ink);margin-bottom:1.3rem;
+}
+.fig{background:var(--deep);color:var(--on-deep);padding:1.1rem 1rem;}
+.fig .n{
+  font-family:'Anton',sans-serif;font-size:2.1rem;line-height:1;
+  color:var(--marigold);display:block;font-variant-numeric:tabular-nums;
+}
+:lang(hi) .fig .n,:lang(mr) .fig .n,:lang(bn) .fig .n,:lang(ta) .fig .n,:lang(te) .fig .n{
+  font-family:system-ui,'Noto Sans',sans-serif;font-weight:700;
+}
+.fig .l{font-size:.83rem;line-height:1.45;margin-top:.45rem;opacity:.93;}
+.fig .s{
+  font-family:ui-monospace,'Cascadia Mono',Menlo,Consolas,monospace;
+  font-size:.64rem;opacity:.6;margin-top:.45rem;display:block;
+}
+
+/* ── tables ── */
+.scroll{overflow-x:auto;}
+table.data{border-collapse:collapse;width:100%;font-size:.88rem;background:var(--card);margin-bottom:.9rem;}
+table.data th,table.data td{border:1px solid var(--line);padding:.6rem .75rem;text-align:left;vertical-align:top;}
+table.data th{
+  font-family:ui-monospace,'Cascadia Mono',Menlo,Consolas,monospace;
+  font-size:.7rem;text-transform:uppercase;letter-spacing:.06em;background:var(--paper);
+}
+table.data td.ok{color:var(--heal);font-weight:700;}
+
+/* ── buttons ── */
+button,.btn{
+  font-family:'Anton',sans-serif;text-transform:uppercase;letter-spacing:.05em;
+  font-size:.95rem;background:var(--ink);color:var(--paper);border:none;
+  padding:.75rem 1.3rem;cursor:pointer;transition:transform .12s var(--e-out1);
+  text-decoration:none;display:inline-block;min-height:2.75rem;
+}
+:lang(hi) button,:lang(mr) button,:lang(bn) button,:lang(ta) button,:lang(te) button{
+  font-family:system-ui,'Noto Sans',sans-serif;font-weight:700;
+  text-transform:none;letter-spacing:0;
+}
+button:hover,.btn:hover{transform:translate(-2px,-2px);box-shadow:4px 4px 0 var(--heal);}
+button.secondary{background:transparent;color:var(--ink);border:2px solid var(--ink);}
+button.danger{background:var(--stamp);color:#fff;}
+button:disabled{opacity:.45;cursor:not-allowed;transform:none;box-shadow:none;}
+
+/* ── reference lists ── */
+.reflist ol{margin-left:1.4rem;}
+.reflist li{font-size:.87rem;margin-bottom:.6rem;color:var(--muted);}
+.reflist li a{color:var(--ink);font-weight:600;}
+.reflist li .mono{font-size:.72rem;color:var(--heal);}
+
+/* ── footer ── */
+footer{
+  padding:2.5rem 0 3.5rem;font-size:.87rem;color:var(--muted);
+  border-top:3px solid var(--ink);margin-top:2.6rem;
+}
+footer p{max-width:72ch;}
+footer .byline{
+  margin-top:1.1rem;padding-top:1rem;border-top:1px solid var(--line);
+  display:flex;gap:.8rem;flex-wrap:wrap;align-items:baseline;
+  font-family:ui-monospace,'Cascadia Mono',Menlo,Consolas,monospace;font-size:.78rem;
+}
+footer .byline strong{color:var(--ink);font-size:.85rem;}
+
+/* ── small screens ── */
+@media(max-width:640px){
+  header.hero{padding:2rem 0 1.6rem;}
+  section{padding:2rem 0 .3rem;}
+  h1{font-size:clamp(1.55rem,7vw,2rem);}
+  .lede{font-size:.95rem;}
+  .topstrip{font-size:.68rem;}
+  .panel{padding:.95rem 1.1rem;}
+}
+
+@media print{
+  .topstrip,nav.site,.noprint{display:none!important;}
+  body{background:#fff;color:#000;}
+}

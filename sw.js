@@ -6,8 +6,8 @@ const CACHE = "psych-screener-v1";
 const ASSETS = [
   "./", "./index.html", "./i18n.js", "./helplines.js",
   "./ethics.html", "./evidence.html", "./manifesto.html",
-  "./poster.html", "./qr-site.svg", "./global.html",
-  "./anton.woff2", "./manifest.webmanifest",
+  "./poster.html", "./qr-site.svg",
+  "./anton.woff2", "./site.css", "./manifest.webmanifest",
   "./icon-192.png", "./icon-512.png", "./icon-maskable.png"
 ];
 
