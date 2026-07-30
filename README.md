@@ -34,6 +34,7 @@ earlier**, and **giving them the follow-up record the system doesn't**.
 | `index.html` | **The screener app** — instruments, guided conversation, guidance, history, reminders |
 | `i18n.js` | **Translation layer** — every UI string and instrument item in 6 languages |
 | `helplines.js` | **Crisis lines worldwide** — directory-first, region tables, review-dated |
+| `global.html` | **Global Frameworks** — alignment with WHO and UN commitments, stated honestly |
 | `ethics.html` | **Ethics & Privacy Charter** — every claim written to be independently verifiable |
 | `evidence.html` | **The Evidence Register** — peer-reviewed citations behind every design decision |
 | `manifesto.html` | **The Waiting Room is Full** — a citizen's manifesto on the treatment gap |
@@ -46,6 +47,15 @@ Plain HTML/CSS/JS. **No build step, no framework, no backend, no tracking.** Ope
 file in a browser or host the folder anywhere static.
 
 ## Features
+
+**Built against global commitments** — [`global.html`](global.html) sets out the WHO and UN
+frameworks this was designed against: SDG target 3.4 and indicator 3.4.2, WHO's
+Comprehensive Mental Health Action Plan 2013–2030, mhGAP task-sharing, and QualityRights —
+then maps each to what the tool actually does, **including the two commitments it cannot
+touch and the one it deliberately forgoes**. India's Mental Healthcare Act 2017, the DMHP
+and Tele-MANAS are presented as the national implementation those global commitments run
+through. The page carries an explicit non-affiliation notice: WHO and UN publications are
+cited as public evidence, with no emblem used and no endorsement implied.
 
 **A wordless opening** — Chaplin's principle, that expression crosses every language
 border, applied literally: a five-beat silent animation carries the whole argument with

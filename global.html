@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Global Frameworks — How This Aligns with WHO and UN Commitments</title>
+<meta name="description" content="How the Psych Screener maps to WHO's Comprehensive Mental Health Action Plan 2013–2030, SDG target 3.4, mhGAP task-sharing and QualityRights — implemented through India's national mental health architecture.">
+<meta name="author" content="Aryan Manhas">
+<style>
+@font-face{font-family:'Anton';font-style:normal;font-weight:400;font-display:swap;src:url('anton.woff2') format('woff2');}
+:root{
+  --ink:#151C2E; --paper:#F6F4EE; --marigold:#E6A11C;
+  --stamp:#B23A2E; --heal:#2F6E5E; --line:#D8D3C6; --muted:#54596A; --card:#FFFFFF;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --ink:#EDEAE2; --paper:#12161F; --card:#1A1F2B; --line:#333B4C;
+    --muted:#9AA3B5; --marigold:#F0B53C; --stamp:#E4796B; --heal:#5FB39C;
+  }
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{background:var(--paper);color:var(--ink);
+  font-family:system-ui,-apple-system,'Segoe UI','Noto Sans',Roboto,Arial,sans-serif;
+  line-height:1.65;font-size:17px;}
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important;}
+  html{scroll-behavior:auto;}
+}
+a{color:var(--heal);}
+.display{font-family:'Anton',sans-serif;letter-spacing:.01em;line-height:1.08;text-transform:uppercase;text-wrap:balance;}
+.mono{font-family:ui-monospace,'Cascadia Mono',Menlo,Consolas,monospace;}
+.wrap{max-width:1000px;margin:0 auto;padding:0 22px;}
+
+.topstrip{background:var(--stamp);color:#fff;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12.5px;padding:8px 0;letter-spacing:.03em;}
+.topstrip .wrap{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;}
+.topstrip a{color:#fff;font-weight:700;}
+nav{background:var(--ink);padding:14px 0;}
+:root:not([data-theme="light"]) nav{background:#0A0D14;}
+nav .wrap{display:flex;align-items:center;gap:18px;flex-wrap:wrap;}
+nav .brand{font-family:'Anton',sans-serif;color:#F6F4EE;font-size:19px;text-transform:uppercase;letter-spacing:.04em;margin-right:auto;}
+nav .brand .accent{color:var(--marigold);}
+nav a{color:#F6F4EE;text-decoration:none;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:13px;letter-spacing:.06em;text-transform:uppercase;padding:4px 2px;border-bottom:2px solid transparent;}
+nav a:hover,nav a:focus-visible{border-bottom-color:var(--marigold);outline:none;}
+
+header.hero{padding:54px 0 40px;border-bottom:3px solid var(--ink);}
+.eyebrow{display:inline-block;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:13px;
+  letter-spacing:.14em;text-transform:uppercase;border:1.5px solid var(--heal);color:var(--heal);
+  padding:4px 10px;margin-bottom:18px;}
+h1{font-size:clamp(32px,6vw,58px);}
+h1 .accent{color:var(--heal);}
+.lede{max-width:66ch;font-size:18px;margin-top:16px;}
+
+/* the notice that has to be unmissable */
+.disclaim{
+  border:2px solid var(--stamp);border-left:8px solid var(--stamp);background:var(--card);
+  padding:16px 20px;margin-top:26px;max-width:66ch;font-size:14.5px;
+}
+.disclaim b{display:block;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12px;
+  letter-spacing:.1em;text-transform:uppercase;color:var(--stamp);margin-bottom:6px;}
+
+section{padding:46px 0 4px;}
+.sec-label{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:13px;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--stamp);margin-bottom:10px;}
+h2{font-size:clamp(24px,4vw,38px);margin-bottom:10px;}
+.sec-sub{max-width:66ch;color:var(--muted);font-size:15.5px;margin-bottom:24px;}
+
+/* global figures */
+.figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(13rem,1fr));gap:2px;background:var(--ink);border:2px solid var(--ink);margin-bottom:22px;}
+.fig{background:var(--ink);color:#F6F4EE;padding:18px 16px;}
+:root:not([data-theme="light"]) .fig,:root:not([data-theme="light"]) .figs{background:#0A0D14;}
+.fig .n{font-family:'Anton',sans-serif;font-size:34px;line-height:1;color:var(--marigold);display:block;}
+.fig .l{font-size:13.5px;line-height:1.45;margin-top:8px;opacity:.93;}
+.fig .s{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:10.5px;opacity:.6;margin-top:8px;display:block;}
+
+/* framework cards */
+.fw{background:var(--card);border:2px solid var(--ink);border-left:8px solid var(--heal);
+  padding:20px 24px;margin-bottom:14px;}
+.fw .tag{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:11.5px;letter-spacing:.09em;
+  text-transform:uppercase;color:var(--heal);margin-bottom:6px;}
+.fw h3{font-size:19px;font-weight:700;margin-bottom:8px;}
+.fw p{font-size:15px;margin-bottom:10px;}
+.fw p:last-child{margin-bottom:0;}
+.fw .q{border-left:3px solid var(--line);padding-left:14px;font-style:italic;color:var(--muted);font-size:14.5px;}
+
+/* the mapping table — the page's centrepiece */
+.scroll{overflow-x:auto;}
+table.map{border-collapse:collapse;width:100%;font-size:14.5px;background:var(--card);margin-bottom:14px;}
+table.map th,table.map td{border:1px solid var(--line);padding:11px 13px;text-align:left;vertical-align:top;}
+table.map th{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:11.5px;text-transform:uppercase;
+  letter-spacing:.07em;background:var(--paper);}
+table.map td:first-child{font-weight:600;width:32%;}
+table.map td .src{display:block;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:11px;color:var(--muted);margin-top:4px;}
+table.map .ok{color:var(--heal);font-weight:700;}
+
+.reflist{max-width:900px;}
+.reflist ol{margin-left:22px;}
+.reflist li{font-size:14px;margin-bottom:10px;color:var(--muted);}
+.reflist li a{color:var(--ink);font-weight:600;}
+.reflist li .mono{font-size:11.5px;color:var(--heal);}
+
+footer{padding:40px 0 56px;font-size:14px;color:var(--muted);border-top:3px solid var(--ink);margin-top:44px;}
+footer .mono{font-size:12px;display:block;margin-top:12px;color:var(--muted);}
+.visually-hidden{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;}
+</style>
+</head>
+<body>
+
+<div class="topstrip">
+  <div class="wrap">
+    <span>IN DISTRESS? FIND A HELPLINE IN YOUR COUNTRY: <a href="https://findahelpline.com" target="_blank" rel="noopener">findahelpline.com</a></span>
+    <span>FREE · 24×7 · CONFIDENTIAL</span>
+  </div>
+</div>
+<nav>
+  <div class="wrap">
+    <span class="brand">Psych <span class="accent">Screener</span></span>
+    <a href="index.html">Screener</a>
+    <a href="index.html#resources">Get Help</a>
+    <a href="evidence.html">Evidence</a>
+    <a href="ethics.html">Ethics</a>
+    <a href="poster.html">Poster</a>
+    <a href="manifesto.html">Manifesto</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="wrap">
+    <span class="eyebrow">Global Frameworks</span>
+    <h1 class="display">A local tool, built against <span class="accent">global commitments.</span></h1>
+    <p class="lede">Every government at the World Health Assembly has already agreed what good mental health care looks like. The gap is not consensus — it is delivery. This page sets out the international commitments this project was designed against, the evidence behind each, and precisely which of them a free screening tool can and cannot advance.</p>
+
+    <div class="disclaim">
+      <b>Independent · Not affiliated</b>
+      This is an independent open-source project. It is <strong>not affiliated with, endorsed by, or produced in cooperation with</strong> the World Health Organization, the United Nations, or the Government of India. Their publications are cited here as public evidence and policy context, under normal academic citation. No WHO or UN emblem, logo or name is used to imply approval, and none should be inferred.
+    </div>
+  </div>
+</header>
+
+<section id="picture">
+  <div class="wrap">
+    <p class="sec-label">Part I — The Global Picture</p>
+    <h2 class="display">What the world's own data says</h2>
+    <p class="sec-sub">These are WHO's published figures, not this project's estimates. They describe a system-level failure of delivery that is remarkably consistent across income levels — and worst where resources are scarcest.</p>
+
+    <div class="figs">
+      <div class="fig"><span class="n">1 billion+</span><span class="l">people worldwide are living with a mental health condition</span><span class="s">WHO, September 2025</span></div>
+      <div class="fig"><span class="n">2%</span><span class="l">median share of government health budgets spent on mental health — unchanged since 2017</span><span class="s">WHO Mental Health Atlas 2024</span></div>
+      <div class="fig"><span class="n">13</span><span class="l">mental health workers per 100,000 people — the global median</span><span class="s">WHO Mental Health Atlas 2024</span></div>
+      <div class="fig"><span class="n">727,000</span><span class="l">lives lost to suicide in 2021; the third leading cause of death among 15–29-year-olds</span><span class="s">WHO, 2025</span></div>
+    </div>
+
+    <p class="sec-sub" style="margin-bottom:0;">The trajectory matters as much as the totals. On present trends the world is projected to achieve roughly a <strong>12% reduction</strong> in suicide mortality by 2030, against a UN target of <strong>one third</strong>. That is not a marginal shortfall; it is a miss by a factor of nearly three, and it is the clearest single argument for interventions that work upstream of specialist services.</p>
+  </div>
+</section>
+
+<section id="frameworks">
+  <div class="wrap">
+    <p class="sec-label">Part II — The Commitments</p>
+    <h2 class="display">Four frameworks this was built against</h2>
+    <p class="sec-sub">These are not aspirations invented for this project. They are instruments adopted by member states, including India, and they define what "good" means in this field.</p>
+
+    <div class="fw">
+      <p class="tag">United Nations · Agenda 2030</p>
+      <h3>Sustainable Development Goal target 3.4</h3>
+      <p>SDG 3.4 commits every member state, by 2030, to <em>"reduce by one third premature mortality from non-communicable diseases through prevention and treatment, and promote mental health and well-being."</em> Indicator <strong>3.4.2</strong> tracks it by suicide mortality rate.</p>
+      <p>Mental health is therefore not a soft add-on to the development agenda. It is a numbered, measured target with a deadline four years away.</p>
+    </div>
+
+    <div class="fw">
+      <p class="tag">World Health Organization · Adopted by the World Health Assembly</p>
+      <h3>Comprehensive Mental Health Action Plan 2013–2030</h3>
+      <p>The plan sets four objectives for member states: stronger <strong>leadership and governance</strong>; <strong>comprehensive, integrated services in community-based settings</strong>; <strong>promotion and prevention</strong> strategies; and strengthened <strong>information systems, evidence and research</strong>. Each carries measurable global targets.</p>
+      <p>The second and third objectives are where a public screening tool has real standing: community-based access, and prevention through earlier identification.</p>
+    </div>
+
+    <div class="fw">
+      <p class="tag">World Health Organization · Implementation Programme</p>
+      <h3>mhGAP — the Mental Health Gap Action Programme</h3>
+      <p>mhGAP exists to scale up care for priority mental, neurological and substance use conditions by equipping <strong>non-specialists</strong> in primary and community settings to deliver evidence-based interventions — the approach usually called task-sharing.</p>
+      <p class="q">The programme's central premise is that the treatment gap cannot be closed by producing specialists alone. This project is built on the same premise, one step earlier in the pathway: identification before referral.</p>
+    </div>
+
+    <div class="fw">
+      <p class="tag">World Health Organization · Rights and Quality</p>
+      <h3>QualityRights</h3>
+      <p>QualityRights works to improve service quality and to advance the rights of people with psychosocial, intellectual and cognitive disabilities, supporting systems built on <strong>recovery, rights and inclusion</strong>, and on reducing coercion, stigma and discrimination.</p>
+      <p>This is the framework that governs <em>how</em> a tool should behave, not just what it measures — and it is the reason this project publishes an <a href="ethics.html">ethics charter</a> stating what it refuses to do.</p>
+    </div>
+  </div>
+</section>
+
+<section id="mapping">
+  <div class="wrap">
+    <p class="sec-label">Part III — Alignment, Stated Honestly</p>
+    <h2 class="display">What this tool does — and what it cannot</h2>
+    <p class="sec-sub">Claiming to advance a WHO objective is easy. The table below states the specific mechanism in each case, and marks plainly where a screening tool contributes nothing. Overclaiming here would undermine the project's only real asset, which is that its claims can be checked.</p>
+
+    <div class="scroll">
+      <table class="map">
+        <caption class="visually-hidden">Mapping of global framework commitments to this project's features</caption>
+        <thead>
+          <tr><th scope="col">Commitment</th><th scope="col">What this project actually does</th><th scope="col">Contribution</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Community-based access to care<span class="src">WHO Action Plan, Objective 2</span></td>
+            <td>Validated screening delivered free on any phone, offline-capable, in six languages, with no account, cost or clinic visit required to begin.</td>
+            <td class="ok">Direct</td>
+          </tr>
+          <tr>
+            <td>Prevention and early identification<span class="src">WHO Action Plan, Objective 3</span></td>
+            <td>Targets the pre-clinical window. Peak age of onset is 14.5 years and 48% of conditions begin before 18, yet first contact with services typically lags onset by years.</td>
+            <td class="ok">Direct</td>
+          </tr>
+          <tr>
+            <td>Task-sharing with non-specialists<span class="src">WHO mhGAP</span></td>
+            <td>Uses the same instruments (PHQ-9, GAD-7, AUDIT-C) that mhGAP-aligned primary care and lay-counsellor programmes use, so a result is legible to a non-specialist and to the clinician they refer on to.</td>
+            <td class="ok">Direct</td>
+          </tr>
+          <tr>
+            <td>Rights, dignity, non-coercion<span class="src">WHO QualityRights</span></td>
+            <td>No account, no data collection, no engagement mechanics, no diagnosis asserted. The user can export or destroy their record at any time. Refusals are documented publicly.</td>
+            <td class="ok">Direct</td>
+          </tr>
+          <tr>
+            <td>Reduce suicide mortality by one third<span class="src">SDG 3.4 / indicator 3.4.2</span></td>
+            <td>Surfaces crisis helplines on every page in every language, and triggers a crisis panel on any positive response to the PHQ-9 self-harm item, before the score is shown.</td>
+            <td>Contributory only</td>
+          </tr>
+          <tr>
+            <td>Information systems and research<span class="src">WHO Action Plan, Objective 4</span></td>
+            <td>Nothing. The privacy architecture means no data is collected, so this project generates no population-level evidence by design. That is a deliberate trade, and it is a real cost.</td>
+            <td>None — by design</td>
+          </tr>
+          <tr>
+            <td>Leadership, governance, financing<span class="src">WHO Action Plan, Objective 1</span></td>
+            <td>Nothing a website can do. Budgets, workforce and legislation are state functions. The <a href="manifesto.html">manifesto</a> argues for them; the tool cannot deliver them.</td>
+            <td>None</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="sec-sub" style="margin-bottom:0;">Two of seven commitments this project cannot touch, and one it deliberately forgoes. A tool that claimed all seven would be worth less, not more.</p>
+  </div>
+</section>
+
+<section id="india">
+  <div class="wrap">
+    <p class="sec-label">Part IV — India, Where This Is Grounded</p>
+    <h2 class="display">Global commitments have a national address</h2>
+    <p class="sec-sub">International frameworks only matter where they are implemented. India has an unusually complete legal and programmatic architecture for mental health — the shortfall is in reach, not in intent. This project is built to feed that architecture rather than duplicate it.</p>
+
+    <div class="fw">
+      <p class="tag">Statute</p>
+      <h3>The Mental Healthcare Act, 2017</h3>
+      <p>The Act establishes a <strong>legal right</strong> to access affordable, good-quality mental healthcare from services run or funded by the government, and aligns Indian law with the UN Convention on the Rights of Persons with Disabilities.</p>
+      <p>This matters for the tool's copy: every result that tells someone to seek care is pointing them toward something they are legally entitled to, not asking them to request a favour. The wording throughout reflects that.</p>
+    </div>
+
+    <div class="fw">
+      <p class="tag">Delivery</p>
+      <h3>The District Mental Health Programme</h3>
+      <p>The DMHP extends the National Mental Health Programme into districts, placing psychiatric care, free or near-free medication and counselling at the district hospital and below — the practical embodiment of WHO's community-based-services objective.</p>
+      <p>Every moderate and severe result in this tool routes explicitly to a DMHP clinic or PHC, because that is where a person can actually be seen. Naming the real service is worth more than generic advice to "seek help".</p>
+    </div>
+
+    <div class="fw">
+      <p class="tag">Access</p>
+      <h3>Tele-MANAS</h3>
+      <p>India's national tele-mental-health service offers free, 24×7, confidential support in 20+ languages, with escalation to specialists and linkage to district services — a direct instrument of the digital-access strand of global mental health policy.</p>
+      <p>Tele-MANAS appears on every page of this project and at every step of the guided conversation, because for most users it is a better first action than anything the software itself can offer.</p>
+    </div>
+
+    <div class="fw">
+      <p class="tag">Why the emphasis stays here</p>
+      <h3>Specific beats generic</h3>
+      <p>A screening tool that names PHQ-9 cutoffs but tells an Indian user only to "consult a professional" has done half the job. Naming Tele-MANAS, the DMHP clinic, the PHC and the legal right under the 2017 Act converts a score into an action someone can take this week.</p>
+      <p>The instruments are international; the pathway must be local. The architecture supports adding other countries' pathways the same way — the helpline layer is already worldwide and directory-first — but depth for one country was chosen over shallow coverage of many.</p>
+    </div>
+  </div>
+</section>
+
+<section id="sources">
+  <div class="wrap">
+    <p class="sec-label">Sources</p>
+    <h2 class="display">Cited material</h2>
+    <p class="sec-sub">Figures are quoted from the publications below. Policy documents are linked to their official pages so a reader can verify wording directly rather than take this summary on trust.</p>
+    <div class="reflist">
+      <ol>
+        <li><a href="https://www.who.int/news/item/02-09-2025-over-a-billion-people-living-with-mental-health-conditions-services-require-urgent-scale-up" target="_blank" rel="noopener">Over a billion people living with mental health conditions — services require urgent scale-up</a> — World Health Organization, 2 September 2025. <span class="mono">Prevalence, spending and workforce figures.</span></li>
+        <li><a href="https://iris.who.int/" target="_blank" rel="noopener">Mental Health Atlas 2024</a> — World Health Organization. <span class="mono">Median 2% of health budgets; 13 mental health workers per 100,000.</span></li>
+        <li><a href="https://www.who.int/publications/i/item/9789240031029" target="_blank" rel="noopener">Comprehensive Mental Health Action Plan 2013–2030</a> — World Health Organization. <span class="mono">The four objectives and their global targets.</span></li>
+        <li><a href="https://www.who.int/teams/mental-health-and-substance-use/treatment-care/mental-health-gap-action-programme" target="_blank" rel="noopener">Mental Health Gap Action Programme (mhGAP)</a> — World Health Organization. <span class="mono">Task-sharing and non-specialist delivery.</span></li>
+        <li><a href="https://www.who.int/publications/i/item/9789240084278" target="_blank" rel="noopener">mhGAP guideline for mental, neurological and substance use disorders</a> — World Health Organization, 2023.</li>
+        <li><a href="https://www.who.int/teams/mental-health-and-substance-use/policy-law-rights/QualityRights" target="_blank" rel="noopener">WHO QualityRights initiative</a> — World Health Organization. <span class="mono">Recovery, rights and inclusion; reducing coercion.</span></li>
+        <li><a href="https://sdgs.un.org/goals/goal3" target="_blank" rel="noopener">Sustainable Development Goal 3 — target 3.4 and indicator 3.4.2</a> — United Nations.</li>
+        <li><a href="https://news.un.org/en/story/2025/09/1165759" target="_blank" rel="noopener">WHO sounds alarm as mental health conditions soar past one billion worldwide</a> — UN News, September 2025. <span class="mono">Suicide mortality; progress against the 2030 target.</span></li>
+        <li><a href="https://www.who.int/news-room/fact-sheets/detail/adolescent-mental-health" target="_blank" rel="noopener">Mental health of adolescents</a> — World Health Organization fact sheet.</li>
+        <li>Age-of-onset and treatment-coverage figures are drawn from the peer-reviewed literature indexed in this project's <a href="evidence.html">evidence register</a> (Solmi et&nbsp;al., <em>Molecular Psychiatry</em> 2021; McGrath et&nbsp;al., <em>Lancet Psychiatry</em> 2023; Moitra et&nbsp;al., <em>PLoS Medicine</em> 2022).</li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <p>Policy summaries on this page are the author's reading of public documents and carry no official status. Where a precise commitment matters — for a grant application, a policy submission, or a clinical service — read the source document rather than this summary. Figures were compiled in July 2026 and should be re-verified against the latest editions.</p>
+    <p style="margin-top:12px;"><strong>Built by Aryan Manhas</strong> ·
+      <a href="https://github.com/aryanmanhas12/Psych">github.com/aryanmanhas12/Psych</a> ·
+      MIT licensed · 2026</p>
+    <span class="mono">GLOBAL FRAMEWORKS · PSYCH SCREENER · <a href="index.html" style="color:inherit;">BACK TO THE SCREENER</a></span>
+  </div>
+</footer>
+
+</body>
+</html>
