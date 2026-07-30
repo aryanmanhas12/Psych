@@ -1,0 +1,11 @@
+# Agent tooling belongs on the developer's machine, not in a health repo.
+# Install skills globally instead (~/.claude/skills), so they apply to every
+# project without adding weight here:
+#   /plugin marketplace add nextlevelbuilder/ui-ux-pro-max-skill
+#   /plugin marketplace add freshtechbro/claudedesignskills
+.claude/
+
+# OS / editor noise
+.DS_Store
+Thumbs.db
+*.swp
