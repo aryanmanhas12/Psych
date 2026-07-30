@@ -514,66 +514,57 @@
   #skipIntro:hover{transform:none;box-shadow:none;background:var(--ink);color:var(--paper);}
   .ot-progress{height:3px;background:var(--line);flex:1;min-width:6rem;max-width:14rem;}
   .ot-progress i{display:block;height:100%;width:0;background:var(--marigold);}
-  .ot-progress i.run{width:100%;transition:width 15.2s linear;}
+  .ot-progress i.run{width:100%;transition:width 9.2s linear;}
 
-  /* ── scene elements ── */
-  .ot-fig{transition:transform 1.2s var(--e-out2), opacity .8s linear;}
-  .ot-body{fill:#6B7386;transition:fill 1.4s var(--e-out2);}
-  .ot-head{fill:#6B7386;transition:fill 1.4s var(--e-out2);}
-  #otWeight{opacity:0;transform-origin:300px 96px;transition:opacity .9s linear, transform 1.1s var(--e-out2);}
-  #otWeight.on{opacity:1;}
-  #otWeight.lift{opacity:0;transform:translateY(-46px) scale(1.5);}
-  #otSlump{transition:transform 1.3s var(--e-out2);}
-  #otSlump.down{transform:translateY(13px) scaleY(.93);}
-  #otSlump.up{transform:translateY(-4px) scaleY(1.02);}
-  #otSlump.turn{transform:translateY(10px) scaleY(.95) translateX(5px);}
-  .ot-passer{opacity:0;}
-  .ot-passer.walk{animation:otWalk 2.4s var(--e-out1) forwards;}
-  @keyframes otWalk{
-    0%{opacity:0;transform:translateX(-260px);}
-    18%{opacity:.5;}
-    82%{opacity:.5;}
-    100%{opacity:0;transform:translateX(280px);}
-  }
-  /* The crowd fills the frame rather than the figure shrinking into a
-     speck — the point is scale, and scale reads only if it is legible. */
-  #otField{opacity:0;transition:opacity 1.2s linear;}
-  #otField.on{opacity:1;}
-  #otField circle{fill:var(--ink);opacity:.20;}
-  #otField circle.gold{fill:var(--marigold);opacity:1;}
-  #otGold{opacity:0;transition:opacity .6s linear;transform-origin:center;}
-  #otGold.on{opacity:1;animation:otPulse 1.6s ease-in-out infinite;}
-  @keyframes otPulse{0%,100%{r:9;opacity:.55;}50%{r:17;opacity:.08;}}
-  /* the figure recedes to become one of them, without vanishing */
-  #otZoom{transition:transform 1.5s var(--e-out2), opacity 1.2s linear;transform-origin:300px 168px;}
-  #otZoom.far{transform:scale(.42) translate(0,86px);opacity:.5;}
-  #otReach{opacity:0;transition:opacity .7s linear;}
-  #otReach.on{opacity:1;}
+  /* ── scene ──
+     Stick figures rather than filled capsules: a line drawing carries
+     posture, and posture is what makes sadness legible without words.
+     The whole sequence is ~9s, short enough that nobody feels detained. */
+  .ot-room .rl{fill:none;stroke:var(--line);stroke-width:2.5;stroke-linecap:round;}
+  .ot-room .rl.dot{fill:var(--line);stroke:none;}
+  .ot-room{opacity:0;transition:opacity .8s linear;}
+  .ot-room.on{opacity:1;}
 
-  /* ── the exchange ──
-     The old version drew a line between two blobs, which read as a stick
-     rather than a gesture. Capsule figures cannot reach, so they now have
-     arms: the helper offers first and waits, and the person reaches back.
-     Help arriving and help being accepted are two separate beats, in that
-     order, because that sequence is the whole point of the tool. */
-  .ot-helper{fill:var(--heal);}
-  .ot-arm{
-    fill:#6B7386;transform-box:fill-box;transform-origin:0% 50%;
-    transform:rotate(74deg);                      /* hanging at the side */
-    transition:transform 1.1s var(--e-out2), fill 1.4s var(--e-out2);
+  .fig{opacity:0;transition:opacity .7s linear;}
+  .fig.on{opacity:1;}
+  .fig .hd{fill:#6B7386;transition:fill 1.1s var(--e-out2);}
+  .fig .lb{fill:none;stroke:#6B7386;stroke-width:6;stroke-linecap:round;stroke-linejoin:round;
+           transition:stroke 1.1s var(--e-out2);}
+  .fig.heal .hd{fill:var(--heal);}
+  .fig.heal .lb{stroke:var(--heal);}
+  .fig.warmed .hd{fill:var(--heal);}
+  .fig.warmed .lb{stroke:var(--heal);}
+
+  /* curled in on themselves, then slowly sitting up */
+  /* The pivot is the hip, so the angle has to be steep: at a shallow one
+     the head only swings sideways and the pose reads as leaning, not as
+     head-down. At 52deg the head comes to rest just above the knees. */
+  #otCurl{transform-origin:233px 238px;transform:rotate(52deg);
+          transition:transform 1.6s var(--e-out2);}
+  #otCurl.lift{transform:rotate(2deg);}
+  #otArmA{transition:d 1.2s var(--e-out2);}
+
+  /* the world outside, not stopping */
+  #otPass .passer{opacity:0;}
+  #otPass .passer circle{fill:#9AA3B5;}
+  #otPass .passer path{stroke:#9AA3B5;stroke-width:5;stroke-linecap:round;fill:none;}
+  #otPass .passer.go{animation:otCross 2.1s linear forwards;}
+  @keyframes otCross{
+    0%{opacity:0;transform:translateX(96px);}
+    12%{opacity:.85;}
+    88%{opacity:.85;}
+    100%{opacity:0;transform:translateX(212px);}
   }
-  .ot-arm.helper{fill:var(--heal);transform-origin:100% 50%;transform:rotate(-74deg);}
-  .ot-arm.helper.offer{transform:rotate(3deg);}   /* extended, and held */
-  .ot-arm.reach{transform:rotate(-3deg);}         /* reached back */
-  #otSpark{
-    fill:var(--marigold);opacity:0;mix-blend-mode:multiply;
-    transition:r .45s var(--e-out2), opacity .5s linear;
-  }
-  #otSpark.on{opacity:.5;r:11;}
-  #otSpark.fade{opacity:0;r:22;}
-  .ot-healed .ot-body,.ot-healed .ot-head,.ot-healed .ot-arm{fill:var(--heal);}
-  #otGlow{opacity:0;transition:opacity 1.2s linear;}
-  #otGlow.on{opacity:.16;}
+
+  /* crossing the room */
+  #otWalk{transform:translateX(470px);transition:transform 1.6s linear, opacity .5s linear;}
+  #otWalk.cross{transform:translateX(335px);}
+  #otLegs{transform-origin:0 215px;}
+  #otWalk.cross #otLegs{animation:otStep .42s steps(2,end) infinite;}
+  @keyframes otStep{0%{transform:skewX(-13deg);}100%{transform:skewX(13deg);}}
+
+  #otWarm{fill:var(--marigold);opacity:0;transition:opacity 1.4s linear;}
+  #otWarm.on{opacity:.14;}
 
   @media (prefers-reduced-motion: reduce){
     #overture{display:none!important;}
@@ -652,46 +643,56 @@
   </div>
 
   <div class="ot-stage">
-    <svg viewBox="0 0 600 300" aria-hidden="true">
-      <!-- warmth that arrives only at the end -->
-      <circle id="otGlow" cx="300" cy="150" r="120" fill="var(--heal)"/>
+    <svg viewBox="0 0 600 320" aria-hidden="true">
+      <!-- ── the room ──
+           Isolation reads more clearly as a place than as an abstraction:
+           a person on the floor of a room, with the world visible through
+           a window and carrying on without them. -->
+      <g id="otRoom" class="ot-room">
+        <path class="rl" d="M60 250 H540"/>                      <!-- floor -->
+        <path class="rl" d="M60 250 V70"/>                       <!-- left wall -->
+        <path class="rl" d="M540 250 V70"/>                      <!-- right wall -->
+        <path class="rl" d="M60 70 H540"/>                       <!-- ceiling -->
+        <!-- window: the world going on outside -->
+        <rect class="rl" x="108" y="104" width="96" height="72" rx="2"/>
+        <path class="rl" d="M156 104 V176 M108 140 H204"/>
+        <!-- door -->
+        <rect class="rl" x="428" y="118" width="76" height="132" rx="2"/>
+        <circle class="rl dot" cx="440" cy="188" r="3.5"/>
+      </g>
 
-      <!-- the crowd this person turns out to belong to; sits outside the
-           zoom group so it fills the frame instead of shrinking with them -->
-      <g id="otField"></g>
-      <circle id="otGold" cx="0" cy="0" r="9" fill="none" stroke="var(--marigold)" stroke-width="2.5"/>
+      <!-- people passing the window: none of them stop -->
+      <g id="otPass" clip-path="url(#otWin)">
+        <g class="passer" id="otPa"><circle cx="0" cy="130" r="9"/><path d="M0 140 V162"/></g>
+        <g class="passer" id="otPb"><circle cx="0" cy="134" r="8"/><path d="M0 143 V163"/></g>
+      </g>
+      <clipPath id="otWin"><rect x="110" y="106" width="92" height="68"/></clipPath>
 
-      <g id="otZoom">
-        <!-- passers-by who never stop -->
-        <g class="ot-passer" id="otP1"><circle cx="140" cy="150" r="9" fill="#6B7386"/><rect x="131" y="162" width="18" height="34" rx="9" fill="#6B7386"/></g>
-        <g class="ot-passer" id="otP2"><circle cx="200" cy="146" r="8" fill="#6B7386"/><rect x="192" y="157" width="16" height="31" rx="8" fill="#6B7386"/></g>
-        <g class="ot-passer" id="otP3"><circle cx="90"  cy="153" r="10" fill="#6B7386"/><rect x="80" y="166" width="20" height="36" rx="10" fill="#6B7386"/></g>
+      <!-- warmth, which only arrives at the end -->
+      <ellipse id="otWarm" cx="284" cy="206" rx="112" ry="45"/>
 
-        <!-- the one who stays -->
-        <g id="otFig" class="ot-fig">
-          <g id="otSlump">
-            <circle class="ot-head" cx="300" cy="140" r="15"/>
-            <rect  class="ot-body" x="285" y="160" width="30" height="56" rx="15"/>
-            <!-- an arm, so reaching has something to reach with -->
-            <rect id="otArmA" class="ot-arm" x="313" y="169" width="31" height="9" rx="4.5"/>
-          </g>
-          <!-- the weight: pressing down, never named -->
-          <g id="otWeight">
-            <ellipse cx="300" cy="96" rx="52" ry="21" fill="var(--ink)" opacity=".55"/>
-            <ellipse cx="276" cy="88" rx="30" ry="16" fill="var(--ink)" opacity=".42"/>
-            <ellipse cx="324" cy="90" rx="26" ry="14" fill="var(--ink)" opacity=".35"/>
-          </g>
+      <!-- ── the person, curled on the floor ── -->
+      <g id="otFigA" class="fig">
+        <g id="otCurl">
+          <circle class="hd" cx="227" cy="193" r="16"/>
+          <path class="lb" d="M227 210 L233 238"/>
+          <path class="lb" id="otArmA" d="M229 218 L262 231"/>
         </g>
+        <path class="lb" d="M233 238 L269 230 L274 247"/>
+      </g>
 
-        <!-- someone who does stop -->
-        <g id="otReach">
-          <circle class="ot-helper" cx="392" cy="142" r="14"/>
-          <rect  class="ot-helper" x="378" y="161" width="28" height="53" rx="14"/>
-          <!-- the offered hand: it moves first, and it waits -->
-          <rect id="otArmB" class="ot-arm helper" x="347" y="169" width="31" height="9" rx="4.5"/>
-        </g>
-        <!-- the moment of contact, held for a beat -->
-        <circle id="otSpark" cx="345.5" cy="173.5" r="0"/>
+      <!-- ── the one who comes in ── -->
+      <g id="otWalk" class="fig heal">
+        <circle class="hd" cx="0" cy="158" r="16"/>
+        <path class="lb" d="M0 175 V215"/>
+        <path class="lb" id="otLegs" d="M0 215 L-14 247 M0 215 L14 247"/>
+        <path class="lb" d="M0 185 L-16 205 M0 185 L16 205"/>
+      </g>
+      <g id="otSit" class="fig heal">
+        <circle class="hd" cx="341" cy="193" r="16"/>
+        <path class="lb" d="M341 210 L335 238"/>
+        <path class="lb" d="M335 238 L299 230 L294 247"/>
+        <path class="lb" id="otArmB" d="M339 218 L306 231"/>
       </g>
     </svg>
   </div>
@@ -1889,58 +1890,40 @@ function otEnd(){
 }
 
 function otPlay(){
-  otBuildField();
   ot.hidden = false;
   ot.classList.remove("closing");
   const $ = id => document.getElementById(id);
+  const set = (id, cls) => $(id).setAttribute("class", cls);
+
   /* reset */
-  $("otWeight").setAttribute("class","");
-  $("otGold").setAttribute("class","");
-  $("otArmA").setAttribute("class","ot-arm");
-  $("otArmB").setAttribute("class","ot-arm helper");
-  $("otSpark").setAttribute("class","");
-  $("otSlump").setAttribute("class","");
-  $("otField").setAttribute("class","");
-  $("otReach").setAttribute("class","");
-  $("otGlow").setAttribute("class","");
-  $("otZoom").setAttribute("class","");
-  $("otFig").classList.remove("ot-healed");
-  ["otP1","otP2","otP3"].forEach(id=> $(id).setAttribute("class","ot-passer"));
+  set("otRoom","ot-room"); set("otFigA","fig"); set("otWalk","fig heal");
+  set("otSit","fig heal"); set("otCurl",""); set("otWarm","");
+  set("otPa","passer"); set("otPb","passer");
   $("otBar").classList.remove("run");
   requestAnimationFrame(()=> $("otBar").classList.add("run"));
 
-  /* beat 1 — the weight settles */
-  otAt(500,  ()=> $("otWeight").setAttribute("class","on"));
-  otAt(1100, ()=> $("otSlump").setAttribute("class","down"));
+  /* ── ~9 seconds, six beats ──
+     1  a room
+     2  someone on the floor of it, curled away from everything
+     3  the world passes the window and does not stop
+     4  one person comes through the door
+     5  they sit down beside them — beside, not over
+     6  the head lifts, and the room warms                        */
+  otAt(200,  ()=> set("otRoom","ot-room on"));
+  otAt(900,  ()=> set("otFigA","fig on"));
 
-  /* beat 2 — others pass, none stop */
-  otAt(2300, ()=> $("otP1").setAttribute("class","ot-passer walk"));
-  otAt(2900, ()=> $("otP3").setAttribute("class","ot-passer walk"));
-  otAt(3500, ()=> $("otP2").setAttribute("class","ot-passer walk"));
+  otAt(2100, ()=> set("otPa","passer go"));
+  otAt(2900, ()=> set("otPb","passer go"));
 
-  /* beat 3 — pull back: one of 133, and help is a long way off */
-  otAt(5400, ()=>{ $("otZoom").setAttribute("class","far"); $("otField").setAttribute("class","on"); });
-  otAt(6300, ()=> $("otGold").setAttribute("class","on"));
+  otAt(4300, ()=> set("otWalk","fig heal on"));
+  otAt(4700, ()=> set("otWalk","fig heal on cross"));
 
-  /* beat 4 — someone stops, and offers a hand */
-  otAt(7900, ()=>{ $("otZoom").setAttribute("class",""); $("otField").setAttribute("class","");
-                   $("otGold").setAttribute("class",""); });
-  otAt(8900,  ()=> $("otReach").setAttribute("class","on"));
-  otAt(9500,  ()=> $("otArmB").setAttribute("class","ot-arm helper offer"));
+  otAt(6300, ()=>{ set("otWalk","fig heal"); set("otSit","fig heal on"); });
 
-  /* beat 5 — and it is taken. The pause between offer and reach is the
-     beat that makes the sequence legible: help is offered, then accepted. */
-  otAt(10900, ()=>{ $("otArmA").setAttribute("class","ot-arm reach");
-                    $("otSlump").setAttribute("class","down turn"); });
-  otAt(11800, ()=> $("otSpark").setAttribute("class","on"));
+  otAt(7000, ()=> set("otCurl","lift"));
+  otAt(7600, ()=>{ set("otWarm","on"); $("otFigA").classList.add("warmed"); });
 
-  /* beat 6 — only now does the weight lift */
-  otAt(12400, ()=>{ $("otSpark").setAttribute("class","on fade");
-                    $("otWeight").setAttribute("class","on lift");
-                    $("otSlump").setAttribute("class","up"); });
-  otAt(13000, ()=>{ $("otFig").classList.add("ot-healed"); $("otGlow").setAttribute("class","on"); });
-
-  otAt(15200, otEnd);
+  otAt(9200, otEnd);
 }
 
 document.getElementById("skipIntro").addEventListener("click", otEnd);
