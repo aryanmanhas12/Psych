@@ -514,7 +514,7 @@
   #skipIntro:hover{transform:none;box-shadow:none;background:var(--ink);color:var(--paper);}
   .ot-progress{height:3px;background:var(--line);flex:1;min-width:6rem;max-width:14rem;}
   .ot-progress i{display:block;height:100%;width:0;background:var(--marigold);}
-  .ot-progress i.run{width:100%;transition:width 13s linear;}
+  .ot-progress i.run{width:100%;transition:width 15.2s linear;}
 
   /* ── scene elements ── */
   .ot-fig{transition:transform 1.2s var(--e-out2), opacity .8s linear;}
@@ -526,6 +526,7 @@
   #otSlump{transition:transform 1.3s var(--e-out2);}
   #otSlump.down{transform:translateY(13px) scaleY(.93);}
   #otSlump.up{transform:translateY(-4px) scaleY(1.02);}
+  #otSlump.turn{transform:translateY(10px) scaleY(.95) translateX(5px);}
   .ot-passer{opacity:0;}
   .ot-passer.walk{animation:otWalk 2.4s var(--e-out1) forwards;}
   @keyframes otWalk{
@@ -548,10 +549,29 @@
   #otZoom.far{transform:scale(.42) translate(0,86px);opacity:.5;}
   #otReach{opacity:0;transition:opacity .7s linear;}
   #otReach.on{opacity:1;}
-  #otLink{stroke:var(--heal);stroke-width:3;stroke-linecap:round;
-    stroke-dasharray:120;stroke-dashoffset:120;transition:stroke-dashoffset 1s var(--e-out2);}
-  #otLink.draw{stroke-dashoffset:0;}
-  .ot-healed .ot-body,.ot-healed .ot-head{fill:var(--heal);}
+
+  /* ── the exchange ──
+     The old version drew a line between two blobs, which read as a stick
+     rather than a gesture. Capsule figures cannot reach, so they now have
+     arms: the helper offers first and waits, and the person reaches back.
+     Help arriving and help being accepted are two separate beats, in that
+     order, because that sequence is the whole point of the tool. */
+  .ot-helper{fill:var(--heal);}
+  .ot-arm{
+    fill:#6B7386;transform-box:fill-box;transform-origin:0% 50%;
+    transform:rotate(74deg);                      /* hanging at the side */
+    transition:transform 1.1s var(--e-out2), fill 1.4s var(--e-out2);
+  }
+  .ot-arm.helper{fill:var(--heal);transform-origin:100% 50%;transform:rotate(-74deg);}
+  .ot-arm.helper.offer{transform:rotate(3deg);}   /* extended, and held */
+  .ot-arm.reach{transform:rotate(-3deg);}         /* reached back */
+  #otSpark{
+    fill:var(--marigold);opacity:0;mix-blend-mode:multiply;
+    transition:r .45s var(--e-out2), opacity .5s linear;
+  }
+  #otSpark.on{opacity:.5;r:11;}
+  #otSpark.fade{opacity:0;r:22;}
+  .ot-healed .ot-body,.ot-healed .ot-head,.ot-healed .ot-arm{fill:var(--heal);}
   #otGlow{opacity:0;transition:opacity 1.2s linear;}
   #otGlow.on{opacity:.16;}
 
@@ -652,6 +672,8 @@
           <g id="otSlump">
             <circle class="ot-head" cx="300" cy="140" r="15"/>
             <rect  class="ot-body" x="285" y="160" width="30" height="56" rx="15"/>
+            <!-- an arm, so reaching has something to reach with -->
+            <rect id="otArmA" class="ot-arm" x="313" y="169" width="31" height="9" rx="4.5"/>
           </g>
           <!-- the weight: pressing down, never named -->
           <g id="otWeight">
@@ -663,10 +685,13 @@
 
         <!-- someone who does stop -->
         <g id="otReach">
-          <circle class="ot-head" cx="392" cy="142" r="14" fill="var(--heal)"/>
-          <rect  class="ot-body" x="378" y="161" width="28" height="53" rx="14" fill="var(--heal)"/>
-          <line id="otLink" x1="378" y1="180" x2="318" y2="182"/>
+          <circle class="ot-helper" cx="392" cy="142" r="14"/>
+          <rect  class="ot-helper" x="378" y="161" width="28" height="53" rx="14"/>
+          <!-- the offered hand: it moves first, and it waits -->
+          <rect id="otArmB" class="ot-arm helper" x="347" y="169" width="31" height="9" rx="4.5"/>
         </g>
+        <!-- the moment of contact, held for a beat -->
+        <circle id="otSpark" cx="345.5" cy="173.5" r="0"/>
       </g>
     </svg>
   </div>
@@ -1871,11 +1896,13 @@ function otPlay(){
   /* reset */
   $("otWeight").setAttribute("class","");
   $("otGold").setAttribute("class","");
+  $("otArmA").setAttribute("class","ot-arm");
+  $("otArmB").setAttribute("class","ot-arm helper");
+  $("otSpark").setAttribute("class","");
   $("otSlump").setAttribute("class","");
   $("otField").setAttribute("class","");
   $("otReach").setAttribute("class","");
   $("otGlow").setAttribute("class","");
-  $("otLink").setAttribute("class","");
   $("otZoom").setAttribute("class","");
   $("otFig").classList.remove("ot-healed");
   ["otP1","otP2","otP3"].forEach(id=> $(id).setAttribute("class","ot-passer"));
@@ -1895,17 +1922,25 @@ function otPlay(){
   otAt(5400, ()=>{ $("otZoom").setAttribute("class","far"); $("otField").setAttribute("class","on"); });
   otAt(6300, ()=> $("otGold").setAttribute("class","on"));
 
-  /* beat 4 — someone reaches them */
+  /* beat 4 — someone stops, and offers a hand */
   otAt(7900, ()=>{ $("otZoom").setAttribute("class",""); $("otField").setAttribute("class","");
                    $("otGold").setAttribute("class",""); });
-  otAt(9000, ()=> $("otReach").setAttribute("class","on"));
-  otAt(9500, ()=> $("otLink").setAttribute("class","draw"));
+  otAt(8900,  ()=> $("otReach").setAttribute("class","on"));
+  otAt(9500,  ()=> $("otArmB").setAttribute("class","ot-arm helper offer"));
 
-  /* beat 5 — the weight lifts, the grey warms */
-  otAt(10600, ()=>{ $("otWeight").setAttribute("class","on lift"); $("otSlump").setAttribute("class","up"); });
-  otAt(11200, ()=>{ $("otFig").classList.add("ot-healed"); $("otGlow").setAttribute("class","on"); });
+  /* beat 5 — and it is taken. The pause between offer and reach is the
+     beat that makes the sequence legible: help is offered, then accepted. */
+  otAt(10900, ()=>{ $("otArmA").setAttribute("class","ot-arm reach");
+                    $("otSlump").setAttribute("class","down turn"); });
+  otAt(11800, ()=> $("otSpark").setAttribute("class","on"));
 
-  otAt(13000, otEnd);
+  /* beat 6 — only now does the weight lift */
+  otAt(12400, ()=>{ $("otSpark").setAttribute("class","on fade");
+                    $("otWeight").setAttribute("class","on lift");
+                    $("otSlump").setAttribute("class","up"); });
+  otAt(13000, ()=>{ $("otFig").classList.add("ot-healed"); $("otGlow").setAttribute("class","on"); });
+
+  otAt(15200, otEnd);
 }
 
 document.getElementById("skipIntro").addEventListener("click", otEnd);
