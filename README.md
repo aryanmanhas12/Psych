@@ -32,9 +32,9 @@ earlier**, and **giving them the follow-up record the system doesn't**.
 | File | What it is |
 |---|---|
 | `index.html` | **The screener app** — instruments, guided conversation, guidance, history, reminders |
+| `site.css` | **Shared design system** — one source of truth for tokens, dark mode, nav and components |
 | `i18n.js` | **Translation layer** — every UI string and instrument item in 6 languages |
 | `helplines.js` | **Crisis lines worldwide** — directory-first, region tables, review-dated |
-| `global.html` | **Global Frameworks** — alignment with WHO and UN commitments, stated honestly |
 | `ethics.html` | **Ethics & Privacy Charter** — every claim written to be independently verifiable |
 | `evidence.html` | **The Evidence Register** — peer-reviewed citations behind every design decision |
 | `manifesto.html` | **The Waiting Room is Full** — a citizen's manifesto on the treatment gap |
@@ -47,15 +47,6 @@ Plain HTML/CSS/JS. **No build step, no framework, no backend, no tracking.** Ope
 file in a browser or host the folder anywhere static.
 
 ## Features
-
-**Built against global commitments** — [`global.html`](global.html) sets out the WHO and UN
-frameworks this was designed against: SDG target 3.4 and indicator 3.4.2, WHO's
-Comprehensive Mental Health Action Plan 2013–2030, mhGAP task-sharing, and QualityRights —
-then maps each to what the tool actually does, **including the two commitments it cannot
-touch and the one it deliberately forgoes**. India's Mental Healthcare Act 2017, the DMHP
-and Tele-MANAS are presented as the national implementation those global commitments run
-through. The page carries an explicit non-affiliation notice: WHO and UN publications are
-cited as public evidence, with no emblem used and no endorsement implied.
 
 **A wordless opening** — Chaplin's principle, that expression crosses every language
 border, applied literally: a five-beat silent animation carries the whole argument with
@@ -145,7 +136,7 @@ commit) or clone and edit locally. Changes to `main` go live on GitHub Pages in 
 | Wording, questions, guidance, resources | `i18n.js` — find the language block, edit the string |
 | Add a language | Copy any language block in `i18n.js`, translate the values, keep the keys |
 | Add an instrument | Add scoring to `META` in `index.html`, then add its text to every language in `i18n.js` |
-| Colours, spacing, layout | The `:root` variables and CSS at the top of each HTML file |
+| Colours, spacing, layout | `site.css` — change a token, every page follows |
 | Citations | `evidence.html` |
 | Helpline numbers | `helplines.js` — read the safety note at the top first |
 | Ethics or privacy claims | `ethics.html` — only claim what the code actually does |

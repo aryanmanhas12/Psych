@@ -4,58 +4,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>The Waiting Room — A Manifesto for India's Mental Health Crisis</title>
+<link rel="stylesheet" href="site.css">
 <style>
-/* Self-hosted so the page makes ZERO third-party requests — the privacy
-   claim on this site is only true if nothing phones home, fonts included. */
-@font-face{
-  font-family:'Anton';font-style:normal;font-weight:400;font-display:swap;
-  src:url('anton.woff2') format('woff2');
-}
-</style>
-<style>
-  :root{
-    --ink:#151C2E;
-    --paper:#F6F4EE;
-    --marigold:#E6A11C;
-    --stamp:#B23A2E;
-    --heal:#2F6E5E;
-    --line:#D8D3C6;
-  }
-  *{margin:0;padding:0;box-sizing:border-box;}
-  html{scroll-behavior:smooth;}
-  body{
-    background:var(--paper);
-    color:var(--ink);
-    font-family:system-ui,-apple-system,'Segoe UI','Noto Sans',Roboto,Arial,sans-serif;
-    line-height:1.65;
-    font-size:17px;
-  }
-  @media (prefers-reduced-motion: reduce){
-    *,*::before,*::after{animation:none!important;transition:none!important;}
-    html{scroll-behavior:auto;}
-  }
-  .display{font-family:'Anton',sans-serif;letter-spacing:.01em;line-height:1.05;text-transform:uppercase;}
-  .mono{font-family:ui-monospace,'Cascadia Mono',Menlo,Consolas,monospace;}
-  .wrap{max-width:960px;margin:0 auto;padding:0 22px;}
-
-  /* ── top strip ── */
-  .topstrip{
-    background:var(--ink);color:var(--paper);
-    font-family:ui-monospace,'Cascadia Mono',Menlo,Consolas,monospace;font-size:12.5px;
-    padding:8px 0;letter-spacing:.04em;
-  }
-  .topstrip .wrap{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;}
-
-  /* ── hero ── */
+/* ── hero ── */
   .hero{padding:64px 0 48px;border-bottom:3px solid var(--ink);}
-  .eyebrow{
-    display:inline-block;font-family:ui-monospace,'Cascadia Mono',Menlo,Consolas,monospace;font-size:13px;
-    letter-spacing:.12em;text-transform:uppercase;
-    border:1.5px solid var(--stamp);color:var(--stamp);
-    padding:4px 10px;transform:rotate(-1.2deg);margin-bottom:22px;
-  }
-  h1{font-size:clamp(44px,9vw,96px);}
-  h1 .accent{color:var(--stamp);}
   .hero p.lede{max-width:620px;font-size:19px;margin-top:22px;}
 
   /* dot grid signature */
@@ -74,14 +26,6 @@
   @keyframes pulse{0%,100%{box-shadow:0 0 0 3px rgba(230,161,28,.35);}50%{box-shadow:0 0 0 7px rgba(230,161,28,.12);}}
   .dotcaption{font-family:ui-monospace,'Cascadia Mono',Menlo,Consolas,monospace;font-size:13px;margin-top:14px;color:#4a4f5e;max-width:640px;}
   .dotcaption b{color:var(--ink);}
-
-  /* ── section scaffolding ── */
-  section{padding:64px 0;}
-  .sec-label{
-    font-family:ui-monospace,'Cascadia Mono',Menlo,Consolas,monospace;font-size:13px;letter-spacing:.14em;
-    text-transform:uppercase;color:var(--stamp);margin-bottom:14px;
-  }
-  h2{font-size:clamp(30px,5vw,52px);margin-bottom:26px;}
 
   /* ── crisis stats ── */
   .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:0;border:2px solid var(--ink);}
@@ -132,11 +76,6 @@
   .pledge-lines li{padding:8px 0;border-bottom:1px dashed var(--line);font-size:16px;display:flex;gap:10px;}
   .pledge-lines li::before{content:"☐";color:var(--heal);font-size:18px;}
   .pledge-lines li.done::before{content:"☑";}
-  button{
-    font-family:'Anton',sans-serif;text-transform:uppercase;letter-spacing:.05em;
-    font-size:18px;background:var(--ink);color:var(--paper);border:none;
-    padding:14px 28px;cursor:pointer;transition:transform .12s;
-  }
   button:hover{transform:translate(-2px,-2px);box-shadow:4px 4px 0 var(--stamp);}
   button:focus-visible{outline:3px solid var(--stamp);outline-offset:3px;}
   .pledge-count{font-family:ui-monospace,'Cascadia Mono',Menlo,Consolas,monospace;font-size:14px;margin-top:14px;}
@@ -158,10 +97,6 @@
     padding:13px 26px;display:inline-block;transition:transform .12s;
   }
   .screenerlink a:hover{transform:translate(-2px,-2px);box-shadow:4px 4px 0 var(--ink);}
-
-  /* ── footer ── */
-  footer{padding:44px 0 60px;font-size:14px;color:#5a5f6e;}
-  footer .mono{font-size:12px;display:block;margin-top:14px;color:#8a8f9c;}
   .stampmark{
     display:inline-block;font-family:'Anton',sans-serif;text-transform:uppercase;
     border:3px double var(--stamp);color:var(--stamp);padding:6px 14px;
@@ -171,12 +106,25 @@
 </head>
 <body>
 
-<div class="topstrip">
+<div class="topstrip noprint">
   <div class="wrap">
-    <span>OPD REGISTER · PSYCHIATRY · INDIA</span>
-    <span id="tokenTicker">TOKEN NO. 001 — NOW SERVING</span>
+    <span>IN DISTRESS? FIND A HELPLINE IN YOUR COUNTRY: <a href="https://findahelpline.com" target="_blank" rel="noopener">findahelpline.com</a></span>
+    <span>INDIA: TELE-MANAS <a href="tel:14416">14416</a> &middot; EMERGENCY <a href="tel:112">112</a></span>
   </div>
 </div>
+<nav class="site noprint" aria-label="Main">
+  <div class="wrap">
+    <a class="brand" href="index.html">Psych <span class="accent">Screener</span></a>
+    <a class="navlink" href="index.html">Screener</a>
+    <a class="navlink" href="index.html#guide">Talk it through</a>
+    <a class="navlink" href="index.html#resources">Get Help</a>
+    <a class="navlink" href="evidence.html">Evidence</a>
+    <a class="navlink" href="global.html">Global</a>
+    <a class="navlink" href="ethics.html">Ethics</a>
+    <a class="navlink" href="manifesto.html" aria-current="page">Manifesto</a>
+    <a class="navlink" href="poster.html">Poster</a>
+  </div>
+</nav>
 
 <header class="hero">
   <div class="wrap">
@@ -336,7 +284,6 @@
       <a href="index.html" style="color:var(--heal);">Open the screener</a> ·
       MIT licensed
     </p>
-    <p style="margin-top:10px;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12.5px;"><a href="index.html" style="color:var(--heal);">Screener</a> · <a href="evidence.html" style="color:var(--heal);">Evidence</a> · <a href="global.html" style="color:var(--heal);">Global frameworks</a> · <a href="ethics.html" style="color:var(--heal);">Ethics</a> · <a href="poster.html" style="color:var(--heal);">Printable poster</a></p>
     <span class="mono">THE WAITING ROOM IS FULL · A CITIZEN'S MANIFESTO · 2026</span>
   </div>
 </footer>

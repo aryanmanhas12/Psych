@@ -6,27 +6,26 @@
 <title>Printable Poster — Psych Screener</title>
 <meta name="description" content="A printable A4 poster in six languages linking to free, private mental health screening. For clinic walls, colleges, and waiting rooms.">
 <meta name="author" content="Aryan Manhas">
+<link rel="stylesheet" href="site.css">
 <style>
 @font-face{font-family:'Anton';font-style:normal;font-weight:400;font-display:swap;src:url('anton.woff2') format('woff2');}
 :root{--ink:#151C2E;--paper:#F6F4EE;--marigold:#E6A11C;--stamp:#B23A2E;--heal:#2F6E5E;--line:#D8D3C6;--muted:#54596A;}
 *{margin:0;padding:0;box-sizing:border-box;}
-body{background:#e9e7e1;color:var(--ink);font-family:system-ui,-apple-system,'Segoe UI','Noto Sans',Roboto,Arial,sans-serif;line-height:1.5;}
+body{background:var(--paper);color:var(--ink);font-family:system-ui,-apple-system,'Segoe UI','Noto Sans',Roboto,Arial,sans-serif;line-height:1.5;}
 .bar{background:var(--ink);color:var(--paper);padding:14px 0;}
 .bar .in{max-width:1000px;margin:0 auto;padding:0 20px;display:flex;gap:14px;align-items:center;flex-wrap:wrap;}
 .bar h1{font-family:'Anton',sans-serif;font-size:19px;text-transform:uppercase;letter-spacing:.04em;margin-right:auto;}
 .bar .accent{color:var(--marigold);}
 .bar label{font-size:13px;font-family:ui-monospace,Menlo,Consolas,monospace;}
-.nv{display:flex;gap:14px;flex-wrap:wrap;}
-.nv a{color:var(--paper);text-decoration:none;font-family:ui-monospace,Menlo,Consolas,monospace;
-  font-size:12px;letter-spacing:.06em;text-transform:uppercase;border-bottom:2px solid transparent;padding:3px 0;}
-.nv a:hover,.nv a:focus-visible{border-bottom-color:var(--marigold);}
 select,button.act{font-family:system-ui,sans-serif;font-size:14px;padding:7px 12px;background:var(--paper);color:var(--ink);border:2px solid var(--paper);cursor:pointer;}
 button.act{background:var(--marigold);border-color:var(--marigold);font-weight:700;}
-.hint{max-width:1000px;margin:16px auto 0;padding:0 20px;font-size:14px;color:#3d4354;}
+.hint{max-width:1000px;margin:16px auto 0;padding:0 20px;font-size:14px;color:var(--muted);}
 
 /* ── the sheet: exact A4 ── */
+.sheetwrap{overflow-x:auto;padding:0 0 8px;}
 .sheet{
-  width:210mm;min-height:297mm;margin:18px auto;background:var(--paper);
+  /* the sheet itself stays paper-white — it is a print preview */
+  width:210mm;min-height:297mm;margin:18px auto;background:#F6F4EE;color:#151C2E;
   padding:14mm 15mm;display:flex;flex-direction:column;
   box-shadow:0 3px 18px rgba(0,0,0,.18);
 }
@@ -66,27 +65,40 @@ button.act{background:var(--marigold);border-color:var(--marigold);font-weight:7
 .foot .dis{max-width:120mm;line-height:1.45;}
 
 @page{size:A4;margin:0;}
+@media(max-width:840px){
+  .sheetwrap{padding-left:10px;padding-right:10px;}
+  .sheet{transform:scale(var(--fit,.44));transform-origin:top left;margin:12px 0;
+         height:297mm;margin-bottom:calc(297mm * (var(--fit,.44) - 1) + 20px);}
+}
 @media print{
   body{background:#fff;}
   .sheet{height:297mm;min-height:0;overflow:hidden;}
   .bar,.hint{display:none!important;}
-  .sheet{margin:0;box-shadow:none;width:210mm;min-height:297mm;page-break-after:always;}
+  .sheetwrap{overflow:visible!important;padding:0!important;}
+  .sheet{margin:0!important;box-shadow:none;width:210mm;min-height:297mm;
+         transform:none!important;}   /* the preview scale must never reach paper */
 }
 </style>
 </head>
 <body>
 
-<div class="bar">
+<nav class="site noprint" aria-label="Main">
+  <div class="wrap-wide">
+    <a class="brand" href="index.html">Psych <span class="accent">Screener</span></a>
+    <a class="navlink" href="index.html">Screener</a>
+    <a class="navlink" href="index.html#guide">Talk it through</a>
+    <a class="navlink" href="index.html#resources">Get Help</a>
+    <a class="navlink" href="evidence.html">Evidence</a>
+    <a class="navlink" href="global.html">Global</a>
+    <a class="navlink" href="ethics.html">Ethics</a>
+    <a class="navlink" href="manifesto.html">Manifesto</a>
+    <a class="navlink" href="poster.html" aria-current="page">Poster</a>
+  </div>
+</nav>
+
+<div class="bar noprint">
   <div class="in">
     <h1>Psych <span class="accent">Screener</span> — Poster</h1>
-    <nav class="nv" aria-label="Site">
-      <a href="index.html">Screener</a>
-      <a href="index.html#resources">Get Help</a>
-      <a href="global.html">Global</a>
-    <a href="evidence.html">Evidence</a>
-      <a href="ethics.html">Ethics</a>
-      <a href="manifesto.html">Manifesto</a>
-    </nav>
     <label for="lang">Language</label>
     <select id="lang"></select>
     <button class="act" onclick="window.print()">Print / Save as PDF</button>
@@ -94,7 +106,7 @@ button.act{background:var(--marigold);border-color:var(--marigold);font-weight:7
 </div>
 <p class="hint">Pick a language, then print at <strong>A4, 100% scale, no margins</strong>. The QR code has been decode-tested down to 18&nbsp;mm, so it scans reliably at this size. Put it where people wait.</p>
 
-<div class="sheet" id="sheet" lang="en">
+<div class="sheetwrap"><div class="sheet" id="sheet" lang="en">
   <p class="eyebrow" id="pEyebrow"></p>
   <h2 class="head" id="pHead"></h2>
   <p class="sub" id="pSub"></p>
@@ -121,7 +133,7 @@ button.act{background:var(--marigold);border-color:var(--marigold);font-weight:7
     <span class="dis" id="pDisc"></span>
     <span>Built by Aryan Manhas · MIT · 2026</span>
   </div>
-</div>
+</div></div>
 
 <script>
 /* Poster copy. Deliberately separate from the app's i18n.js: a printed
@@ -228,6 +240,17 @@ Object.keys(P).forEach(c=>{ const o=document.createElement("option"); o.value=c;
 sel.addEventListener("change", ()=> render(sel.value));
 render((navigator.language||"en").slice(0,2) in P ? (navigator.language||"en").slice(0,2) : "en");
 sel.value = document.getElementById("sheet").lang;
+
+/* fit the A4 preview to narrow screens; print output is unaffected */
+function fitSheet(){
+  const wrap=document.querySelector('.sheetwrap'), sheet=document.getElementById('sheet');
+  if(!wrap) return;
+  const avail=wrap.clientWidth-20, natural=sheet.getBoundingClientRect().width/ (parseFloat(getComputedStyle(sheet).getPropertyValue('--fit'))||1);
+  if(window.innerWidth<=840){
+    sheet.style.setProperty('--fit', Math.min(1, avail/793.7).toFixed(3));
+  } else sheet.style.removeProperty('--fit');
+}
+addEventListener('resize', fitSheet); fitSheet();
 </script>
 </body>
 </html>
