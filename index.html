@@ -600,12 +600,67 @@
     .scorebox .num{font-size:2.2rem;}
   }
 
+  /* ── clinical summary sheet ── */
+  .sheet{background:var(--card);border:2px solid var(--ink);padding:1.5rem 1.6rem;}
+  .sheet .sh-top{border-bottom:2px solid var(--ink);padding-bottom:.8rem;margin-bottom:1rem;}
+  .sheet .sh-kicker{
+    font-family:ui-monospace,'Cascadia Mono',Menlo,Consolas,monospace;
+    font-size:.68rem;letter-spacing:.13em;text-transform:uppercase;color:var(--stamp);
+  }
+  .sheet h2{font-size:1.35rem;margin:.2rem 0 .1rem;}
+  .sheet .sh-meta{
+    font-family:ui-monospace,'Cascadia Mono',Menlo,Consolas,monospace;
+    font-size:.74rem;color:var(--muted);
+  }
+  .sheet h3{
+    font-family:ui-monospace,'Cascadia Mono',Menlo,Consolas,monospace;
+    font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;
+    color:var(--stamp);margin:1.4rem 0 .5rem;
+  }
+  .sheet .sh-score{display:flex;align-items:baseline;gap:.9rem;flex-wrap:wrap;margin-bottom:.4rem;}
+  .sheet .sh-score .n{
+    font-family:'Anton',sans-serif;font-size:2.6rem;line-height:1;
+    font-variant-numeric:tabular-nums;
+  }
+  .sheet .sh-verdict{font-weight:700;}
+  .sheet table{border-collapse:collapse;width:100%;font-size:.84rem;}
+  .sheet th,.sheet td{border:1px solid var(--line);padding:.4rem .55rem;text-align:left;vertical-align:top;}
+  .sheet th{
+    font-family:ui-monospace,'Cascadia Mono',Menlo,Consolas,monospace;
+    font-size:.64rem;letter-spacing:.06em;text-transform:uppercase;background:var(--paper);
+  }
+  .sheet td.v{text-align:center;font-variant-numeric:tabular-nums;width:3.2rem;font-weight:700;}
+  .sheet tr.hit td{background:color-mix(in srgb,var(--marigold) 15%,transparent);}
+  .sheet tr.flag td{background:color-mix(in srgb,var(--stamp) 15%,transparent);font-weight:700;}
+  .sheet .alt{display:block;font-size:.78rem;color:var(--muted);margin-top:.15rem;}
+  .sheet .sh-note{
+    border-left:.35rem solid var(--stamp);padding:.6rem .8rem;margin-top:.7rem;
+    font-size:.85rem;background:color-mix(in srgb,var(--stamp) 8%,transparent);
+  }
+  .sheet .sh-prov{font-size:.78rem;color:var(--muted);margin-top:.35rem;}
+  .sheet .sh-prov strong{color:var(--ink);}
+  .sheet .sh-foot{
+    border-top:2px solid var(--ink);margin-top:1.4rem;padding-top:.7rem;
+    font-size:.74rem;color:var(--muted);
+  }
+
   @media print{
     .topstrip,nav,.a11ybar,footer,.actionrow,.noprint,.skip{display:none!important;}
     body{background:#fff;font-size:12px;}
     .printonly{display:block!important;font-family:monospace;font-size:11px;margin-bottom:1rem;}
     .view{padding:0;}
     .scoreboard,.safety,.notice{max-width:none;border-width:1px;}
+    /* the sheet is a document, not a web page: no fills, no rounding */
+    .wrap{max-width:none;padding:0;}
+    .sheet{border:none;padding:0;background:#fff;color:#000;}
+    .sheet th{background:#fff;}
+    .sheet tr.hit td,.sheet tr.flag td{background:#fff;}
+    .sheet tr.hit td.v::after{content:" ◂";}
+    .sheet tr.flag td.v::after{content:" ◂◂";}
+    .sheet h3{color:#000;}
+    .sheet .sh-note{background:#fff;border-left:3px solid #000;}
+    .sheet table{page-break-inside:auto;}
+    .sheet tr{page-break-inside:avoid;}
   }
   .printonly{display:none;}
 
@@ -925,11 +980,43 @@
     </details>
 
     <div class="actionrow noprint">
-      <button id="printBtn" data-i18n="printBtn"></button>
+      <button id="sheetBtn" data-i18n="sheetBtn"></button>
+      <button class="secondary" id="printBtn" data-i18n="printBtn"></button>
       <button class="secondary" id="icsBtn" data-i18n="reminderBtn"></button>
       <button class="secondary" data-view="history" data-i18n="viewHistory"></button>
       <button class="secondary" data-view="home" data-i18n="backHome"></button>
     </div>
+  </div>
+</section>
+
+<!-- ══════════ CLINICAL SUMMARY ══════════
+     The project exists because prescriptions get written without anyone
+     looking closely at the patient. A total score does not fix that: a
+     PHQ-9 of 14 built from sleep and appetite is a different consultation
+     from a 14 built from hopelessness and anhedonia. This sheet carries the
+     item-level detail, the trend, and the instrument's own limitations into
+     the room, so the conversation starts further along.
+
+     The sheet's own labels are English on purpose. It is a clinical
+     document read by clinicians, the instruments were validated in English,
+     and a mistranslated clinical form is more dangerous than an untranslated
+     one. The patient's own answers appear in both languages so that nobody
+     is asked to hand over a document they cannot read. -->
+<section class="view" id="view-summary" tabindex="-1" aria-labelledby="sumH1">
+  <div class="wrap">
+    <span class="eyebrow noprint" data-i18n="sheetEyebrow"></span>
+    <h1 class="display noprint" id="sumH1" style="font-size:clamp(1.6rem,4.5vw,2.6rem);" data-i18n="sheetTitle"></h1>
+    <p class="lede noprint" data-i18n="sheetLede"></p>
+
+    <div class="actionrow noprint" style="margin:1.1rem 0 1.6rem;">
+      <button id="sheetPrintBtn" data-i18n="sheetPrint"></button>
+      <button class="secondary" data-view="results" data-i18n="back"></button>
+    </div>
+
+    <div class="sheet" id="sheetBody"></div>
+
+    <p class="lede noprint" style="font-size:.9rem;color:var(--muted);margin-top:1.4rem;"
+       data-i18n="sheetPatientNote"></p>
   </div>
 </section>
 
@@ -1105,6 +1192,7 @@ function showView(name){
   document.querySelectorAll("nav a[data-view]").forEach(a=>
     a.setAttribute("aria-current", a.dataset.view === name ? "page" : "false"));
   if(name === "history") renderHistory();
+  if(name === "summary") renderSummary();
   if(name === "guide" && !document.getElementById("transcript").childElementCount) guideStart();
   if(name !== "test"){ stopClock(); }
   window.scrollTo(0,0);
@@ -1286,7 +1374,13 @@ function scoreTest(){
     inst:id, score, sev, bandIdx:bi, safetyFlag, elapsedMs:Date.now() - current.t0,
     date:new Date().toISOString(), rescreenDays:RESCREEN_DAYS[sev]
   };
-  saveEntry({ inst:id, score, sev, bandIdx:bi, safetyFlag, date:lastResult.date });
+  /* Item-level answers are stored, not just the total. A clinician can do
+     very little with "PHQ-9 = 14"; the same 14 built from sleep and appetite
+     is a different consultation from one built from hopelessness and
+     anhedonia. This is the whole point of the clinical summary. */
+  lastResult.answers = current.answers.slice();
+  saveEntry({ inst:id, score, sev, bandIdx:bi, safetyFlag, date:lastResult.date,
+              ans:current.answers.slice() });
   renderResults(true);
   showView("results");
 }
@@ -1372,6 +1466,177 @@ function downloadReminder(){
   a.href = URL.createObjectURL(new Blob([ics],{type:"text/calendar"}));
   a.download = "rescreen-reminder.ics"; a.click();
   URL.revokeObjectURL(a.href);
+}
+
+/* ════════ clinical summary ════════
+   Provenance is deliberately in English and deliberately unflattering.
+   A clinician who cannot see an instrument's limits cannot weigh its
+   output, so the sheet states the operating characteristics and the one
+   place where this app knowingly departs from the published scoring. */
+const PROV = {
+  phq9: {
+    full:"PHQ-9 — Patient Health Questionnaire-9",
+    domain:"Depression",
+    cut:"≥10",
+    bands:"5 / 10 / 15 / 20 = mild / moderate / moderately severe / severe",
+    ops:"88% sensitivity and 88% specificity at ≥10 in the original validation (Kroenke, Spitzer & Williams, J Gen Intern Med 2001; n=6,000). An individual-participant-data meta-analysis of 100 studies and 44,503 participants confirms 0.85 / 0.85 at the same cut point (Levis et al., BMJ 2019). Administered by non-specialist health workers in Kerala primary care: AUC 0.92, sensitivity 82.5%, specificity 90.1%.",
+    lic:"Public domain. No permission required."
+  },
+  gad7: {
+    full:"GAD-7 — Generalised Anxiety Disorder-7",
+    domain:"Anxiety",
+    cut:"≥10",
+    bands:"5 / 10 / 15 = mild / moderate / severe",
+    ops:"89% sensitivity and 82% specificity at the optimal cut point in the original validation (Spitzer et al., Arch Intern Med 2006; n=2,740). A 2025 Cochrane review across 48 studies reports acceptable-to-good accuracy; pooled analyses support cut points of 7–10.",
+    lic:"Public domain. No permission required."
+  },
+  phq4: {
+    full:"PHQ-4 — ultra-brief combined screen",
+    domain:"Depression and anxiety, triage only",
+    cut:"≥6",
+    bands:"3 / 6 / 9 = mild / moderate / severe",
+    ops:"Validated in 2,149 patients (Kroenke et al., Psychosomatics 2009). A JAMA individual-participant meta-analysis found two-stage screening — brief screen, then full PHQ-9 — retains sensitivity while cutting respondent burden by more than half (Levis et al., JAMA 2020).",
+    lic:"Public domain. No permission required.",
+    caveat:"This is a triage instrument. It indicates whether a fuller screen is warranted; it does not itself estimate severity."
+  },
+  auditc: {
+    full:"AUDIT-C — WHO-derived alcohol consumption screen",
+    domain:"Hazardous alcohol use",
+    cut:"≥4",
+    bands:"3 / 4 / 8 = low risk / increasing risk / higher risk",
+    ops:"AUC 0.891 for detecting heavy drinking, marginally better than the full 10-item AUDIT (Bush et al., Arch Intern Med 1998).",
+    lic:"Derived from the WHO AUDIT. This project is not affiliated with, endorsed by, or connected to the World Health Organization.",
+    /* An honest disclosure rather than a silent divergence: the published
+       thresholds are sex-specific, and this app does not ask the patient's
+       sex because it collects nothing it does not need. The consequence
+       falls on women, so it is stated plainly where a clinician will see it. */
+    caveat:"The published thresholds are sex-specific — ≥4 in men, ≥3 in women. This screener applies ≥4 to everyone because it does not ask the patient's sex. It therefore under-flags women: a score of 3 in a female patient should be read as a positive screen."
+  }
+};
+
+function buildSheet(r){
+  const meta = META[r.inst], t = T.inst[r.inst], p = PROV[r.inst];
+  const en = window.I18N.en, ten = en.inst[r.inst];
+  const bi = r.bandIdx, band = t.bands[bi], bandEn = ten.bands[bi];
+  const ans = r.answers || [];
+  const crossed = r.score >= meta.cutoff;
+  const dt = new Date(r.date);
+  const dstr = dt.toLocaleString("en-GB",{day:"2-digit",month:"short",year:"numeric",hour:"2-digit",minute:"2-digit"});
+  const bilingual = LANG !== "en";
+  let h = "";
+
+  h += '<div class="sh-top">'
+     +   '<div class="sh-kicker">Clinical summary · self-administered screen · not a diagnosis</div>'
+     +   "<h2>"+esc(p.full)+"</h2>"
+     +   '<div class="sh-meta">'+esc(p.domain)+" · completed "+esc(dstr)
+     +     " · answered in "+esc(en.label ? (window.I18N[LANG].label || LANG) : LANG)+"</div>"
+     + "</div>";
+
+  h += "<h3>Result</h3>"
+     + '<div class="sh-score"><span class="n">'+r.score+"</span>"
+     +   '<span class="sh-meta">out of '+meta.max+" · clinical cut point "+esc(p.cut)+"</span></div>"
+     + '<p class="sh-verdict">'+esc(bandEn)+(bilingual ? ' <span class="alt">'+esc(band)+"</span>" : "")+"</p>"
+     + '<p class="sh-prov">'+(crossed
+         ? "At or above the published cut point. A screen is not a diagnosis; it indicates that a clinical assessment is warranted."
+         : "Below the published cut point. A negative screen does not rule out a condition, particularly where the patient reports distress.")
+     + "</p>";
+
+  if(p.caveat) h += '<div class="sh-note"><strong>Read with care.</strong> '+esc(p.caveat)+"</div>";
+
+  /* item-level detail: the reason this sheet exists */
+  if(ans.length){
+    h += "<h3>Item-level responses</h3>"
+       + "<table><thead><tr><th>#</th><th>Item</th><th>Response</th><th>Score</th></tr></thead><tbody>";
+    ans.forEach((v,i)=>{
+      const optsEn = meta.perQuestionOpts ? ten.optsets[i] : ten.opts;
+      const optsLo = meta.perQuestionOpts ? t.optsets[i]   : t.opts;
+      const isFlag = meta.safetyIdx === i && v > 0;
+      const isHit  = !isFlag && v >= 2;
+      const lblEn = optsEn && optsEn[v], lblLo = optsLo && optsLo[v];
+      h += '<tr class="'+(isFlag ? "flag" : isHit ? "hit" : "")+'">'
+         +   "<td>"+(i+1)+"</td>"
+         +   "<td>"+esc(ten.q[i])+(bilingual ? '<span class="alt">'+esc(t.q[i])+"</span>" : "")+"</td>"
+         +   "<td>"+esc(typeof lblEn === "string" ? lblEn : "—")
+         +     (bilingual && typeof lblLo === "string" ? '<span class="alt">'+esc(lblLo)+"</span>" : "")+"</td>"
+         +   '<td class="v">'+esc(Number(v))+"</td>"
+         + "</tr>";
+    });
+    h += "</tbody></table>";
+    h += '<p class="sh-prov">Shaded rows scored 2 or more. '
+       + (meta.safetyIdx != null
+          ? "Item "+(meta.safetyIdx+1)+" is the self-harm item and is highlighted whenever it is endorsed at all."
+          : "") + "</p>";
+  } else {
+    h += "<h3>Item-level responses</h3>"
+       + '<p class="sh-prov">Not recorded. This screening predates the version of the app that stores '
+       + "individual answers; only the total score was kept.</p>";
+  }
+
+  if(r.safetyFlag){
+    h += '<div class="sh-note"><strong>Self-harm item endorsed.</strong> The patient reported '
+       + "thoughts of being better off dead or of hurting themselves. This warrants direct enquiry "
+       + "in the consultation regardless of the total score.</div>";
+  }
+
+  /* the follow-up gap this project exists to close */
+  const prior = loadHistory().filter(e=> e.inst === r.inst && e.date !== r.date)
+                  .sort((a,b)=> new Date(a.date) - new Date(b.date));
+  h += "<h3>Screening history — "+esc(t.name)+"</h3>";
+  if(prior.length){
+    const all = prior.concat([{date:r.date, score:r.score, bandIdx:bi}]);
+    h += "<table><thead><tr><th>Date</th><th>Score</th><th>Band</th><th>Interval</th><th>Change</th></tr></thead><tbody>";
+    all.forEach((e,i)=>{
+      const prev = i ? all[i-1] : null;
+      const days = prev ? Math.round((new Date(e.date) - new Date(prev.date)) / 86400000) : null;
+      const d = prev ? e.score - prev.score : null;
+      /* storage is not a trusted source — a band index out of range must
+         degrade to a dash, never to whatever else lives on that array */
+      const bl = ten.bands[e.bandIdx] || "—";
+      h += "<tr>"
+         + "<td>"+esc(new Date(e.date).toLocaleDateString("en-GB",{day:"2-digit",month:"short",year:"numeric"}))+"</td>"
+         + '<td class="v">'+esc(Number(e.score))+"</td>"
+         + "<td>"+esc(typeof bl === "string" ? bl : "—")+"</td>"
+         + "<td>"+(days == null ? "—" : days+" d")+"</td>"
+         + "<td>"+(d == null ? "—" : (d > 0 ? "+"+d : d))+"</td>"
+         + "</tr>";
+    });
+    h += "</tbody></table>"
+       + '<p class="sh-prov">Repeated measurement is the point. Measurement-based care — '
+       + "letting serial scores drive treatment decisions — outperforms treatment as usual, and "
+       + "this history is that practice kept in the patient's own hands.</p>";
+  } else {
+    h += '<p class="sh-prov">This is the first recorded '+esc(t.name)+" screening. "
+       + "A single score describes a moment, not a trajectory; a repeat screen after treatment "
+       + "changes is what makes the number useful.</p>";
+  }
+
+  h += "<h3>Instrument provenance</h3>"
+     + '<p class="sh-prov"><strong>Accuracy.</strong> '+esc(p.ops)+"</p>"
+     + '<p class="sh-prov"><strong>Severity bands.</strong> '+esc(p.bands)+"</p>"
+     + '<p class="sh-prov"><strong>Licence.</strong> '+esc(p.lic)+"</p>";
+
+  h += '<div class="sh-foot">'
+     + "<strong>How this was produced.</strong> The patient completed this screen themselves, "
+     + "unsupervised, on their own device. Scoring is the instrument's published scoring, applied "
+     + "unchanged except where noted above. Nothing was transmitted: the answers were stored in "
+     + "this browser and this sheet was rendered locally. There is no server, no account and no "
+     + "record of this anywhere else — so this sheet cannot be verified against a source, and "
+     + "should be treated as patient-reported history rather than as a clinical record.<br><br>"
+     + "Screening instruments detect probability, not disease. They do not diagnose, and they "
+     + "perform differently across languages and cultures than in the populations where they were "
+     + "validated.<br><br>"
+     /* On paper a reference with no address is no reference at all, so the
+        URL is printed rather than hidden behind link text. */
+     + '<strong>Source.</strong> Every figure above is cited in full at '
+     + '<a href="evidence.html">aryanmanhas12.github.io/Psych/evidence.html</a>. '
+     + "The screener itself is free, open source and carries no advertising."
+     + "</div>";
+  return h;
+}
+
+function renderSummary(){
+  if(!lastResult){ showView("home"); return; }
+  document.getElementById("sheetBody").innerHTML = buildSheet(lastResult);
 }
 
 /* ════════ history ════════ */
@@ -1470,7 +1735,32 @@ function importData(file){
     try{
       const data = JSON.parse(reader.result);
       if(!Array.isArray(data)) throw new Error("not an array");
-      const clean = data.filter(e=> e && META[e.inst] && Number.isFinite(e.score) && e.date);
+      /* An imported file is untrusted input: it can be hand-edited, or come
+         from someone else entirely. Rebuild each entry field by field rather
+         than passing the parsed object through, so nothing unexpected reaches
+         storage and, from there, the clinical summary. */
+      /* hasOwnProperty, not a truthiness test: META["__proto__"] and
+         META["constructor"] are both truthy and neither is an instrument. */
+      const known = k=> typeof k === "string" && Object.prototype.hasOwnProperty.call(META, k);
+      const clean = data.filter(e=>
+          e && known(e.inst) && Number.isFinite(e.score) && e.date &&
+          !isNaN(new Date(e.date).getTime()))
+        .map(e=>{
+          const meta = META[e.inst];
+          const score = Math.max(0, Math.min(meta.max, Math.round(e.score)));
+          const bi = meta.bands.findIndex(([lo,hi])=> score >= lo && score <= hi);
+          const out = {
+            inst: e.inst, score, bandIdx: bi, sev: meta.bands[bi][2],
+            safetyFlag: !!e.safetyFlag,
+            date: new Date(e.date).toISOString()
+          };
+          /* item-level answers, only if they are the right shape */
+          if(Array.isArray(e.ans) && e.ans.length === T.inst[e.inst].q.length
+             && e.ans.every(v=> Number.isInteger(v) && v >= 0 && v <= 12)){
+            out.ans = e.ans.slice();
+          }
+          return out;
+        });
       if(!clean.length) throw new Error("no valid entries");
       const merged = loadHistory().concat(clean);
       const seen = new Set();
@@ -1787,6 +2077,8 @@ document.addEventListener("keydown", e=>{
   if(e.key === "Escape" && setPanel.classList.contains("open")){ toggleSettings(false); setBtn.focus(); }
 });
 document.getElementById("printBtn").addEventListener("click", ()=> window.print());
+document.getElementById("sheetBtn").addEventListener("click", ()=> showView("summary"));
+document.getElementById("sheetPrintBtn").addEventListener("click", ()=> window.print());
 document.getElementById("icsBtn").addEventListener("click", downloadReminder);
 document.getElementById("exportBtn").addEventListener("click", exportData);
 document.getElementById("clearBtn").addEventListener("click", clearData);
