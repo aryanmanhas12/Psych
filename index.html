@@ -354,6 +354,7 @@
   /* ── history ── */
   .histempty{color:var(--muted);font-size:.95rem;}
   .histblock{background:var(--card);border:2px solid var(--ink);padding:1.3rem;margin-bottom:1.2rem;max-width:52rem;}
+  .histsheet{margin-top:.9rem;font-size:.85rem;}
   .histblock h3{font-size:1.12rem;font-weight:700;margin-bottom:.2rem;}
   .histblock .sub{font-family:ui-monospace,'Cascadia Mono',Menlo,Consolas,monospace;font-size:.75rem;color:var(--muted);margin-bottom:.9rem;}
   .chartwrap{overflow-x:auto;position:relative;}
@@ -1010,7 +1011,7 @@
 
     <div class="actionrow noprint" style="margin:1.1rem 0 1.6rem;">
       <button id="sheetPrintBtn" data-i18n="sheetPrint"></button>
-      <button class="secondary" data-view="results" data-i18n="back"></button>
+      <button class="secondary" id="sheetBackBtn" data-i18n="back"></button>
     </div>
 
     <div class="sheet" id="sheetBody"></div>
@@ -1518,7 +1519,8 @@ function buildSheet(r){
   const meta = META[r.inst], t = T.inst[r.inst], p = PROV[r.inst];
   const en = window.I18N.en, ten = en.inst[r.inst];
   const bi = r.bandIdx, band = t.bands[bi], bandEn = ten.bands[bi];
-  const ans = r.answers || [];
+  /* fresh results carry `answers`; entries read back from storage carry `ans` */
+  const ans = r.answers || r.ans || [];
   const crossed = r.score >= meta.cutoff;
   const dt = new Date(r.date);
   const dstr = dt.toLocaleString("en-GB",{day:"2-digit",month:"short",year:"numeric",hour:"2-digit",minute:"2-digit"});
@@ -1634,9 +1636,25 @@ function buildSheet(r){
   return h;
 }
 
+/* The sheet is built for whichever screening is being shown, which is the
+   one just taken by default and the most recent stored one when reached
+   from history. */
+let sheetFor = null, sheetBack = "results";
+
+function openSheetFor(inst){
+  const rows = loadHistory().filter(e=> e.inst === inst)
+                 .sort((a,b)=> new Date(a.date) - new Date(b.date));
+  if(!rows.length) return;
+  sheetFor = rows[rows.length-1];
+  sheetBack = "history";
+  showView("summary");
+}
+
 function renderSummary(){
-  if(!lastResult){ showView("home"); return; }
-  document.getElementById("sheetBody").innerHTML = buildSheet(lastResult);
+  const r = sheetFor || lastResult;
+  if(!r){ showView("home"); return; }
+  document.getElementById("sheetBody").innerHTML = buildSheet(r);
+  sheetFor = null;   /* one-shot: the results view owns the default again */
 }
 
 /* ════════ history ════════ */
@@ -1662,9 +1680,14 @@ function renderHistory(){
       "<h3>"+esc(fmt(T.ui.histLatest,{name:t.name,score:latest.score,max:meta.max,label:lastLabel}))+"</h3>" +
       '<p class="sub">'+esc(fmt(T.ui.histCount,{n:entries.length}))+(trend ? " · "+esc(trend) : "")+"</p>" +
       (entries.length > 1 ? '<div class="chartwrap">'+chartSVG(entries,id)+'<div class="ctip"></div></div>' : "") +
-      historyTable(entries,id);
+      historyTable(entries,id) +
+      /* A sheet is only useful if you can produce one on the morning of the
+         appointment, which is rarely the day you took the screen. */
+      '<button class="secondary histsheet" data-inst="'+esc(id)+'">'+esc(T.ui.sheetBtn)+"</button>";
     el.appendChild(block);
   });
+  el.querySelectorAll(".histsheet").forEach(b=>
+    b.addEventListener("click", ()=> openSheetFor(b.dataset.inst)));
   el.querySelectorAll(".chartwrap").forEach(w=>{
     const tip = w.querySelector(".ctip");
     w.addEventListener("pointerover", ev=>{
@@ -2077,7 +2100,10 @@ document.addEventListener("keydown", e=>{
   if(e.key === "Escape" && setPanel.classList.contains("open")){ toggleSettings(false); setBtn.focus(); }
 });
 document.getElementById("printBtn").addEventListener("click", ()=> window.print());
-document.getElementById("sheetBtn").addEventListener("click", ()=> showView("summary"));
+document.getElementById("sheetBtn").addEventListener("click", ()=>{
+  sheetBack = "results"; showView("summary");
+});
+document.getElementById("sheetBackBtn").addEventListener("click", ()=> showView(sheetBack));
 document.getElementById("sheetPrintBtn").addEventListener("click", ()=> window.print());
 document.getElementById("icsBtn").addEventListener("click", downloadReminder);
 document.getElementById("exportBtn").addEventListener("click", exportData);
