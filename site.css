@@ -121,6 +121,28 @@ nav.site a.navlink{
 }
 nav.site a.navlink:hover,nav.site a.navlink:focus-visible{border-bottom-color:var(--marigold);}
 nav.site a.navlink[aria-current="page"]{border-bottom-color:var(--marigold);font-weight:500;}
+nav.site .navlinks{display:contents;}
+
+/* ── the menu button: only ever seen on small screens ── */
+nav.site .navtoggle{
+  display:none;background:transparent;border:1.5px solid var(--on-deep);color:var(--on-deep);
+  font-family:ui-monospace,'Cascadia Mono',Menlo,Consolas,monospace;
+  font-size:.74rem;letter-spacing:.06em;text-transform:uppercase;
+  padding:.4rem .7rem;min-height:2.4rem;align-items:center;gap:.5rem;
+}
+nav.site .navtoggle:hover{transform:none;box-shadow:none;border-color:var(--marigold);}
+nav.site .navtoggle .bars{
+  width:1rem;height:2px;background:currentColor;position:relative;display:inline-block;
+}
+nav.site .navtoggle .bars::before,nav.site .navtoggle .bars::after{
+  content:"";position:absolute;left:0;width:1rem;height:2px;background:currentColor;
+  transition:transform .18s var(--e-out1);
+}
+nav.site .navtoggle .bars::before{top:-5px;}
+nav.site .navtoggle .bars::after{top:5px;}
+nav.site .navtoggle[aria-expanded="true"] .bars{background:transparent;}
+nav.site .navtoggle[aria-expanded="true"] .bars::before{transform:translateY(5px) rotate(45deg);}
+nav.site .navtoggle[aria-expanded="true"] .bars::after{transform:translateY(-5px) rotate(-45deg);}
 
 /* ── page furniture ── */
 header.hero{padding:3.2rem 0 2.4rem;border-bottom:3px solid var(--ink);}
@@ -223,12 +245,39 @@ footer .byline{
 footer .byline strong{color:var(--ink);font-size:.85rem;}
 
 /* ── small screens ── */
+@media(max-width:720px){
+  /* One row: brand, menu, settings. The links live behind the button. */
+  nav.site{padding:.55rem 0;}
+  nav.site .wrap,nav.site .wrap-wide{gap:.6rem;flex-wrap:wrap;}
+  nav.site .navtoggle{display:inline-flex;}
+  nav.site .navlinks{
+    display:none;flex-basis:100%;width:100%;
+    flex-direction:column;align-items:stretch;
+    border-top:1px solid rgba(255,255,255,.18);margin-top:.5rem;padding-top:.3rem;
+  }
+  nav.site .navlinks.open{display:flex;}
+  nav.site .navlinks a.navlink{
+    padding:.7rem .2rem;border-bottom:1px solid rgba(255,255,255,.10);
+    font-size:.84rem;letter-spacing:.05em;
+  }
+  nav.site .navlinks a.navlink:last-child{border-bottom:0;}
+  nav.site a.navlink[aria-current="page"]{border-bottom-color:var(--marigold);}
+  /* Settings stays on the top row — it holds the language switch, which is
+     the one control a reader may need before they can read anything. The
+     word is hidden from sight but not from the accessibility tree. */
+  nav.site .setlabel{
+    position:absolute;width:1px;height:1px;padding:0;margin:-1px;
+    overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0;
+  }
+}
 @media(max-width:640px){
   header.hero{padding:2rem 0 1.6rem;}
   section{padding:2rem 0 .3rem;}
   h1{font-size:clamp(1.55rem,7vw,2rem);}
   .lede{font-size:.95rem;}
-  .topstrip{font-size:.68rem;}
+  /* the crisis strip stays, but two tight lines instead of three loose ones */
+  .topstrip{font-size:.66rem;padding:.4rem 0;line-height:1.45;}
+  .topstrip .wrap,.topstrip .wrap-wide{gap:.15rem .8rem;}
   .panel{padding:.95rem 1.1rem;}
 }
 
