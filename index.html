@@ -8,6 +8,7 @@
 <meta name="author" content="Aryan Manhas">
 <meta name="theme-color" content="#151C2E">
 <link rel="manifest" href="manifest.webmanifest">
+<script src="nav.js" defer></script>
 <link rel="icon" href="icon-192.png" type="image/png">
 <link rel="apple-touch-icon" href="icon-192.png">
 <link rel="stylesheet" href="site.css">
@@ -578,7 +579,28 @@
   .byline strong{color:var(--ink);font-size:.85rem;}
   .byline a{color:var(--heal);}
 
-  /* ── small screens: get the primary action above the fold ── */
+  /* ── small screens: get the primary action above the fold ──
+     On a phone the home page read as an argument you had to sit through
+     before you were allowed to act: headline, disclaimer, then a 676px
+     band of global statistics, and only then the screeners — about 1,400px
+     down. The evidence is the reason to trust the tool, but it is not the
+     reason someone opened it. Below 720px the order becomes: the promise,
+     the screeners, then the case for them. Desktop keeps the original
+     narrative, where the band costs nothing because it sits beside rather
+     than above. */
+  @media(max-width:720px){
+    #view-home > .wrap{display:flex;flex-direction:column;}
+    #view-home > .wrap > *{order:5;}
+    #view-home > .wrap > .eyebrow,
+    #view-home > .wrap > #homeH1,
+    #view-home > .wrap > #dotrule,
+    #view-home > .wrap > #homeLede,
+    #view-home > .wrap > #ledeMore{order:1;}
+    #view-home > .wrap > #chooseH2{order:2;margin-top:.4rem;}
+    #view-home > .wrap > #cardGrid{order:2;}
+    #view-home > .wrap > .notice{order:3;margin-top:1.4rem;}
+    #view-home > .wrap > #statBand{order:4;}
+  }
   @media(max-width:640px){
     .view{padding:1.2rem 0 2.4rem;}
     h1{font-size:clamp(1.5rem,7vw,1.9rem);margin-bottom:.5rem;}
@@ -643,6 +665,33 @@
   .sheet .sh-foot{
     border-top:2px solid var(--ink);margin-top:1.4rem;padding-top:.7rem;
     font-size:.74rem;color:var(--muted);
+  }
+  .sheet .scroll{overflow-x:auto;}
+  .sheet .scroll table{min-width:29rem;}
+
+  /* On a phone a four-column table crushes the item text into a column two
+     words wide. Each item becomes its own block instead — the question, then
+     the answer and its score on one line — which is how you would read it
+     aloud anyway. The printed sheet keeps the table. */
+  @media screen and (max-width:640px){
+    .sheet{padding:1rem .95rem;}
+    .sheet table.items,.sheet table.items tbody,
+    .sheet table.items tr,.sheet table.items td{display:block;width:auto;}
+    .sheet table.items thead{display:none;}
+    .sheet table.items tr{
+      border:1px solid var(--line);border-left:.32rem solid var(--line);
+      padding:.55rem .7rem;margin-bottom:.4rem;overflow:hidden;
+    }
+    .sheet table.items tr.hit{border-left-color:var(--marigold);}
+    .sheet table.items tr.flag{border-left-color:var(--stamp);}
+    .sheet table.items td{border:0;padding:0;}
+    .sheet table.items td.n{float:left;margin-right:.45rem;color:var(--muted);font-weight:700;}
+    .sheet table.items td.q{font-weight:600;margin-bottom:.35rem;}
+    .sheet table.items td.r,.sheet table.items td.v{
+      display:inline-block;width:auto;text-align:left;font-size:.83rem;
+    }
+    .sheet table.items td.r{color:var(--muted);}
+    .sheet table.items td.v::before{content:" · ";color:var(--muted);font-weight:400;}
   }
 
   @media print{
@@ -785,7 +834,7 @@
     <a class="navlink" href="poster.html">Poster</a>
     <div class="setwrap">
       <button type="button" class="setbtn" id="setBtn" aria-expanded="false" aria-controls="setPanel">
-        <span aria-hidden="true">⚙</span> <span data-i18n="settings">Settings</span>
+        <span aria-hidden="true">⚙</span> <span class="setlabel" data-i18n="settings">Settings</span>
       </button>
       <div class="setpanel" id="setPanel" role="group" aria-labelledby="setBtn">
         <div class="setrow">
@@ -850,7 +899,7 @@
 
     <div class="statband reveal" id="statBand" aria-label="Global mental health figures"></div>
 
-    <h2 class="display reveal" data-i18n="chooseScreener">Choose a screener</h2>
+    <h2 class="display reveal" id="chooseH2" data-i18n="chooseScreener">Choose a screener</h2>
     <div class="cards" id="cardGrid"></div>
 
     <div class="mood reveal">
@@ -1548,7 +1597,7 @@ function buildSheet(r){
   /* item-level detail: the reason this sheet exists */
   if(ans.length){
     h += "<h3>Item-level responses</h3>"
-       + "<table><thead><tr><th>#</th><th>Item</th><th>Response</th><th>Score</th></tr></thead><tbody>";
+       + '<table class="items"><thead><tr><th>#</th><th>Item</th><th>Response</th><th>Score</th></tr></thead><tbody>';
     ans.forEach((v,i)=>{
       const optsEn = meta.perQuestionOpts ? ten.optsets[i] : ten.opts;
       const optsLo = meta.perQuestionOpts ? t.optsets[i]   : t.opts;
@@ -1556,9 +1605,9 @@ function buildSheet(r){
       const isHit  = !isFlag && v >= 2;
       const lblEn = optsEn && optsEn[v], lblLo = optsLo && optsLo[v];
       h += '<tr class="'+(isFlag ? "flag" : isHit ? "hit" : "")+'">'
-         +   "<td>"+(i+1)+"</td>"
-         +   "<td>"+esc(ten.q[i])+(bilingual ? '<span class="alt">'+esc(t.q[i])+"</span>" : "")+"</td>"
-         +   "<td>"+esc(typeof lblEn === "string" ? lblEn : "—")
+         +   '<td class="n">'+(i+1)+"</td>"
+         +   '<td class="q">'+esc(ten.q[i])+(bilingual ? '<span class="alt">'+esc(t.q[i])+"</span>" : "")+"</td>"
+         +   '<td class="r">'+esc(typeof lblEn === "string" ? lblEn : "—")
          +     (bilingual && typeof lblLo === "string" ? '<span class="alt">'+esc(lblLo)+"</span>" : "")+"</td>"
          +   '<td class="v">'+esc(Number(v))+"</td>"
          + "</tr>";
@@ -1586,7 +1635,7 @@ function buildSheet(r){
   h += "<h3>Screening history — "+esc(t.name)+"</h3>";
   if(prior.length){
     const all = prior.concat([{date:r.date, score:r.score, bandIdx:bi}]);
-    h += "<table><thead><tr><th>Date</th><th>Score</th><th>Band</th><th>Interval</th><th>Change</th></tr></thead><tbody>";
+    h += '<div class="scroll"><table class="trend"><thead><tr><th>Date</th><th>Score</th><th>Band</th><th>Interval</th><th>Change</th></tr></thead><tbody>';
     all.forEach((e,i)=>{
       const prev = i ? all[i-1] : null;
       const days = prev ? Math.round((new Date(e.date) - new Date(prev.date)) / 86400000) : null;
@@ -1602,7 +1651,7 @@ function buildSheet(r){
          + "<td>"+(d == null ? "—" : (d > 0 ? "+"+d : d))+"</td>"
          + "</tr>";
     });
-    h += "</tbody></table>"
+    h += "</tbody></table></div>"
        + '<p class="sh-prov">Repeated measurement is the point. Measurement-based care — '
        + "letting serial scores drive treatment decisions — outperforms treatment as usual, and "
        + "this history is that practice kept in the patient's own hands.</p>";
@@ -1900,7 +1949,12 @@ const STATS = [
   { n:"1 in 2",  k:"half",  l:"of people will develop a mental disorder at some point by age 75", s:"McGrath et al., Lancet Psychiatry 2023 · 156,331 people, 29 countries" },
   { n:"14.5",    k:"num", to:14.5, dp:1, l:"years — the peak age at which mental disorders first begin", s:"Solmi et al., Molecular Psychiatry 2021 · meta-analysis, 192 studies" },
   { n:"48%",     k:"num", to:48,   dp:0, suffix:"%", l:"of all mental disorders have already begun before age 18", s:"Solmi et al., Molecular Psychiatry 2021" },
-  { n:"3% / 23%",k:"gap", l:"get minimally adequate treatment for depression — low-income vs high-income countries", s:"Moitra et al., PLoS Medicine 2022 · 84 countries" }
+  /* Two bare numbers separated by a slash made the reader do the matching
+     themselves, and most did not. One headline number, and the comparison
+     carried by the sentence instead. */
+  { n:"3%", k:"num", to:3, dp:0, suffix:"%",
+    l:"of people with depression in low-income countries get minimally adequate treatment. In high-income countries it is 23%.",
+    s:"Moitra et al., PLoS Medicine 2022 · 84 countries" }
 ];
 function renderStats(){
   const el = document.getElementById("statBand");

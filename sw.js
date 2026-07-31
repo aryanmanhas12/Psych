@@ -2,11 +2,16 @@
    The whole point: someone on a patchy connection in a district town
    should still be able to screen themselves and read the helpline
    numbers. Everything here is static, so we can cache all of it. */
-const CACHE = "psych-screener-v1";
+/* Bump this on every release that changes a cached file. The fetch handler
+   is cache-first, so an installed copy will happily serve the version it
+   first saw forever — a stale name here means shipped changes never reach
+   the people who installed the app, which is exactly what had happened
+   while this sat at v1 through several releases. */
+const CACHE = "psych-screener-v3";
 const ASSETS = [
-  "./", "./index.html", "./i18n.js", "./helplines.js",
+  "./", "./index.html", "./i18n.js", "./helplines.js", "./nav.js",
   "./ethics.html", "./evidence.html", "./manifesto.html",
-  "./poster.html", "./qr-site.svg",
+  "./global.html", "./poster.html", "./qr-site.svg",
   "./anton.woff2", "./site.css", "./manifest.webmanifest",
   "./icon-192.png", "./icon-512.png", "./icon-maskable.png"
 ];
