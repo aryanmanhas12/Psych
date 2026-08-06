@@ -11,6 +11,7 @@
 <script src="nav.js" defer></script>
 <link rel="icon" href="icon-192.png" type="image/png">
 <link rel="apple-touch-icon" href="icon-192.png">
+<script src="prefs.js"></script>
 <link rel="stylesheet" href="site.css">
 <style>
 /* Dark theme. People in distress use phones at 2am; a wall of light
@@ -28,13 +29,19 @@
     --line:#333B4C; --muted:#9AA3B5;
     --marigold:#F0B53C; --stamp:#E4796B; --heal:#5FB39C;
   }
-  /* the ink-on-dark blocks invert so they stay distinct from the page */
-  :root[data-theme="dark"] .scorebox,
-  :root[data-theme="dark"] nav,
-  :root[data-theme="dark"] .tokenbar,
-  :root[data-theme="dark"] .stat,
-  :root[data-theme="dark"] .statband,
-  :root[data-theme="dark"] .bub.u{background:#0A0D14;color:var(--ink);}
+  /* The ink-on-dark blocks invert so they stay distinct from the page.
+     Excluded under high contrast: this rule pins a literal near-black
+     background but takes its text from --ink, and high contrast sets
+     --ink to pure black — so the two combined rendered black on black
+     and the figures and their citations disappeared entirely. Opting out
+     lets the plain rule below apply instead, which is already the
+     maximum-contrast pairing those two settings are asking for. */
+  :root[data-theme="dark"]:not([data-contrast="high"]) .scorebox,
+  :root[data-theme="dark"]:not([data-contrast="high"]) nav,
+  :root[data-theme="dark"]:not([data-contrast="high"]) .tokenbar,
+  :root[data-theme="dark"]:not([data-contrast="high"]) .stat,
+  :root[data-theme="dark"]:not([data-contrast="high"]) .statband,
+  :root[data-theme="dark"]:not([data-contrast="high"]) .bub.u{background:#0A0D14;color:var(--ink);}
 
   /* high-contrast mode: user-toggled, overrides tokens only */
   :root[data-contrast="high"]{
@@ -351,6 +358,11 @@
   }
   .rescreen b{color:var(--heal);}
   .actionrow{display:flex;gap:.75rem;flex-wrap:wrap;margin-top:1.6rem;}
+  .sheetnudge{
+    border-left:.3rem solid var(--heal);padding:.6rem .85rem;margin-top:1.4rem;
+    background:color-mix(in srgb,var(--heal) 9%,transparent);
+    font-size:.9rem;max-width:60ch;
+  }
 
   /* ── history ── */
   .histempty{color:var(--muted);font-size:.95rem;}
@@ -391,6 +403,17 @@
   }
   .stat .l{font-size:.8rem;line-height:1.45;margin-top:.4rem;opacity:.92;}
   .stat .s{font-family:ui-monospace,'Cascadia Mono',Menlo,Consolas,monospace;font-size:.62rem;opacity:.55;margin-top:.45rem;display:block;}
+  /* Dimming is a way of saying "this matters less". Someone who has
+     turned on high contrast is telling us they cannot afford that, and
+     the citation is the part that makes a claim checkable. */
+  :root[data-contrast="high"] .stat .l,
+  :root[data-contrast="high"] .stat .s{opacity:1;}
+  /* High contrast darkens the marigold so it holds up on white — but this
+     band is black in that mode, where the same colour drops to 3.65:1.
+     A literal rather than a token because it is the one place the accent
+     sits on a guaranteed-black surface, and the token cannot be right for
+     both directions at once. 13.4:1 here. */
+  :root[data-contrast="high"] .stat .n{color:#FFC64D;}
 
   /* ── global helplines ── */
   .dirlist{display:grid;gap:.6rem;max-width:52rem;margin-bottom:1.2rem;}
@@ -570,6 +593,63 @@
 
   @media (prefers-reduced-motion: reduce){
     #overture{display:none!important;}
+  }
+
+  /* ── opening questions ── */
+  .intro{
+    position:fixed;inset:0;z-index:950;background:var(--paper);
+    display:flex;align-items:center;justify-content:center;padding:1.2rem;
+    animation:introIn .4s var(--e-out2);
+  }
+  /* `hidden` is only a UA rule, so any class setting display beats it and
+     the overlay renders anyway — empty, because nothing has filled it in
+     yet. Every element here that toggles via the attribute needs this. */
+  .intro[hidden]{display:none;}
+  @keyframes introIn{from{opacity:0;}to{opacity:1;}}
+  .intro-inner{width:min(38rem,100%);text-align:center;}
+  .intro-crisis{
+    font-size:.72rem;color:var(--muted);margin-bottom:1.6rem;letter-spacing:.02em;
+  }
+  .intro-crisis a{color:var(--stamp);font-weight:700;}
+  .intro h2{font-size:clamp(1.5rem,5.5vw,2.6rem);margin-bottom:1.6rem;}
+  /* the quote card: a statement being put to you, not a form field */
+  .intro-card{
+    position:relative;background:var(--deep);color:var(--on-deep);
+    padding:2.6rem 1.8rem;margin-bottom:1.8rem;
+    display:flex;align-items:center;justify-content:center;min-height:11rem;
+  }
+  .intro-card p{
+    font-size:clamp(1.05rem,3.4vw,1.35rem);font-weight:700;line-height:1.5;
+    max-width:26ch;margin:0;
+  }
+  .intro-card .qm{
+    position:absolute;color:var(--marigold);font-size:2.4rem;line-height:1;
+    font-family:Georgia,'Times New Roman',serif;
+  }
+  .intro-card .qm-a{top:-.35rem;left:.5rem;transform:rotate(180deg);}
+  .intro-card .qm-b{bottom:-.9rem;right:.5rem;}
+  .intro-btns{display:flex;gap:.8rem;justify-content:center;margin-bottom:1.5rem;}
+  .intro-btns button{
+    border-radius:2rem;padding:.9rem 2.4rem;font-size:1rem;min-height:3.2rem;
+    flex:1;max-width:14rem;
+  }
+  .intro-no{background:var(--line);color:var(--ink);}
+  .intro-yes{background:var(--heal);color:#fff;}
+  .intro-foot{display:flex;align-items:center;justify-content:center;gap:1.1rem;}
+  .intro-dots{font-size:.75rem;color:var(--muted);letter-spacing:.25em;}
+  .intro-skip{
+    background:transparent;color:var(--muted);border:0;
+    font-family:ui-monospace,'Cascadia Mono',Menlo,Consolas,monospace;
+    text-transform:none;letter-spacing:0;font-size:.8rem;
+    min-height:2.75rem;padding:.4rem .6rem;text-decoration:underline;
+  }
+  .intro-skip:hover{transform:none;box-shadow:none;color:var(--ink);}
+  @media(max-width:640px){
+    .intro-card{padding:2.1rem 1.1rem;min-height:9rem;}
+    .intro-btns button{padding:.85rem 1rem;}
+  }
+  @media (prefers-reduced-motion: reduce){
+    .intro{animation:none;}
   }
 
   /* ── guided tour: a spotlight, not another video ──
@@ -956,6 +1036,40 @@
   </div>
 </div>
 
+<!-- ══════════ OPENING QUESTIONS ══════════
+     Three statements, tapped through in about ten seconds. They are not a
+     survey: nothing is sent anywhere, and each one changes something the
+     reader will actually see later. Asking a question whose answer goes
+     nowhere is the kind of friction that makes people close a tab, and
+     this is a tab someone may have opened while feeling awful.
+
+     Everything here is escapable. The crisis line stays on screen, Skip
+     is a real control rather than fine print, and the whole thing never
+     runs for someone arriving on a deep link — a person heading straight
+     for a phone number is not answering questionnaires first. -->
+<div id="intro" class="intro" hidden role="dialog" aria-modal="true" aria-labelledby="introQ">
+  <div class="intro-inner">
+    <p class="intro-crisis mono">
+      <span data-i18n="introCrisisLead"></span>
+      <a href="tel:14416">Tele-MANAS 14416</a>
+    </p>
+    <h2 class="display" id="introQ" data-i18n="introQuestion"></h2>
+    <div class="intro-card">
+      <span class="qm qm-a" aria-hidden="true">❞</span>
+      <p id="introStatement"></p>
+      <span class="qm qm-b" aria-hidden="true">❞</span>
+    </div>
+    <div class="intro-btns">
+      <button type="button" class="intro-no"  id="introNo"  data-i18n="introNo"></button>
+      <button type="button" class="intro-yes" id="introYes" data-i18n="introYes"></button>
+    </div>
+    <div class="intro-foot">
+      <span class="intro-dots mono" id="introDots" aria-hidden="true"></span>
+      <button type="button" class="intro-skip" id="introSkip" data-i18n="introSkip"></button>
+    </div>
+  </div>
+</div>
+
 <a class="skip" href="#main" data-i18n="skip">Skip to main content</a>
 
 <div class="topstrip noprint">
@@ -1196,6 +1310,8 @@
       <summary id="accDoctorSum"></summary>
       <div class="accbody"><ul id="resDoctor"></ul></div>
     </details>
+
+    <p class="sheetnudge" id="sheetNudge" hidden data-i18n="sheetNudge"></p>
 
     <div class="actionrow noprint">
       <button id="sheetBtn" data-i18n="sheetBtn"></button>
@@ -1678,6 +1794,7 @@ function renderResults(animate){
     esc(fmt(T.ui.rescreenTail,{n:r.rescreenDays}));
 
   renderSevScale(r.inst, r.score);
+  applyIntroTailoring();
   if(animate) animateScore(r.score); else document.getElementById("resScore").textContent = r.score;
 
   const wp = document.getElementById("wellbeingsPanel");
@@ -2508,8 +2625,8 @@ function otEnd(skipped){
        reaching for Skip and immediately getting a second guided thing
        is the opposite of what Skip was for */
     if(skipped) return;
-    if(otThenTour){ otThenTour = false; tourStart(); }
-    else tourMaybeAutostart();
+    const replay = otThenTour; otThenTour = false;
+    openingNext(replay);
   }, 500);
   try{ localStorage.setItem(OT_KEY, "1"); }catch(e){}
 }
@@ -2571,6 +2688,79 @@ if(!otSkip){
   setTimeout(()=> document.getElementById("skipIntro").focus(), 60);
 }
 
+/* ════════ opening questions ════════
+   Three statements about getting help, not about symptoms — the treatment
+   gap this project exists for is only partly clinical, and what someone
+   believes before they start shapes whether they act on a score at all.
+
+   Each answer changes something later, which is the only reason it is
+   fair to ask. They are kept in the same local store as everything else
+   and never leave the device. */
+const INTRO_KEY = "psych-intro-answers";
+const INTRO_SEEN = "psych-seen-intro";
+const INTRO_N = 3;
+let introIdx = 0, introAns = [];
+
+function introAnswers(){
+  try{ return JSON.parse(localStorage.getItem(INTRO_KEY)) || null; }catch(e){ return null; }
+}
+
+/* What follows the room scene. The questions are a first-visit thing
+   only: someone replaying the opening wants to see the walkthrough
+   again, not to be asked the same three things a second time. */
+function openingNext(replay){
+  let seen = true;
+  try{ seen = !!localStorage.getItem(INTRO_SEEN); }catch(e){}
+  if(!seen){ introStart(); return; }
+  if(replay) tourStart(); else tourMaybeAutostart();
+}
+
+function introRender(){
+  document.getElementById("introStatement").textContent = T.ui.introStatements[introIdx];
+  document.getElementById("introDots").textContent =
+    "●".repeat(introIdx + 1) + "○".repeat(INTRO_N - introIdx - 1);
+}
+
+function introStart(){
+  introIdx = 0; introAns = [];
+  document.getElementById("intro").hidden = false;
+  introRender();
+  setTimeout(()=> document.getElementById("introYes").focus(), 260);
+}
+
+function introFinish(saved){
+  document.getElementById("intro").hidden = true;
+  try{
+    localStorage.setItem(INTRO_SEEN, "1");
+    if(saved) localStorage.setItem(INTRO_KEY, JSON.stringify(introAns));
+  }catch(e){}
+  applyIntroTailoring();
+  /* the questions hand straight over to the feature walkthrough */
+  tourMaybeAutostart();
+}
+
+function introAnswer(yes){
+  introAns.push(yes);
+  if(introIdx < INTRO_N - 1){ introIdx++; introRender(); }
+  else introFinish(true);
+}
+
+/* The payoff. Someone who says they would struggle to describe how they
+   feel to a doctor is exactly who the clinician sheet was built for, so
+   that is surfaced for them rather than left to be discovered. */
+function applyIntroTailoring(){
+  const a = introAnswers();
+  const el = document.getElementById("sheetNudge");
+  if(el) el.hidden = !(a && a[1] === true);
+}
+
+document.getElementById("introYes").addEventListener("click", ()=> introAnswer(true));
+document.getElementById("introNo").addEventListener("click", ()=> introAnswer(false));
+document.getElementById("introSkip").addEventListener("click", ()=> introFinish(false));
+document.getElementById("intro").addEventListener("keydown", e=>{
+  if(e.key === "Escape") introFinish(false);
+});
+
 /* ════════ guided tour ════════
    Five real controls, in the order someone would meet them: change how
    the page looks, pick a screener, know the numbers are always there,
@@ -2587,7 +2777,11 @@ const TOUR_STEPS = [
   { sel:'a.bcard[href="manifesto.html"]',key:"tourManifesto" },
   { sel:"details.notice",                key:"tourHowThis" }
 ];
-const TOUR_STEP_MS = 2800;      /* 5 steps × 2.8s ≈ 14s — inside the 10-15s asked for */
+/* 4.8s a box. The earlier 2.8s was long enough to see a box but not to
+   finish reading one — two sentences is more than a two-second glance,
+   especially for anyone reading a second language. Four transitions at
+   this rate reach the final box in about 19s, where it waits. */
+const TOUR_STEP_MS = 4800;
 let tourIdx = 0, tourTimer = null, tourPaused = false, tourPlacedAt = 0, tourRepaint = null;
 
 function tourMaybeAutostart(){
