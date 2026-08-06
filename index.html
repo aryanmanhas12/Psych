@@ -593,10 +593,38 @@
   .tour-card{
     position:fixed;z-index:2;max-width:22rem;background:var(--card);color:var(--ink);
     border:2px solid var(--ink);padding:1.1rem 1.2rem;
+    /* three round corners and one squared off: the shorthand for "someone
+       is saying this", without a tail that would have to be re-aimed */
+    border-radius:1.1rem 1.1rem 1.1rem .2rem;
     box-shadow:0 10px 34px rgba(0,0,0,.35);
     transition:top .45s var(--e-out2),left .45s var(--e-out2),
                right .45s var(--e-out2),bottom .45s var(--e-out2);
   }
+  .tour-head{display:flex;align-items:center;gap:.6rem;margin-bottom:.35rem;}
+  /* the same figure from the opening, now doing the explaining — the
+     scene and the tour should feel like one voice, not two features */
+  .tour-guide{width:1.9rem;height:2.4rem;flex:none;}
+  .tour-guide circle{fill:var(--heal);}
+  .tour-guide path{
+    fill:none;stroke:var(--heal);stroke-width:3.4;
+    stroke-linecap:round;stroke-linejoin:round;
+  }
+  .tour-guide .wave{transform-origin:20px 22px;animation:tourWave 1.6s ease-in-out infinite;}
+  @keyframes tourWave{0%,100%{transform:rotate(0deg);}50%{transform:rotate(-22deg);}}
+
+  .tour-arrow{
+    position:fixed;z-index:3;width:4rem;height:4rem;
+    margin:-2rem 0 0 -2rem;pointer-events:none;
+    filter:drop-shadow(0 2px 6px rgba(0,0,0,.55));
+    transition:transform .45s var(--e-out2);
+  }
+  .tour-arrow svg{width:100%;height:100%;display:block;}
+  .tour-arrow path{
+    fill:none;stroke:var(--marigold);stroke-width:7;
+    stroke-linecap:round;stroke-linejoin:round;
+  }
+  .tour-arrow .ab{animation:tourBob 1.05s ease-in-out infinite alternate;}
+  @keyframes tourBob{from{transform:translateX(-5px);}to{transform:translateX(5px);}}
   /* one segment per step, Instagram-story style: solid = done, filling =
      current, empty = ahead. Doubles as the "time is passing" cue that
      makes the auto-advance legible instead of just abrupt. */
@@ -640,7 +668,10 @@
     .tour-card{left:.9rem!important;right:.9rem!important;bottom:.9rem!important;top:auto!important;max-width:none;}
   }
   @media (prefers-reduced-motion: reduce){
-    .tour-ring,.tour-card{transition:none;}
+    /* the arrow still points — it carries meaning; only the idle
+       motion that carries none is dropped */
+    .tour-ring,.tour-card,.tour-arrow{transition:none;}
+    .tour-arrow .ab,.tour-guide .wave{animation:none;}
   }
 
   .byline{
@@ -890,9 +921,31 @@
 <div id="tour" class="tour" hidden role="dialog" aria-modal="true" aria-labelledby="tourTitle">
   <div class="tour-block" id="tourBlock"></div>
   <div class="tour-ring" id="tourRing"></div>
+
+  <!-- The arrow is a separate layer rather than a tail on the bubble,
+       because the bubble moves to wherever there is room and the target
+       does not: a CSS tail is fixed to one edge and would point at empty
+       space half the time. This one is rotated at each step to aim at
+       the thing being described, so it is always right. -->
+  <div class="tour-arrow" id="tourArrow" aria-hidden="true">
+    <svg viewBox="0 0 64 64">
+      <g class="ab">
+        <path d="M6 32 H44"/>
+        <path d="M32 17 L47 32 L32 47"/>
+      </g>
+    </svg>
+  </div>
+
   <div class="tour-card" id="tourCard">
     <div class="tour-progress" id="tourProgress" aria-hidden="true"></div>
-    <div class="tour-count mono" id="tourCount"></div>
+    <div class="tour-head">
+      <svg class="tour-guide" viewBox="0 0 40 50" aria-hidden="true">
+        <circle cx="20" cy="9" r="7.5"/>
+        <path d="M20 17 V33 M20 33 L13 47 M20 33 L27 47 M20 22 L11 28"/>
+        <path class="wave" d="M20 22 L29 27"/>
+      </svg>
+      <div class="tour-count mono" id="tourCount"></div>
+    </div>
     <h3 id="tourTitle"></h3>
     <p id="tourBody"></p>
     <div class="tour-nav">
@@ -2439,6 +2492,12 @@ function otBuildField(){
   }
 }
 
+/* set when the opening was asked for on purpose, rather than happening
+   to a first-time visitor — a deliberate replay should always run the
+   whole thing through, not consult the once-per-device gates that exist
+   to stop it repeating uninvited */
+let otThenTour = false;
+
 function otEnd(skipped){
   otClear();
   ot.classList.add("closing");
@@ -2448,7 +2507,9 @@ function otEnd(skipped){
     /* only a room scene someone actually watched earns a follow-up —
        reaching for Skip and immediately getting a second guided thing
        is the opposite of what Skip was for */
-    if(!skipped) tourMaybeAutostart();
+    if(skipped) return;
+    if(otThenTour){ otThenTour = false; tourStart(); }
+    else tourMaybeAutostart();
   }, 500);
   try{ localStorage.setItem(OT_KEY, "1"); }catch(e){}
 }
@@ -2491,10 +2552,13 @@ function otPlay(){
 }
 
 document.getElementById("skipIntro").addEventListener("click", ()=> otEnd(true));
-document.getElementById("replayIntro").addEventListener("click", ()=>{
-  toggleSettings(false); otPlay();
+function playOpening(){
+  toggleSettings(false);
+  otThenTour = true;
+  otPlay();
   setTimeout(()=> document.getElementById("skipIntro").focus(), 60);
-});
+}
+document.getElementById("replayIntro").addEventListener("click", playOpening);
 ot.addEventListener("keydown", e=>{ if(e.key === "Escape") otEnd(true); });
 
 /* Plays once per device, never for reduced-motion users, and never
@@ -2524,7 +2588,7 @@ const TOUR_STEPS = [
   { sel:"details.notice",                key:"tourHowThis" }
 ];
 const TOUR_STEP_MS = 2800;      /* 5 steps × 2.8s ≈ 14s — inside the 10-15s asked for */
-let tourIdx = 0, tourTimer = null, tourPaused = false, tourPlacedAt = 0;
+let tourIdx = 0, tourTimer = null, tourPaused = false, tourPlacedAt = 0, tourRepaint = null;
 
 function tourMaybeAutostart(){
   let seen = true;
@@ -2589,7 +2653,7 @@ function tourPlace(){
      anchor links. Passing "auto" here silently re-smooths every jump and
      reproduces exactly the staleness this rAF rewrite was meant to fix. */
   el.scrollIntoView({ block:"center", behavior:"instant" });
-  requestAnimationFrame(()=>{
+  const paint = ()=>{
     const r = el.getBoundingClientRect(), pad = 6;
     const ring = document.getElementById("tourRing");
     ring.style.top    = (r.top - pad) + "px";
@@ -2598,13 +2662,85 @@ function tourPlace(){
     ring.style.height = (r.height + pad*2) + "px";
 
     const card = document.getElementById("tourCard");
+    const cw = card.offsetWidth, chh0 = card.offsetHeight;
+    /* Where the bubble is *going*, not where it is. It animates into place
+       over .45s, so reading its rect now returns the previous step's spot
+       and every arrow decision made from it would be a step behind. */
+    let c;
     if(window.innerWidth > 640){
       card.style.right = card.style.bottom = "";
-      const below = r.bottom + 16 + 190 < innerHeight;
-      card.style.top  = (below ? r.bottom + 16 : Math.max(16, r.top - 16 - 190)) + "px";
-      card.style.left = Math.min(Math.max(16, r.left), innerWidth - 22*16 - 16) + "px";
+      const below = r.bottom + 16 + chh0 < innerHeight;
+      const cTop  = below ? r.bottom + 16 : Math.max(16, r.top - 16 - chh0);
+      const cLeft = Math.min(Math.max(16, r.left), innerWidth - cw - 16);
+      card.style.top  = cTop + "px";
+      card.style.left = cLeft + "px";
+      c = { left:cLeft, top:cTop, right:cLeft + cw, bottom:cTop + chh0 };
+    } else {
+      /* pinned as a bottom sheet by CSS, so it does not travel between
+         steps and its current rect is already the settled one */
+      const b = card.getBoundingClientRect();
+      c = { left:b.left, top:b.top, right:b.right, bottom:b.bottom };
     }
-  });
+
+    /* Aim the arrow along the line from the bubble to the target and park
+       it just outside the ring, so it always reads as "from me, to that"
+       whichever side the bubble ended up on. */
+    {
+      const tx = r.left + r.width/2,  ty = r.top + r.height/2;
+      const cx = (c.left + c.right)/2, cy = (c.top + c.bottom)/2;
+      const ang = Math.atan2(ty - cy, tx - cx);
+      const hw = r.width/2 + pad, hh = r.height/2 + pad;
+
+      /* Try standing points around the highlight and take the first with
+         clear air: preferred is the side facing the bubble, then the two
+         flanks, then straight past it. Wherever it ends up it is aimed
+         back at the highlight, so the reading is the same.
+
+         Placing it by formula alone kept failing on one case or another —
+         the half-diagonal parked it 580px from a wide, short target; the
+         bubble's own edge overshot small targets it already enclosed and
+         aimed the arrow backwards; a single flip to the far side still
+         landed inside a bubble that spanned both. Trying candidates and
+         checking each is what actually holds for every step. */
+      const offsets = [Math.PI, Math.PI/2, -Math.PI/2, 0,
+                       3*Math.PI/4, -3*Math.PI/4, Math.PI/4, -Math.PI/4];
+      let ax = null, ay = null, dir = ang;
+      for(const off of offsets){
+        const phi = ang + off;
+        const ex = Math.cos(phi), ey = Math.sin(phi);
+        /* where this heading leaves the ring, plus a margin */
+        const ee = Math.min(
+          Math.abs(ex) > 1e-6 ? hw/Math.abs(ex) : Infinity,
+          Math.abs(ey) > 1e-6 ? hh/Math.abs(ey) : Infinity
+        );
+        const mm = (isFinite(ee) ? ee : 0) + 26;
+        const qx = tx + ex*mm, qy = ty + ey*mm;
+        const overBubble = qx > c.left - 8 && qx < c.right  + 8 &&
+                           qy > c.top  - 8 && qy < c.bottom + 8;
+        const onScreen = qx > 34 && qx < innerWidth - 34 &&
+                         qy > 34 && qy < innerHeight - 34;
+        if(!overBubble && onScreen){ ax = qx; ay = qy; dir = phi + Math.PI; break; }
+      }
+      const arrow = document.getElementById("tourArrow");
+      /* nowhere clear — a tiny viewport with a bubble covering most of it.
+         Hiding beats drawing an arrow across the words. */
+      arrow.style.opacity = ax === null ? "0" : "1";
+      if(ax !== null){
+        arrow.style.transform =
+          "translate(" + ax + "px," + ay + "px) rotate(" + dir + "rad)";
+      }
+    }
+  };
+
+  requestAnimationFrame(paint);
+  /* Paint again once everything has stopped moving. The ring and bubble
+     animate into place over .45s, and a target carrying .reveal slides up
+     14px as it enters view — enough, at the distances involved here, to
+     leave the arrow aimed several degrees wide of what it is pointing at.
+     Cheap to redo, and it is the difference between "points at it" and
+     "points near it". */
+  clearTimeout(tourRepaint);
+  tourRepaint = setTimeout(paint, 560);
 }
 
 function tourStart(){
@@ -2662,7 +2798,9 @@ document.getElementById("tourCard").addEventListener("pointerleave", ()=> tourSe
 document.getElementById("tourCard").addEventListener("touchstart", ()=> tourSetPaused(true), {passive:true});
 
 document.getElementById("startTour").addEventListener("click", ()=>{ toggleSettings(false); tourStart(); });
-document.getElementById("tourCta").addEventListener("click", tourStart);
+/* the one obvious way back to the whole opening, on the page itself
+   rather than behind the settings panel where nobody found it */
+document.getElementById("tourCta").addEventListener("click", playOpening);
 document.getElementById("tourNext").addEventListener("click", ()=> tourStep(1));
 document.getElementById("tourPrev").addEventListener("click", ()=> tourStep(-1));
 document.getElementById("tourSkip").addEventListener("click", tourEnd);
