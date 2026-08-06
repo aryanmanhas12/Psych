@@ -220,6 +220,13 @@ section{padding:2.8rem 0 .3rem;}
   font-family:system-ui,'Noto Sans',sans-serif;font-weight:700;
 }
 .fig .l{font-size:.83rem;line-height:1.45;margin-top:.45rem;opacity:.93;}
+/* same reasoning as the screener's stat band: high contrast is a request
+   not to dim anything, least of all the source line under a figure */
+:root[data-contrast="high"] .fig .l,
+:root[data-contrast="high"] .fig .s{opacity:1;}
+/* and the same accent problem — .fig sits on --deep, which high contrast
+   sets to black, where the darkened marigold falls to 3.65:1 */
+:root[data-contrast="high"] .fig .n{color:#FFC64D;}
 .fig .s{
   font-family:ui-monospace,'Cascadia Mono',Menlo,Consolas,monospace;
   font-size:.64rem;opacity:.6;margin-top:.45rem;display:block;
