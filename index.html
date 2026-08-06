@@ -672,6 +672,12 @@
 
   /* ── clinical summary sheet ── */
   .sheet{background:var(--card);border:2px solid var(--ink);padding:1.5rem 1.6rem;}
+  /* A bare URL has no natural break point, so on a narrow phone it can
+     blow the sheet wider than the viewport rather than wrap — the exact
+     failure mode a horizontal-scroll-checking sweep is built to catch,
+     and did. Applies to the whole sheet rather than one selector, since
+     the next long unbroken string added here should not reproduce it. */
+  .sheet, .sheet *{overflow-wrap:anywhere;}
   .sheet .sh-top{border-bottom:2px solid var(--ink);padding-bottom:.8rem;margin-bottom:1rem;}
   .sheet .sh-kicker{
     font-family:ui-monospace,'Cascadia Mono',Menlo,Consolas,monospace;
