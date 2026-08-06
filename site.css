@@ -62,12 +62,35 @@
 
 /* ── reset & base ── */
 *{margin:0;padding:0;box-sizing:border-box;}
-html{scroll-behavior:smooth;font-size:calc(17px * var(--scale));}
+html{
+  /* 18px rather than 17, and more air between lines: the previous scale
+     read as slightly clinical at body size, which fights the "someone who
+     has been putting this off for years" reader this project is for. */
+  scroll-behavior:smooth;font-size:calc(18px * var(--scale));
+  /* Tells the browser to render its own furniture — scrollbars, native
+     select popups, form controls — in the matching scheme. Without it a
+     dark page keeps a bright white scrollbar. */
+  color-scheme:light dark;
+  /* Anchored headings otherwise land underneath the sticky crisis strip. */
+  scroll-padding-top:4.5rem;
+  -webkit-text-size-adjust:100%;
+}
+:root[data-theme="light"],:root[data-contrast="high"]{color-scheme:light;}
+:root[data-theme="dark"]{color-scheme:dark;}
 body{
   background:var(--paper);color:var(--ink);
   font-family:system-ui,-apple-system,'Segoe UI','Noto Sans',Roboto,Arial,sans-serif;
-  line-height:1.65;font-size:1rem;
+  line-height:1.7;font-size:1rem;
+  /* the 300ms double-tap-zoom delay makes every tap feel a beat late */
+  touch-action:manipulation;
+  -webkit-tap-highlight-color:rgba(47,110,94,.18);
+  text-rendering:optimizeLegibility;
 }
+h1,h2,h3{scroll-margin-top:4.5rem;}
+/* Ragged last lines read better than a single orphaned word. */
+p,li{text-wrap:pretty;}
+/* Digits that are meant to be compared must not shift width between them. */
+.mono,table.data td,.fig .n{font-variant-numeric:tabular-nums;}
 @media (prefers-reduced-motion: reduce){
   *,*::before,*::after{animation:none!important;transition:none!important;}
   html{scroll-behavior:auto;}
@@ -80,7 +103,10 @@ a:hover{text-decoration-thickness:2px;}
 img,svg{max-width:100%;}
 
 .display{
-  font-family:'Anton',sans-serif;letter-spacing:.01em;line-height:1.08;
+  /* A hair looser than Anton's native spacing and line-height: at full
+     tightness the headline reads as a shout. This keeps its weight and
+     confidence but lets it sit rather than shout. */
+  font-family:'Anton',sans-serif;letter-spacing:.015em;line-height:1.14;
   text-transform:uppercase;text-wrap:balance;
 }
 /* Indic scripts have no Anton coverage — keep them in the body face, heavy */
@@ -154,7 +180,7 @@ header.hero{padding:3.2rem 0 2.4rem;border-bottom:3px solid var(--ink);}
 h1{font-size:clamp(1.9rem,5.5vw,3.4rem);}
 h1 .accent{color:var(--heal);}
 h2{font-size:clamp(1.4rem,3.6vw,2.2rem);margin-bottom:.6rem;}
-.lede{max-width:66ch;font-size:1.06rem;margin-top:1rem;}
+.lede{max-width:66ch;font-size:1.1rem;line-height:1.65;margin-top:1.1rem;}
 
 section{padding:2.8rem 0 .3rem;}
 .sec-label{

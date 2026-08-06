@@ -571,6 +571,53 @@
   @media (prefers-reduced-motion: reduce){
     #overture{display:none!important;}
   }
+
+  /* ── guided tour: a spotlight, not another video ──
+     The ring is the whole trick: a transparent box whose border sits on
+     the target and whose box-shadow — spread far past the viewport —
+     darkens everything else. No SVG mask, no second scrim element for the
+     dimming; a #tourBlock still sits underneath it purely to catch clicks,
+     since a box-shadow has no hit-testing of its own. */
+  .tour{position:fixed;inset:0;z-index:900;}
+  .tour-block{position:fixed;inset:0;background:transparent;cursor:default;}
+  .tour-ring{
+    position:fixed;border-radius:.6rem;pointer-events:none;
+    /* the white line is what keeps the ring legible over a bright or
+       busy target — the crisis strip's red, for one — where a 2px
+       marigold border on its own reads as barely there */
+    box-shadow:0 0 0 9999px rgba(10,13,20,.72), 0 0 0 4px rgba(255,255,255,.85);
+    border:2.5px solid var(--marigold);
+    transition:top .45s var(--e-out2),left .45s var(--e-out2),
+               width .45s var(--e-out2),height .45s var(--e-out2);
+  }
+  .tour-card{
+    position:fixed;z-index:2;max-width:22rem;background:var(--card);color:var(--ink);
+    border:2px solid var(--ink);padding:1.1rem 1.2rem;
+    box-shadow:0 10px 34px rgba(0,0,0,.35);
+    transition:top .45s var(--e-out2),left .45s var(--e-out2),
+               right .45s var(--e-out2),bottom .45s var(--e-out2);
+  }
+  .tour-card h3{font-size:1.05rem;margin-bottom:.4rem;}
+  .tour-card p{font-size:.92rem;color:var(--muted);margin-bottom:.9rem;}
+  .tour-count{font-size:.72rem;color:var(--heal);letter-spacing:.08em;margin-bottom:.5rem;}
+  .tour-nav{display:flex;align-items:center;gap:.5rem;}
+  .tour-nav #tourPrev,.tour-nav #tourNext{min-width:2.75rem;padding:.5rem;font-size:1.1rem;}
+  .tour-nav #tourSkip{
+    margin-left:auto;background:transparent;color:var(--muted);
+    font-family:ui-monospace,'Cascadia Mono',Menlo,Consolas,monospace;
+    text-transform:none;letter-spacing:0;font-size:.8rem;min-height:auto;padding:.4rem .2rem;
+  }
+  .tour-nav #tourPrev:disabled{opacity:.3;cursor:default;}
+  .tour-nav #tourPrev:disabled:hover{transform:none;box-shadow:none;}
+  @media(max-width:640px){
+    /* the card can't float near a target on a small screen without
+       covering it, so it settles as a sheet at the bottom instead */
+    .tour-card{left:.9rem!important;right:.9rem!important;bottom:.9rem!important;top:auto!important;max-width:none;}
+  }
+  @media (prefers-reduced-motion: reduce){
+    .tour-ring,.tour-card{transition:none;}
+  }
+
   .byline{
     margin-top:1.1rem;padding-top:1rem;border-top:1px solid var(--line);
     display:flex;gap:.8rem;flex-wrap:wrap;align-items:baseline;
@@ -811,6 +858,27 @@
   </div>
 </div>
 
+<!-- ══════════ GUIDED TOUR ══════════
+     Five real controls, pointed at directly, rather than a second video.
+     The overture answers "why does this exist" without words; once someone
+     is looking at the actual interface, the more useful question is
+     "where do I click for X" — which a spotlight answers faster than
+     prose ever could. -->
+<div id="tour" class="tour" hidden role="dialog" aria-modal="true" aria-labelledby="tourTitle">
+  <div class="tour-block" id="tourBlock"></div>
+  <div class="tour-ring" id="tourRing"></div>
+  <div class="tour-card" id="tourCard">
+    <div class="tour-count mono" id="tourCount"></div>
+    <h3 id="tourTitle"></h3>
+    <p id="tourBody"></p>
+    <div class="tour-nav">
+      <button type="button" class="secondary" id="tourPrev">‹</button>
+      <button type="button" class="secondary" id="tourNext"></button>
+      <button type="button" id="tourSkip" data-i18n="tourSkip"></button>
+    </div>
+  </div>
+</div>
+
 <a class="skip" href="#main" data-i18n="skip">Skip to main content</a>
 
 <div class="topstrip noprint">
@@ -867,6 +935,9 @@
           <button type="button" id="replayIntro" data-i18n="replayIntro">Replay the opening</button>
         </div>
         <div class="setrow">
+          <button type="button" id="startTour" data-i18n="tourStart">Take the tour</button>
+        </div>
+        <div class="setrow">
           <button type="button" id="installBtn" data-i18n="install">Install app</button>
         </div>
       </div>
@@ -879,6 +950,10 @@
 <!-- ══════════ HOME ══════════ -->
 <section class="view active" id="view-home" tabindex="-1" aria-labelledby="homeH1">
   <div class="wrap">
+    <div class="panel warn" id="wellbeingsBanner" hidden style="margin-bottom:1.2rem;">
+      <span class="tag" data-i18n="wbBackTag"></span>
+      <p data-i18n="wbBackBody"></p>
+    </div>
     <span class="eyebrow reveal" data-i18n="homeEyebrow">Screen Early · Act Early</span>
     <h1 class="display reveal" id="homeH1"><span data-i18n="homeTitle1"></span> <span class="accent" data-i18n="homeTitle2"></span></h1>
     <div class="dotrule reveal" id="dotrule" aria-hidden="true"></div>
@@ -1024,6 +1099,13 @@
 
     <div class="rescreen" id="resRescreen"></div>
 
+    <div class="panel" id="wellbeingsPanel" hidden>
+      <span class="tag" data-i18n="wellbeingsTag"></span>
+      <h3 data-i18n="wellbeingsTitle"></h3>
+      <p data-i18n="wellbeingsBody"></p>
+      <a class="btn secondary" id="wellbeingsLink" href="#" data-i18n="wellbeingsCta"></a>
+    </div>
+
     <details class="acc" id="accDoctor">
       <summary id="accDoctorSum"></summary>
       <div class="accbody"><ul id="resDoctor"></ul></div>
@@ -1152,10 +1234,42 @@ const META = {
   phq4:   { max:12, cutoff:6,  bands:[[0,2,0],[3,5,1],[6,8,2],[9,12,3]] },
   phq9:   { max:27, cutoff:10, bands:[[0,4,0],[5,9,1],[10,14,2],[15,19,3],[20,27,3]], safetyIdx:8 },
   gad7:   { max:21, cutoff:10, bands:[[0,4,0],[5,9,1],[10,14,2],[15,21,3]] },
-  auditc: { max:12, cutoff:4,  bands:[[0,2,0],[3,3,1],[4,7,2],[8,12,3]], perQuestionOpts:true }
+  auditc: { max:12, cutoff:4,  bands:[[0,2,0],[3,3,1],[4,7,2],[8,12,3]], perQuestionOpts:true },
+  /* WHO-5 runs the other way: it measures well-being, so a high score is a
+     good one and the screen is positive at or BELOW the cut point. Every
+     place that assumed "higher is worse" now reads this flag rather than
+     special-casing the instrument by name — which is what lets the next
+     well-being or functioning scale be added without touching that logic
+     again. Severity still descends with score in the bands, so the shared
+     guidance and re-screen intervals keep working unchanged. */
+  who5:   { max:25, cutoff:12, inverse:true, bands:[[0,6,3],[7,12,2],[13,17,1],[18,25,0]] }
 };
-const ORDER = ["phq4","phq9","gad7","auditc"];
+const ORDER = ["phq4","phq9","gad7","who5","auditc"];
 const RESCREEN_DAYS = [28,14,14,7];
+
+/* ════════ Well-beings companion app ════════
+   The two apps are meant to hand off to each other: this screener does the
+   occasional deep check, Well-beings does the weekly one-tap pulse, and
+   each points at the other when it is the more useful tool for the moment.
+
+   Left blank, the whole feature stays dormant — no button renders, no
+   param is read differently. Set this to the live URL to turn it on:
+
+     const WELLBEINGS_URL = "https://aryanmanhas12.github.io/Well-beings/";
+
+   The contract in both directions is a URL parameter only. No scores, no
+   answers, no identifiers cross between the two apps — that would mean
+   each app carrying data the other's privacy page never promised to hold.
+
+   Outbound (this app -> Well-beings), from the results view:
+     ?ref=psych-screener&band=<0-3>
+     band is the severity band just shown, nothing finer-grained.
+
+   Inbound (Well-beings -> this app), read once on load:
+     ?ref=wellbeings
+     shows a welcome-back banner suggesting a full screening; carries no
+     data about what triggered the redirect on their end. */
+const WELLBEINGS_URL = "";
 
 /* ════════ state ════════ */
 const STORE_KEY = "psych-screener-history";
@@ -1450,6 +1564,7 @@ function renderResults(animate){
   let extra = "";
   if(r.inst === "auditc") extra = T.ui.noteAuditc;
   if(r.inst === "phq4")   extra = T.ui.notePhq4;
+  if(r.inst === "who5")   extra = T.ui.noteWho5;
   document.getElementById("resMeaning").textContent = T.ui.meanings[r.sev] + extra;
   document.getElementById("safetyBox").style.display = r.safetyFlag ? "block" : "none";
 
@@ -1476,6 +1591,15 @@ function renderResults(animate){
 
   renderSevScale(r.inst, r.score);
   if(animate) animateScore(r.score); else document.getElementById("resScore").textContent = r.score;
+
+  const wp = document.getElementById("wellbeingsPanel");
+  if(WELLBEINGS_URL){
+    const url = new URL(WELLBEINGS_URL);
+    url.searchParams.set("ref", "psych-screener");
+    url.searchParams.set("band", String(r.sev));
+    document.getElementById("wellbeingsLink").href = url.toString();
+    wp.hidden = false;
+  } else wp.hidden = true;
 }
 
 function renderSevScale(id, score){
@@ -1549,6 +1673,17 @@ const PROV = {
     lic:"Public domain. No permission required.",
     caveat:"This is a triage instrument. It indicates whether a fuller screen is warranted; it does not itself estimate severity."
   },
+  who5: {
+    full:"WHO-5 — World Health Organization Well-Being Index",
+    domain:"Well-being (positively framed)",
+    cut:"≤50 on the 0–100 scale, i.e. a raw score of 12 or below",
+    bands:"Raw 0–25, multiplied by 4 for the 0–100 percentage. 18+ / 13–17 / 7–12 / 0–6 = good / moderate / low / very low",
+    ops:"Reported as free to use and among the most widely applied well-being measures in mental health settings (Lara-Cabrera et al., J Adv Nurs 2020). A cut-off below 50 identified psychological symptoms with 84% sensitivity and 59% specificity, AUC 0.82, in a validation of the Farsi version (Mortazavi et al., 2015).",
+    lic:"Free to use. Derived from WHO material; this project is not affiliated with, endorsed by, or connected to the World Health Organization.",
+    /* The direction reversal is the single most likely thing to be misread
+       on a sheet full of instruments that run the other way. */
+    caveat:"This scale runs opposite to the others here: it measures well-being, so a HIGH score is good and the screen is positive at or below the cut point. It is not a diagnostic depression screen — a low score indicates poor well-being and warrants a fuller assessment, not a diagnosis."
+  },
   auditc: {
     full:"AUDIT-C — WHO-derived alcohol consumption screen",
     domain:"Hazardous alcohol use",
@@ -1570,7 +1705,7 @@ function buildSheet(r){
   const bi = r.bandIdx, band = t.bands[bi], bandEn = ten.bands[bi];
   /* fresh results carry `answers`; entries read back from storage carry `ans` */
   const ans = r.answers || r.ans || [];
-  const crossed = r.score >= meta.cutoff;
+  const crossed = meta.inverse ? r.score <= meta.cutoff : r.score >= meta.cutoff;
   const dt = new Date(r.date);
   const dstr = dt.toLocaleString("en-GB",{day:"2-digit",month:"short",year:"numeric",hour:"2-digit",minute:"2-digit"});
   const bilingual = LANG !== "en";
@@ -1721,7 +1856,13 @@ function renderHistory(){
     let trend = "";
     if(entries.length > 1){
       const a = entries[entries.length-2].score, b = latest.score;
-      trend = b < a ? T.ui.trendDown : b > a ? T.ui.trendUp : T.ui.trendFlat;
+      /* Two different things to say, and on a well-being scale they point
+         opposite ways: the arrow describes the number, the words describe
+         what the change means. Keeping them separate is what stops WHO-5
+         reporting a fall from 14 to 5 as "higher than last screen". */
+      const better = meta.inverse ? b > a : b < a;
+      const arrow = b === a ? "→" : b > a ? "↑" : "↓";
+      trend = arrow + " " + (b === a ? T.ui.trendFlat : better ? T.ui.trendDown : T.ui.trendUp);
     }
     const block = document.createElement("div");
     block.className = "histblock";
@@ -1781,7 +1922,8 @@ function chartSVG(entries, id){
   s += '<text x="'+(padL-6)+'" y="'+(y(0)+4)+'" text-anchor="end" font-size="11" fill="#54596A" font-family="monospace">0</text>';
   s += '<text x="'+(padL-6)+'" y="'+(y(meta.max)+4)+'" text-anchor="end" font-size="11" fill="#54596A" font-family="monospace">'+meta.max+'</text>';
   s += '<line x1="'+padL+'" y1="'+cutY+'" x2="'+(W-padR)+'" y2="'+cutY+'" stroke="#B23A2E" stroke-width="1.5" stroke-dasharray="5 4"/>';
-  s += '<text x="'+(W-padR+4)+'" y="'+(cutY+4)+'" font-size="10" fill="#B23A2E" font-family="monospace">'+esc(String(meta.cutoff))+'+</text>';
+  s += '<text x="'+(W-padR+4)+'" y="'+(cutY+4)+'" font-size="10" fill="#B23A2E" font-family="monospace">'+
+       esc(meta.inverse ? "≤"+meta.cutoff : meta.cutoff+"+")+'</text>';
   s += '<path d="'+path+'" fill="none" stroke="#151C2E" stroke-width="2" stroke-linejoin="round"/>';
   entries.forEach((e,i)=>{
     s += '<circle cx="'+pts[i][0].toFixed(1)+'" cy="'+pts[i][1].toFixed(1)+'" r="4.5" fill="#151C2E" stroke="#F6F4EE" stroke-width="2" style="pointer-events:none;"/>';
@@ -2020,7 +2162,7 @@ function bubble(cls, html){
   d.className = "bub " + cls;
   d.innerHTML = html;
   document.getElementById("transcript").appendChild(d);
-  d.scrollIntoView({ block:"nearest", behavior: REVEAL_OK ? "smooth" : "auto" });
+  d.scrollIntoView({ block:"nearest", behavior: REVEAL_OK ? "smooth" : "instant" });
   return d;
 }
 function guideSay(html, cls, then){
@@ -2043,7 +2185,7 @@ function guideRender(node){
       addChoice(T.ui.breatheOpen, ()=>{
         const b = document.getElementById("breathe");
         b.hidden = false;
-        b.scrollIntoView({ block:"nearest", behavior: REVEAL_OK ? "smooth" : "auto" });
+        b.scrollIntoView({ block:"nearest", behavior: REVEAL_OK ? "smooth" : "instant" });
         document.getElementById("breatheBtn").focus();
       });
       addChoice(T.ui.guideRestart, ()=> guideStart());
@@ -2127,6 +2269,15 @@ setLang(P.lang || (navigator.language || "en").slice(0,2));
 applySize(P.scale || 1);
 applyTheme(P.theme || "auto");
 applyContrast(!!P.contrast);
+
+/* Well-beings inbound: a bare ref param, read once, then removed from the
+   address bar so a refresh or a shared link doesn't keep re-showing it. */
+if(new URLSearchParams(location.search).get("ref") === "wellbeings"){
+  document.getElementById("wellbeingsBanner").hidden = false;
+  const url = new URL(location.href);
+  url.searchParams.delete("ref");
+  history.replaceState(null, "", url.pathname + url.search + url.hash);
+}
 
 document.querySelectorAll("[data-view]").forEach(el=>
   el.addEventListener("click", e=>{ e.preventDefault(); showView(el.dataset.view); }));
@@ -2253,11 +2404,17 @@ function otBuildField(){
   }
 }
 
-function otEnd(){
+function otEnd(skipped){
   otClear();
   ot.classList.add("closing");
-  setTimeout(()=>{ ot.hidden = true; ot.classList.remove("closing");
-    document.getElementById("view-home").focus({preventScroll:true}); }, 500);
+  setTimeout(()=>{
+    ot.hidden = true; ot.classList.remove("closing");
+    document.getElementById("view-home").focus({preventScroll:true});
+    /* only a room scene someone actually watched earns a follow-up —
+       reaching for Skip and immediately getting a second guided thing
+       is the opposite of what Skip was for */
+    if(!skipped) tourMaybeAutostart();
+  }, 500);
   try{ localStorage.setItem(OT_KEY, "1"); }catch(e){}
 }
 
@@ -2295,22 +2452,140 @@ function otPlay(){
   otAt(7000, ()=> set("otCurl","lift"));
   otAt(7600, ()=>{ set("otWarm","on"); $("otFigA").classList.add("warmed"); });
 
-  otAt(9200, otEnd);
+  otAt(9200, ()=> otEnd(false));
 }
 
-document.getElementById("skipIntro").addEventListener("click", otEnd);
+document.getElementById("skipIntro").addEventListener("click", ()=> otEnd(true));
 document.getElementById("replayIntro").addEventListener("click", ()=>{
   toggleSettings(false); otPlay();
   setTimeout(()=> document.getElementById("skipIntro").focus(), 60);
 });
-ot.addEventListener("keydown", e=>{ if(e.key === "Escape") otEnd(); });
+ot.addEventListener("keydown", e=>{ if(e.key === "Escape") otEnd(true); });
 
 /* Plays once per device, never for reduced-motion users, and never
    when someone arrives via a deep link — a person heading straight
    for #resources is looking for a phone number, not a film. */
 const otSkip = window.matchMedia("(prefers-reduced-motion: reduce)").matches ||
                location.hash || (()=>{ try{ return localStorage.getItem(OT_KEY); }catch(e){ return true; } })();
-if(!otSkip){ otPlay(); setTimeout(()=> document.getElementById("skipIntro").focus(), 60); }
+if(!otSkip){
+  otPlay();
+  setTimeout(()=> document.getElementById("skipIntro").focus(), 60);
+}
+
+/* ════════ guided tour ════════
+   Five real controls, in the order someone would meet them: change how
+   the page looks, pick a screener, know the numbers are always there,
+   understand why the project exists, know exactly what it claims to be.
+   Targets are CSS selectors resolved fresh on every step rather than
+   cached elements, so a step degrades to "skip it" instead of "point at
+   nothing" if a selector ever stops matching — the tour is a courtesy,
+   not something worth a blank spotlight over. */
+const TOUR_KEY = "psych-seen-tour";
+const TOUR_STEPS = [
+  { sel:"#setBtn",                       key:"tourSettings" },
+  { sel:"#cardGrid",                     key:"tourScreeners" },
+  { sel:".topstrip",                     key:"tourCrisis" },
+  { sel:'a.bcard[href="manifesto.html"]',key:"tourManifesto" },
+  { sel:"details.notice",                key:"tourHowThis" }
+];
+let tourIdx = 0;
+
+function tourMaybeAutostart(){
+  let seen = true;
+  try{ seen = !!localStorage.getItem(TOUR_KEY); }catch(e){}
+  if(!seen && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) tourStart();
+}
+
+function tourTarget(){
+  for(let i=tourIdx; i<TOUR_STEPS.length; i++){
+    const el = document.querySelector(TOUR_STEPS[i].sel);
+    if(el){ tourIdx = i; return el; }
+  }
+  return null;
+}
+
+function tourPlace(){
+  const el = tourTarget();
+  if(!el){ tourEnd(); return; }
+  const step = TOUR_STEPS[tourIdx], tt = T.ui.tour[step.key];
+  document.getElementById("tourTitle").textContent = tt.t;
+  document.getElementById("tourBody").textContent = tt.b;
+  document.getElementById("tourCount").textContent =
+    fmt(T.ui.tourCount, {n:tourIdx+1, total:TOUR_STEPS.length});
+  document.getElementById("tourPrev").disabled = tourIdx === 0;
+  document.getElementById("tourNext").textContent =
+    tourIdx === TOUR_STEPS.length-1 ? T.ui.tourDone : T.ui.tourNext;
+
+  /* The scroll jump is always instant — the ring's own CSS transition is
+     what supplies the sense of motion between steps. A smooth scroll
+     racing a smooth ring animation, measured after a fixed delay, is
+     exactly the setup that goes stale under fast repeated presses: the
+     ring ends up measured mid-flight against a scroll that had not
+     finished settling. Instant scroll + one rAF measurement has nothing
+     to race — but "instant" has to be spelled that way explicitly.
+     behavior:"auto" does not mean instant; it means "defer to the page's
+     own scroll-behavior", which site.css sets to smooth on <html> for
+     anchor links. Passing "auto" here silently re-smooths every jump and
+     reproduces exactly the staleness this rAF rewrite was meant to fix. */
+  el.scrollIntoView({ block:"center", behavior:"instant" });
+  requestAnimationFrame(()=>{
+    const r = el.getBoundingClientRect(), pad = 6;
+    const ring = document.getElementById("tourRing");
+    ring.style.top    = (r.top - pad) + "px";
+    ring.style.left   = (r.left - pad) + "px";
+    ring.style.width  = (r.width + pad*2) + "px";
+    ring.style.height = (r.height + pad*2) + "px";
+
+    const card = document.getElementById("tourCard");
+    if(window.innerWidth > 640){
+      card.style.right = card.style.bottom = "";
+      const below = r.bottom + 16 + 190 < innerHeight;
+      card.style.top  = (below ? r.bottom + 16 : Math.max(16, r.top - 16 - 190)) + "px";
+      card.style.left = Math.min(Math.max(16, r.left), innerWidth - 22*16 - 16) + "px";
+    }
+  });
+}
+
+function tourStart(){
+  tourIdx = 0;
+  toggleSettings(false);
+  document.getElementById("tour").hidden = false;
+  tourPlace();
+  addEventListener("resize", tourPlace);
+  setTimeout(()=> document.getElementById("tourNext").focus(), 300);
+}
+function tourEnd(){
+  document.getElementById("tour").hidden = true;
+  removeEventListener("resize", tourPlace);
+  try{ localStorage.setItem(TOUR_KEY, "1"); }catch(e){}
+}
+function tourStep(delta){
+  const n = tourIdx + delta;
+  if(n < 0) return;
+  if(n >= TOUR_STEPS.length){ tourEnd(); return; }
+  tourIdx = n; tourPlace();
+}
+
+document.getElementById("startTour").addEventListener("click", ()=>{ toggleSettings(false); tourStart(); });
+document.getElementById("tourNext").addEventListener("click", ()=> tourStep(1));
+document.getElementById("tourPrev").addEventListener("click", ()=> tourStep(-1));
+document.getElementById("tourSkip").addEventListener("click", tourEnd);
+document.getElementById("tourBlock").addEventListener("click", tourEnd);
+document.getElementById("tour").addEventListener("keydown", e=>{
+  if(e.key === "Escape") tourEnd();
+  else if(e.key === "ArrowRight") tourStep(1);
+  else if(e.key === "ArrowLeft")  tourStep(-1);
+  else if(e.key === "Tab"){
+    /* .tour-block only stops pointer events — without this, Tab still
+       walks into the dimmed, inert page behind the card, which is the
+       usual way a "modal" dialog turns out not to be one. */
+    const f = [...document.getElementById("tourCard").querySelectorAll("button:not(:disabled)")];
+    const i = f.indexOf(document.activeElement);
+    e.preventDefault();
+    const n = e.shiftKey ? (i <= 0 ? f.length-1 : i-1) : (i === f.length-1 ? 0 : i+1);
+    f[n < 0 ? 0 : n].focus();
+  }
+});
 
 renderDotRule();
 renderStats();
