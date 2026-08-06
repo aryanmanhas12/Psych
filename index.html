@@ -597,6 +597,31 @@
     transition:top .45s var(--e-out2),left .45s var(--e-out2),
                right .45s var(--e-out2),bottom .45s var(--e-out2);
   }
+  /* one segment per step, Instagram-story style: solid = done, filling =
+     current, empty = ahead. Doubles as the "time is passing" cue that
+     makes the auto-advance legible instead of just abrupt. */
+  .tour-progress{display:flex;gap:.3rem;margin-bottom:.8rem;}
+  .tour-progress i{
+    flex:1;height:3px;background:var(--line);border-radius:2px;
+    overflow:hidden;position:relative;font-style:normal;
+  }
+  .tour-progress i::after{
+    content:"";position:absolute;inset:0;background:var(--heal);
+    transform:scaleX(0);transform-origin:left;
+  }
+  .tour-progress i.done::after{transform:scaleX(1);}
+  .tour-progress i.run::after{
+    transform:scaleX(0);animation:tourFill linear forwards;
+    /* set on #tour by JS, not on the <i> itself — inline styles on a host
+       element don't reach its own ::after, but a custom property does,
+       since it inherits through the box including generated content */
+    animation-duration:var(--tour-dur,2800ms);
+    animation-play-state:var(--tour-play,running);
+  }
+  @keyframes tourFill{to{transform:scaleX(1);}}
+  @media (prefers-reduced-motion: reduce){
+    .tour-progress{display:none;}
+  }
   .tour-card h3{font-size:1.05rem;margin-bottom:.4rem;}
   .tour-card p{font-size:.92rem;color:var(--muted);margin-bottom:.9rem;}
   .tour-count{font-size:.72rem;color:var(--heal);letter-spacing:.08em;margin-bottom:.5rem;}
@@ -626,27 +651,19 @@
   .byline strong{color:var(--ink);font-size:.85rem;}
   .byline a{color:var(--heal);}
 
-  /* ── small screens: get the primary action above the fold ──
-     On a phone the home page read as an argument you had to sit through
-     before you were allowed to act: headline, disclaimer, then a 676px
-     band of global statistics, and only then the screeners — about 1,400px
-     down. The evidence is the reason to trust the tool, but it is not the
-     reason someone opened it. Below 720px the order becomes: the promise,
-     the screeners, then the case for them. Desktop keeps the original
-     narrative, where the band costs nothing because it sits beside rather
-     than above. */
-  @media(max-width:720px){
-    #view-home > .wrap{display:flex;flex-direction:column;}
-    #view-home > .wrap > *{order:5;}
-    #view-home > .wrap > .eyebrow,
-    #view-home > .wrap > #homeH1,
-    #view-home > .wrap > #dotrule,
-    #view-home > .wrap > #homeLede,
-    #view-home > .wrap > #ledeMore{order:1;}
-    #view-home > .wrap > #chooseH2{order:2;margin-top:.4rem;}
-    #view-home > .wrap > #cardGrid{order:2;}
-    #view-home > .wrap > .notice{order:3;margin-top:1.4rem;}
-    #view-home > .wrap > #statBand{order:4;}
+  /* ── the primary action above the fold, at every width ──
+     This used to be a mobile-only flex-order hack reshuffling a desktop-
+     first DOM: headline, disclaimer, a 676px band of statistics, and only
+     then the screeners, about 1,400px down. The evidence is the reason to
+     trust the tool, but it is not the reason anyone opened it. The fix
+     now lives in the markup itself — cards sit right after the headline
+     for every reader, not just narrow ones — so this block just adds a
+     little breathing room around the promoted heading; no reordering. */
+  #chooseH2{margin-top:.6rem;}
+  .tourcta{
+    margin:.9rem 0 1.6rem;font-size:.82rem;
+    font-family:ui-monospace,'Cascadia Mono',Menlo,Consolas,monospace;
+    text-transform:none;letter-spacing:0;min-height:2.4rem;
   }
   @media(max-width:640px){
     .view{padding:1.2rem 0 2.4rem;}
@@ -874,6 +891,7 @@
   <div class="tour-block" id="tourBlock"></div>
   <div class="tour-ring" id="tourRing"></div>
   <div class="tour-card" id="tourCard">
+    <div class="tour-progress" id="tourProgress" aria-hidden="true"></div>
     <div class="tour-count mono" id="tourCount"></div>
     <h3 id="tourTitle"></h3>
     <p id="tourBody"></p>
@@ -963,6 +981,18 @@
     <span class="eyebrow reveal" data-i18n="homeEyebrow">Screen Early · Act Early</span>
     <h1 class="display reveal" id="homeH1"><span data-i18n="homeTitle1"></span> <span class="accent" data-i18n="homeTitle2"></span></h1>
     <div class="dotrule reveal" id="dotrule" aria-hidden="true"></div>
+
+    <!-- The screener is what this site IS, so it is the first thing under
+         the headline — not something you scroll past a disclaimer and a
+         band of statistics to reach. Everything that used to sit here
+         (the fuller argument, the fine print, the global figures) still
+         exists; it now sits just below, as the case FOR what you just
+         saw, rather than a wall in front of it. -->
+    <h2 class="display reveal" id="chooseH2" data-i18n="chooseScreener">Choose a screener</h2>
+    <div class="cards" id="cardGrid"></div>
+
+    <button type="button" class="secondary tourcta reveal" id="tourCta" data-i18n="tourCtaBtn"></button>
+
     <p class="lede reveal clamped" id="homeLede" data-i18n="homeLede"></p>
     <button type="button" id="ledeMore" class="secondary"
             style="display:none;font-family:ui-monospace,'Cascadia Mono',Menlo,Consolas,monospace;text-transform:none;letter-spacing:0;font-size:.76rem;padding:.2rem .5rem;min-height:0;border-width:1.5px;margin-bottom:.8rem;"
@@ -979,9 +1009,6 @@
     </details>
 
     <div class="statband reveal" id="statBand" aria-label="Global mental health figures"></div>
-
-    <h2 class="display reveal" id="chooseH2" data-i18n="chooseScreener">Choose a screener</h2>
-    <div class="cards" id="cardGrid"></div>
 
     <div class="mood reveal">
       <div>
@@ -1277,7 +1304,7 @@ const RESCREEN_DAYS = [28,14,14,7];
      ?ref=wellbeings
      shows a welcome-back banner suggesting a full screening; carries no
      data about what triggered the redirect on their end. */
-const WELLBEINGS_URL = "";
+const WELLBEINGS_URL = "https://aryanmanhas12.github.io/Well-beings/";
 
 /* ════════ state ════════ */
 const STORE_KEY = "psych-screener-history";
@@ -2490,13 +2517,14 @@ if(!otSkip){
    not something worth a blank spotlight over. */
 const TOUR_KEY = "psych-seen-tour";
 const TOUR_STEPS = [
-  { sel:"#setBtn",                       key:"tourSettings" },
   { sel:"#cardGrid",                     key:"tourScreeners" },
   { sel:".topstrip",                     key:"tourCrisis" },
+  { sel:"#setBtn",                       key:"tourSettings" },
   { sel:'a.bcard[href="manifesto.html"]',key:"tourManifesto" },
   { sel:"details.notice",                key:"tourHowThis" }
 ];
-let tourIdx = 0;
+const TOUR_STEP_MS = 2800;      /* 5 steps × 2.8s ≈ 14s — inside the 10-15s asked for */
+let tourIdx = 0, tourTimer = null, tourPaused = false, tourPlacedAt = 0;
 
 function tourMaybeAutostart(){
   let seen = true;
@@ -2512,6 +2540,24 @@ function tourTarget(){
   return null;
 }
 
+const TOUR_MOTION_OK = !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+function tourArmTimer(){
+  clearTimeout(tourTimer); tourTimer = null;
+  /* A tour that advances itself while someone is trying to read it, or
+     for a reader who has asked for no automatic motion at all, is worse
+     than one that waits — Next/Prev/Skip stay the real controls either
+     way, this is only ever a courtesy on top of them. */
+  if(!TOUR_MOTION_OK || tourPaused) return;
+  if(tourIdx >= TOUR_STEPS.length - 1) return;   /* last step: wait for a real choice */
+  tourTimer = setTimeout(()=> tourStep(1), TOUR_STEP_MS);
+}
+function tourSetPaused(p){
+  tourPaused = p;
+  document.getElementById("tour").style.setProperty("--tour-play", p ? "paused" : "running");
+  if(p) clearTimeout(tourTimer); else tourArmTimer();
+}
+
 function tourPlace(){
   const el = tourTarget();
   if(!el){ tourEnd(); return; }
@@ -2523,6 +2569,13 @@ function tourPlace(){
   document.getElementById("tourPrev").disabled = tourIdx === 0;
   document.getElementById("tourNext").textContent =
     tourIdx === TOUR_STEPS.length-1 ? T.ui.tourDone : T.ui.tourNext;
+
+  const prog = document.getElementById("tourProgress");
+  prog.querySelectorAll("i").forEach((seg,i)=>{
+    seg.className = i < tourIdx ? "done" : i === tourIdx ? "run" : "";
+  });
+  tourPlacedAt = Date.now();
+  tourArmTimer();
 
   /* The scroll jump is always instant — the ring's own CSS transition is
      what supplies the sense of motion between steps. A smooth scroll
@@ -2555,14 +2608,18 @@ function tourPlace(){
 }
 
 function tourStart(){
-  tourIdx = 0;
+  tourIdx = 0; tourPaused = false;
   toggleSettings(false);
+  document.getElementById("tourProgress").innerHTML =
+    TOUR_STEPS.map(()=> "<i></i>").join("");
+  document.getElementById("tour").style.setProperty("--tour-dur", TOUR_STEP_MS + "ms");
   document.getElementById("tour").hidden = false;
   tourPlace();
   addEventListener("resize", tourPlace);
   setTimeout(()=> document.getElementById("tourNext").focus(), 300);
 }
 function tourEnd(){
+  clearTimeout(tourTimer); tourTimer = null;
   document.getElementById("tour").hidden = true;
   removeEventListener("resize", tourPlace);
   try{ localStorage.setItem(TOUR_KEY, "1"); }catch(e){}
@@ -2574,7 +2631,38 @@ function tourStep(delta){
   tourIdx = n; tourPlace();
 }
 
+/* pause the auto-advance while a mouse is actually resting on the card,
+   and resume once it leaves — real hovering, not the focus tourStart()
+   sets programmatically so a keyboard/screen-reader user knows where they
+   landed. Wiring focusin the same way as pointerenter looked right and
+   was wrong: that opening focus() call fires focusin on this same card,
+   so the tour would pause itself the instant it opened and never resume,
+   since nothing ever moves focus back out on its own. Keyboard users
+   already have a full manual override — the arrow keys — so they are not
+   left without a way to control the pace, they just do not get this
+   particular courtesy. Touch has no hover to key off, so a tap anywhere
+   on the card is treated the same as a mouse arriving: it pauses, and
+   whoever tapped now drives with Next/Prev like they would on any other
+   step-through UI. */
+document.getElementById("tourCard").addEventListener("pointerenter", ()=>{
+  /* Chromium (and to a lesser extent other engines) re-checks :hover after
+     a layout shift, so when the spotlight jumps to a new spot it can fire
+     a pointerenter purely because a stationary cursor now happens to sit
+     over the card's new position — nobody moved anything. That reads as
+     "arrived to read" and would pause a step the reader has not actually
+     looked at yet. Real arrival takes at least a beat after the card
+     appears there; a same-instant firing is the reflow, not a person.
+     Measured: the spurious one fires ~100ms after tourPlace(); reacting
+     to a just-appeared element with a deliberate mouse move takes longer
+     than that for an actual person. 150ms clears the artifact with room
+     to spare, without making a real quick hover wait. */
+  if(Date.now() - tourPlacedAt > 150) tourSetPaused(true);
+});
+document.getElementById("tourCard").addEventListener("pointerleave", ()=> tourSetPaused(false));
+document.getElementById("tourCard").addEventListener("touchstart", ()=> tourSetPaused(true), {passive:true});
+
 document.getElementById("startTour").addEventListener("click", ()=>{ toggleSettings(false); tourStart(); });
+document.getElementById("tourCta").addEventListener("click", tourStart);
 document.getElementById("tourNext").addEventListener("click", ()=> tourStep(1));
 document.getElementById("tourPrev").addEventListener("click", ()=> tourStep(-1));
 document.getElementById("tourSkip").addEventListener("click", tourEnd);
