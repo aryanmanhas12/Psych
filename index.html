@@ -598,7 +598,14 @@
   /* ── opening questions ── */
   .intro{
     position:fixed;inset:0;z-index:950;background:var(--paper);
-    display:flex;align-items:center;justify-content:center;padding:1.2rem;
+    display:flex;justify-content:center;padding:1.2rem;
+    /* Scrollable, and centred by the child's auto margins rather than
+       align-items. A centred flex item taller than its container
+       overflows equally in both directions and the top half becomes
+       unreachable — which on a landscape phone put Yes, No and Skip all
+       off-screen at once, with nothing left to tap. margin:auto
+       distributes the same way but keeps the overflow scrollable. */
+    overflow-y:auto;overscroll-behavior:contain;
     animation:introIn .4s var(--e-out2);
   }
   /* `hidden` is only a UA rule, so any class setting display beats it and
@@ -606,7 +613,7 @@
      yet. Every element here that toggles via the attribute needs this. */
   .intro[hidden]{display:none;}
   @keyframes introIn{from{opacity:0;}to{opacity:1;}}
-  .intro-inner{width:min(38rem,100%);text-align:center;}
+  .intro-inner{width:min(38rem,100%);text-align:center;margin:auto;}
   .intro-crisis{
     font-size:.72rem;color:var(--muted);margin-bottom:1.6rem;letter-spacing:.02em;
   }
@@ -647,6 +654,21 @@
   @media(max-width:640px){
     .intro-card{padding:2.1rem 1.1rem;min-height:9rem;}
     .intro-btns button{padding:.85rem 1rem;}
+  }
+  /* A landscape phone is about 360px tall. Scrolling now works, but not
+     having to is better: at that height the card's generous padding is
+     the first thing that should go, not the buttons. */
+  @media(max-height:560px){
+    .intro{padding:.7rem;}
+    .intro-crisis{margin-bottom:.5rem;}
+    .intro h2{font-size:clamp(1.1rem,4vw,1.5rem);margin-bottom:.6rem;}
+    .intro-card{min-height:auto;padding:.9rem 1rem;margin-bottom:.7rem;}
+    .intro-card p{font-size:1rem;}
+    .intro-card .qm{font-size:1.6rem;}
+    .intro-btns{margin-bottom:.5rem;}
+    /* buttons stay at a full touch target — trimming those to save
+       height would be solving the wrong problem */
+    .intro-btns button{min-height:2.9rem;padding:.6rem 1rem;}
   }
   @media (prefers-reduced-motion: reduce){
     .intro{animation:none;}
@@ -747,6 +769,17 @@
        covering it, so it settles as a sheet at the bottom instead */
     .tour-card{left:.9rem!important;right:.9rem!important;bottom:.9rem!important;top:auto!important;max-width:none;}
   }
+  /* On a short screen the bubble can outgrow the viewport; let it scroll
+     rather than lose its own Next button, and keep that scroll from
+     chaining to the dimmed page behind it. */
+  .tour-card{max-height:calc(100vh - 2rem);overflow-y:auto;overscroll-behavior:contain;}
+  @media(max-height:560px){
+    .tour-card{padding:.8rem .9rem;}
+    .tour-card h3{font-size:.98rem;margin-bottom:.25rem;}
+    .tour-card p{font-size:.86rem;margin-bottom:.6rem;}
+    .tour-progress{margin-bottom:.5rem;}
+  }
+
   @media (prefers-reduced-motion: reduce){
     /* the arrow still points — it carries meaning; only the idle
        motion that carries none is dropped */
@@ -770,6 +803,30 @@
      now lives in the markup itself — cards sit right after the headline
      for every reader, not just narrow ones — so this block just adds a
      little breathing room around the promoted heading; no reordering. */
+  /* Was a long inline style attribute; moved here so it can be themed and
+     so the touch-target rule below can actually reach it — an inline
+     min-height:0 cannot be overridden from a stylesheet without
+     !important. JS still toggles display, which is why it starts hidden. */
+  .ledemore{
+    display:none;
+    font-family:ui-monospace,'Cascadia Mono',Menlo,Consolas,monospace;
+    text-transform:none;letter-spacing:0;font-size:.76rem;
+    padding:.2rem .5rem;min-height:0;border-width:1.5px;margin-bottom:.8rem;
+  }
+  /* A mouse can hit a 36px control; a fingertip is about 44px across and
+     lands where it lands. These are all real controls — settings, theme
+     and size toggles, region tabs, the intro and Read more buttons —
+     that had been sized for a cursor. Raised only where the pointer is
+     coarse, so desktop density is left alone.
+
+     Placed after .ledemore deliberately: that rule sets min-height:0 at
+     the same specificity, so source order is what decides, and putting
+     this block first meant it lost silently. */
+  @media (pointer: coarse){
+    .setbtn,.setpanel button,.regiontabs button,.tourcta,
+    .ledemore,nav.site .navtoggle{min-height:44px;}
+  }
+
   #chooseH2{margin-top:.6rem;}
   .tourcta{
     margin:.9rem 0 1.6rem;font-size:.82rem;
@@ -1161,8 +1218,7 @@
     <button type="button" class="secondary tourcta reveal" id="tourCta" data-i18n="tourCtaBtn"></button>
 
     <p class="lede reveal clamped" id="homeLede" data-i18n="homeLede"></p>
-    <button type="button" id="ledeMore" class="secondary"
-            style="display:none;font-family:ui-monospace,'Cascadia Mono',Menlo,Consolas,monospace;text-transform:none;letter-spacing:0;font-size:.76rem;padding:.2rem .5rem;min-height:0;border-width:1.5px;margin-bottom:.8rem;"
+    <button type="button" id="ledeMore" class="secondary ledemore"
             aria-expanded="false" aria-controls="homeLede" data-i18n="readMore"></button>
 
     <details class="notice reveal">
@@ -2781,7 +2837,7 @@ const TOUR_STEPS = [
    finish reading one — two sentences is more than a two-second glance,
    especially for anyone reading a second language. Four transitions at
    this rate reach the final box in about 19s, where it waits. */
-const TOUR_STEP_MS = 4800;
+const TOUR_STEP_MS = 6500;
 let tourIdx = 0, tourTimer = null, tourPaused = false, tourPlacedAt = 0, tourRepaint = null;
 
 function tourMaybeAutostart(){
