@@ -71,6 +71,7 @@ en: {
     timeTaken: "You took {t} on this.",
     timeContext: "A psychiatric consultation in an overloaded Indian OPD often runs under five minutes — for history, diagnosis, prescription and counselling combined. You just gave yourself more unhurried attention than the system usually can.",
     navScreeners: "Screeners", navHistory: "My History", navHelp: "Get Help",
+    tabScreeners: "Screeners", tabGuide: "Talk", tabHelp: "Help", tabHistory: "History",
     navEvidence: "Evidence", navManifesto: "Manifesto",
     langLabel: "Language", textSize: "Text size", contrast: "High contrast",
 
@@ -291,6 +292,7 @@ hi: {
     timeTaken: "आपने इसमें {t} लगाए।",
     timeContext: "भारत की भीड़भाड़ वाली ओपीडी में मनोरोग परामर्श अक्सर पाँच मिनट से भी कम चलता है — इतिहास, निदान, पर्ची और काउंसलिंग, सब मिलाकर। आपने अभी ख़ुद को उससे ज़्यादा इत्मीनान भरा ध्यान दिया है जितना व्यवस्था आम तौर पर दे पाती है।",
     navScreeners: "स्क्रीनिंग", navHistory: "मेरा रिकॉर्ड", navHelp: "मदद लें",
+    tabScreeners: "स्क्रीनिंग", tabGuide: "बात", tabHelp: "मदद", tabHistory: "रिकॉर्ड",
     navEvidence: "प्रमाण", navManifesto: "घोषणापत्र",
     langLabel: "भाषा", textSize: "अक्षर आकार", contrast: "उच्च कंट्रास्ट",
 
@@ -511,6 +513,7 @@ mr: {
     timeTaken: "तुम्ही यासाठी {t} घेतले.",
     timeContext: "भारतातील गर्दीच्या ओपीडीत मानसोपचार सल्ला अनेकदा पाच मिनिटांपेक्षाही कमी असतो — इतिहास, निदान, चिठ्ठी आणि समुपदेशन, सर्व मिळून. व्यवस्था सहसा देऊ शकते त्यापेक्षा जास्त निवांत लक्ष तुम्ही आत्ता स्वतःला दिले आहे.",
     navScreeners: "तपासणी", navHistory: "माझा इतिहास", navHelp: "मदत मिळवा",
+    tabScreeners: "तपासणी", tabGuide: "बोला", tabHelp: "मदत", tabHistory: "इतिहास",
     navEvidence: "पुरावे", navManifesto: "जाहीरनामा",
     langLabel: "भाषा", textSize: "अक्षर आकार", contrast: "उच्च कॉन्ट्रास्ट",
 
@@ -731,6 +734,7 @@ bn: {
     timeTaken: "আপনি এতে {t} সময় নিয়েছেন।",
     timeContext: "ভারতের ভিড়ে ঠাসা ওপিডিতে মানসিক পরামর্শ প্রায়ই পাঁচ মিনিটেরও কম — ইতিহাস, রোগনির্ণয়, প্রেসক্রিপশন ও কাউন্সেলিং সব মিলিয়ে। ব্যবস্থা সাধারণত যতটা পারে, তার চেয়ে বেশি নিরুদ্বেগ মনোযোগ আপনি নিজেকে দিলেন।",
     navScreeners: "স্ক্রিনিং", navHistory: "আমার রেকর্ড", navHelp: "সাহায্য নিন",
+    tabScreeners: "স্ক্রিনিং", tabGuide: "কথা", tabHelp: "সাহায্য", tabHistory: "রেকর্ড",
     navEvidence: "প্রমাণ", navManifesto: "ইশতেহার",
     langLabel: "ভাষা", textSize: "লেখার আকার", contrast: "উচ্চ কনট্রাস্ট",
 
@@ -951,6 +955,7 @@ ta: {
     timeTaken: "இதற்கு நீங்கள் {t} எடுத்துக்கொண்டீர்கள்.",
     timeContext: "இந்தியாவின் நெரிசலான ஓபிடியில் மனநல ஆலோசனை பெரும்பாலும் ஐந்து நிமிடங்களுக்கும் குறைவே — வரலாறு, நோயறிதல், மருந்துச்சீட்டு, ஆலோசனை அனைத்தும் சேர்த்து. அமைப்பு வழக்கமாகத் தர முடிவதை விட அதிக நிதானமான கவனத்தை நீங்கள் இப்போது உங்களுக்கே அளித்தீர்கள்.",
     navScreeners: "பரிசோதனைகள்", navHistory: "என் பதிவு", navHelp: "உதவி பெறு",
+    tabScreeners: "பரிசோதனை", tabGuide: "பேச", tabHelp: "உதவி", tabHistory: "பதிவு",
     navEvidence: "சான்றுகள்", navManifesto: "அறிக்கை",
     langLabel: "மொழி", textSize: "எழுத்து அளவு", contrast: "அதிக மாறுபாடு",
 
@@ -1171,6 +1176,7 @@ te: {
     timeTaken: "దీనికి మీరు {t} తీసుకున్నారు.",
     timeContext: "భారతదేశంలోని రద్దీ ఓపీడీలో మానసిక సంప్రదింపు తరచుగా ఐదు నిమిషాల కంటే తక్కువే — చరిత్ర, నిర్ధారణ, చీటీ, కౌన్సెలింగ్ అన్నీ కలిపి. వ్యవస్థ సాధారణంగా ఇవ్వగలిగే దానికంటే ఎక్కువ తీరిక దృష్టిని మీరు ఇప్పుడు మీకే ఇచ్చుకున్నారు.",
     navScreeners: "పరీక్షలు", navHistory: "నా రికార్డు", navHelp: "సహాయం పొందండి",
+    tabScreeners: "పరీక్షలు", tabGuide: "మాట్లాడు", tabHelp: "సహాయం", tabHistory: "రికార్డు",
     navEvidence: "ఆధారాలు", navManifesto: "ప్రకటన",
     langLabel: "భాష", textSize: "అక్షర పరిమాణం", contrast: "అధిక కాంట్రాస్ట్",
 

@@ -562,9 +562,30 @@
        column of nothing; the growing row is the one below it, which puts
        Skip and the progress bar at the bottom where the thumb already is. */
     #overture{grid-template-rows:auto auto 1fr;}
-    .ot-stage{padding:2.2rem .6rem 0;align-self:start;}
+    .ot-stage{padding:1.6rem .9rem 0;align-self:start;}
     .ot-bottom{padding:.7rem 0 1.1rem;align-self:end;}
     #skipIntro{font-size:.8rem;padding:.6rem 1.2rem;}
+
+    /* ── one 16:9 frame, used twice ──
+       The scene is a widescreen drawing, and on a phone it had been
+       rendering as whatever shape was left over. Giving it an explicit
+       16:9 frame is the difference between a picture that got squeezed in
+       and one that was placed: the ratio is the most familiar rectangle
+       there is, so the eye reads it as a screen and stops noticing the
+       layout at all.
+
+       The tour then takes the same rectangle in the same place. Both are
+       the same voice explaining the same thing, and on a phone the tour
+       card had been resizing itself step to step — every advance moved
+       the Next button somewhere new. Fixed shape, fixed position: the
+       only thing that changes between steps is the words. */
+    .ot-frame{
+      aspect-ratio:16/9;width:100%;
+      border:2px solid var(--line);border-radius:.7rem;
+      background:var(--card);overflow:hidden;
+      display:grid;place-items:center;
+    }
+    .ot-stage svg{width:100%;height:100%;}
   }
 
   /* ── scene ──
@@ -791,9 +812,46 @@
   .tour-nav #tourPrev:disabled{opacity:.3;cursor:default;}
   .tour-nav #tourPrev:disabled:hover{transform:none;box-shadow:none;}
   @media(max-width:640px){
-    /* the card can't float near a target on a small screen without
-       covering it, so it settles as a sheet at the bottom instead */
-    .tour-card{left:.9rem!important;right:.9rem!important;bottom:.9rem!important;top:auto!important;max-width:none;}
+    /* The card can't float near a target on a small screen without
+       covering it, so it settles as a sheet at the bottom — and takes the
+       same 16:9 rectangle the opening scene just used, in the same place
+       on every step.
+
+       The shape is doing real work here, not decoration. The card used to
+       size itself to whatever the current step said, so Next, Back and
+       Skip moved on every advance and the reader had to find the controls
+       again each time. Pinned to one ratio they never move, which is what
+       makes five steps feel like one thing rather than five. min-height
+       rather than a hard aspect-ratio, so an unusually long step or a
+       reader at 135% text grows the card instead of hiding its own
+       buttons behind a scrollbar. */
+    .tour-card{
+      left:.9rem!important;right:.9rem!important;
+      bottom:calc(.9rem + var(--tabbar-h,0px))!important;
+      top:auto!important;max-width:none;
+      aspect-ratio:16/9;
+      display:flex;flex-direction:column;
+      border-radius:.7rem;padding:.6rem .85rem;
+    }
+    /* The copy is trimmed to fit the frame rather than the frame stretched
+       to fit the copy — that is the whole point of fixing the ratio. The
+       big saving is line-height: the page runs at 1.7 (1.8 for the Indic
+       scripts), which is right for reading a page and far too airy for a
+       card this size, where it alone put the progress bar off the top.
+       The overflow rule already on .tour-card stays as the escape hatch
+       for a long translation at 135% text, so nothing is ever
+       unreachable; it just stops being the normal case. */
+    .tour-card .tour-guide{width:1.3rem;height:1.6rem;}
+    .tour-card .tour-progress{margin-bottom:.4rem;}
+    .tour-card .tour-head{margin-bottom:.15rem;}
+    .tour-card .tour-count{font-size:.64rem;margin-bottom:0;}
+    .tour-card h3{font-size:.95rem;line-height:1.25;margin-bottom:.2rem;}
+    .tour-card p{font-size:.8rem;line-height:1.36;margin-bottom:.25rem;}
+    .tour-card .tour-nav #tourPrev,
+    .tour-card .tour-nav #tourNext{min-height:44px;padding:.3rem .6rem;}
+    /* pushes the controls to the foot of the frame, so they sit on one
+       line across every step regardless of how short the copy is */
+    .tour-card .tour-nav{margin-top:auto;}
   }
   /* On a short screen the bubble can outgrow the viewport; let it scroll
      rather than lose its own Next button, and keep that scroll from
@@ -812,6 +870,46 @@
     .tour-ring,.tour-card,.tour-arrow{transition:none;}
     .tour-arrow .ab,.tour-guide .wave{animation:none;}
   }
+
+  /* ── the phone tab bar ── */
+  .tabbar{display:none;}
+  @media(max-width:640px){
+    /* A starting value only — trackTabbar replaces it with the measured
+       height as soon as the script runs, so nothing depends on this
+       guess being right. */
+    :root{--tabbar-h:3.9rem;}
+    .tabbar{
+      display:grid;grid-template-columns:repeat(4,1fr);
+      position:fixed;left:0;right:0;bottom:0;z-index:80;
+      background:var(--deep);
+      border-top:1px solid rgba(255,255,255,.14);
+      padding-bottom:env(safe-area-inset-bottom,0px);
+    }
+    .tabbar a{
+      display:flex;flex-direction:column;align-items:center;justify-content:center;
+      gap:.18rem;min-height:3.9rem;padding:.35rem .2rem;
+      color:rgba(255,255,255,.62);text-decoration:none;
+      font-family:ui-monospace,'Cascadia Mono',Menlo,Consolas,monospace;
+      font-size:.6rem;letter-spacing:.02em;text-align:center;line-height:1.15;
+    }
+    .tabbar svg{
+      width:1.35rem;height:1.35rem;fill:none;stroke:currentColor;
+      stroke-width:2;stroke-linecap:round;stroke-linejoin:round;
+    }
+    /* Marked, not merely coloured: on a dark bar a colour shift alone is
+       easy to miss and invisible to anyone who can't separate these two
+       hues, so the active tab also carries a rule above it. */
+    .tabbar a[aria-current="page"]{color:#fff;box-shadow:inset 0 3px 0 var(--marigold);}
+    /* the bar covers the foot of the page unless the page knows about it */
+    body{padding-bottom:calc(var(--tabbar-h) + env(safe-area-inset-bottom,0px));}
+    /* the overture and the questions are full-screen layers of their own;
+       a tab bar under them would be navigation to a page nobody is on */
+    #overture,.intro{padding-bottom:0;}
+  }
+  /* Neither layer should sit under the bar, and neither should the bar
+     sit over them — they own the screen while they're up. */
+  #overture:not([hidden]) ~ .tabbar,
+  .intro:not([hidden]) ~ .tabbar{display:none;}
 
   .byline{
     margin-top:1.1rem;padding-top:1rem;border-top:1px solid var(--line);
@@ -1013,6 +1111,7 @@
   </div>
 
   <div class="ot-stage">
+   <div class="ot-frame">
     <svg viewBox="0 0 600 320" aria-hidden="true">
       <!-- ── the room ──
            Isolation reads more clearly as a place than as an abstraction:
@@ -1065,6 +1164,7 @@
         <path class="lb" id="otArmB" d="M339 218 L306 231"/>
       </g>
     </svg>
+   </div>
   </div>
 
   <div class="ot-bottom">
@@ -1493,6 +1593,37 @@
 </section>
 
 </main>
+
+<!-- ══════════ primary navigation, on a phone ══════════
+     Nine links behind a Menu button is a fine desktop nav and a poor
+     phone one: four of those links are the app itself — take a screener,
+     talk it through, get help, look at your history — and the other five
+     are reading. Collapsing all nine into one toggle meant every move
+     between the four cost two taps and a decision, at the top of the
+     screen, in a hamburger that hides which one you're even on.
+
+     These four come out of the menu and sit where a thumb already rests,
+     labelled, with the current one marked. The reading pages stay in the
+     menu, which is what a menu is for. Phone only: at desktop widths the
+     nav bar already shows every link at once and this would be noise. -->
+<nav class="tabbar noprint" aria-label="Primary">
+  <a href="#home" data-view="home">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16M4 12h16M4 19h9"/></svg>
+    <span data-i18n="tabScreeners">Screeners</span>
+  </a>
+  <a href="#guide" data-view="guide">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 4H4v12h5l3 4 3-4h5z"/></svg>
+    <span data-i18n="tabGuide">Talk</span>
+  </a>
+  <a href="#resources" data-view="resources">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20s-7-4.5-7-9.5A3.5 3.5 0 0 1 12 8a3.5 3.5 0 0 1 7 2.5c0 5-7 9.5-7 9.5z"/></svg>
+    <span data-i18n="tabHelp">Help</span>
+  </a>
+  <a href="#history" data-view="history">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 7v5l3 2M4 12a8 8 0 1 0 2.3-5.6M6 4v3h3"/></svg>
+    <span data-i18n="tabHistory">History</span>
+  </a>
+</nav>
 
 <footer>
   <div class="wrap">
@@ -2569,6 +2700,32 @@ if(new URLSearchParams(location.search).get("ref") === "wellbeings"){
 
 document.querySelectorAll("[data-view]").forEach(el=>
   el.addEventListener("click", e=>{ e.preventDefault(); showView(el.dataset.view); }));
+
+/* How tall the tab bar actually is, rather than how tall it was guessed to
+   be. The guess was a rem value, and a rem here is whatever the text-size
+   control last set — so the page cleared 70px for an 86px bar and the
+   footer sat under it, and at 135% text it would have been further out
+   again. Measuring keeps the page's bottom padding and the tour card's
+   offset correct across every text size and every language. */
+(function trackTabbar(){
+  const bar = document.querySelector(".tabbar");
+  if(!bar) return;
+  const sync = ()=> document.documentElement.style.setProperty(
+    "--tabbar-h", (bar.offsetHeight || 0) + "px");
+  sync();
+  if(typeof ResizeObserver !== "undefined") new ResizeObserver(sync).observe(bar);
+  addEventListener("resize", sync);
+})();
+
+/* aria-current was only ever set by showView, which runs on navigation —
+   so on the first paint no tab was marked and the bar couldn't answer the
+   one question it exists to answer: which of these am I on. */
+(function markCurrentView(){
+  const active = document.querySelector(".view.active");
+  const name = active ? active.id.replace(/^view-/, "") : "home";
+  document.querySelectorAll("nav a[data-view]").forEach(a=>
+    a.setAttribute("aria-current", a.dataset.view === name ? "page" : "false"));
+})();
 document.getElementById("backBtn").addEventListener("click", ()=>{
   if(current && current.idx > 0){
     current.idx--; current.goingBack = true;
@@ -2754,14 +2911,18 @@ function otPlay(){
 /* The scene is authored on a 600×320 canvas with wide margins that suit a
    desktop. On a phone those margins are the difference between a scene and
    a stamp: the room itself was rendering about 300px across inside a stage
-   more than twice as tall as the whole drawing. Cropping to the artwork's
-   real bounds — floor to ceiling, wall to wall, plus a little air — gives
-   the room the full width of the screen without touching a single
-   coordinate in the drawing. */
+   more than twice as tall as the whole drawing.
+
+   The phone window is the artwork's real width — wall to wall plus a
+   little air, 496 units — at exactly 16:9, which makes it 279 tall and
+   centres it on the room. Nothing in the drawing moves; the frame is just
+   put where a frame belongs, and the room ends up filling about 97% of
+   the width it's given instead of floating inside its own empty margins.
+   Same rectangle the tour card uses, deliberately. */
 const OT_SVG = ot.querySelector(".ot-stage svg");
 function otFit(){
   if(!OT_SVG) return;
-  OT_SVG.setAttribute("viewBox", innerWidth <= 640 ? "52 62 496 200" : "0 0 600 320");
+  OT_SVG.setAttribute("viewBox", innerWidth <= 640 ? "52 22.5 496 279" : "0 0 600 320");
 }
 otFit();
 addEventListener("resize", otFit);
