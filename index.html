@@ -875,6 +875,8 @@
        motion that carries none is dropped */
     .tour-ring,.tour-card,.tour-arrow{transition:none;}
     .tour-arrow .ab,.tour-guide .wave{animation:none;}
+    /* it still gets out of the way, it just doesn't slide doing it */
+    .tabbar{transition:none;}
   }
 
   /* ── the phone tab bar ── */
@@ -906,6 +908,15 @@
        easy to miss and invisible to anyone who can't separate these two
        hues, so the active tab also carries a rule above it. */
     .tabbar a[aria-current="page"]{color:#fff;box-shadow:inset 0 3px 0 var(--marigold);}
+    /* ── the bar gets out of the way of reading ──
+       Pinned strip plus pinned bar spent about 15% of a phone screen on
+       chrome before a word of content. The bar is the half that can
+       yield: it slides out while you scroll down and comes back the
+       instant you scroll up or reach the end, which is when navigation
+       is actually wanted. The crisis strip does not move, because the
+       moment you need that you are not going to scroll to look for it. */
+    .tabbar{transition:transform .22s var(--e-out2);will-change:transform;}
+    :root.navdown .tabbar{transform:translateY(100%);}
     /* the bar covers the foot of the page unless the page knows about it */
     body{padding-bottom:calc(var(--tabbar-h) + env(safe-area-inset-bottom,0px));}
     /* the overture and the questions are full-screen layers of their own;
@@ -2753,6 +2764,30 @@ document.querySelectorAll("[data-view]").forEach(el=>
   sync();
   if(typeof ResizeObserver !== "undefined") new ResizeObserver(sync).observe(bar);
   addEventListener("resize", sync);
+})();
+
+/* The tab bar yields while you read. Down hides it, up brings it back,
+   and so does arriving at the foot of the page — nobody should reach the
+   end and find the way onward gone. Deliberately only the bar: the crisis
+   strip stays put, because the moment someone needs that number is not a
+   moment to make them scroll in the right direction first.
+
+   rAF-gated and passive, so this never lands work in the scroll handler
+   itself; the 6px deadband stops a hovering thumb flickering it. */
+(function chromeYields(){
+  const root = document.documentElement;
+  let last = scrollY, ticking = false;
+  function update(){
+    ticking = false;
+    const y = Math.max(0, scrollY);
+    const atEnd = innerHeight + y >= document.body.scrollHeight - 4;
+    if(Math.abs(y - last) < 6 && !atEnd) return;
+    root.classList.toggle("navdown", !atEnd && y > last && y > 140);
+    last = y;
+  }
+  addEventListener("scroll", ()=>{
+    if(!ticking){ ticking = true; requestAnimationFrame(update); }
+  }, { passive:true });
 })();
 
 /* aria-current was only ever set by showView, which runs on navigation —
