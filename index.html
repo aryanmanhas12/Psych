@@ -849,6 +849,12 @@
     .tour-card p{font-size:.8rem;line-height:1.36;margin-bottom:.25rem;}
     .tour-card .tour-nav #tourPrev,
     .tour-card .tour-nav #tourNext{min-height:44px;padding:.3rem .6rem;}
+    /* Skip was 85×30 while Next was 65×45 — the way out was the smallest
+       target on the card. Someone who wants the walkthrough gone is, more
+       often than not, someone who opened this needing something else
+       urgently; that button should be the easiest one on the screen to
+       hit, not the hardest. */
+    .tour-card .tour-nav #tourSkip{min-height:44px;padding:.4rem .7rem;}
     /* pushes the controls to the foot of the frame, so they sit on one
        line across every step regardless of how short the copy is */
     .tour-card .tour-nav{margin-top:auto;}
@@ -949,6 +955,8 @@
   @media (pointer: coarse){
     .setbtn,.setpanel button,.regiontabs button,.tourcta,
     .ledemore,nav.site .navtoggle{min-height:44px;}
+    /* was 36px wide — tall enough and still a narrow strip to hit */
+    .setbtn{min-width:44px;}
   }
 
   #chooseH2{margin-top:.6rem;}
@@ -975,6 +983,23 @@
     .card{padding:.75rem .85rem;}
     .card p{display:none;}          /* description lives in the aria-label */
     .card h3{font-size:1.05rem;}
+    /* Two columns stop working before the text does. At 320px the label
+       column was down to about nine characters, so "QUICK CHECK · START
+       HERE" came apart into four stacked lines beside a half-empty
+       second column. One column reads in the order it is spoken —
+       what it is, its name, how long it takes — and gives every line the
+       full width of the card. */
+    @media(max-width:380px){
+      /* Flex, not a one-column grid: the grid rules place .meta and .go in
+         the second column explicitly, so collapsing to a single column
+         reordered the card into "4 questions / Start / QUICK CHECK /
+         PHQ-4" — the answer before the question. Flex follows the markup,
+         which is already in the order the card should be read: what it
+         is, its name, how long it takes, and how to begin. */
+      .card{display:flex;flex-direction:column;align-items:flex-start;gap:.1rem;}
+      .card .meta{margin-top:.15rem;}
+      .card .go{align-self:flex-end;margin-top:.35rem;}
+    }
     /* .topstrip sizing lives in site.css, so the strip is identical on
        every page — it used to be overridden here, one page out of six. */
     .scorebox .num{font-size:2.2rem;}
@@ -1277,7 +1302,7 @@
     <a class="navlink" href="poster.html">Poster</a>
     <div class="setwrap">
       <button type="button" class="setbtn" id="setBtn" aria-expanded="false" aria-controls="setPanel">
-        <span aria-hidden="true">⚙</span> <span class="setlabel" data-i18n="settings">Settings</span>
+        <span class="setlang" id="setLangCode" aria-hidden="true"></span><span aria-hidden="true">⚙</span> <span class="setlabel" data-i18n="settings">Settings</span>
       </button>
       <div class="setpanel" id="setPanel" role="group" aria-labelledby="setBtn">
         <div class="setrow">
@@ -1722,6 +1747,19 @@ function setLang(code){
   });
   document.getElementById("langsel").value = code;
   document.getElementById("moodBtns").setAttribute("aria-label", T.ui.moodTitle);
+  dialable();
+
+  /* The language control was a dropdown inside a panel behind a gear —
+     which asks someone who cannot read this page to navigate this page in
+     order to change it. The button now wears the current language code, so
+     the way out of the wrong language is visible from the first screen
+     without being able to read a word of it. Two letters cost no room,
+     and the panel behind it opens on Language. */
+  const codeTag = document.getElementById("setLangCode");
+  if(codeTag) codeTag.textContent = code.toUpperCase();
+  const setBtn = document.getElementById("setBtn");
+  if(setBtn) setBtn.setAttribute("aria-label",
+    (T.ui.settings || "Settings") + " — " + (T.ui.langLabel || "Language") + ": " + T.label);
 
   renderCards(); renderMood(); renderResources();
   if(document.getElementById("transcript").childElementCount) guideStart();
@@ -2955,6 +2993,51 @@ if(!otSkip){
      still gated on reduced-motion inside tourMaybeAutostart, and still
      never on a deep link, where someone is after a phone number. */
   setTimeout(tourMaybeAutostart, 400);
+}
+
+/* ════════ the numbers in the crisis strip are numbers you can call ════════
+   They had been plain text. On the device this site is mostly read on,
+   that is the difference between "call this" and "memorise this, leave
+   the page, find the dialler, and type it again without getting a digit
+   wrong" — asked of someone we have just told is in distress. The strip
+   said IN DISTRESS? and then handed over homework.
+
+   The numbers are the one part of these strings that is identical in
+   every language (helplines.js says so itself: proper nouns and dialable
+   strings, never translated), so one pass over the text works for all
+   six without touching a single translation.
+
+   Built as DOM nodes rather than an innerHTML replacement: the input is
+   our own i18n string today, and this way it stays safe if that ever
+   stops being true. */
+function dialable(){
+  document.querySelectorAll('.topstrip [data-i18n="crisis"]').forEach(host=>{
+    const raw = host.textContent;
+    if(!raw) return;
+    const frag = document.createDocumentFragment();
+    let last = 0;
+    /* 3+ characters, digits and separators, starting and ending on a
+       digit — matches 112, 14416 and 1800-599-0019, and leaves years and
+       ordinary words alone. */
+    const re = /\d[\d‑-]{1,}\d/g;
+    let m;
+    while((m = re.exec(raw)) !== null){
+      if(m.index > last) frag.appendChild(document.createTextNode(raw.slice(last, m.index)));
+      const a = document.createElement("a");
+      a.href = "tel:" + m[0].replace(/\D/g, "");
+      a.className = "dial";
+      a.textContent = m[0];
+      /* The visible text is a bare number; on its own that reads as
+         "1800-599-0019, link" and nothing more. */
+      a.setAttribute("aria-label", (T.ui.callLabel || "Call") + " " + m[0]);
+      frag.appendChild(a);
+      last = m.index + m[0].length;
+    }
+    if(!last) return;                       /* no numbers — leave it be */
+    if(last < raw.length) frag.appendChild(document.createTextNode(raw.slice(last)));
+    host.textContent = "";
+    host.appendChild(frag);
+  });
 }
 
 /* ════════ opening questions ════════
