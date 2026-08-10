@@ -541,6 +541,32 @@
   .ot-progress i{display:block;height:100%;width:0;background:var(--marigold);}
   .ot-progress i.run{width:100%;transition:width 9.2s linear;}
 
+  /* ── the opening, on a phone ──
+     The scene is a 600×320 landscape drawing. Dropped into a portrait
+     screen it rendered about 190px tall inside a 600px stage: a postage
+     stamp adrift in paper, under a three-line block of red. It read as a
+     desktop page that hadn't been made to fit.
+
+     Three things fix it, and none of them touch the drawing itself. The
+     crisis line gets tight rather than tall — every number stays on
+     screen, it just stops being a wall. The stage stops being a 1fr void
+     and sizes to its contents, so the scene and the Skip control sit
+     together as one centred composition. And the viewBox is cropped to
+     the artwork's real bounds (see otFit) so the room fills the width
+     it's given instead of floating inside its own empty margins. */
+  @media(max-width:640px){
+    .ot-top{font-size:.6rem;padding:.4rem 0;line-height:1.4;letter-spacing:.02em;}
+    .ot-top .wrap{gap:.05rem .7rem;}
+    /* Content row sizes to the drawing instead of stretching, so the scene
+       sits up where it's read rather than floating in the middle of a
+       column of nothing; the growing row is the one below it, which puts
+       Skip and the progress bar at the bottom where the thumb already is. */
+    #overture{grid-template-rows:auto auto 1fr;}
+    .ot-stage{padding:2.2rem .6rem 0;align-self:start;}
+    .ot-bottom{padding:.7rem 0 1.1rem;align-self:end;}
+    #skipIntro{font-size:.8rem;padding:.6rem 1.2rem;}
+  }
+
   /* ── scene ──
      Stick figures rather than filled capsules: a line drawing carries
      posture, and posture is what makes sadness legible without words.
@@ -851,7 +877,8 @@
     .card{padding:.75rem .85rem;}
     .card p{display:none;}          /* description lives in the aria-label */
     .card h3{font-size:1.05rem;}
-    .topstrip{font-size:.68rem;}
+    /* .topstrip sizing lives in site.css, so the strip is identical on
+       every page — it used to be overridden here, one page out of six. */
     .scorebox .num{font-size:2.2rem;}
   }
 
@@ -1132,7 +1159,7 @@
 <div class="topstrip noprint">
   <div class="wrap">
     <span><span data-i18n="crisis">IN DISTRESS? TELE-MANAS 14416 · KIRAN 1800-599-0019 · EMERGENCY 112</span></span>
-    <span><a href="https://findahelpline.com" target="_blank" rel="noopener">🌐 findahelpline.com</a> — 130+ countries</span>
+    <span><a href="https://findahelpline.com" target="_blank" rel="noopener">🌐 findahelpline.com</a><span class="strip-tail"> — 130+ countries</span></span>
   </div>
 </div>
 
@@ -2724,6 +2751,21 @@ function otPlay(){
   otAt(9200, ()=> otEnd(false));
 }
 
+/* The scene is authored on a 600×320 canvas with wide margins that suit a
+   desktop. On a phone those margins are the difference between a scene and
+   a stamp: the room itself was rendering about 300px across inside a stage
+   more than twice as tall as the whole drawing. Cropping to the artwork's
+   real bounds — floor to ceiling, wall to wall, plus a little air — gives
+   the room the full width of the screen without touching a single
+   coordinate in the drawing. */
+const OT_SVG = ot.querySelector(".ot-stage svg");
+function otFit(){
+  if(!OT_SVG) return;
+  OT_SVG.setAttribute("viewBox", innerWidth <= 640 ? "52 62 496 200" : "0 0 600 320");
+}
+otFit();
+addEventListener("resize", otFit);
+
 document.getElementById("skipIntro").addEventListener("click", ()=> otEnd(true));
 function playOpening(){
   toggleSettings(false);
@@ -2742,6 +2784,16 @@ const otSkip = window.matchMedia("(prefers-reduced-motion: reduce)").matches ||
 if(!otSkip){
   otPlay();
   setTimeout(()=> document.getElementById("skipIntro").focus(), 60);
+} else if(!location.hash){
+  /* The walkthrough used to hang off the end of the room scene and nowhere
+     else, so anyone who never saw the scene — reduced-motion readers, and
+     everyone on their second load, which on a phone is most people — could
+     only find it by opening the settings panel and pressing Take the tour.
+     The one explanation of what this site does was behind the least-pressed
+     button on the page. It now stands on its own: still once per device,
+     still gated on reduced-motion inside tourMaybeAutostart, and still
+     never on a deep link, where someone is after a phone number. */
+  setTimeout(tourMaybeAutostart, 400);
 }
 
 /* ════════ opening questions ════════
@@ -2761,14 +2813,23 @@ function introAnswers(){
   try{ return JSON.parse(localStorage.getItem(INTRO_KEY)) || null; }catch(e){ return null; }
 }
 
-/* What follows the room scene. The questions are a first-visit thing
-   only: someone replaying the opening wants to see the walkthrough
-   again, not to be asked the same three things a second time. */
+/* What follows the room scene: the walkthrough, always. The room says why
+   this exists; the tour says what it does. Those two belong together, and
+   nothing should come between them.
+
+   The questions used to sit in this gap. They now run off the end of the
+   tour instead — see tourEnd. */
 function openingNext(replay){
+  if(replay) tourStart(); else tourMaybeAutostart();
+}
+
+/* First visit only: someone replaying the opening wants to see the
+   walkthrough again, not to be asked the same three things a second
+   time. */
+function introMaybeStart(){
   let seen = true;
   try{ seen = !!localStorage.getItem(INTRO_SEEN); }catch(e){}
-  if(!seen){ introStart(); return; }
-  if(replay) tourStart(); else tourMaybeAutostart();
+  if(!seen) introStart();
 }
 
 function introRender(){
@@ -2791,8 +2852,6 @@ function introFinish(saved){
     if(saved) localStorage.setItem(INTRO_KEY, JSON.stringify(introAns));
   }catch(e){}
   applyIntroTailoring();
-  /* the questions hand straight over to the feature walkthrough */
-  tourMaybeAutostart();
 }
 
 function introAnswer(yes){
@@ -2843,7 +2902,16 @@ let tourIdx = 0, tourTimer = null, tourPaused = false, tourPlacedAt = 0, tourRep
 function tourMaybeAutostart(){
   let seen = true;
   try{ seen = !!localStorage.getItem(TOUR_KEY); }catch(e){}
-  if(!seen && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) tourStart();
+  /* Reduced-motion readers get the walkthrough too. It used to be withheld
+     from them entirely, which meant the people most likely to be on an
+     older phone got no explanation of the site at all. The thing that was
+     actually unsafe for them is the auto-advance, and tourArmTimer already
+     refuses to run it — so for them the tour simply waits on Next, which
+     is what it should have done from the start. */
+  if(!seen){ tourStart(); return; }
+  /* Tour already behind them but the questions never ran — someone who
+     skipped out of the tour on a first visit. Don't strand them. */
+  introMaybeStart();
 }
 
 function tourTarget(){
@@ -3009,6 +3077,12 @@ function tourEnd(){
   document.getElementById("tour").hidden = true;
   removeEventListener("resize", tourPlace);
   try{ localStorage.setItem(TOUR_KEY, "1"); }catch(e){}
+  /* The three opening questions come last, not first. Asking someone what
+     they believe about getting help before they have any idea what this
+     site is, is asking a stranger for an opinion at the door — on a phone,
+     where the questions fill the whole screen, it read as the site itself.
+     After the walkthrough there is something to have an opinion about. */
+  introMaybeStart();
 }
 function tourStep(delta){
   const n = tourIdx + delta;
