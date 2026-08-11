@@ -162,11 +162,27 @@ img,svg{max-width:100%;}
    reads as a control rather than as punctuation in a sentence, with the
    padding kept off the block axis so widening the target does not make
    the strip itself any taller. */
-.topstrip a.dial{
+/* Matched on the href as well as the class. index.html builds these links
+   at runtime (see dialable) and tags them .dial; the other five pages
+   carry hand-written tel: anchors in the markup and never got the class,
+   so on every page except the home page the helpline numbers were plain
+   13px text — the site's own tour promises these are "pinned to the top
+   of every page", and on five of six they were the least pressable thing
+   on the screen. Keying off the protocol means a number cannot be added
+   anywhere on this site and quietly miss the treatment.
+
+   The vertical padding is cancelled by an equal negative margin. That is
+   what lets the target grow to ~28px — past the 24px WCAG 2.5.8 floor —
+   without the strip itself getting one pixel taller, which was the whole
+   reason the original padding was kept to the inline axis. */
+.topstrip a.dial,
+.topstrip a{
+  display:inline-block;
   text-decoration:underline;text-underline-offset:2px;text-decoration-thickness:1.5px;
-  padding:0 .18rem;border-radius:3px;white-space:nowrap;
+  padding:.34rem .3rem;margin:-.34rem 0;
+  border-radius:3px;white-space:nowrap;
 }
-.topstrip a.dial:hover,.topstrip a.dial:focus-visible{background:rgba(255,255,255,.18);}
+.topstrip a:hover,.topstrip a:focus-visible{background:rgba(255,255,255,.18);}
 
 /* Current language, worn on the settings button. Two characters, so it
    costs no room even at 320px, and it is the one label on the page that
@@ -409,4 +425,27 @@ footer .byline strong{color:var(--ink);font-size:.85rem;}
 @media print{
   .topstrip,nav.site,.noprint{display:none!important;}
   body{background:#fff;color:#000;}
+}
+
+/* ── coarse-pointer targets, for every page ──
+   This lived in index.html's own <style> block, so the shared navigation
+   was only finger-sized on the one page that happened to define it: the
+   Menu toggle measured 43px on the other five, and the language select
+   36px. Anything in the shared nav belongs in the shared stylesheet.
+
+   Placed at the end of the file deliberately. These selectors have the
+   same specificity as the nav.site rules above that set the toggle's
+   padding, so source order is what decides — exactly the trap the
+   .ledemore rule in index.html already carries a note about. Sitting
+   earlier in the file, this block lost silently and measured 43px.
+   A fingertip is about 44px across and lands where it lands. */
+@media (pointer: coarse){
+  nav.site .navtoggle,
+  nav.site select,
+  nav.site .setbtn{min-height:44px;}
+  /* The brand is the way back to the screener from every reading page,
+     which makes it a real control and not decoration. It measured 35px.
+     inline-flex rather than a bare min-height because an inline anchor
+     ignores height entirely. */
+  nav.site .brand{display:inline-flex;align-items:center;min-height:44px;}
 }

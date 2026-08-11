@@ -100,6 +100,16 @@ button.act{background:var(--marigold);border-color:var(--marigold);font-weight:7
   </div>
 </nav>
 
+<style>
+/* The poster's control bar is its own furniture, outside nav.site, so the
+   shared coarse-pointer rule does not reach it. Same requirement though:
+   this page is opened on a phone by someone standing in a clinic
+   deciding what to print. */
+@media (pointer: coarse){
+  .bar .in select,.bar .in button{min-height:44px;}
+  nav.site .brand{display:inline-flex;align-items:center;min-height:44px;}
+}
+</style>
 <div class="bar noprint">
   <div class="in">
     <h1>Psych <span class="accent">Screener</span> — Poster</h1>
