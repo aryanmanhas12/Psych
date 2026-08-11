@@ -437,6 +437,43 @@
   table.lines td a{font-weight:700;white-space:nowrap;}
   .reviewed{font-family:ui-monospace,'Cascadia Mono',Menlo,Consolas,monospace;font-size:.72rem;color:var(--muted);margin-top:.6rem;}
 
+  /* ── the helpline directory, on a phone ──
+     Three columns of country/service/number is a table on a desktop and a
+     sideways-scrolling strip at 390px: 383px of table in a 343px column,
+     with Number — the only column anyone came for — the one pushed off
+     the right edge. And the numbers themselves were 54x18 links, an 18px
+     target for a crisis line, which is the same fault the top strip had
+     before its numbers were made dialable and padded.
+
+     Below 640px each row becomes its own block: country and service as
+     label lines, the number as a full-width control with a real 44px
+     target. Nothing scrolls sideways, and the number is the largest
+     thing in the row, which is the right order of importance for a page
+     someone opens because they need to call someone. */
+  @media(max-width:640px){
+    table.lines,table.lines tbody,table.lines tr,table.lines td{display:block;width:100%;}
+    table.lines thead{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;}
+    table.lines{border-collapse:separate;background:transparent;}
+    table.lines tr{
+      border:1px solid var(--line);background:var(--card);
+      padding:.6rem .75rem;margin-bottom:.5rem;
+    }
+    table.lines td{border:0;padding:.1rem 0;}
+    table.lines td:first-child{
+      font-family:ui-monospace,'Cascadia Mono',Menlo,Consolas,monospace;
+      font-size:.68rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);
+    }
+    table.lines td a{
+      display:inline-flex;align-items:center;min-height:44px;
+      padding:0 .7rem;margin-top:.2rem;font-size:1.05rem;
+      border:1.5px solid currentColor;border-radius:.4rem;
+    }
+  }
+  /* 21px and 40px respectively — both real controls that had been sized
+     for a cursor. */
+  .dir a{display:inline-flex;align-items:center;min-height:44px;}
+  #view-results a[data-i18n="whyTrust"]{display:inline-flex;align-items:center;min-height:44px;}
+
   /* ── guided conversation ── */
   .guidewrap{max-width:44rem;}
   .guidenote{
