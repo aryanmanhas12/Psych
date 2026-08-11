@@ -1417,7 +1417,22 @@
 
 <div class="topstrip noprint">
   <div class="wrap">
-    <span><span data-i18n="crisis">IN DISTRESS? TELE-MANAS 14416 · KIRAN 1800-599-0019 · EMERGENCY 112</span></span>
+    <!-- The numbers are anchors in the markup, not only after dialable()
+         has run. This text is the pre-JavaScript fallback: it paints with
+         the document, but until i18n.js arrives — 275KB, and the largest
+         thing this page fetches — the numbers used to be inert text, so
+         on a slow connection there is a window where the helpline is
+         legible and not callable. Measured first paint at 2.4s against
+         DOMContentLoaded at 10.6s on a poor 3G link; that window is the
+         better part of eight seconds, and it belongs to exactly the
+         person this strip is for.
+
+         Marked up they are tappable the instant the strip is visible, and
+         they keep working if the script never arrives at all. dialable()
+         reads textContent and rebuilds the whole span, so it flattens
+         these and re-creates them with the right aria-label once the
+         translations land — no double-wrapping. -->
+    <span><span data-i18n="crisis">IN DISTRESS? TELE-MANAS <a class="dial" href="tel:14416">14416</a> · KIRAN <a class="dial" href="tel:18005990019">1800-599-0019</a> · EMERGENCY <a class="dial" href="tel:112">112</a></span></span>
     <span><a href="https://findahelpline.com" target="_blank" rel="noopener">🌐 findahelpline.com</a><span class="strip-tail"> — 130+ countries</span></span>
   </div>
 </div>
