@@ -10,8 +10,17 @@
    no returning visitor could see, because HTML was cache-first with no
    name bump: an installed copy kept serving the version it first saw,
    indefinitely. v4 fixes both the name and the strategy that let it happen
-   again. */
-const CACHE = "psych-screener-v4";
+   again.
+
+   v5: the opening was rebuilt and its caption lives in i18n.js, which is
+   cache-first. Network-first HTML alone would have shipped a new
+   index.html to an installed device while it kept reading the old
+   i18n.js from cache — same URL, still valid, never re-fetched — and the
+   caption would have come out blank in all six languages. The note above
+   is right that a stale asset is never served to a page that did not
+   change; it is the case where the page DID change that needs the name
+   bumped, because that is what makes activate() evict and refetch. */
+const CACHE = "psych-screener-v5";
 const ASSETS = [
   "./", "./index.html", "./i18n.js", "./helplines.js", "./nav.js",
   "./ethics.html", "./evidence.html", "./manifesto.html",

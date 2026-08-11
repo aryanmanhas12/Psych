@@ -529,15 +529,28 @@
   .ot-top a{color:#fff;font-weight:700;}
   .ot-stage{display:grid;place-items:center;padding:1rem;min-height:0;}
   .ot-stage svg{width:min(100%,52rem);height:auto;max-height:100%;}
+  /* frame, caption and progress as one centred block */
+  .ot-scene{display:flex;flex-direction:column;align-items:center;gap:.9rem;
+            width:min(100%,52rem);max-height:100%;min-height:0;}
+  /* align-items:center on a column makes children shrink to their content,
+     which left the frame wrapping the SVG's intrinsic 300px on tablets and
+     desktop instead of the width the stage had given it */
+  .ot-frame{width:100%;display:grid;place-items:center;min-height:0;}
+  .ot-cap{
+    font-family:ui-monospace,'Cascadia Mono',Menlo,Consolas,monospace;
+    font-size:.8rem;color:var(--muted);text-align:center;margin:0;max-width:34ch;
+  }
   .ot-bottom{padding:.9rem 0 1.4rem;}
-  .ot-bottom .wrap{display:flex;justify-content:space-between;align-items:center;gap:1rem;flex-wrap:wrap;}
+  .ot-bottom .wrap{display:flex;justify-content:center;align-items:center;gap:1rem;flex-wrap:wrap;}
   #skipIntro{
     font-family:ui-monospace,'Cascadia Mono',Menlo,Consolas,monospace;
     text-transform:none;letter-spacing:.04em;font-size:.85rem;
     background:transparent;color:var(--ink);border:2px solid var(--ink);padding:.5rem 1.1rem;
   }
   #skipIntro:hover{transform:none;box-shadow:none;background:var(--ink);color:var(--paper);}
-  .ot-progress{height:3px;background:var(--line);flex:1;min-width:6rem;max-width:14rem;}
+  /* flex:none — it lives in a column now, where flex:1 would have stretched
+     a 3px rule into the full height of the stack */
+  .ot-progress{height:3px;background:var(--line);flex:none;width:min(100%,14rem);}
   .ot-progress i{display:block;height:100%;width:0;background:var(--marigold);}
   .ot-progress i.run{width:100%;transition:width 9.2s linear;}
 
@@ -557,35 +570,58 @@
   @media(max-width:640px){
     .ot-top{font-size:.6rem;padding:.4rem 0;line-height:1.4;letter-spacing:.02em;}
     .ot-top .wrap{gap:.05rem .7rem;}
-    /* Content row sizes to the drawing instead of stretching, so the scene
-       sits up where it's read rather than floating in the middle of a
-       column of nothing; the growing row is the one below it, which puts
-       Skip and the progress bar at the bottom where the thumb already is. */
-    #overture{grid-template-rows:auto auto 1fr;}
-    .ot-stage{padding:1.6rem .9rem 0;align-self:start;}
+
+    /* ── the scene has to own the screen ──
+       This row was `auto` with the slack pushed below it, which is what
+       made the opening unreadable on a phone: the drawing is a 16:9
+       landscape, so at 390px wide it can only ever be ~200px tall, and
+       sitting it at the top left roughly 630px — three quarters of the
+       screen — as empty paper. Nobody reads that as "a film is playing";
+       they read it as a page that failed to load.
+
+       The drawing cannot be made portrait (it is a room, seen side-on,
+       and cropping to a taller window cuts either the window the world
+       passes or the door the second person comes through — both are the
+       story). So the answer is composition, not geometry: give the slack
+       to the stage and centre the whole block in it, so the picture sits
+       where the eye already is, with its caption and its progress
+       attached to it. */
+    #overture{grid-template-rows:auto 1fr auto;}
+    .ot-stage{padding:0;align-self:center;}
+    .ot-scene{gap:.8rem;}
     .ot-bottom{padding:.7rem 0 1.1rem;align-self:end;}
     #skipIntro{font-size:.8rem;padding:.6rem 1.2rem;}
 
-    /* ── one 16:9 frame, used twice ──
-       The scene is a widescreen drawing, and on a phone it had been
-       rendering as whatever shape was left over. Giving it an explicit
-       16:9 frame is the difference between a picture that got squeezed in
-       and one that was placed: the ratio is the most familiar rectangle
-       there is, so the eye reads it as a screen and stops noticing the
-       layout at all.
-
-       The tour then takes the same rectangle in the same place. Both are
-       the same voice explaining the same thing, and on a phone the tour
-       card had been resizing itself step to step — every advance moved
-       the Next button somewhere new. Fixed shape, fixed position: the
-       only thing that changes between steps is the words. */
+    /* Edge to edge, and squared off. A rounded card inset by a margin
+       reads as a widget that happens to be on the page; a full-bleed band
+       reads as a frame someone chose — the same reason a film letterboxes
+       instead of floating a rounded rectangle in the middle of the screen.
+       It also buys back the side padding, which at this width is the
+       difference between a 358px and a 390px picture. */
     .ot-frame{
       aspect-ratio:16/9;width:100%;
-      border:2px solid var(--line);border-radius:.7rem;
+      border:2px solid var(--line);border-left:0;border-right:0;border-radius:0;
       background:var(--card);overflow:hidden;
       display:grid;place-items:center;
     }
+    .ot-cap{font-size:.78rem;padding:0 1.1rem;}
     .ot-stage svg{width:100%;height:100%;}
+  }
+
+  /* ── a phone turned sideways, and anything else short ──
+     The scene is 1.875:1, so on a wide-and-short viewport "as wide as the
+     stage" is far taller than the stage: at 844×390 the frame came out
+     431px tall in a 390px window and took the caption and the progress
+     bar off the bottom of the screen with it. Height has to be the
+     constraint there, not width. A max-height on the SVG is enough —
+     it has an intrinsic ratio, so clamping the height recomputes the
+     width to match and the whole composition scales down together. */
+  @media (max-height:560px){
+    .ot-frame{aspect-ratio:auto;border-radius:0;}
+    .ot-stage svg{width:auto;max-width:100%;height:auto;max-height:44vh;}
+    .ot-scene{gap:.5rem;}
+    .ot-cap{font-size:.72rem;}
+    .ot-bottom{padding:.4rem 0 .6rem;}
   }
 
   /* ── scene ──
@@ -1147,7 +1183,8 @@
   </div>
 
   <div class="ot-stage">
-   <div class="ot-frame">
+   <div class="ot-scene">
+    <div class="ot-frame">
     <svg viewBox="0 0 600 320" aria-hidden="true">
       <!-- ── the room ──
            Isolation reads more clearly as a place than as an abstraction:
@@ -1200,13 +1237,20 @@
         <path class="lb" id="otArmB" d="M339 218 L306 231"/>
       </g>
     </svg>
+    </div>
+    <!-- Caption and progress belong to the picture, not to the far edge of
+         the screen. They used to sit in .ot-bottom, which on a phone put
+         the only evidence that anything was playing ~600px below the only
+         thing that was. Kept in one stack, the scene reads as a composition
+         with a beginning and an end rather than a stamp adrift in paper. -->
+    <p class="ot-cap" data-i18n="introCap"></p>
+    <span class="ot-progress" aria-hidden="true"><i id="otBar"></i></span>
    </div>
   </div>
 
   <div class="ot-bottom">
     <div class="wrap">
       <button type="button" id="skipIntro" data-i18n="skipIntro">Skip</button>
-      <span class="ot-progress" aria-hidden="true"><i id="otBar"></i></span>
       <span id="otAlt" class="visually-hidden" data-i18n="introAlt"></span>
     </div>
   </div>
@@ -2892,6 +2936,38 @@ document.getElementById("guideResetBtn").addEventListener("click", guideStart);
      4  someone reaches them; a line connects
      5  the weight lifts, the grey warms
    Then it gets out of the way.                                    */
+/* ════════ how "seen it already" is remembered ════════
+   Each of the three opening layers — the room scene, the walkthrough, the
+   three questions — runs once per device and then stays quiet, which is
+   right: nobody wants the same introduction every morning.
+
+   What was wrong is that "once" was recorded as the bare string "1", so
+   it meant "this person has seen SOMETHING, ever". Rebuild the opening
+   and every phone that ever loaded the old one is locked out of the new
+   one permanently — there is no version in the flag for a new release to
+   differ from. That is not a hypothetical: the opening has been through
+   three shapes now, and a returning phone showed none of them. It landed
+   on the bare page with no scene, no walkthrough and no questions, which
+   is exactly the report that sent me looking.
+
+   This is the same bug sw.js already documents at the network layer (a
+   cache name that never changed, so a shipped fix reached nobody), and it
+   takes the same fix: put a version in the value and compare against it
+   rather than testing for truthiness. Bump ONBOARD_V whenever the opening
+   changes enough to be worth showing again, and every device — including
+   the ones that saw every previous version — gets it exactly once more.
+
+   Reads fail closed: if storage throws (private mode, storage disabled)
+   we treat it as seen, because repeating the introduction on every load
+   is worse than skipping it. */
+const ONBOARD_V = "2";
+function onboardSeen(key){
+  try{ return localStorage.getItem(key) === ONBOARD_V; }catch(e){ return true; }
+}
+function onboardMark(key){
+  try{ localStorage.setItem(key, ONBOARD_V); }catch(e){}
+}
+
 const OT_KEY = "psych-seen-overture";
 const ot = document.getElementById("overture");
 let otTimers = [];
@@ -2941,7 +3017,7 @@ function otEnd(skipped){
     const replay = otThenTour; otThenTour = false;
     openingNext(replay);
   }, 500);
-  try{ localStorage.setItem(OT_KEY, "1"); }catch(e){}
+  onboardMark(OT_KEY);
 }
 
 function otPlay(){
@@ -3014,7 +3090,7 @@ ot.addEventListener("keydown", e=>{ if(e.key === "Escape") otEnd(true); });
    when someone arrives via a deep link — a person heading straight
    for #resources is looking for a phone number, not a film. */
 const otSkip = window.matchMedia("(prefers-reduced-motion: reduce)").matches ||
-               location.hash || (()=>{ try{ return localStorage.getItem(OT_KEY); }catch(e){ return true; } })();
+               location.hash || onboardSeen(OT_KEY);
 if(!otSkip){
   otPlay();
   setTimeout(()=> document.getElementById("skipIntro").focus(), 60);
@@ -3106,9 +3182,7 @@ function openingNext(replay){
    walkthrough again, not to be asked the same three things a second
    time. */
 function introMaybeStart(){
-  let seen = true;
-  try{ seen = !!localStorage.getItem(INTRO_SEEN); }catch(e){}
-  if(!seen) introStart();
+  if(!onboardSeen(INTRO_SEEN)) introStart();
 }
 
 function introRender(){
@@ -3126,10 +3200,10 @@ function introStart(){
 
 function introFinish(saved){
   document.getElementById("intro").hidden = true;
-  try{
-    localStorage.setItem(INTRO_SEEN, "1");
-    if(saved) localStorage.setItem(INTRO_KEY, JSON.stringify(introAns));
-  }catch(e){}
+  onboardMark(INTRO_SEEN);
+  /* the answers themselves are the person's, not a version flag — they
+     survive an ONBOARD_V bump untouched */
+  if(saved){ try{ localStorage.setItem(INTRO_KEY, JSON.stringify(introAns)); }catch(e){} }
   applyIntroTailoring();
 }
 
@@ -3179,8 +3253,7 @@ const TOUR_STEP_MS = 6500;
 let tourIdx = 0, tourTimer = null, tourPaused = false, tourPlacedAt = 0, tourRepaint = null;
 
 function tourMaybeAutostart(){
-  let seen = true;
-  try{ seen = !!localStorage.getItem(TOUR_KEY); }catch(e){}
+  const seen = onboardSeen(TOUR_KEY);
   /* Reduced-motion readers get the walkthrough too. It used to be withheld
      from them entirely, which meant the people most likely to be on an
      older phone got no explanation of the site at all. The thing that was
@@ -3347,6 +3420,14 @@ function tourStart(){
     TOUR_STEPS.map(()=> "<i></i>").join("");
   document.getElementById("tour").style.setProperty("--tour-dur", TOUR_STEP_MS + "ms");
   document.getElementById("tour").hidden = false;
+  /* Marked here rather than only in tourEnd. It used to be written when
+     the tour finished, which meant closing the tab halfway through — or
+     on a phone, taking a call — left the flag unwritten, and the tour
+     opened over the page again on the next load, and the one after that,
+     for ever. An unfinished walkthrough is still a walkthrough that
+     happened to you; the way back is the Watch the intro button on the
+     page, which is deliberate and always there. */
+  onboardMark(TOUR_KEY);
   tourPlace();
   addEventListener("resize", tourPlace);
   setTimeout(()=> document.getElementById("tourNext").focus(), 300);
@@ -3355,7 +3436,7 @@ function tourEnd(){
   clearTimeout(tourTimer); tourTimer = null;
   document.getElementById("tour").hidden = true;
   removeEventListener("resize", tourPlace);
-  try{ localStorage.setItem(TOUR_KEY, "1"); }catch(e){}
+  onboardMark(TOUR_KEY);
   /* The three opening questions come last, not first. Asking someone what
      they believe about getting help before they have any idea what this
      site is, is asking a stranger for an opinion at the door — on a phone,
