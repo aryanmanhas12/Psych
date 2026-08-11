@@ -32,6 +32,29 @@
   --muted:#54596A;
   --deep:#151C2E;          /* the always-dark surface: nav, stat bands */
   --on-deep:#F6F4EE;
+  /* ── the red that has to carry white text ──
+     --stamp does two unrelated jobs: it is the accent red for text and
+     rules ON the page, and it is the fill BEHIND the white text of the
+     crisis strip. Those want opposite things from a dark theme. The dark
+     token lightened --stamp to #E4796B so it would read against a near
+     black page, which is right for a rule and wrong for a background:
+     white on #E4796B is 2.90:1, so in dark mode the helpline numbers —
+     the most safety-critical text on the site, read at 2am on a phone,
+     by someone we have just told is in distress — were the single
+     hardest thing here to read, and failed WCAG AA outright.
+
+     Split into its own token, and deliberately the same value in both
+     themes: white on it is 5.94:1, it still sits 3.05:1 clear of the
+     dark page so the band reads as a band, and a crisis affordance that
+     does not move or change colour between themes is one less thing to
+     re-learn at the worst possible moment. */
+  --stamp-bg:#B23A2E;
+  --on-stamp:#FFFFFF;
+  /* The opening's progress rule, which has to be visible against paper to
+     do its one job — say that this is timed and nearly over. Plain
+     --marigold is 2.01:1 on light paper and the --line track is 1.36:1,
+     so on a light phone the bar was, in practice, not there. */
+  --bar:#B87D0E;
   --e-out1:cubic-bezier(.25,.46,.45,.94);
   --e-out2:cubic-bezier(.215,.61,.355,1);
   --scale:1;
@@ -48,16 +71,21 @@
     --heal:#5FB39C;
     --deep:#0A0D14;
     --on-deep:#EDEAE2;
+    --stamp-bg:#B23A2E;
+    --on-stamp:#FFFFFF;
+    --bar:#F0B53C;
   }
 }
 :root[data-theme="dark"]{
   --ink:#EDEAE2; --paper:#12161F; --card:#1A1F2B; --line:#333B4C;
   --muted:#9AA3B5; --marigold:#F0B53C; --stamp:#E4796B; --heal:#5FB39C;
   --deep:#0A0D14; --on-deep:#EDEAE2;
+  --stamp-bg:#B23A2E; --on-stamp:#FFFFFF; --bar:#F0B53C;
 }
 :root[data-contrast="high"]{
   --ink:#000; --paper:#FFF; --card:#FFF; --line:#000; --muted:#1A1A1A;
   --marigold:#8A5D00; --stamp:#8E1B10; --heal:#0F4A3C; --deep:#000; --on-deep:#FFF;
+  --stamp-bg:#8E1B10; --on-stamp:#FFF; --bar:#8A5D00;
 }
 
 /* ── reset & base ── */
@@ -124,7 +152,7 @@ img,svg{max-width:100%;}
 
 /* ── crisis strip: identical on every page, by design ── */
 .topstrip{
-  background:var(--stamp);color:#fff;
+  background:var(--stamp-bg);color:var(--on-stamp);
   font-family:ui-monospace,'Cascadia Mono',Menlo,Consolas,monospace;
   font-size:.76rem;padding:.5rem 0;letter-spacing:.03em;
 }
@@ -273,7 +301,7 @@ button,.btn{
 }
 button:hover,.btn:hover{transform:translate(-2px,-2px);box-shadow:4px 4px 0 var(--heal);}
 button.secondary{background:transparent;color:var(--ink);border:2px solid var(--ink);}
-button.danger{background:var(--stamp);color:#fff;}
+button.danger{background:var(--stamp-bg);color:var(--on-stamp);}
 button:disabled{opacity:.45;cursor:not-allowed;transform:none;box-shadow:none;}
 
 /* ── reference lists ── */

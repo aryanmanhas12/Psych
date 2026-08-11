@@ -119,7 +119,7 @@
     padding:.35rem .7rem;font-size:.85rem;min-height:2.2rem;flex:1;cursor:pointer;
   }
   .setpanel button:hover{border-color:var(--ink);transform:none;box-shadow:none;}
-  .setpanel button[aria-pressed="true"]{background:var(--heal);color:#fff;border-color:var(--heal);font-weight:700;}
+  .setpanel button[aria-pressed="true"]{background:var(--heal);color:var(--paper);border-color:var(--heal);font-weight:700;}
   /* Visible by default. Only a page that has proven JS runs AND has an
      IntersectionObserver opts into hiding, so content can never be
      stranded invisible — the failure mode the motion guidance warns about. */
@@ -221,7 +221,7 @@
   button:hover,.btn:hover{transform:translate(-2px,-2px);box-shadow:4px 4px 0 var(--heal);}
   :where(button,a,select,input,[tabindex]):focus-visible{outline:3px solid var(--stamp);outline-offset:3px;}
   button.secondary{background:transparent;color:var(--ink);border:2px solid var(--ink);}
-  button.danger{background:var(--stamp);}
+  button.danger{background:var(--stamp-bg);color:var(--on-stamp);}
   button:disabled{opacity:.45;cursor:not-allowed;transform:none;box-shadow:none;}
 
   /* ── test: sticky OPD-token header, everything else fits under it ── */
@@ -337,7 +337,7 @@
   .sevlabels div{text-align:center;}
 
   .safety{
-    background:var(--stamp);color:#fff;padding:1.3rem 1.4rem;margin-bottom:1.4rem;
+    background:var(--stamp-bg);color:var(--on-stamp);padding:1.3rem 1.4rem;margin-bottom:1.4rem;
     border:2px solid var(--ink);max-width:48rem;
   }
   .safety h3{font-family:'Anton',sans-serif;text-transform:uppercase;font-size:1.2rem;margin-bottom:.6rem;letter-spacing:.03em;}
@@ -452,7 +452,7 @@
   @keyframes bubin{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:none;}}
   .bub.g{background:var(--card);align-self:flex-start;border-left:.4rem solid var(--heal);}
   .bub.u{background:var(--ink);color:var(--paper);align-self:flex-end;text-align:right;}
-  .bub.crisis{background:var(--stamp);color:#fff;border-color:var(--ink);align-self:stretch;max-width:100%;}
+  .bub.crisis{background:var(--stamp-bg);color:var(--on-stamp);border-color:var(--ink);align-self:stretch;max-width:100%;}
   .bub.crisis a{color:#fff;font-weight:700;}
   .bub .lines{font-family:ui-monospace,'Cascadia Mono',Menlo,Consolas,monospace;font-size:.85rem;line-height:2;margin-top:.5rem;}
   .typing{display:inline-flex;gap:.22rem;align-items:center;padding:.15rem 0;}
@@ -469,7 +469,7 @@
   }
   .choices button:hover{border-color:var(--heal);transform:translateX(2px);box-shadow:none;}
   .choices button.now{border-color:var(--stamp);color:var(--stamp);font-weight:700;}
-  .choices button.go{background:var(--heal);color:#fff;border-color:var(--heal);font-weight:700;}
+  .choices button.go{background:var(--heal);color:var(--paper);border-color:var(--heal);font-weight:700;}
   .guidebar{display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:.9rem;}
 
   /* ── grounding: paced breathing ──
@@ -523,7 +523,7 @@
   #overture[hidden]{display:none;}
   #overture.closing{animation:otOut .5s var(--e-out2) forwards;}
   @keyframes otOut{to{opacity:0;visibility:hidden;}}
-  .ot-top{padding:.55rem 0;background:var(--stamp);color:#fff;
+  .ot-top{padding:.55rem 0;background:var(--stamp-bg);color:var(--on-stamp);
     font-family:ui-monospace,'Cascadia Mono',Menlo,Consolas,monospace;font-size:.72rem;}
   .ot-top .wrap{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap;align-items:center;}
   .ot-top a{color:#fff;font-weight:700;}
@@ -540,6 +540,25 @@
     font-family:ui-monospace,'Cascadia Mono',Menlo,Consolas,monospace;
     font-size:.8rem;color:var(--muted);text-align:center;margin:0;max-width:34ch;
   }
+  /* Six names, wrapping to as many rows as they need. Each is a real
+     44px target — this is the control most likely to be pressed by
+     someone who can read nothing else on the screen. */
+  .ot-langs{display:flex;flex-wrap:wrap;gap:.4rem;justify-content:center;max-width:32rem;}
+  .ot-langs button{
+    font-family:system-ui,'Noto Sans',sans-serif;
+    text-transform:none;letter-spacing:0;font-size:.86rem;font-weight:600;
+    min-height:44px;padding:.4rem .85rem;border-radius:2rem;
+    background:var(--card);color:var(--ink);border:1.5px solid var(--line);
+  }
+  .ot-langs button:hover{transform:none;box-shadow:none;border-color:var(--heal);}
+  /* --paper, not #fff. --heal is the accent GREEN, and like --stamp it
+     flips lightness between themes: #2F6E5E on light, #5FB39C on dark.
+     Hard-coded white text on it is 5.4:1 in light and 2.5:1 in dark.
+     --paper is by construction the opposite end of the same theme, so
+     one declaration reads correctly in both — and in high contrast. */
+  .ot-langs button[aria-pressed="true"]{
+    background:var(--heal);color:var(--paper);border-color:var(--heal);
+  }
   .ot-bottom{padding:.9rem 0 1.4rem;}
   .ot-bottom .wrap{display:flex;justify-content:center;align-items:center;gap:1rem;flex-wrap:wrap;}
   #skipIntro{
@@ -549,9 +568,14 @@
   }
   #skipIntro:hover{transform:none;box-shadow:none;background:var(--ink);color:var(--paper);}
   /* flex:none — it lives in a column now, where flex:1 would have stretched
-     a 3px rule into the full height of the stack */
-  .ot-progress{height:3px;background:var(--line);flex:none;width:min(100%,14rem);}
-  .ot-progress i{display:block;height:100%;width:0;background:var(--marigold);}
+     a 3px rule into the full height of the stack. The track is tinted from
+     --ink rather than sitting on --line, which on light paper was a 1.36:1
+     rule nobody could see. */
+  .ot-progress{
+    height:4px;flex:none;width:min(100%,14rem);border-radius:2px;overflow:hidden;
+    background:color-mix(in srgb,var(--ink) 16%,transparent);
+  }
+  .ot-progress i{display:block;height:100%;width:0;background:var(--bar);}
   .ot-progress i.run{width:100%;transition:width 9.2s linear;}
 
   /* ── the opening, on a phone ──
@@ -606,6 +630,14 @@
     }
     .ot-cap{font-size:.78rem;padding:0 1.1rem;}
     .ot-stage svg{width:100%;height:100%;}
+    /* An even three-by-two rather than natural wrapping, which put five
+       names on one line and left Telugu alone on a second — the odd one
+       out reads as an afterthought, and none of these six is. */
+    .ot-langs{
+      display:grid;grid-template-columns:repeat(3,minmax(0,1fr));
+      gap:.45rem;width:100%;padding:0 1.1rem;
+    }
+    .ot-langs button{padding:.4rem .3rem;font-size:.82rem;}
   }
 
   /* ── a phone turned sideways, and anything else short ──
@@ -724,7 +756,7 @@
     flex:1;max-width:14rem;
   }
   .intro-no{background:var(--line);color:var(--ink);}
-  .intro-yes{background:var(--heal);color:#fff;}
+  .intro-yes{background:var(--heal);color:var(--paper);}
   .intro-foot{display:flex;align-items:center;justify-content:center;gap:1.1rem;}
   .intro-dots{font-size:.75rem;color:var(--muted);letter-spacing:.25em;}
   .intro-skip{
@@ -1244,6 +1276,16 @@
          thing that was. Kept in one stack, the scene reads as a composition
          with a beginning and an end rather than a stamp adrift in paper. -->
     <p class="ot-cap" data-i18n="introCap"></p>
+    <!-- ── the six languages, on the first screen ──
+         The language control was a <select> inside a panel behind a gear
+         icon, which asks someone who cannot read this page to navigate
+         this page in order to change it. The settings button now wears
+         the current code, but that still only helps once you have found
+         the button. These are the six names, each written in its own
+         script, on the very first screen there is — the one thing here
+         that needs no English at all to use. Names not flags: a flag is
+         a country, and five of these six are spoken across many. -->
+    <div class="ot-langs" id="otLangs" role="group"></div>
     <span class="ot-progress" aria-hidden="true"><i id="otBar"></i></span>
    </div>
   </div>
@@ -3023,6 +3065,7 @@ function otEnd(skipped){
 function otPlay(){
   ot.hidden = false;
   ot.classList.remove("closing");
+  otBuildLangs();
   const $ = id => document.getElementById(id);
   const set = (id, cls) => $(id).setAttribute("class", cls);
 
@@ -3031,6 +3074,7 @@ function otPlay(){
   set("otSit","fig heal"); set("otCurl",""); set("otWarm","");
   set("otPa","passer"); set("otPb","passer");
   $("otBar").classList.remove("run");
+  $("otBar").style.width = "";     /* clear a freeze left by otHold */
   requestAnimationFrame(()=> $("otBar").classList.add("run"));
 
   /* ── ~9 seconds, six beats ──
@@ -3068,6 +3112,48 @@ function otPlay(){
    put where a frame belongs, and the room ends up filling about 97% of
    the width it's given instead of floating inside its own empty margins.
    Same rectangle the tour card uses, deliberately. */
+/* The six language chips on the opening screen. Pressing one re-renders
+   the whole page through setLang — including this row and the caption
+   above it — so the only feedback needed is which one is now pressed.
+
+   Choosing a language also stops the clock. The opening dismisses itself
+   on a timer, and someone who has just found their own script is about to
+   read the caption in it; having the screen vanish mid-sentence as a
+   reward for that is precisely the wrong lesson. The timers are dropped
+   and the progress bar is frozen where it stands, so from here the person
+   leaves when they press Skip, and not before. */
+function otBuildLangs(){
+  const host = document.getElementById("otLangs");
+  if(!host) return;
+  host.setAttribute("aria-label", (T.ui.langLabel || "Language"));
+  host.textContent = "";
+  Object.keys(window.I18N).forEach(code=>{
+    const b = document.createElement("button");
+    b.type = "button";
+    b.textContent = window.I18N[code].label;
+    b.lang = window.I18N[code].htmlLang;
+    b.setAttribute("aria-pressed", String(code === LANG));
+    b.addEventListener("click", ()=>{
+      otHold();
+      setLang(code);
+      otBuildLangs();
+    });
+    host.appendChild(b);
+  });
+}
+function otHold(){
+  otClear();
+  const bar = document.getElementById("otBar");
+  if(bar){
+    /* freeze the fill at its current width rather than letting the
+       transition carry on to 100% under a sequence that is no longer
+       running */
+    const w = getComputedStyle(bar).width;
+    bar.classList.remove("run");
+    bar.style.width = w;
+  }
+}
+
 const OT_SVG = ot.querySelector(".ot-stage svg");
 function otFit(){
   if(!OT_SVG) return;
@@ -3488,7 +3574,18 @@ document.getElementById("tourCta").addEventListener("click", playOpening);
 document.getElementById("tourNext").addEventListener("click", ()=> tourStep(1));
 document.getElementById("tourPrev").addEventListener("click", ()=> tourStep(-1));
 document.getElementById("tourSkip").addEventListener("click", tourEnd);
-document.getElementById("tourBlock").addEventListener("click", tourEnd);
+/* The backdrop swallows the tap and does nothing else. It used to end the
+   tour, which is the one dismissal nobody chooses on purpose: on a phone
+   the dimmed area is most of the screen, so a thumb landing anywhere off
+   the card — reaching for the thing being pointed at, steadying the
+   handset — closed the only explanation of what this site is, with no way
+   back that a first-time reader would find.
+
+   Skip is still right there on the card, and Escape still works, because
+   a walkthrough somebody cannot leave is the wrong thing to put in front
+   of a person who may be in distress. This makes leaving deliberate, not
+   difficult. */
+document.getElementById("tourBlock").addEventListener("click", e=> e.stopPropagation());
 document.getElementById("tour").addEventListener("keydown", e=>{
   if(e.key === "Escape") tourEnd();
   else if(e.key === "ArrowRight") tourStep(1);
