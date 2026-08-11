@@ -1475,7 +1475,15 @@
     <a class="navlink" href="poster.html">Poster</a>
     <div class="setwrap">
       <button type="button" class="setbtn" id="setBtn" aria-expanded="false" aria-controls="setPanel">
-        <span class="setlang" id="setLangCode" aria-hidden="true"></span><span aria-hidden="true">⚙</span> <span class="setlabel" data-i18n="settings">Settings</span>
+        <!-- "EN" is here rather than left for setLang to fill in, because
+             an empty span that gains two characters widens the settings
+             button, which reflows the nav row and pushes every pixel of
+             the page below it down. Measured at 0.169 cumulative layout
+             shift on load — the whole of the page's CLS, and above the
+             0.1 "good" threshold, for two characters. Every language code
+             is two characters wide, so reserving it here costs nothing
+             and setLang's overwrite is now the same width it already was. -->
+        <span class="setlang" id="setLangCode" aria-hidden="true">EN</span><span aria-hidden="true">⚙</span> <span class="setlabel" data-i18n="settings">Settings</span>
       </button>
       <div class="setpanel" id="setPanel" role="group" aria-labelledby="setBtn">
         <div class="setrow">
@@ -2137,12 +2145,21 @@ function selectOpt(val, btn){
   });
   btn.setAttribute("aria-checked","true");
   btn.classList.add("picked");
+  /* The pause is here so the answer is seen to register before the next
+     question replaces it — .picked runs a 320ms flash and this cuts in at
+     240ms, part-way through, which is the beat that makes the tap feel
+     acknowledged rather than swallowed.
+
+     None of that applies when the reader has asked for no animation:
+     .picked is set to animation:none for them, so the wait is 240ms of a
+     motionless screen, nine times over in a PHQ-9. They get the aria
+     state change immediately and the next question straight after. */
   setTimeout(()=>{
     advancing = false;
     const n = T.inst[current.id].q.length;
     if(current.idx < n-1){ current.idx++; renderQ(); document.querySelector("#qcard button").focus(); }
     else scoreTest();
-  }, 240);
+  }, window.matchMedia("(prefers-reduced-motion: reduce)").matches ? 60 : 240);
 }
 
 document.addEventListener("keydown", e=>{

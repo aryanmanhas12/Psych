@@ -356,6 +356,16 @@ footer .byline strong{color:var(--ink);font-size:.85rem;}
     font-size:.84rem;letter-spacing:.05em;
   }
   nav.site .navlinks a.navlink:last-child{border-bottom:0;}
+  /* Collapsed from the first paint, not from whenever nav.js runs.
+     Scoped to links that are still DIRECT children of the nav wrapper —
+     i.e. ones nav.js has not yet moved into .navlinks. The moment it
+     does move them they stop matching this rule and the .navlinks rules
+     above take over, so the open/closed behaviour is untouched and there
+     is no state to keep in sync. Under html.js only: with scripting off
+     the class is never set, nothing here applies, and the nav stays the
+     plain row of links it ships as. */
+  html.js nav.site > .wrap > a.navlink,
+  html.js nav.site > .wrap-wide > a.navlink{display:none;}
   nav.site a.navlink[aria-current="page"]{border-bottom-color:var(--marigold);}
   /* Settings stays on the top row — it holds the language switch, which is
      the one control a reader may need before they can read anything. The
