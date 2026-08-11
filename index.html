@@ -747,6 +747,19 @@
     #overture{display:none!important;}
   }
 
+  /* Shown only when the strings never arrived — see boot(). Styled from
+     raw values rather than tokens on purpose: this is the one panel that
+     has to render correctly when part of the page has already failed. */
+  .loadfail{
+    background:#B23A2E;color:#fff;padding:1rem 1.2rem;margin:0 0 1.2rem;
+    border:2px solid #7D2419;
+  }
+  .loadfail p{margin-bottom:.7rem;font-size:.95rem;}
+  .loadfail button{
+    background:#fff;color:#B23A2E;border:0;font-weight:700;
+    padding:.6rem 1.2rem;min-height:44px;
+  }
+
   /* ── opening questions ── */
   .intro{
     position:fixed;inset:0;z-index:950;background:var(--paper);
@@ -792,7 +805,18 @@
     border-radius:2rem;padding:.9rem 2.4rem;font-size:1rem;min-height:3.2rem;
     flex:1;max-width:14rem;
   }
-  .intro-no{background:var(--line);color:var(--ink);}
+  /* --line for the fill and --ink for the label is a safe pairing in light
+     and dark, and the same colour twice in high contrast, where both
+     tokens collapse to #000: the No button rendered as a black pill with
+     a black label, 1:1, completely unreadable. It is one of the two
+     answers to every question in the opening, so a reader who had turned
+     high contrast ON — because they need it — was the one reader who
+     could not see it.
+
+     A card fill with an ink border keeps the same "secondary next to the
+     green Yes" reading and stays legible in all three: 15.4:1 light,
+     11.6:1 dark, 21:1 high contrast. */
+  .intro-no{background:var(--card);color:var(--ink);border:2px solid var(--ink);}
   .intro-yes{background:var(--heal);color:var(--paper);}
   .intro-foot{display:flex;align-items:center;justify-content:center;gap:1.1rem;}
   .intro-dots{font-size:.75rem;color:var(--muted);letter-spacing:.25em;}
@@ -2868,13 +2892,59 @@ function breatheStop(finished){
   document.getElementById("breatheMeta").textContent = finished ? T.ui.breatheDone : "";
 }
 
-/* ════════ wiring ════════ */
-buildLangSelect();
-const P = prefs();
-setLang(P.lang || (navigator.language || "en").slice(0,2));
-applySize(P.scale || 1);
-applyTheme(P.theme || "auto");
-applyContrast(!!P.contrast);
+/* ════════ wiring ════════
+   Everything below this line needs window.I18N. Every visible string on
+   the page is a data-i18n key filled in by setLang, and the screener
+   cards, the guide and the results are all built from T at runtime — so
+   if i18n.js does not arrive, 62 of 98 text nodes stay empty, the card
+   grid renders nothing, and the <h1> is a blank line.
+
+   That was not a graceful degradation, it was a crash. buildLangSelect
+   opens with Object.keys(window.I18N), which throws "Cannot convert
+   undefined or null to object" on undefined, and the exception took the
+   rest of this script with it. What a person actually saw, reported from
+   a phone, was a white screen with one working phone number on it — the
+   only text on the page that is hard-coded rather than translated.
+
+   i18n.js is 275KB, the largest thing this page fetches, which makes it
+   the most likely single request to be dropped on a bad connection. So:
+   try once more before giving up, since a retry usually just works, and
+   if it still fails say so in plain English instead of showing a blank
+   page. The crisis strip above is unaffected either way — its numbers
+   are in the markup and callable with no JavaScript at all. */
+function boot(){
+  buildLangSelect();
+  const P = prefs();
+  setLang(P.lang || (navigator.language || "en").slice(0,2));
+  applySize(P.scale || 1);
+  applyTheme(P.theme || "auto");
+  applyContrast(!!P.contrast);
+  /* last, and only once the strings exist — see startOpening */
+  startOpening();
+}
+
+function bootFailed(){
+  const el = document.createElement("div");
+  el.className = "loadfail";
+  el.setAttribute("role", "alert");
+  const p = document.createElement("p");
+  p.innerHTML = "<strong>This page didn’t finish loading.</strong> " +
+    "The helpline numbers at the top of the screen still work — you can tap them to call.";
+  const b = document.createElement("button");
+  b.type = "button";
+  b.textContent = "Try again";
+  b.addEventListener("click", ()=> location.reload());
+  el.appendChild(p); el.appendChild(b);
+  const main = document.getElementById("main") || document.body;
+  main.insertBefore(el, main.firstChild);
+}
+
+/* boot() is invoked at the very foot of this script, not here. It ends by
+   calling startOpening(), which reads consts — OT_KEY, the tour tables —
+   that are declared further down; running it from this point put those in
+   the temporal dead zone and threw "Cannot access 'OT_KEY' before
+   initialization". Everything above is declarations; the one statement
+   that starts the app belongs after the last of them. */
 
 /* Well-beings inbound: a bare ref param, read once, then removed from the
    address bar so a refresh or a shared link doesn't keep re-showing it. */
@@ -3227,6 +3297,16 @@ ot.addEventListener("keydown", e=>{ if(e.key === "Escape") otEnd(true); });
 /* Plays once per device, never for reduced-motion users, and never
    when someone arrives via a deep link — a person heading straight
    for #resources is looking for a phone number, not a film. */
+/* Called from boot(), not at the top level, because every part of the
+   opening reads strings: the scene's caption and its language chips, the
+   walkthrough's copy, the three questions. This used to run inline here,
+   which was fine only because setLang had always already happened by the
+   time the parser reached it. Now that boot() can be deferred by a retry
+   — or never run at all, when i18n.js does not arrive — starting the
+   opening from here threw "Cannot read properties of null (reading
+   'ui')" and took the rest of the script down with it. The opening is
+   the one thing that must not run before the words it is made of. */
+function startOpening(){
 const otSkip = window.matchMedia("(prefers-reduced-motion: reduce)").matches ||
                location.hash || onboardSeen(OT_KEY);
 if(!otSkip){
@@ -3242,6 +3322,7 @@ if(!otSkip){
      still gated on reduced-motion inside tourMaybeAutostart, and still
      never on a deep link, where someone is after a phone number. */
   setTimeout(tourMaybeAutostart, 400);
+}
 }
 
 /* ════════ the numbers in the crisis strip are numbers you can call ════════
@@ -3657,6 +3738,18 @@ document.getElementById("tour").addEventListener("keydown", e=>{
 renderDotRule();
 renderStats();
 observeReveals();
+
+/* ════════ start ════════
+   Last statement in the file, so every declaration above it exists. */
+if(window.I18N && window.I18N.en){
+  boot();
+}else{
+  const again = document.createElement("script");
+  again.src = "i18n.js";
+  again.onload  = ()=> (window.I18N && window.I18N.en) ? boot() : bootFailed();
+  again.onerror = bootFailed;
+  document.head.appendChild(again);
+}
 
 if(location.hash){
   const v = location.hash.slice(1);
