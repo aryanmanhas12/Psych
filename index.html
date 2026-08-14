@@ -166,16 +166,26 @@
   .mood{
     background:var(--card);border:2px solid var(--ink);border-left:.5rem solid var(--marigold);
     padding:.75rem 1rem;max-width:64ch;margin:1.1rem 0;
-    display:grid;grid-template-columns:1fr auto;gap:.5rem 1rem;align-items:center;
+    /* minmax(0,1fr), not 1fr. A grid item's default min-width is auto, so
+       a track sized 1fr still refuses to go narrower than its widest
+       child — here the five mood buttons, whose min-width is in rem and
+       therefore grows with the text-size control. At 1.35 that row is
+       368px inside a 320px screen, and the whole page scrolled sideways
+       because of it. minmax(0,…) lets the track shrink and the flex row
+       inside it wrap, which is what it was always meant to do. */
+    display:grid;grid-template-columns:minmax(0,1fr) auto;gap:.5rem 1rem;align-items:center;
   }
-  @media(max-width:640px){.mood{grid-template-columns:1fr;}}
+  @media(max-width:640px){.mood{grid-template-columns:minmax(0,1fr);}}
   .mood .moodhead{font-size:.85rem;font-weight:700;}
-  .moodbtns{display:flex;gap:.35rem;flex-wrap:wrap;}
+  .moodbtns{display:flex;gap:.35rem;flex-wrap:wrap;min-width:0;}
   .moodbtns button{font-size:1.25rem;background:var(--paper);border:2px solid var(--line);padding:.25rem .45rem;line-height:1;min-width:2.75rem;min-height:2.75rem;transition:transform .16s var(--e-out1),border-color .16s var(--e-out1);}
   .moodbtns button:hover{border-color:var(--ink);box-shadow:none;transform:translateY(-2px);}
   .moodbtns button[aria-pressed="true"]{border-color:var(--heal);background:#e9f1ee;border-width:3px;}
   :root[data-contrast="high"] .moodbtns button[aria-pressed="true"]{background:#d7e8e1;}
-  .moodstrip{display:flex;gap:.2rem;align-items:flex-end;height:1.6rem;grid-column:1/-1;}
+  /* min-width:0 and hidden overflow: this is a sparkline of past days, it
+     grows by one cell a day, and it must never be the thing that widens
+     the page. */
+  .moodstrip{display:flex;gap:.2rem;align-items:flex-end;height:1.6rem;grid-column:1/-1;min-width:0;overflow:hidden;}
   .moodcell{width:.75rem;background:var(--line);transition:height .3s var(--e-out2);}
   .moodcell.v1{background:var(--stamp);}
   .moodcell.v2{background:#B0521A;}
@@ -184,7 +194,15 @@
   .moodcell.v5{background:var(--heal);}
 
   /* ── cards: whole card is the control, tighter grid ── */
-  .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(15rem,1fr));gap:.7rem;}
+  /* minmax(min(Xrem,100%),1fr), not minmax(Xrem,1fr). auto-fit gives every
+     track a hard minimum, and a rem minimum grows with the text-size
+     control while the column it sits in does not: at 1.35 the 15rem floor
+     becomes 365px inside a 297px column, so every card hung off the right
+     of the screen and the page scrolled sideways. Reported from a phone —
+     "Start →" was cut in half. min() lets the track shrink to the
+     container when there isn't room for the ideal width, which is what
+     auto-fit was supposed to do. */
+  .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(15rem,100%),1fr));gap:.7rem;}
   @media(min-width:52rem){.cards{grid-template-columns:repeat(2,1fr);}}
   .card{
     background:var(--card);border:2px solid var(--ink);padding:.9rem 1rem;
@@ -390,7 +408,7 @@
 
   /* ── global stat band: the eye-opening numbers ── */
   .statband{
-    display:grid;grid-template-columns:repeat(auto-fit,minmax(11rem,1fr));
+    display:grid;grid-template-columns:repeat(auto-fit,minmax(min(11rem,100%),1fr));
     border:2px solid var(--ink);background:var(--ink);gap:2px;margin:1.2rem 0 1.4rem;max-width:64rem;
   }
   .stat{background:var(--ink);color:var(--paper);padding:1rem .9rem;}
@@ -1016,15 +1034,27 @@
        guess being right. */
     :root{--tabbar-h:3.9rem;}
     .tabbar{
-      display:grid;grid-template-columns:repeat(4,1fr);
+      /* minmax(0,1fr): four equal columns that are actually allowed to be
+         equal. A plain 1fr track still refuses to shrink below its widest
+         child, so at a large text size "Screeners" and "History" pushed
+         their own columns wider than a quarter each and the bar ran off
+         the right of the screen — History was the half-word visible in
+         the recording that started this. */
+      display:grid;grid-template-columns:repeat(4,minmax(0,1fr));
       position:fixed;left:0;right:0;bottom:0;z-index:80;
       background:var(--deep);
       border-top:1px solid rgba(255,255,255,.14);
       padding-bottom:env(safe-area-inset-bottom,0px);
     }
     .tabbar a{
+      min-width:0;overflow-wrap:anywhere;
       display:flex;flex-direction:column;align-items:center;justify-content:center;
-      gap:.18rem;min-height:3.9rem;padding:.35rem .2rem;
+      /* Horizontal padding in px, not rem, so it does not grow with the
+         text it is supposed to be making room for. At 135% the .2rem
+         inset left "Screeners" 70px of an 80px column and it broke
+         mid-word into "Screener / s". Vertical padding still scales,
+         because that is the axis the bar can afford to grow on. */
+      gap:.18rem;min-height:3.9rem;padding:.35rem 2px;
       color:rgba(255,255,255,.62);text-decoration:none;
       font-family:ui-monospace,'Cascadia Mono',Menlo,Consolas,monospace;
       font-size:.6rem;letter-spacing:.02em;text-align:center;line-height:1.15;
@@ -1101,7 +1131,9 @@
 
   #chooseH2{margin-top:.6rem;}
   .tourcta{
-    margin:.9rem 0 1.6rem;font-size:.82rem;
+    /* Tighter than it was below the cards, where vertical room was free.
+       Above them every pixel is competing with the first screener. */
+    margin:.55rem 0 .85rem;font-size:.82rem;
     font-family:ui-monospace,'Cascadia Mono',Menlo,Consolas,monospace;
     text-transform:none;letter-spacing:0;min-height:2.4rem;
   }
@@ -1243,7 +1275,7 @@
   .printonly{display:none;}
 
   /* ── what's behind this: surfaces the rest of the site on the home page ── */
-  .behind{display:grid;grid-template-columns:repeat(auto-fit,minmax(15rem,1fr));gap:.7rem;margin-top:.8rem;}
+  .behind{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(15rem,100%),1fr));gap:.7rem;margin-top:.8rem;}
   .bcard{
     background:var(--card);border:2px solid var(--ink);border-left:.4rem solid var(--heal);
     padding:.95rem 1.1rem;text-decoration:none;color:inherit;display:block;
@@ -1545,10 +1577,23 @@
          (the fuller argument, the fine print, the global figures) still
          exists; it now sits just below, as the case FOR what you just
          saw, rather than a wall in front of it. -->
+    <!-- Moved above the cards, from below all five of them. The opening
+         scene and the walkthrough run once per device and then stay quiet,
+         which is right — nobody wants the same introduction every morning
+         — but the only way back to them was this button, sitting 307px
+         below the fold on a 360x640 phone, after the whole card grid. So
+         for everyone on their second visit, which on a phone is most
+         people, the one explanation of what this site does had no visible
+         entrance. Asked directly, from a phone: "where is the animation
+         that we discussed?" It was here, underneath everything.
+
+         It costs about 60px above the fold and buys back the answer to
+         "what is this and what can it do for me", which is the question
+         the whole page exists to answer. -->
+    <button type="button" class="secondary tourcta reveal" id="tourCta" data-i18n="tourCtaBtn"></button>
+
     <h2 class="display reveal" id="chooseH2" data-i18n="chooseScreener">Choose a screener</h2>
     <div class="cards" id="cardGrid"></div>
-
-    <button type="button" class="secondary tourcta reveal" id="tourCta" data-i18n="tourCtaBtn"></button>
 
     <p class="lede reveal clamped" id="homeLede" data-i18n="homeLede"></p>
     <button type="button" id="ledeMore" class="secondary ledemore"

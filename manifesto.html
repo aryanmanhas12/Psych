@@ -32,7 +32,7 @@
   .dotcaption b{color:var(--ink);}
 
   /* ── crisis stats ── */
-  .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:0;border:2px solid var(--ink);}
+  .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(210px,100%),1fr));gap:0;border:2px solid var(--ink);}
   .stat{padding:22px 20px;border-right:2px solid var(--ink);border-bottom:2px solid var(--ink);background:#fff;}
   .stat:last-child{border-right:none;}
   @media(max-width:700px){.stat{border-right:none;}}

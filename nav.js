@@ -35,6 +35,16 @@
 
   function setOpen(open){
     box.classList.toggle("open", open);
+    /* Also on the nav itself, so the stylesheet can reach the row that
+       holds these links. Below 380px that row is flex-wrap:nowrap — a
+       deliberate choice, so the brand, Menu and Settings share one line
+       on the narrowest phones — but nowrap also forbids the open menu
+       from taking a line of its own. It stayed in the row instead,
+       squeezed against the right edge with its labels cut off and the
+       page scrolling sideways. Reported from a phone, with a recording.
+       The class lets that rule be lifted for exactly as long as the menu
+       is open, and not a moment longer. */
+    nav.classList.toggle("menu-open", open);
     btn.setAttribute("aria-expanded", String(open));
   }
   btn.addEventListener("click", function(){

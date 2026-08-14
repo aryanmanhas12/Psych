@@ -199,7 +199,16 @@ nav.site .wrap,nav.site .wrap-wide{display:flex;align-items:center;gap:1.1rem;fl
 nav.site .brand{
   font-family:'Anton',sans-serif;color:var(--on-deep);font-size:1.15rem;
   text-transform:uppercase;letter-spacing:.04em;margin-right:auto;text-decoration:none;
+  /* Allowed to give way. On the narrowest phones at a large text size the
+     brand, Menu and Settings could not share the one line they are pinned
+     to, and Settings — which holds the language switch — was pushed off
+     the right edge. The name is the only thing in that row that can be
+     shortened without losing a control. */
+  min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
 }
+/* A bare URL has no break opportunities, so it sets a floor on how narrow
+   the page can be. Footer credits should never do that. */
+footer a,.byline a{overflow-wrap:anywhere;}
 nav.site .brand .accent{color:var(--marigold);}
 nav.site a.navlink{
   color:var(--on-deep);text-decoration:none;
@@ -270,7 +279,7 @@ section{padding:2.8rem 0 .3rem;}
 
 /* ── figure band: dark, for headline numbers ── */
 .figs{
-  display:grid;grid-template-columns:repeat(auto-fit,minmax(12rem,1fr));
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(min(12rem,100%),1fr));
   gap:2px;background:var(--ink);border:2px solid var(--ink);margin-bottom:1.3rem;
 }
 .fig{background:var(--deep);color:var(--on-deep);padding:1.1rem 1rem;}
@@ -385,6 +394,12 @@ footer .byline strong{color:var(--ink);font-size:.85rem;}
    accessibility tree, so nothing is lost to a screen reader. */
 @media(max-width:380px){
   nav.site .wrap,nav.site .wrap-wide{flex-wrap:nowrap;gap:.45rem;}
+  /* nowrap is for the CLOSED top row only. With the menu open the links
+     need a line of their own; held in the row they were crushed against
+     the right edge, labels clipped, and the whole document scrolled
+     sideways. nav.js sets .menu-open for the duration. */
+  nav.site.menu-open .wrap,
+  nav.site.menu-open .wrap-wide{flex-wrap:wrap;}
   nav.site .brand{font-size:1rem;letter-spacing:.02em;}
   nav.site .navtoggle{padding-inline:.7rem;}
   nav.site .navtoggle-label{
