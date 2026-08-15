@@ -3318,24 +3318,35 @@ function otBuildLangs(){
     b.lang = window.I18N[code].htmlLang;
     b.setAttribute("aria-pressed", String(code === LANG));
     b.addEventListener("click", ()=>{
-      otHold();
+      /* Already in this language: do nothing, so a stray second tap on the
+         chip that is already pressed does not restart anything. */
+      if(code === LANG) return;
       setLang(code);
-      otBuildLangs();
+      otReplay();
     });
     host.appendChild(b);
   });
 }
-function otHold(){
-  otClear();
-  const bar = document.getElementById("otBar");
-  if(bar){
-    /* freeze the fill at its current width rather than letting the
-       transition carry on to 100% under a sequence that is no longer
-       running */
-    const w = getComputedStyle(bar).width;
-    bar.classList.remove("run");
-    bar.style.width = w;
-  }
+
+/* Picking a language plays the scene again from the top, in that language.
+
+   It used to freeze instead — the timers were dropped and the progress
+   bar was pinned where it stood, on the reasoning that the opening
+   dismisses itself on a clock and someone who has just found their own
+   script should not have the screen vanish mid-sentence. The reasoning
+   was fine and the implementation was not: nothing ever restarted it. The
+   scene stopped on whatever frame it happened to be on and stayed there,
+   the bar stopped moving, and the only way out was Skip. Reported from a
+   phone with a recording — "the animation stops if i change the language
+   mid animation", and it did, permanently.
+
+   Replaying is the better answer to the original worry anyway. The
+   drawing carries no words, so nothing about it needs re-translating;
+   what the reader gets is the whole scene from the beginning plus a fresh
+   nine seconds to read the caption in the language they just chose. */
+function otReplay(){
+  otClear();          /* otPlay does not clear, so without this the beats double up */
+  otPlay();
 }
 
 const OT_SVG = ot.querySelector(".ot-stage svg");

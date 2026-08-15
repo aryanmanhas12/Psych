@@ -19,8 +19,28 @@
    caption would have come out blank in all six languages. The note above
    is right that a stale asset is never served to a page that did not
    change; it is the case where the page DID change that needs the name
-   bumped, because that is what makes activate() evict and refetch. */
-const CACHE = "psych-screener-v5";
+   bumped, because that is what makes activate() evict and refetch.
+
+   v6, and the reason the strategy below changed with it: five consecutive
+   releases edited site.css, nav.js or prefs.js and none of them bumped
+   this name. Cache-first means exactly what it says, so an installed
+   device went on serving the stylesheet it first saw — for weeks. A
+   navigation menu fix, a layout-shift fix, a contrast fix and two
+   tap-target fixes were all pushed, all deployed, and none of them ever
+   reached a phone that already had the site installed. The user reported
+   the same broken menu after it had been fixed, which is the only way
+   this class of bug ever surfaces.
+
+   Bumping the name fixes today. It does not fix the next time, because it
+   depends on remembering, and the note above proves that remembering is
+   not reliable — it is the third instance of the same fault in this file.
+   So assets are stale-while-revalidate now: the cached copy is served
+   immediately, exactly as fast as before, and a fresh copy is fetched in
+   the background and written over it. A stale asset can now be at most
+   one page load behind instead of permanent, whether or not anyone
+   remembers this constant. Offline is unaffected — the background fetch
+   just fails and the cached copy stands. */
+const CACHE = "psych-screener-v6";
 const ASSETS = [
   "./", "./index.html", "./i18n.js", "./helplines.js", "./nav.js",
   "./ethics.html", "./evidence.html", "./manifesto.html",
@@ -74,15 +94,20 @@ self.addEventListener("fetch", e=>{
     return;
   }
 
+  /* stale-while-revalidate: answer from cache at once, and refresh the
+     cache from the network in the background for next time. Same speed as
+     cache-first on the hot path, but a shipped fix can no longer be
+     invisible for ever just because the CACHE name above did not change. */
   e.respondWith(
-    caches.match(req).then(hit=>
-      hit || fetch(req).then(res=>{
+    caches.match(req).then(hit=>{
+      const fresh = fetch(req).then(res=>{
         if(res.ok){
           const copy = res.clone();
           caches.open(CACHE).then(c=> c.put(req, copy));
         }
         return res;
-      }).catch(()=> caches.match("./index.html"))
-    )
+      }).catch(()=> hit || caches.match("./index.html"));
+      return hit || fresh;
+    })
   );
 });
