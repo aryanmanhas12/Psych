@@ -3474,7 +3474,24 @@ function openingNext(replay){
    walkthrough again, not to be asked the same three things a second
    time. */
 function introMaybeStart(){
-  if(!onboardSeen(INTRO_SEEN)) introStart();
+  if(onboardSeen(INTRO_SEEN)) return false;
+  introStart();
+  return true;
+}
+
+/* The walkthrough scrolls the page to whatever it is pointing at, and its
+   last step points at the notice near the foot of the home view. So the
+   moment onboarding finished, the reader was left 651px down — headline
+   above the top of the screen, PHQ-4 above that, and the first thing in
+   view a statistic. After being told what the site is for, the one thing
+   that should be in front of them is the thing to start.
+
+   Instant rather than smooth: this is a return to a known place at the end
+   of a sequence, not a movement worth following, and a half-second glide
+   here reads as the page still doing something to you. */
+function onboardingDone(){
+  try{ window.scrollTo({ top:0, behavior:"instant" }); }
+  catch(e){ window.scrollTo(0,0); }
 }
 
 function introRender(){
@@ -3497,6 +3514,7 @@ function introFinish(saved){
      survive an ONBOARD_V bump untouched */
   if(saved){ try{ localStorage.setItem(INTRO_KEY, JSON.stringify(introAns)); }catch(e){} }
   applyIntroTailoring();
+  onboardingDone();
 }
 
 function introAnswer(yes){
@@ -3734,7 +3752,10 @@ function tourEnd(){
      site is, is asking a stranger for an opinion at the door — on a phone,
      where the questions fill the whole screen, it read as the site itself.
      After the walkthrough there is something to have an opinion about. */
-  introMaybeStart();
+  /* If the questions run they own the screen and will land the reader
+     themselves when they finish; only send them home when nothing else
+     is coming. */
+  if(!introMaybeStart()) onboardingDone();
 }
 function tourStep(delta){
   const n = tourIdx + delta;
