@@ -262,6 +262,20 @@
     font-family:ui-monospace,'Cascadia Mono',Menlo,Consolas,monospace;font-size:.74rem;padding:.25rem .6rem;margin-top:.5rem;
   }
   .progress{font-family:ui-monospace,'Cascadia Mono',Menlo,Consolas,monospace;font-size:.78rem;color:var(--muted);margin:.3rem 0 .8rem;}
+  /* The card slides in from 14px to the right, which is a transform and so
+     costs no layout — but it does extend the scrollable area, and when the
+     card already fills the width that is 14px of document wider than the
+     screen for the length of the animation. A horizontal scrollbar
+     flickering in and out on every question, nine times in a PHQ-9, which
+     is precisely the sort of thing that reads as "clunky" without ever
+     being obviously broken. Clipping it at the view boundary keeps the
+     motion and drops the overflow.
+
+     overflow-x:clip rather than hidden: clip does not make a scroll
+     container, so nothing inside changes behaviour, and the buttons' focus
+     rings sit well within the wrap's own padding so none of them is cut.
+     A browser too old for clip simply behaves as it did before. */
+  #view-test{overflow-x:clip;}
   .qbox{background:var(--card);border:2px solid var(--ink);padding:1.2rem 1.3rem;max-width:48rem;animation:qin .3s var(--e-out2);}
   @keyframes qin{from{opacity:0;transform:translateX(14px);}to{opacity:1;transform:none;}}
   .qbox.back{animation:qinback .3s var(--e-out2);}

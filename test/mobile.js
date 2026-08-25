@@ -277,6 +277,39 @@ const OVERFLOW = `(()=>{
     await ctx.close();
   }
 
+  /* 10 ── the screen a patient actually spends their time on, in every
+          language. Telugu at 320px/135% caught a horizontal scrollbar
+          flickering on each question: the card slides in from 14px right,
+          which extended the document for the length of the animation. */
+  head('10. QUESTION SCREEN — all six languages');
+  {
+    for (const lang of ['en','hi','mr','bn','ta','te']) {
+      const ctx = await b.newContext({ viewport:{width:320,height:800}, isMobile:true, hasTouch:true });
+      const p = await ctx.newPage();
+      await p.goto(URL);
+      await p.evaluate(l=>{['psych-seen-overture','psych-seen-tour','psych-seen-intro'].forEach(k=>localStorage.setItem(k,'2'));
+        localStorage.setItem('psych-prefs',JSON.stringify({lang:l,scale:1.35}));},lang);
+      await p.goto(URL,{waitUntil:'networkidle'}); await p.waitForTimeout(400);
+      await p.evaluate(()=>startTest('phq9')); await p.waitForTimeout(400);
+      let worst=0, small=0;
+      for(let q=0;q<9;q++){
+        const m=await p.evaluate(OVERFLOW);
+        if(m.scrollW>worst) worst=m.scrollW;
+        small += await p.evaluate(()=>[...document.querySelectorAll('#qcard .bigopts button')]
+          .filter(x=>x.getBoundingClientRect().height<44).length);
+        const before=await p.evaluate(()=>current?current.idx:-1);
+        await p.evaluate(()=>{const bs=[...document.querySelectorAll('#qcard .bigopts button')];if(bs.length)bs[0].click();});
+        await p.waitForFunction(x=>document.getElementById('view-results').classList.contains('active')||
+          (current&&current.idx!==x),before,{timeout:3000}).catch(()=>{});
+      }
+      const bad=[];
+      if(worst>321) bad.push(`sideways scroll ${worst}>320`);
+      if(small) bad.push(`${small} answer button(s) under 44px`);
+      bad.length?fail(`${lang} @320px/135%: ${bad.join('; ')}`):ok(`${lang} @320px/135%: 9 questions, no overflow`);
+      await ctx.close();
+    }
+  }
+
   console.log('\n' + '─'.repeat(58));
   console.log(FAILS.length ? `\x1b[31m${FAILS.length} PROBLEM(S)\x1b[0m` : '\x1b[32mALL CHECKS PASS\x1b[0m');
   FAILS.forEach(f=>console.log('  • '+f));
