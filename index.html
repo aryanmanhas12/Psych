@@ -1637,6 +1637,7 @@
     <div class="actionrow noprint">
       <button id="sheetBtn" data-i18n="sheetBtn"></button>
       <button class="secondary" id="sbarBtn">Copy SBAR Note for Doctor</button>
+      <button class="secondary" id="shareBtn" style="display:none;">Share Results</button>
       <button class="secondary" id="printBtn" data-i18n="printBtn"></button>
       <button class="secondary" id="icsBtn" data-i18n="reminderBtn"></button>
       <button class="secondary" data-view="history" data-i18n="viewHistory"></button>
@@ -2154,6 +2155,16 @@ function startClock(){
 }
 function stopClock(){ if(clockTimer){ clearInterval(clockTimer); clockTimer = null; } }
 
+function readQuestionAloud(text){
+  if(!('speechSynthesis' in window)) return;
+  window.speechSynthesis.cancel();
+  const utter = new SpeechSynthesisUtterance(text);
+  const langMap = { en:'en-US', hi:'hi-IN', mr:'mr-IN', bn:'bn-IN', ta:'ta-IN', te:'te-IN' };
+  utter.lang = langMap[currentLang] || 'en-US';
+  utter.rate = 0.92;
+  window.speechSynthesis.speak(utter);
+}
+
 function renderQ(){
   const t = T.inst[current.id], i = current.idx, n = t.q.length;
   const opts = optsFor(current.id, i);
@@ -2177,7 +2188,13 @@ function renderQ(){
   const card = document.createElement("div");
   card.className = "qbox" + (current.goingBack ? " back" : "");
   current.goingBack = false;
-  card.innerHTML = '<p class="qtext" id="qLabel"><span class="qnum">Q'+(i+1)+'</span>'+esc(t.q[i])+'</p>';
+  const speechAvail = ('speechSynthesis' in window);
+  const speechBtn = speechAvail ? '<button type="button" class="qspeak-btn" id="qSpeakBtn" title="Listen to question" aria-label="Listen to question" style="background:none;border:none;cursor:pointer;color:var(--heal);font-size:1.15rem;padding:2px 6px;margin-left:6px;vertical-align:middle;">🔊</button>' : '';
+  card.innerHTML = '<p class="qtext" id="qLabel"><span class="qnum">Q'+(i+1)+'</span>'+esc(t.q[i])+speechBtn+'</p>';
+  if(speechAvail){
+    const sb = card.querySelector("#qSpeakBtn");
+    if(sb) sb.addEventListener("click", (e)=>{ e.stopPropagation(); readQuestionAloud(t.q[i]); });
+  }
   const group = document.createElement("div");
   group.className = "bigopts";
   group.setAttribute("role","radiogroup");
@@ -2634,21 +2651,21 @@ function chartSVG(entries, id){
   const df = d => dateStr(d,{day:"numeric",month:"short"});
   let s = '<svg viewBox="0 0 '+W+' '+H+'" width="100%" style="min-width:26rem;max-width:40rem;display:block;" role="img" aria-label="'+
     esc(fmt(T.ui.chartAria,{name:t.name,cut:meta.cutoff}))+'">';
-  s += '<line x1="'+padL+'" y1="'+y(0)+'" x2="'+(W-padR)+'" y2="'+y(0)+'" stroke="#D8D3C6" stroke-width="1"/>';
-  s += '<line x1="'+padL+'" y1="'+y(meta.max)+'" x2="'+(W-padR)+'" y2="'+y(meta.max)+'" stroke="#D8D3C6" stroke-width="1"/>';
-  s += '<text x="'+(padL-6)+'" y="'+(y(0)+4)+'" text-anchor="end" font-size="11" fill="#54596A" font-family="monospace">0</text>';
-  s += '<text x="'+(padL-6)+'" y="'+(y(meta.max)+4)+'" text-anchor="end" font-size="11" fill="#54596A" font-family="monospace">'+meta.max+'</text>';
-  s += '<line x1="'+padL+'" y1="'+cutY+'" x2="'+(W-padR)+'" y2="'+cutY+'" stroke="#B23A2E" stroke-width="1.5" stroke-dasharray="5 4"/>';
-  s += '<text x="'+(W-padR+4)+'" y="'+(cutY+4)+'" font-size="10" fill="#B23A2E" font-family="monospace">'+
+  s += '<line x1="'+padL+'" y1="'+y(0)+'" x2="'+(W-padR)+'" y2="'+y(0)+'" stroke="var(--line)" stroke-width="1"/>';
+  s += '<line x1="'+padL+'" y1="'+y(meta.max)+'" x2="'+(W-padR)+'" y2="'+y(meta.max)+'" stroke="var(--line)" stroke-width="1"/>';
+  s += '<text x="'+(padL-6)+'" y="'+(y(0)+4)+'" text-anchor="end" font-size="11" fill="var(--muted)" font-family="monospace">0</text>';
+  s += '<text x="'+(padL-6)+'" y="'+(y(meta.max)+4)+'" text-anchor="end" font-size="11" fill="var(--muted)" font-family="monospace">'+meta.max+'</text>';
+  s += '<line x1="'+padL+'" y1="'+cutY+'" x2="'+(W-padR)+'" y2="'+cutY+'" stroke="var(--stamp)" stroke-width="1.5" stroke-dasharray="5 4"/>';
+  s += '<text x="'+(W-padR+4)+'" y="'+(cutY+4)+'" font-size="10" fill="var(--stamp)" font-family="monospace">'+
        esc(meta.inverse ? "≤"+meta.cutoff : meta.cutoff+"+")+'</text>';
-  s += '<path d="'+path+'" fill="none" stroke="#151C2E" stroke-width="2" stroke-linejoin="round"/>';
+  s += '<path d="'+path+'" fill="none" stroke="var(--ink)" stroke-width="2" stroke-linejoin="round"/>';
   entries.forEach((e,i)=>{
-    s += '<circle cx="'+pts[i][0].toFixed(1)+'" cy="'+pts[i][1].toFixed(1)+'" r="4.5" fill="#151C2E" stroke="#F6F4EE" stroke-width="2" style="pointer-events:none;"/>';
+    s += '<circle cx="'+pts[i][0].toFixed(1)+'" cy="'+pts[i][1].toFixed(1)+'" r="4.5" fill="var(--ink)" stroke="var(--paper)" stroke-width="2" style="pointer-events:none;"/>';
     s += '<circle cx="'+pts[i][0].toFixed(1)+'" cy="'+pts[i][1].toFixed(1)+'" r="12" fill="transparent" data-d="'+esc(df(e.date))+'" data-s="'+e.score+'/'+meta.max+'" data-l="'+esc(t.bands[e.bandIdx != null ? e.bandIdx : 0])+'"/>';
   });
-  s += '<text x="'+(pts[n-1][0]+8)+'" y="'+(pts[n-1][1]-8)+'" font-size="12" font-weight="700" fill="#151C2E" font-family="monospace">'+entries[n-1].score+'</text>';
-  s += '<text x="'+padL+'" y="'+(H-8)+'" font-size="11" fill="#54596A" font-family="monospace">'+esc(df(entries[0].date))+'</text>';
-  s += '<text x="'+(W-padR)+'" y="'+(H-8)+'" text-anchor="end" font-size="11" fill="#54596A" font-family="monospace">'+esc(df(entries[n-1].date))+'</text>';
+  s += '<text x="'+(pts[n-1][0]+8)+'" y="'+(pts[n-1][1]-8)+'" font-size="12" font-weight="700" fill="var(--ink)" font-family="monospace">'+entries[n-1].score+'</text>';
+  s += '<text x="'+padL+'" y="'+(H-8)+'" font-size="11" fill="var(--muted)" font-family="monospace">'+esc(df(entries[0].date))+'</text>';
+  s += '<text x="'+(W-padR)+'" y="'+(H-8)+'" text-anchor="end" font-size="11" fill="var(--muted)" font-family="monospace">'+esc(df(entries[n-1].date))+'</text>';
   return s + "</svg>";
 }
 
@@ -3281,6 +3298,20 @@ if(sbarBtn) sbarBtn.addEventListener("click", copySBARSummary);
 const spSaveBtn = document.getElementById("spSaveBtn");
 if(spSaveBtn) spSaveBtn.addEventListener("click", saveSafetyPlan);
 loadSafetyPlan();
+
+const shareBtn = document.getElementById("shareBtn");
+if(shareBtn && navigator.share){
+  shareBtn.style.display = "";
+  shareBtn.addEventListener("click", ()=>{
+    if(!lastResult) return;
+    const t = T.inst[lastResult.inst], meta = META[lastResult.inst];
+    navigator.share({
+      title: t.name + " Screening Result",
+      text: "I checked my wellbeing privately on-device (" + t.name + ": " + lastResult.score + "/" + meta.max + " - " + t.bands[lastResult.bandIdx] + "). Check yours privately at https://aryanmanhas12.github.io/Psych/",
+      url: "https://aryanmanhas12.github.io/Psych/"
+    }).catch(()=>{});
+  });
+}
 
 /* ── offline: register the service worker, offer install when the browser does ── */
 if("serviceWorker" in navigator && location.protocol.startsWith("http")){
