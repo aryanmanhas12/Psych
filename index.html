@@ -1564,6 +1564,31 @@
         <a href="tel:112" data-i18n="lineEmergency"></a>
       </div>
       <p style="margin-top:.6rem;" data-i18n="safety3"></p>
+
+      <details class="safetyplan-acc" style="margin-top:1.1rem;background:rgba(0,0,0,0.18);padding:.9rem 1.1rem;border-radius:var(--r-md);border:1px solid rgba(255,255,255,0.25);">
+        <summary style="cursor:pointer;font-weight:700;color:#fff;font-size:.95rem;">Personal Safety Plan (Stanley-Brown Protocol) ↓</summary>
+        <div style="margin-top:.85rem;font-size:.88rem;line-height:1.55;color:#fff;">
+          <p style="margin-bottom:.6rem;">A safety plan is a private list of warning signs, coping mechanisms, and trusted contacts to help guide you through a moment of crisis. Saved only on this phone.</p>
+          <div style="display:flex;flex-direction:column;gap:.65rem;">
+            <label style="font-size:.82rem;display:flex;flex-direction:column;gap:3px;">1. My Warning Signs (mood, physical cues, thoughts):
+              <input type="text" id="spWarning" placeholder="e.g. Isolating, racing thoughts, insomnia" style="width:100%;padding:.45rem;border-radius:4px;border:none;background:#fff;color:#1c2033;font-size:.85rem;">
+            </label>
+            <label style="font-size:.82rem;display:flex;flex-direction:column;gap:3px;">2. Internal Coping Strategies (what I can do on my own):
+              <input type="text" id="spCoping" placeholder="e.g. Warm shower, slow breathing, listening to favorite music" style="width:100%;padding:.45rem;border-radius:4px;border:none;background:#fff;color:#1c2033;font-size:.85rem;">
+            </label>
+            <label style="font-size:.82rem;display:flex;flex-direction:column;gap:3px;">3. Safe Places & Distractions:
+              <input type="text" id="spSocial" placeholder="e.g. Walking in the park, calling a friend" style="width:100%;padding:.45rem;border-radius:4px;border:none;background:#fff;color:#1c2033;font-size:.85rem;">
+            </label>
+            <label style="font-size:.82rem;display:flex;flex-direction:column;gap:3px;">4. Trusted Person I Can Talk To:
+              <input type="text" id="spTrusted" placeholder="e.g. Family member, friend, counselor" style="width:100%;padding:.45rem;border-radius:4px;border:none;background:#fff;color:#1c2033;font-size:.85rem;">
+            </label>
+            <div style="display:flex;align-items:center;gap:.8rem;margin-top:.3rem;">
+              <button type="button" id="spSaveBtn" style="padding:.45rem 1rem;background:#fff;color:#80161a;border:none;font-weight:700;border-radius:4px;cursor:pointer;font-size:.85rem;">Save Plan</button>
+              <span id="spMsg" style="font-size:.82rem;color:#ffe6e6;"></span>
+            </div>
+          </div>
+        </div>
+      </details>
     </div>
 
     <div class="scoreboard">
@@ -1608,6 +1633,7 @@
 
     <div class="actionrow noprint">
       <button id="sheetBtn" data-i18n="sheetBtn"></button>
+      <button class="secondary" id="sbarBtn">Copy SBAR Note for Doctor</button>
       <button class="secondary" id="printBtn" data-i18n="printBtn"></button>
       <button class="secondary" id="icsBtn" data-i18n="reminderBtn"></button>
       <button class="secondary" data-view="history" data-i18n="viewHistory"></button>
@@ -1663,6 +1689,11 @@
     <div class="breathe" id="breathe" hidden>
       <h3 data-i18n="breatheTitle">Slow breathing</h3>
       <p data-i18n="breatheNote"></p>
+      <div style="display:flex;gap:.5rem;margin-bottom:1rem;flex-wrap:wrap;">
+        <button type="button" class="breathe-proto" id="protoVagal" style="padding:5px 11px;font-size:.82rem;font-weight:600;border-radius:6px;border:1px solid var(--heal);background:color-mix(in srgb, var(--heal) 15%, var(--card));color:var(--ink);cursor:pointer;" data-proto="vagal">4-7-8 Vagal Reset</button>
+        <button type="button" class="breathe-proto" id="protoBox" style="padding:5px 11px;font-size:.82rem;border-radius:6px;border:1px solid var(--line);background:var(--card);color:var(--muted);cursor:pointer;" data-proto="box">Box Breathing (4-4-4-4)</button>
+        <button type="button" class="breathe-proto" id="protoCoh" style="padding:5px 11px;font-size:.82rem;border-radius:6px;border:1px solid var(--line);background:var(--card);color:var(--muted);cursor:pointer;" data-proto="coh">Resonance (5.5s HRV)</button>
+      </div>
       <div class="breathestage">
         <div class="orb" id="orb" aria-hidden="true"><span id="orbLabel"></span></div>
         <div>
@@ -2911,18 +2942,55 @@ function guideStart(){
   guideRender("start");
 }
 
-/* ════════ paced breathing: 4s in · 4s hold · 6s out ≈ 6 breaths/min ════════ */
-const BREATH = [["in",4000,"breatheIn"],["hold",4000,"breatheHold"],["out",6000,"breatheOut"]];
-let breatheTimer = null, breathePhase = 0, breatheRounds = 0;
+/* ════════ Audio-Haptic Vagal Bio-Pacer & Grounding Engine ════════ */
+const BREATH_PROTOCOLS = {
+  vagal: [["in",4000,"breatheIn"],["hold",7000,"breatheHold"],["out",8000,"breatheOut"]],
+  box:   [["in",4000,"breatheIn"],["hold",4000,"breatheHold"],["out",4000,"breatheOut"],["hold",4000,"breatheHold"]],
+  coh:   [["in",5500,"breatheIn"],["out",5500,"breatheOut"]]
+};
+let curProto = "vagal", breatheTimer = null, breathePhase = 0, breatheRounds = 0;
+let audioCtx = null;
+
+function playBreathTone(freq, durMs){
+  try {
+    if(!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    if(audioCtx.state === 'suspended') audioCtx.resume();
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+    gain.gain.setValueAtTime(0.0001, audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.08, audioCtx.currentTime + 0.15);
+    gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + Math.min(1.8, durMs/1000 * 0.7));
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+    osc.start();
+    osc.stop(audioCtx.currentTime + Math.min(2.0, durMs/1000));
+  } catch(e){}
+}
+
+function triggerBreathHaptic(pattern){
+  try {
+    if('vibrate' in navigator) navigator.vibrate(pattern || [18]);
+  } catch(e){}
+}
+
 function breatheStep(){
-  const [cls, ms, key] = BREATH[breathePhase];
+  const proto = BREATH_PROTOCOLS[curProto] || BREATH_PROTOCOLS.vagal;
+  const [cls, ms, key] = proto[breathePhase];
   const orb = document.getElementById("orb");
   orb.className = "orb " + cls;
-  document.getElementById("orbLabel").textContent = T.ui[key];
+  orb.style.transitionDuration = (ms/1000) + "s";
+  document.getElementById("orbLabel").textContent = T.ui[key] || key;
   document.getElementById("breatheMeta").textContent =
-    T.ui[key] + " · " + fmt(T.ui.breatheRounds,{n:breatheRounds});
+    (T.ui[key] || key) + " · " + fmt(T.ui.breatheRounds,{n:breatheRounds + 1});
+
+  if(cls === "in") { playBreathTone(432, ms); triggerBreathHaptic([18, 30, 18]); }
+  else if(cls === "hold") { playBreathTone(324, ms); triggerBreathHaptic([18]); }
+  else if(cls === "out") { playBreathTone(216, ms); triggerBreathHaptic([28]); }
+
   breatheTimer = setTimeout(()=>{
-    breathePhase = (breathePhase + 1) % BREATH.length;
+    breathePhase = (breathePhase + 1) % proto.length;
     if(breathePhase === 0){
       breatheRounds++;
       if(breatheRounds >= 6){ breatheStop(true); return; }
@@ -2930,11 +2998,13 @@ function breatheStep(){
     breatheStep();
   }, ms);
 }
+
 function breatheStart(){
   breathePhase = 0; breatheRounds = 0;
   document.getElementById("breatheBtn").textContent = T.ui.breatheStop;
   breatheStep();
 }
+
 function breatheStop(finished){
   if(breatheTimer){ clearTimeout(breatheTimer); breatheTimer = null; }
   const orb = document.getElementById("orb"), btn = document.getElementById("breatheBtn");
@@ -2943,6 +3013,94 @@ function breatheStop(finished){
   document.getElementById("orbLabel").textContent = "";
   btn.textContent = T.ui.breatheStart;
   document.getElementById("breatheMeta").textContent = finished ? T.ui.breatheDone : "";
+}
+
+function setBreathProto(name){
+  curProto = name;
+  document.querySelectorAll(".breathe-proto").forEach(btn=>{
+    const sel = btn.dataset.proto === name;
+    btn.style.borderColor = sel ? "var(--heal)" : "var(--line)";
+    btn.style.background = sel ? "color-mix(in srgb, var(--heal) 15%, var(--card))" : "var(--card)";
+    btn.style.color = sel ? "var(--ink)" : "var(--muted)";
+    btn.style.fontWeight = sel ? "600" : "400";
+  });
+  if(breatheTimer){ breatheStop(); breatheStart(); }
+}
+
+/* ════════ SBAR Doctor Handshake Formatter ════════ */
+function copySBARSummary(){
+  if(!lastResult) return;
+  const r = lastResult, meta = META[r.inst], t = T.inst[r.inst];
+  const dateFormatted = new Date(r.date).toLocaleDateString("en-GB", {day:"numeric",month:"short",year:"numeric"});
+  
+  let icd = "Z13.89 (Screening for behavioral/mental disorder)";
+  if(r.inst === "phq9") icd = "ICD-11: 6A70 (Single episode depressive disorder) / DSM-5: 296.2x";
+  if(r.inst === "gad7") icd = "ICD-11: 6B00 (Generalized anxiety disorder) / DSM-5: 300.02";
+  if(r.inst === "auditc") icd = "ICD-11: 6C40.1 (Harmful pattern of alcohol use)";
+
+  const sbar = [
+    "=== PSYCHIATRIC SCREENING REPORT (SBAR TRIAGE FORMAT) ===",
+    "DATE: " + dateFormatted + " | SOURCE: Psych Screener (On-Device Private PWA)",
+    "",
+    "[S] SITUATION:",
+    "Patient self-administered standard screening for " + t.name + " (" + meta.name + ").",
+    "",
+    "[B] BACKGROUND:",
+    "Completed independently. Target: " + (t.desc || meta.name) + ".",
+    "",
+    "[A] ASSESSMENT:",
+    "• Instrument: " + t.name + " (" + meta.name + ")",
+    "• Total Score: " + r.score + " / " + meta.max + " (" + t.bands[r.bandIdx] + ")",
+    "• Clinical Cutoff: " + (meta.cutoffLabel || "Threshold") + " (Score " + (r.score >= meta.cutoff ? "MET/EXCEEDED" : "NOT MET") + ")",
+    (r.safetyFlag ? "• CRITICAL SAFETY ALERT: Suicide / self-harm ideation reported (Score > 0 on Item 9)" : "• Critical Safety Flags: None flagged"),
+    "• Diagnostic Correlate: " + icd,
+    "",
+    "[R] RECOMMENDATION / NEXT STEPS:",
+    "• Clinical interview to evaluate functional impairment and symptom chronicity.",
+    "• Review evidence-based psychotherapy (CBT/ACT) and pharmacotherapy if indicated.",
+    (r.safetyFlag ? "• IMMEDIATE ACTION: Conduct comprehensive safety assessment (Stanley-Brown protocol) & provide Tele-MANAS (14416) emergency connection." : ""),
+    "",
+    "CONFIDENTIALITY NOTE: Zero health data transmitted over network. All calculations performed client-side."
+  ].filter(Boolean).join("\n");
+
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(sbar).then(()=>{
+      const btn = document.getElementById("sbarBtn");
+      if(btn){
+        const orig = btn.textContent;
+        btn.textContent = "✓ SBAR Note Copied!";
+        setTimeout(()=> btn.textContent = orig, 3000);
+      }
+    }).catch(()=> alert(sbar));
+  } else {
+    alert(sbar);
+  }
+}
+
+/* ════════ Stanley-Brown Safety Plan Persistence ════════ */
+function loadSafetyPlan(){
+  try {
+    const sp = JSON.parse(localStorage.getItem("psych-safety-plan") || "{}");
+    if(sp.warning) document.getElementById("spWarning").value = sp.warning;
+    if(sp.coping)  document.getElementById("spCoping").value  = sp.coping;
+    if(sp.social)  document.getElementById("spSocial").value  = sp.social;
+    if(sp.trusted) document.getElementById("spTrusted").value = sp.trusted;
+  } catch(e){}
+}
+function saveSafetyPlan(){
+  try {
+    const sp = {
+      warning: document.getElementById("spWarning").value.trim(),
+      coping:  document.getElementById("spCoping").value.trim(),
+      social:  document.getElementById("spSocial").value.trim(),
+      trusted: document.getElementById("spTrusted").value.trim(),
+      updatedAt: new Date().toISOString()
+    };
+    localStorage.setItem("psych-safety-plan", JSON.stringify(sp));
+    const msg = document.getElementById("spMsg");
+    msg.textContent = "✓ Plan saved privately on your device.";
+    setTimeout(()=> msg.textContent = "", 3500);
+  } catch(e){}
 }
 
 /* ════════ wiring ════════
@@ -3112,6 +3270,14 @@ document.getElementById("contrastBtn").addEventListener("click", ()=>
 document.getElementById("breatheBtn").addEventListener("click", ()=>{
   if(breatheTimer) breatheStop(); else breatheStart();
 });
+document.querySelectorAll(".breathe-proto").forEach(btn=>{
+  btn.addEventListener("click", ()=> setBreathProto(btn.dataset.proto));
+});
+const sbarBtn = document.getElementById("sbarBtn");
+if(sbarBtn) sbarBtn.addEventListener("click", copySBARSummary);
+const spSaveBtn = document.getElementById("spSaveBtn");
+if(spSaveBtn) spSaveBtn.addEventListener("click", saveSafetyPlan);
+loadSafetyPlan();
 
 /* ── offline: register the service worker, offer install when the browser does ── */
 if("serviceWorker" in navigator && location.protocol.startsWith("http")){
