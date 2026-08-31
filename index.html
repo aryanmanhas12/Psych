@@ -1526,38 +1526,46 @@
       <b data-i18n="whyRescreenTitle"></b> <span data-i18n="whyRescreen"></span>
     </div>
 
-    <h2 class="display reveal" style="margin-top:1.8rem;">What's behind this</h2>
-    <p class="sec-sub reveal">Every claim this tool makes is written down and checkable. These are the working documents, not marketing pages.</p>
+    <!-- This whole section used to be English in the markup, on a page
+         that offers six languages. Someone reading in Hindi got through
+         the screeners and then hit a wall of text they could not read,
+         with nothing to say why. The section is translated now; the five
+         documents behind it are not, and it says so rather than letting
+         anyone tap through and find out. The English text stays inline as
+         the pre-JavaScript fallback, exactly like the crisis strip. -->
+    <h2 class="display reveal" style="margin-top:1.8rem;" data-i18n="behindTitle">What's behind this</h2>
+    <p class="sec-sub reveal" data-i18n="behindSub">Every claim this tool makes is written down and checkable. These are the working documents, not marketing pages.</p>
+    <p class="sec-sub reveal" style="margin-top:-.5rem;font-size:.85rem;color:var(--muted);" data-i18n="behindEnglish">These five documents are in English.</p>
     <div class="behind">
       <a class="bcard reveal" href="evidence.html">
-        <span class="k">Peer-reviewed</span>
-        <h3>The Evidence Register</h3>
-        <p>Every instrument and design decision, with the study behind it — sensitivity, sample size, and the figures that are weaker.</p>
-        <span class="go">Read the register →</span>
+        <span class="k" data-i18n="behindEvidenceK">Peer-reviewed</span>
+        <h3 data-i18n="behindEvidenceT">The Evidence Register</h3>
+        <p data-i18n="behindEvidenceD">Every instrument and design decision, with the study behind it — sensitivity, sample size, and the figures that are weaker.</p>
+        <span class="go" data-i18n="behindEvidenceG">Read the register →</span>
       </a>
       <a class="bcard reveal" href="global.html">
-        <span class="k">WHO &amp; UN</span>
-        <h3>Global Frameworks</h3>
-        <p>How this maps to SDG 3.4, WHO's Action Plan, mhGAP and QualityRights — including what it cannot do.</p>
-        <span class="go">See the alignment →</span>
+        <span class="k" data-i18n="behindGlobalK">WHO &amp; UN</span>
+        <h3 data-i18n="behindGlobalT">Global Frameworks</h3>
+        <p data-i18n="behindGlobalD">How this maps to SDG 3.4, WHO's Action Plan, mhGAP and QualityRights — including what it cannot do.</p>
+        <span class="go" data-i18n="behindGlobalG">See the alignment →</span>
       </a>
       <a class="bcard reveal" href="ethics.html">
-        <span class="k">Verifiable</span>
-        <h3>Ethics &amp; Privacy Charter</h3>
-        <p>What is collected (nothing), how to check that yourself, and the capabilities deliberately refused.</p>
-        <span class="go">Check the claims →</span>
+        <span class="k" data-i18n="behindEthicsK">Verifiable</span>
+        <h3 data-i18n="behindEthicsT">Ethics &amp; Privacy Charter</h3>
+        <p data-i18n="behindEthicsD">What is collected (nothing), how to check that yourself, and the capabilities deliberately refused.</p>
+        <span class="go" data-i18n="behindEthicsG">Check the claims →</span>
       </a>
       <a class="bcard reveal" href="manifesto.html">
-        <span class="k">The argument</span>
-        <h3>The Waiting Room is Full</h3>
-        <p>Why one psychiatrist for 133,000 people makes neglect a structural certainty, not a personal failing.</p>
-        <span class="go">Read the manifesto →</span>
+        <span class="k" data-i18n="behindManifestoK">The argument</span>
+        <h3 data-i18n="behindManifestoT">The Waiting Room is Full</h3>
+        <p data-i18n="behindManifestoD">Why one psychiatrist for 133,000 people makes neglect a structural certainty, not a personal failing.</p>
+        <span class="go" data-i18n="behindManifestoG">Read the manifesto →</span>
       </a>
       <a class="bcard reveal" href="poster.html">
-        <span class="k">Printable</span>
-        <h3>Clinic Poster</h3>
-        <p>One A4 sheet in six languages with a QR code. For a waiting room, a college corridor, a PHC wall.</p>
-        <span class="go">Print a copy →</span>
+        <span class="k" data-i18n="behindPosterK">Printable</span>
+        <h3 data-i18n="behindPosterT">Clinic Poster</h3>
+        <p data-i18n="behindPosterD">One A4 sheet in six languages with a QR code. For a waiting room, a college corridor, a PHC wall.</p>
+        <span class="go" data-i18n="behindPosterG">Print a copy →</span>
       </a>
     </div>
 

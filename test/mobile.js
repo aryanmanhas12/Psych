@@ -345,6 +345,59 @@ const OVERFLOW = `(()=>{
     await c2.close();
   }
 
+  /* 9b ── the site offers six languages; a whole section of the home page
+          was English in the markup, so a Hindi reader got through the
+          screeners and hit a block of text they could not read. The five
+          documents it links to are still English — that is a deliberate,
+          stated limit — but the section introducing them is not, and it
+          has to say so. Also checks the four languages without these
+          strings fall back to the English in the markup rather than
+          rendering empty, which is the failure mode data-i18n has when a
+          key is missing. */
+  head('9b. THE HOME PAGE IN HINDI');
+  {
+    const ctx = await b.newContext(phone()); const p = await ctx.newPage();
+    const DEV = /[\u0900-\u097F]/;
+    await p.goto(URL);
+    await p.evaluate(l=>{['psych-seen-overture','psych-seen-tour','psych-seen-intro']
+      .forEach(k=>localStorage.setItem(k,'2'));
+      localStorage.setItem('psych-prefs',JSON.stringify({lang:l}));}, 'hi');
+    await p.goto(URL,{waitUntil:'networkidle'}); await p.waitForTimeout(700);
+    const r = await p.evaluate(()=>{
+      const pick = s=> [...document.querySelectorAll(s)].map(e=>e.textContent.trim());
+      return { title:(document.querySelector('[data-i18n="behindTitle"]')||{}).textContent||'',
+               sub:(document.querySelector('[data-i18n="behindSub"]')||{}).textContent||'',
+               note:(document.querySelector('[data-i18n="behindEnglish"]')||{}).textContent||'',
+               titles:pick('.behind .bcard h3'), descs:pick('.behind .bcard p'),
+               gos:pick('.behind .bcard .go') };
+    });
+    const latin = [];
+    if(!DEV.test(r.title)) latin.push('section heading');
+    if(!DEV.test(r.sub)) latin.push('section sub');
+    r.titles.forEach((s,i)=>{ if(!DEV.test(s)) latin.push('card '+(i+1)+' title'); });
+    r.descs.forEach((s,i)=>{ if(!DEV.test(s)) latin.push('card '+(i+1)+' description'); });
+    r.gos.forEach((s,i)=>{ if(!DEV.test(s)) latin.push('card '+(i+1)+' link'); });
+    latin.length ? fail(`hi: still English — ${latin.join(', ')}`)
+                 : ok(`hi: "what's behind this" translated (${r.titles.length} cards, heading, sub and links)`);
+    DEV.test(r.note) ? ok('hi: says the linked documents are in English')
+                     : fail('hi: no note that the linked documents are English');
+    await ctx.close();
+
+    /* mr/bn/ta/te have no behind* strings yet: they must show the English
+       left in the markup, not an empty card. */
+    const c2 = await b.newContext(phone()); const p2 = await c2.newPage();
+    await p2.goto(URL);
+    await p2.evaluate(l=>{['psych-seen-overture','psych-seen-tour','psych-seen-intro']
+      .forEach(k=>localStorage.setItem(k,'2'));
+      localStorage.setItem('psych-prefs',JSON.stringify({lang:l}));}, 'mr');
+    await p2.goto(URL,{waitUntil:'networkidle'}); await p2.waitForTimeout(700);
+    const e2 = await p2.evaluate(()=>[...document.querySelectorAll('.behind .bcard h3, .behind .bcard p, .behind .bcard .go')]
+                                       .filter(el=>!el.textContent.trim()).length);
+    e2 ? fail(`mr: ${e2} empty nodes in the behind section — missing keys blanked the fallback`)
+       : ok('mr: falls back to the English in the markup, nothing blank');
+    await c2.close();
+  }
+
   /* 10 ── the screen a patient actually spends their time on, in every
           language. Telugu at 320px/135% caught a horizontal scrollbar
           flickering on each question: the card slides in from 14px right,

@@ -59,8 +59,11 @@
    with the network off, so it would not stay silent for long.
 
    v10: site.css and all six pages changed — the wordmark gained an inner
-   span so it can ellipsise instead of being sliced. */
-const CACHE = "psych-screener-v10";
+   span so it can ellipsise instead of being sliced.
+
+   v11: index.html and both English and Hindi string files changed — the
+   "what's behind this" section is translated now. */
+const CACHE = "psych-screener-v11";
 const ASSETS = [
   "./", "./index.html", "./helplines.js", "./nav.js",
   "./i18n.en.js", "./i18n.hi.js", "./i18n.mr.js",

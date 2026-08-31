@@ -95,6 +95,43 @@
     primerGet: "At the end you get a score, what it means, and what to do next.",
     primerNot: "This is not a diagnosis.",
     primerBack: "Choose a different one",
+    /* The five working documents, and the section that introduces them.
+       These were hard-coded English in the markup — a reader who had set
+       the site to Hindi scrolled past the screeners and hit a block of
+       English with no warning. The documents themselves stay in English:
+       they are a clinician-facing evidence register, an ethics charter and
+       a long argument, and a working translation of those is a bigger
+       promise than this project can keep honestly. So the section says so,
+       rather than letting someone tap through into a wall. */
+    behindTitle: "What's behind this",
+    behindSub: "Every claim this tool makes is written down and checkable. These are the working documents, not marketing pages.",
+    behindEnglish: "These five documents are in English.",
+
+    behindEvidenceK: "Peer-reviewed",
+    behindEvidenceT: "The Evidence Register",
+    behindEvidenceD: "Every instrument and design decision, with the study behind it — sensitivity, sample size, and the figures that are weaker.",
+    behindEvidenceG: "Read the register \u2192",
+
+    behindGlobalK: "WHO & UN",
+    behindGlobalT: "Global Frameworks",
+    behindGlobalD: "How this maps to SDG 3.4, WHO's Action Plan, mhGAP and QualityRights — including what it cannot do.",
+    behindGlobalG: "See the alignment \u2192",
+
+    behindEthicsK: "Verifiable",
+    behindEthicsT: "Ethics & Privacy Charter",
+    behindEthicsD: "What is collected (nothing), how to check that yourself, and the capabilities deliberately refused.",
+    behindEthicsG: "Check the claims \u2192",
+
+    behindManifestoK: "The argument",
+    behindManifestoT: "The Waiting Room is Full",
+    behindManifestoD: "Why one psychiatrist for 133,000 people makes neglect a structural certainty, not a personal failing.",
+    behindManifestoG: "Read the manifesto \u2192",
+
+    behindPosterK: "Printable",
+    behindPosterT: "Clinic Poster",
+    behindPosterD: "One A4 sheet in six languages with a QR code. For a waiting room, a college corridor, a PHC wall.",
+    behindPosterG: "Print a copy \u2192",
+
     whyRescreenTitle: "Why re-screen?",
     whyRescreen: "Scores are snapshots. Tracking them every 2–4 weeks is how clinicians measure whether treatment is working — this app saves your scores privately on this device and reminds you when it's time to check again. That's the follow-up the system forgets; do it for yourself.",
 
