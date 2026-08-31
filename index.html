@@ -1395,7 +1395,7 @@
 
 <nav class="site noprint" aria-label="Main">
   <div class="wrap">
-    <a class="brand" href="index.html">Psych <span class="accent">Screener</span></a>
+    <a class="brand" href="index.html"><span class="name">Psych <span class="accent">Screener</span></span></a>
     <a class="navlink" href="#home" data-view="home" data-i18n="navScreeners">Screener</a>
     <a class="navlink" href="#guide" data-view="guide" data-i18n="navGuide">Talk it through</a>
     <a class="navlink" href="#resources" data-view="resources" data-i18n="navHelp">Get Help</a>
@@ -3323,11 +3323,16 @@ document.querySelectorAll("[data-view]").forEach(el=>
 (function trackTabbar(){
   const bar = document.querySelector(".tabbar");
   if(!bar) return;
-  let rafId = null;
+  let rafId = null, lastH = -1;
   const sync = ()=>{
     if(rafId) cancelAnimationFrame(rafId);
     rafId = requestAnimationFrame(()=>{
       const h = bar.offsetHeight || 0;
+      /* Only write when it actually moved. Setting a custom property to the
+         value it already holds still invalidates style, and this fires on
+         every resize tick and every observer callback. */
+      if(h === lastH) return;
+      lastH = h;
       document.documentElement.style.setProperty("--tabbar-h", h + "px");
     });
   };

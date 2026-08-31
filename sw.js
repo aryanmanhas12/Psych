@@ -56,8 +56,11 @@
    precached here. Dropping five names from this array would look like a
    tidy-up and would silently break offline language switching for the
    people most likely to need it. There is a test that switches language
-   with the network off, so it would not stay silent for long. */
-const CACHE = "psych-screener-v9";
+   with the network off, so it would not stay silent for long.
+
+   v10: site.css and all six pages changed — the wordmark gained an inner
+   span so it can ellipsise instead of being sliced. */
+const CACHE = "psych-screener-v10";
 const ASSETS = [
   "./", "./index.html", "./helplines.js", "./nav.js",
   "./i18n.en.js", "./i18n.hi.js", "./i18n.mr.js",

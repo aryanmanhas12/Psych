@@ -322,6 +322,27 @@ const OVERFLOW = `(()=>{
       issues.length?fail(`${f}: ${issues.join('; ')}`):ok(`${f}: clean${s.strip?`, helpline targets ${s.minH}px`:' (poster: numbers printed on the sheet)'}`);
     }
     await ctx.close();
+
+    /* The wordmark is allowed to shorten — it is the only thing in that row
+       that can, and the language switch beside it must never be the thing
+       that goes. It is not allowed to be sliced. It was: text-overflow sat
+       on the anchor, which is inline-flex under a coarse pointer, and a
+       flex container does not apply text-overflow to its items. Ten of
+       twelve width-and-size combinations cut mid-letter. So: check the
+       ellipsis is live on the box that actually overflows, and that at
+       default text size the name fits outright on every phone width. */
+    const c2 = await b.newContext(phone()); const p2 = await c2.newPage();
+    for (const w of [360,390,412,430]) {
+      await p2.setViewportSize({width:w,height:844});
+      await p2.goto(URL,{waitUntil:'networkidle'}); await p2.waitForTimeout(250);
+      const n = await p2.evaluate(()=>{const e=document.querySelector('nav.site .brand > .name');
+        return e?{cw:e.clientWidth,sw:e.scrollWidth,to:getComputedStyle(e).textOverflow}:null;});
+      if(!n){ fail(`brand: no .name box at ${w}px — ellipsis cannot apply`); continue; }
+      if(n.to!=='ellipsis') fail(`brand @${w}px: text-overflow is ${n.to}, so it slices instead of trailing off`);
+      else if(n.sw>n.cw+1) fail(`brand @${w}px: truncated at default text size (${n.cw} of ${n.sw}px)`);
+      else ok(`brand @${w}px: fits at default text size (${n.sw}px), ellipsis live`);
+    }
+    await c2.close();
   }
 
   /* 10 ── the screen a patient actually spends their time on, in every

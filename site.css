@@ -203,6 +203,17 @@ nav.site .brand{
      to, and Settings — which holds the language switch — was pushed off
      the right edge. The name is the only thing in that row that can be
      shortened without losing a control. */
+  min-width:0;
+}
+/* The ellipsis lives on the inner span, not on the anchor, and that is the
+   whole fix. Under a coarse pointer the anchor becomes inline-flex to earn
+   a 44px target — and a flex container does not apply text-overflow to its
+   items, so the property was set on every width where it was not needed
+   and inert on exactly the phones where it was. The name did not shorten,
+   it was sliced: measured at 390px/135% text, 72px of a 247px wordmark,
+   cut mid-letter. Ten of twelve width-and-size combinations were clipping.
+   One element deeper and it ellipsises whether the parent is flex or not. */
+nav.site .brand > .name{
   min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
 }
 /* A bare URL has no break opportunities, so it sets a floor on how narrow
@@ -406,6 +417,15 @@ footer .byline strong{color:var(--ink);font-size:.85rem;}
    not fit; the bars beside it already say the same thing, so it goes the
    same way the Settings label did — out of sight, still in the
    accessibility tree, so nothing is lost to a screen reader. */
+/* The wordmark steps down for every phone held upright, not only the
+   narrowest ones. It used to step down at 380px, which left 390, 412, 414
+   and 430 — between them most phones sold — carrying the full 1.15rem into
+   a row that could not hold it, and clipping at default text size before
+   anyone had touched the text-size control. Shortening the name is the
+   graceful part; the ellipsis above is the floor beneath it. */
+@media(max-width:480px){
+  nav.site .brand{font-size:.95rem;letter-spacing:.015em;}
+}
 @media(max-width:380px){
   nav.site .wrap,nav.site .wrap-wide{flex-wrap:nowrap;gap:.45rem;}
   /* nowrap is for the CLOSED top row only. With the menu open the links
@@ -414,7 +434,6 @@ footer .byline strong{color:var(--ink);font-size:.85rem;}
      sideways. nav.js sets .menu-open for the duration. */
   nav.site.menu-open .wrap,
   nav.site.menu-open .wrap-wide{flex-wrap:wrap;}
-  nav.site .brand{font-size:1rem;letter-spacing:.02em;}
   nav.site .navtoggle{padding-inline:.7rem;}
   nav.site .navtoggle-label{
     position:absolute;width:1px;height:1px;padding:0;margin:-1px;
