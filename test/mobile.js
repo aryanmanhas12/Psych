@@ -168,12 +168,26 @@ const OVERFLOW = `(()=>{
     await p.evaluate(()=>{ if(typeof introStart==='function') introStart(); });
     await p.waitForTimeout(500);
     const label = scheme + (hc?'+highcontrast':'');
+    /* The nav's own controls were never in this list, which is how a
+       settings button at 1.07:1 in dark mode survived. It holds the
+       language switch — the control a reader who cannot read the page
+       needs first — so it was invisible to exactly the person it is for. */
     for (const [sel,name] of [['.topstrip','crisis strip'],['.topstrip a','helpline number'],
+                              ['nav.site .brand','brand'],['nav.site .navtoggle','menu button'],
+                              ['#setBtn','settings button'],
                               ['.intro-no','No button'],['.intro-yes','Yes button'],['.intro-card p','statement']]) {
       const v = await p.evaluate(`(${CR})(${JSON.stringify(sel)})`);
       if (v===null) continue;
       v>=4.5 ? ok(`${label}: ${name} ${v}:1`) : fail(`${label}: ${name} ${v}:1 (needs 4.5)`);
     }
+    /* Pressed states are their own pairing: --marigold is a light gold in
+       the normal themes and a dark gold under high contrast, so no single
+       flipping token works on it. Measured open as well as shut. */
+    await p.evaluate(()=>document.getElementById('setBtn').click());
+    await p.waitForTimeout(300);
+    const openC = await p.evaluate(`(${CR})('#setBtn')`);
+    if (openC !== null) openC>=4.5 ? ok(`${label}: settings button while open ${openC}:1`)
+                                   : fail(`${label}: settings button while open ${openC}:1 (needs 4.5)`);
     await ctx.close();
   }
 

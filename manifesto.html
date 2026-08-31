@@ -28,7 +28,7 @@
     animation:pulse 2.2s ease-in-out infinite;
   }
   @keyframes pulse{0%,100%{box-shadow:0 0 0 3px rgba(230,161,28,.35);}50%{box-shadow:0 0 0 7px rgba(230,161,28,.12);}}
-  .dotcaption{font-family:ui-monospace,'Cascadia Mono',Menlo,Consolas,monospace;font-size:13px;margin-top:14px;color:#4a4f5e;max-width:640px;}
+  .dotcaption{font-family:var(--font-ui);font-size:13px;margin-top:14px;color:#4a4f5e;max-width:640px;}
   .dotcaption b{color:var(--ink);}
 
   /* ── crisis stats ── */
@@ -38,7 +38,7 @@
   @media(max-width:700px){.stat{border-right:none;}}
   .stat .num{font-weight:700;font-size:44px;line-height:1;color:var(--stamp);}
   .stat .lbl{font-size:14.5px;margin-top:8px;}
-  .stat .src{font-family:ui-monospace,'Cascadia Mono',Menlo,Consolas,monospace;font-size:11px;color:#7a7f8d;margin-top:10px;}
+  .stat .src{font-family:var(--font-ui);font-size:11px;color:#7a7f8d;margin-top:10px;}
   .crisis-copy{max-width:660px;margin-top:30px;}
   .crisis-copy p{margin-bottom:16px;}
 
@@ -66,7 +66,7 @@
   }
   .sol h3{font-size:19px;font-weight:700;margin-bottom:6px;}
   .sol .who{
-    font-family:ui-monospace,'Cascadia Mono',Menlo,Consolas,monospace;font-size:12px;letter-spacing:.08em;
+    font-family:var(--font-ui);font-size:12px;letter-spacing:.08em;
     color:var(--heal);margin-bottom:8px;
   }
   .sol p{font-size:15.5px;}
@@ -82,7 +82,7 @@
   .pledge-lines li.done::before{content:"☑";}
   button:hover{transform:translate(-2px,-2px);box-shadow:4px 4px 0 var(--stamp);}
   button:focus-visible{outline:3px solid var(--stamp);outline-offset:3px;}
-  .pledge-count{font-family:ui-monospace,'Cascadia Mono',Menlo,Consolas,monospace;font-size:14px;margin-top:14px;}
+  .pledge-count{font-family:var(--font-ui);font-size:14px;margin-top:14px;}
   .sharebox{
     display:none;margin-top:18px;background:#fff;border:2px dashed var(--ink);
     padding:16px;font-size:14.5px;
@@ -282,7 +282,7 @@
   <div class="wrap">
     <span class="stampmark">Urgent — For Public Circulation</span>
     <p>If you or someone you know is struggling, call <strong>Tele-MANAS: 14416</strong> (toll-free, 24×7, multiple Indian languages). Figures cited from the National Mental Health Survey 2015–16 and published workforce estimates; verify current numbers before formal use.</p>
-    <p style="margin-top:14px;padding-top:14px;border-top:1px solid var(--line);font-family:ui-monospace,'Cascadia Mono',Menlo,Consolas,monospace;font-size:12.5px;">
+    <p style="margin-top:14px;padding-top:14px;border-top:1px solid var(--line);font-family:var(--font-ui);font-size:12.5px;">
       <strong style="color:var(--ink);">Built by Aryan Manhas</strong> ·
       <a href="https://github.com/aryanmanhas12/Psych" style="color:var(--heal);">github.com/aryanmanhas12/Psych</a> ·
       <a href="index.html" style="color:var(--heal);">Open the screener</a> ·

@@ -39,8 +39,15 @@
    the background and written over it. A stale asset can now be at most
    one page load behind instead of permanent, whether or not anyone
    remembers this constant. Offline is unaffected — the background fetch
-   just fails and the cached copy stands. */
-const CACHE = "psych-screener-v6";
+   just fails and the cached copy stands.
+
+   v7: the settings button — the control holding the language switch — was
+   #EDEAE2 text on a #12161F nav in dark mode. 1.07:1, which is text the
+   same colour as what is behind it, on the one control a reader who cannot
+   read the page needs to find first. Fixed with an --on-marigold token, and
+   the nav's own controls added to the contrast suite so the gap that hid it
+   closes with it. site.css and index.html both changed. */
+const CACHE = "psych-screener-v7";
 const ASSETS = [
   "./", "./index.html", "./i18n.js", "./helplines.js", "./nav.js",
   "./ethics.html", "./evidence.html", "./manifesto.html",

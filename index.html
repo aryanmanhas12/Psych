@@ -76,7 +76,7 @@
   /* ── nav ── */
   nav{background:var(--ink);padding:.8rem 0;}
   nav .wrap{display:flex;align-items:center;gap:1.1rem;flex-wrap:wrap;}
-  .brand{font-weight:700;color:var(--paper);font-size:1.15rem;letter-spacing:.04em;margin-right:auto;}
+  .brand{font-weight:700;color:var(--on-deep);font-size:1.15rem;letter-spacing:.04em;margin-right:auto;}
   .brand .accent{color:var(--marigold);}
   nav a.navlink{
     color:var(--paper);text-decoration:none;font-family:var(--font-ui);
@@ -89,11 +89,26 @@
   /* ── settings popover (replaces the old full-width a11y bar) ── */
   .setbtn{
     font-family:var(--font-ui);text-transform:none;letter-spacing:.04em;
-    background:transparent;color:var(--paper);border:1.5px solid rgba(246,244,238,.45);
+    /* --on-deep, not --paper. The nav is the always-dark surface, and
+       --paper flips with the theme while --deep barely moves: in dark mode
+       this was #12161F on #0A0D14, measured 1.07:1 — text the same colour
+       as the thing behind it. That is the button holding the language
+       switch, which is the one control a reader who cannot read this page
+       needs to find first, so it was invisible to precisely the person it
+       exists for. --on-deep is the token that means "text on the dark
+       surface" and is light in both themes. Third instance of this fault
+       class here; see --stamp-bg in site.css for the first. */
+    background:transparent;color:var(--on-deep);
+    border:1.5px solid color-mix(in srgb, var(--on-deep) 45%, transparent);
     padding:.3rem .7rem;font-size:.78rem;min-height:2rem;cursor:pointer;
   }
   .setbtn:hover{border-color:var(--marigold);transform:none;box-shadow:none;}
-  .setbtn[aria-expanded="true"]{background:var(--marigold);color:var(--ink);border-color:var(--marigold);}
+  /* --deep, not --ink. --marigold is gold in BOTH themes while --ink flips
+     to near-white in dark, so the open state was near-white on gold —
+     1.54:1, unreadable, on the control that had just been pressed. A
+     background that does not flip needs foreground that does not flip
+     either, and --deep is dark in both themes. */
+  .setbtn[aria-expanded="true"]{background:var(--marigold);color:var(--on-marigold);border-color:var(--marigold);}
   .setwrap{position:relative;}
   .setpanel{
     display:none;position:absolute;right:0;top:calc(100% + .5rem);z-index:40;

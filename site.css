@@ -47,6 +47,11 @@
      re-learn at the worst possible moment. */
   --stamp-bg:#B23A2E;
   --on-stamp:#FFFFFF;
+  /* Text on a marigold fill. --marigold is a light gold in the normal
+     themes and a DARK gold under high contrast, so nothing that flips with
+     the theme works on it — dark text is right twice and wrong once. Same
+     pairing idea as --stamp-bg/--on-stamp above, for the same reason. */
+  --on-marigold:#151C2E;
   /* The opening's progress rule, which has to be visible against paper to
      do its one job — say that this is timed and nearly over. Plain
      --marigold is 2.01:1 on light paper and the --line track is 1.36:1,
@@ -92,18 +97,19 @@
     --stamp-bg:#B23A2E;
     --on-stamp:#FFFFFF;
     --bar:#F0B53C;
+    --on-marigold:#0A0D14;
   }
 }
 :root[data-theme="dark"]{
   --ink:#EDEAE2; --paper:#12161F; --card:#1A1F2B; --line:#333B4C;
   --muted:#9AA3B5; --marigold:#F0B53C; --stamp:#E4796B; --heal:#5FB39C;
   --deep:#0A0D14; --on-deep:#EDEAE2;
-  --stamp-bg:#B23A2E; --on-stamp:#FFFFFF; --bar:#F0B53C;
+  --stamp-bg:#B23A2E; --on-stamp:#FFFFFF; --bar:#F0B53C; --on-marigold:#0A0D14;
 }
 :root[data-contrast="high"]{
   --ink:#000; --paper:#FFF; --card:#FFF; --line:#000; --muted:#1A1A1A;
   --marigold:#8A5D00; --stamp:#8E1B10; --heal:#0F4A3C; --deep:#000; --on-deep:#FFF;
-  --stamp-bg:#8E1B10; --on-stamp:#FFF; --bar:#8A5D00;
+  --stamp-bg:#8E1B10; --on-stamp:#FFF; --bar:#8A5D00; --on-marigold:#FFF;
 }
 
 /* ── reset & base ── */
