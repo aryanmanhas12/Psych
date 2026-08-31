@@ -482,9 +482,27 @@ footer .byline strong{color:var(--ink);font-size:.85rem;}
   nav.site .navtoggle,
   nav.site select,
   nav.site .setbtn{min-height:44px;}
-  /* The brand is the way back to the screener from every reading page,
-     which makes it a real control and not decoration. It measured 35px.
-     inline-flex rather than a bare min-height because an inline anchor
-     ignores height entirely. */
   nav.site .brand{display:inline-flex;align-items:center;min-height:44px;}
 }
+
+/* ════════ HIGH-PERFORMANCE RENDERING & GPU COMPOSITING ════════ */
+html {
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+body {
+  overscroll-behavior-y: contain;
+}
+button, a, input, select, summary, .btn, .card {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+.view, .qcard, .orb, .panel, .popover, .dialog, .breathe {
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+.card, .choice, .screener-card, .evidence-item {
+  contain: layout style paint;
+}
+
