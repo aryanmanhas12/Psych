@@ -13,12 +13,9 @@
    · Page-specific styling stays in that page's own <style> block.
    ══════════════════════════════════════════════════════════════ */
 
-/* Self-hosted: the site's privacy claim is only true if nothing
-   phones home, fonts included. */
-@font-face{
-  font-family:'Anton';font-style:normal;font-weight:400;font-display:swap;
-  src:url('anton.woff2') format('woff2');
-}
+/* No @font-face at all now. Every face on this site is the reader's own
+   system type, which is the strongest possible version of the promise that
+   nothing here phones home — there is nothing left to fetch. */
 
 /* ── tokens ── */
 :root{
@@ -55,6 +52,27 @@
      --marigold is 2.01:1 on light paper and the --line track is 1.36:1,
      so on a light phone the bar was, in practice, not there. */
   --bar:#B87D0E;
+  /* ── one interface face, and it is the reader's own ──
+     The interface was set in monospace in 57 places — nav, the crisis
+     strip, tags, captions, buttons. Monospace means "code", and on a page
+     asking someone how often they have felt hopeless it reads as a
+     terminal, not a person. It is also, with stark borders and shouting
+     capitals, the house style of every site an AI has ever generated,
+     which is the first thing the person paying for this said about it.
+
+     No font file is added. system-ui already resolves to Roboto on
+     Android and SF on iOS: humanist faces, drawn for exactly this, that
+     cost nothing to download and keep the promise that this page never
+     phones home. Using the reader's own platform type is what makes a
+     page feel like it belongs on their phone rather than like a template.
+
+     Tabular numerals stay wherever figures have to line up; that is a
+     numeric property, not a reason to set a whole interface in mono. */
+  --font-ui:system-ui,-apple-system,'Segoe UI','Noto Sans',Roboto,Arial,sans-serif;
+  /* Softened geometry. Everything was square with hard 4px offset
+     shadows — confident, and far too loud for the moment it is used in. */
+  --r-sm:.4rem; --r-md:.6rem; --r-lg:.9rem;
+  --shadow-soft:0 1px 2px rgba(21,28,46,.05), 0 4px 14px rgba(21,28,46,.07);
   --e-out1:cubic-bezier(.25,.46,.45,.94);
   --e-out2:cubic-bezier(.215,.61,.355,1);
   --scale:1;
@@ -131,18 +149,28 @@ a:hover{text-decoration-thickness:2px;}
 img,svg{max-width:100%;}
 
 .display{
-  /* A hair looser than Anton's native spacing and line-height: at full
-     tightness the headline reads as a shout. This keeps its weight and
-     confidence but lets it sit rather than shout. */
-  font-family:'Anton',sans-serif;letter-spacing:.015em;line-height:1.14;
-  text-transform:uppercase;text-wrap:balance;
+  /* Anton is gone. It is a condensed poster face — the kind of type used on
+     a flyer to be read across a room — and on a page asking whether you
+     have thought about harming yourself it was doing the emotional
+     equivalent of shouting. Together with the monospace interface and the
+     hard borders it was the largest part of why this read as generated
+     rather than made.
+
+     The body face at a heavy weight carries a headline perfectly well and
+     is the reader's own system type, so it needs no download at all. That
+     also removes 18KB, one request, and a render dependency the headline
+     was waiting on: the font was only discovered after the CSS parsed, and
+     the headline is very likely the largest-contentful-paint element. */
+  font-weight:700;letter-spacing:-.015em;line-height:1.16;
+  text-wrap:balance;
 }
-/* Indic scripts have no Anton coverage — keep them in the body face, heavy */
+/* Devanagari and the southern scripts set taller; give them the room. */
 :lang(hi) .display,:lang(mr) .display,:lang(bn) .display,:lang(ta) .display,:lang(te) .display{
-  font-family:system-ui,'Noto Sans',sans-serif;font-weight:700;
-  text-transform:none;line-height:1.25;
+  line-height:1.3;letter-spacing:0;
 }
-.mono{font-family:ui-monospace,'Cascadia Mono',Menlo,Consolas,monospace;}
+ /* Kept as a hook so markup does not have to change, but it no longer
+    means "monospace" — it means "figures that line up". */
+.mono{font-family:var(--font-ui);font-variant-numeric:tabular-nums;}
 .wrap{max-width:min(60rem,100%);margin:0 auto;padding:0 1.3rem;}
 .wrap-wide{max-width:min(66rem,100%);margin:0 auto;padding:0 1.3rem;}
 .visually-hidden{
@@ -153,7 +181,7 @@ img,svg{max-width:100%;}
 /* ── crisis strip: identical on every page, by design ── */
 .topstrip{
   background:var(--stamp-bg);color:var(--on-stamp);
-  font-family:ui-monospace,'Cascadia Mono',Menlo,Consolas,monospace;
+  font-family:var(--font-ui);
   font-size:.76rem;padding:.5rem 0;letter-spacing:.03em;
 }
 .topstrip .wrap,.topstrip .wrap-wide{display:flex;justify-content:space-between;gap:.8rem;flex-wrap:wrap;}
@@ -188,7 +216,7 @@ img,svg{max-width:100%;}
    costs no room even at 320px, and it is the one label on the page that
    does not need to be read to be understood. */
 nav.site .setlang{
-  font-family:ui-monospace,'Cascadia Mono',Menlo,Consolas,monospace;
+  font-family:var(--font-ui);
   font-size:.72rem;font-weight:700;letter-spacing:.06em;
   margin-right:.32rem;color:var(--marigold);
 }
@@ -197,8 +225,8 @@ nav.site .setlang{
 nav.site{background:var(--deep);padding:.8rem 0;}
 nav.site .wrap,nav.site .wrap-wide{display:flex;align-items:center;gap:1.1rem;flex-wrap:wrap;}
 nav.site .brand{
-  font-family:'Anton',sans-serif;color:var(--on-deep);font-size:1.15rem;
-  text-transform:uppercase;letter-spacing:.04em;margin-right:auto;text-decoration:none;
+  font-weight:700;color:var(--on-deep);font-size:1.15rem;
+  letter-spacing:.04em;margin-right:auto;text-decoration:none;
   /* Allowed to give way. On the narrowest phones at a large text size the
      brand, Menu and Settings could not share the one line they are pinned
      to, and Settings — which holds the language switch — was pushed off
@@ -212,8 +240,8 @@ footer a,.byline a{overflow-wrap:anywhere;}
 nav.site .brand .accent{color:var(--marigold);}
 nav.site a.navlink{
   color:var(--on-deep);text-decoration:none;
-  font-family:ui-monospace,'Cascadia Mono',Menlo,Consolas,monospace;
-  font-size:.79rem;letter-spacing:.06em;text-transform:uppercase;
+  font-family:var(--font-ui);
+  font-size:.79rem;letter-spacing:.06em;
   padding:.5rem .15rem;border-bottom:2px solid transparent;cursor:pointer;display:inline-block;
 }
 nav.site a.navlink:hover,nav.site a.navlink:focus-visible{border-bottom-color:var(--marigold);}
@@ -223,8 +251,8 @@ nav.site .navlinks{display:contents;}
 /* ── the menu button: only ever seen on small screens ── */
 nav.site .navtoggle{
   display:none;background:transparent;border:1.5px solid var(--on-deep);color:var(--on-deep);
-  font-family:ui-monospace,'Cascadia Mono',Menlo,Consolas,monospace;
-  font-size:.74rem;letter-spacing:.06em;text-transform:uppercase;
+  font-family:var(--font-ui);
+  font-size:.74rem;letter-spacing:.06em;
   padding:.4rem .7rem;min-height:2.4rem;align-items:center;gap:.5rem;
 }
 nav.site .navtoggle:hover{transform:none;box-shadow:none;border-color:var(--marigold);}
@@ -244,8 +272,8 @@ nav.site .navtoggle[aria-expanded="true"] .bars::after{transform:translateY(-5px
 /* ── page furniture ── */
 header.hero{padding:3.2rem 0 2.4rem;border-bottom:3px solid var(--ink);}
 .eyebrow{
-  display:inline-block;font-family:ui-monospace,'Cascadia Mono',Menlo,Consolas,monospace;
-  font-size:.79rem;letter-spacing:.13em;text-transform:uppercase;
+  display:inline-block;font-family:var(--font-ui);
+  font-size:.79rem;letter-spacing:.13em;
   border:1.5px solid var(--heal);color:var(--heal);padding:.25rem .6rem;margin-bottom:1.1rem;
 }
 h1{font-size:clamp(1.9rem,5.5vw,3.4rem);}
@@ -255,8 +283,8 @@ h2{font-size:clamp(1.4rem,3.6vw,2.2rem);margin-bottom:.6rem;}
 
 section{padding:2.8rem 0 .3rem;}
 .sec-label{
-  font-family:ui-monospace,'Cascadia Mono',Menlo,Consolas,monospace;
-  font-size:.79rem;letter-spacing:.14em;text-transform:uppercase;
+  font-family:var(--font-ui);
+  font-size:.79rem;letter-spacing:.14em;
   color:var(--stamp);margin-bottom:.6rem;
 }
 .sec-sub{max-width:66ch;color:var(--muted);font-size:.95rem;margin-bottom:1.4rem;}
@@ -272,8 +300,8 @@ section{padding:2.8rem 0 .3rem;}
 .panel.warn{border-left-color:var(--marigold);}
 .panel.hard{border-left-color:var(--stamp);}
 .panel .tag{
-  font-family:ui-monospace,'Cascadia Mono',Menlo,Consolas,monospace;
-  font-size:.7rem;letter-spacing:.09em;text-transform:uppercase;
+  font-family:var(--font-ui);
+  font-size:.7rem;letter-spacing:.09em;
   color:var(--heal);margin-bottom:.35rem;
 }
 
@@ -284,7 +312,7 @@ section{padding:2.8rem 0 .3rem;}
 }
 .fig{background:var(--deep);color:var(--on-deep);padding:1.1rem 1rem;}
 .fig .n{
-  font-family:'Anton',sans-serif;font-size:2.1rem;line-height:1;
+  font-weight:700;font-size:2.1rem;line-height:1;
   color:var(--marigold);display:block;font-variant-numeric:tabular-nums;
 }
 :lang(hi) .fig .n,:lang(mr) .fig .n,:lang(bn) .fig .n,:lang(ta) .fig .n,:lang(te) .fig .n{
@@ -299,7 +327,7 @@ section{padding:2.8rem 0 .3rem;}
    sets to black, where the darkened marigold falls to 3.65:1 */
 :root[data-contrast="high"] .fig .n{color:#FFC64D;}
 .fig .s{
-  font-family:ui-monospace,'Cascadia Mono',Menlo,Consolas,monospace;
+  font-family:var(--font-ui);
   font-size:.64rem;opacity:.6;margin-top:.45rem;display:block;
 }
 
@@ -308,14 +336,14 @@ section{padding:2.8rem 0 .3rem;}
 table.data{border-collapse:collapse;width:100%;font-size:.88rem;background:var(--card);margin-bottom:.9rem;}
 table.data th,table.data td{border:1px solid var(--line);padding:.6rem .75rem;text-align:left;vertical-align:top;}
 table.data th{
-  font-family:ui-monospace,'Cascadia Mono',Menlo,Consolas,monospace;
-  font-size:.7rem;text-transform:uppercase;letter-spacing:.06em;background:var(--paper);
+  font-family:var(--font-ui);
+  font-size:.7rem;letter-spacing:.06em;background:var(--paper);
 }
 table.data td.ok{color:var(--heal);font-weight:700;}
 
 /* ── buttons ── */
-button,.btn{
-  font-family:'Anton',sans-serif;text-transform:uppercase;letter-spacing:.05em;
+button,.btn{border-radius:var(--r-sm);
+  font-weight:700;letter-spacing:.05em;
   font-size:.95rem;background:var(--ink);color:var(--paper);border:none;
   padding:.75rem 1.3rem;cursor:pointer;transition:transform .12s var(--e-out1);
   text-decoration:none;display:inline-block;min-height:2.75rem;
@@ -324,7 +352,9 @@ button,.btn{
   font-family:system-ui,'Noto Sans',sans-serif;font-weight:700;
   text-transform:none;letter-spacing:0;
 }
-button:hover,.btn:hover{transform:translate(-2px,-2px);box-shadow:4px 4px 0 var(--heal);}
+/* Was a 4px hard offset and a 2px lurch — a poster effect, on every button
+   on a page about how often you have felt hopeless. Lift and settle. */
+button:hover,.btn:hover{transform:translateY(-1px);box-shadow:var(--shadow-soft);}
 button.secondary{background:transparent;color:var(--ink);border:2px solid var(--ink);}
 button.danger{background:var(--stamp-bg);color:var(--on-stamp);}
 button:disabled{opacity:.45;cursor:not-allowed;transform:none;box-shadow:none;}
@@ -344,7 +374,7 @@ footer p{max-width:72ch;}
 footer .byline{
   margin-top:1.1rem;padding-top:1rem;border-top:1px solid var(--line);
   display:flex;gap:.8rem;flex-wrap:wrap;align-items:baseline;
-  font-family:ui-monospace,'Cascadia Mono',Menlo,Consolas,monospace;font-size:.78rem;
+  font-family:var(--font-ui);font-size:.78rem;
 }
 footer .byline strong{color:var(--ink);font-size:.85rem;}
 
@@ -352,7 +382,20 @@ footer .byline strong{color:var(--ink);font-size:.85rem;}
 @media(max-width:720px){
   /* One row: brand, menu, settings. The links live behind the button. */
   nav.site{padding:.55rem 0;}
-  nav.site .wrap,nav.site .wrap-wide{gap:.6rem;flex-wrap:wrap;}
+  /* nowrap on the closed row, at every phone width — not just under 380px.
+     Anton was a CONDENSED face; the system bold that replaced it is much
+     wider, so "PsychScreener" + Menu + Settings stopped fitting one line
+     and the row wrapped to two. That grew the nav from 64px to 119px the
+     moment nav.js inserted the toggle, shoving the whole page down 55px
+     while it was being read — 0.282 of layout shift, all of the page's
+     CLS, and a regression of the fix that got it to zero.
+
+     The brand already carries min-width:0 and an ellipsis, so with nowrap
+     it gives way instead of wrapping. It is the only thing in the row that
+     can shorten without costing a control. The menu, when open, still
+     needs a line of its own — hence the override below. */
+  nav.site .wrap,nav.site .wrap-wide{gap:.6rem;flex-wrap:nowrap;}
+  nav.site.menu-open .wrap,nav.site.menu-open .wrap-wide{flex-wrap:wrap;}
   nav.site .navtoggle{display:inline-flex;}
   nav.site .navlinks{
     display:none;flex-basis:100%;width:100%;

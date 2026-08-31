@@ -36,7 +36,7 @@
   .stat{padding:22px 20px;border-right:2px solid var(--ink);border-bottom:2px solid var(--ink);background:#fff;}
   .stat:last-child{border-right:none;}
   @media(max-width:700px){.stat{border-right:none;}}
-  .stat .num{font-family:'Anton',sans-serif;font-size:44px;line-height:1;color:var(--stamp);}
+  .stat .num{font-weight:700;font-size:44px;line-height:1;color:var(--stamp);}
   .stat .lbl{font-size:14.5px;margin-top:8px;}
   .stat .src{font-family:ui-monospace,'Cascadia Mono',Menlo,Consolas,monospace;font-size:11px;color:#7a7f8d;margin-top:10px;}
   .crisis-copy{max-width:660px;margin-top:30px;}
@@ -51,9 +51,9 @@
   }
   .declaration:last-of-type{border-bottom:1px solid rgba(246,244,238,.22);}
   .declaration .roman{
-    font-family:'Anton',sans-serif;font-size:34px;color:var(--marigold);line-height:1;
+    font-weight:700;font-size:34px;color:var(--marigold);line-height:1;
   }
-  .declaration h3{font-family:'Anton',sans-serif;font-size:22px;letter-spacing:.02em;text-transform:uppercase;margin-bottom:8px;}
+  .declaration h3{font-weight:700;font-size:22px;letter-spacing:.02em;margin-bottom:8px;}
   .declaration p{font-size:16px;color:rgba(246,244,238,.82);max-width:640px;}
   @media(max-width:560px){.declaration{grid-template-columns:1fr;gap:6px;}}
 
@@ -67,7 +67,7 @@
   .sol h3{font-size:19px;font-weight:700;margin-bottom:6px;}
   .sol .who{
     font-family:ui-monospace,'Cascadia Mono',Menlo,Consolas,monospace;font-size:12px;letter-spacing:.08em;
-    text-transform:uppercase;color:var(--heal);margin-bottom:8px;
+    color:var(--heal);margin-bottom:8px;
   }
   .sol p{font-size:15.5px;}
 
@@ -93,16 +93,16 @@
   /* ── screener banner ── */
   .screenerlink{background:var(--heal);color:var(--paper);padding:34px 0;}
   .screenerlink .wrap{display:flex;justify-content:space-between;align-items:center;gap:18px;flex-wrap:wrap;}
-  .screenerlink h3{font-family:'Anton',sans-serif;font-size:24px;text-transform:uppercase;letter-spacing:.03em;}
+  .screenerlink h3{font-weight:700;font-size:24px;letter-spacing:.03em;}
   .screenerlink p{font-size:15px;opacity:.9;max-width:520px;}
   .screenerlink a{
-    font-family:'Anton',sans-serif;text-transform:uppercase;letter-spacing:.05em;
+    font-weight:700;letter-spacing:.05em;
     font-size:17px;background:var(--paper);color:var(--ink);text-decoration:none;
     padding:13px 26px;display:inline-block;transition:transform .12s;
   }
   .screenerlink a:hover{transform:translate(-2px,-2px);box-shadow:4px 4px 0 var(--ink);}
   .stampmark{
-    display:inline-block;font-family:'Anton',sans-serif;text-transform:uppercase;
+    display:inline-block;font-weight:700;
     border:3px double var(--stamp);color:var(--stamp);padding:6px 14px;
     transform:rotate(-2deg);font-size:15px;letter-spacing:.08em;margin-bottom:16px;
   }

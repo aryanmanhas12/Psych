@@ -59,7 +59,7 @@
     *,*::before,*::after{animation:none!important;transition:none!important;}
     html{scroll-behavior:auto;}
   }
-  /* Indic scripts have no Anton coverage — keep them in the body face, heavy */
+  /* Indic scripts set taller; give them the room. */
   :lang(hi) .display,:lang(mr) .display,:lang(bn) .display,:lang(ta) .display,:lang(te) .display{
     font-family:system-ui,-apple-system,'Segoe UI','Noto Sans',Roboto,Arial,sans-serif;font-weight:700;text-transform:none;line-height:1.25;
   }
@@ -76,11 +76,11 @@
   /* ── nav ── */
   nav{background:var(--ink);padding:.8rem 0;}
   nav .wrap{display:flex;align-items:center;gap:1.1rem;flex-wrap:wrap;}
-  .brand{font-family:'Anton',sans-serif;color:var(--paper);font-size:1.15rem;text-transform:uppercase;letter-spacing:.04em;margin-right:auto;}
+  .brand{font-weight:700;color:var(--paper);font-size:1.15rem;letter-spacing:.04em;margin-right:auto;}
   .brand .accent{color:var(--marigold);}
   nav a.navlink{
-    color:var(--paper);text-decoration:none;font-family:ui-monospace,'Cascadia Mono',Menlo,Consolas,monospace;
-    font-size:.79rem;letter-spacing:.06em;text-transform:uppercase;
+    color:var(--paper);text-decoration:none;font-family:var(--font-ui);
+    font-size:.79rem;letter-spacing:.06em;
     padding:.5rem .15rem;border-bottom:2px solid transparent;cursor:pointer;display:inline-block;
   }
   nav a.navlink:hover,nav a.navlink:focus-visible{border-bottom-color:var(--marigold);}
@@ -88,7 +88,7 @@
 
   /* ── settings popover (replaces the old full-width a11y bar) ── */
   .setbtn{
-    font-family:ui-monospace,'Cascadia Mono',Menlo,Consolas,monospace;text-transform:none;letter-spacing:.04em;
+    font-family:var(--font-ui);text-transform:none;letter-spacing:.04em;
     background:transparent;color:var(--paper);border:1.5px solid rgba(246,244,238,.45);
     padding:.3rem .7rem;font-size:.78rem;min-height:2rem;cursor:pointer;
   }
@@ -97,7 +97,7 @@
   .setwrap{position:relative;}
   .setpanel{
     display:none;position:absolute;right:0;top:calc(100% + .5rem);z-index:40;
-    background:var(--card);border:2px solid var(--ink);box-shadow:6px 6px 0 rgba(21,28,46,.25);
+    background:var(--card);border:1px solid var(--line);border-radius:var(--r-lg);box-shadow:var(--shadow-soft);
     padding:1rem;min-width:15rem;
   }
   .setpanel.open{display:block;animation:pop .18s cubic-bezier(.25,.46,.45,.94);}
@@ -105,8 +105,8 @@
   .setrow{display:flex;flex-direction:column;gap:.4rem;margin-bottom:.9rem;}
   .setrow:last-child{margin-bottom:0;}
   .setrow .lbl{
-    font-family:ui-monospace,'Cascadia Mono',Menlo,Consolas,monospace;font-size:.68rem;letter-spacing:.08em;
-    text-transform:uppercase;color:var(--muted);
+    font-family:var(--font-ui);font-size:.68rem;letter-spacing:.08em;
+    color:var(--muted);
   }
   .setrow .btns{display:flex;gap:.4rem;}
   select.langsel{
@@ -114,7 +114,7 @@
     background:var(--paper);color:var(--ink);border:2px solid var(--ink);cursor:pointer;
   }
   .setpanel button{
-    font-family:ui-monospace,'Cascadia Mono',Menlo,Consolas,monospace;text-transform:none;letter-spacing:0;
+    font-family:var(--font-ui);text-transform:none;letter-spacing:0;
     background:var(--paper);color:var(--ink);border:2px solid var(--line);
     padding:.35rem .7rem;font-size:.85rem;min-height:2.2rem;flex:1;cursor:pointer;
   }
@@ -152,7 +152,7 @@
     padding:.6rem 1rem;font-size:.9rem;max-width:64ch;margin-bottom:1.1rem;
   }
   details.notice summary{
-    cursor:pointer;font-weight:700;font-size:.85rem;text-transform:uppercase;letter-spacing:.05em;
+    cursor:pointer;font-weight:700;font-size:.85rem;letter-spacing:.05em;
     list-style:none;display:flex;align-items:center;gap:.5rem;padding:.15rem 0;
   }
   details.notice summary::-webkit-details-marker{display:none;}
@@ -160,11 +160,11 @@
   details.notice[open] summary::before{transform:rotate(90deg);}
   details.notice .inner{padding-top:.6rem;animation:slidedown .25s var(--e-out2);}
   @keyframes slidedown{from{opacity:0;transform:translateY(-6px);}to{opacity:1;transform:none;}}
-  .notice .sub{display:block;margin-top:.5rem;font-size:.78rem;color:var(--heal);font-family:ui-monospace,'Cascadia Mono',Menlo,Consolas,monospace;}
+  .notice .sub{display:block;margin-top:.5rem;font-size:.78rem;color:var(--heal);font-family:var(--font-ui);}
 
   /* ── mood: collapsed to a single compact row ── */
   .mood{
-    background:var(--card);border:2px solid var(--ink);border-left:.5rem solid var(--marigold);
+    background:var(--card);border:1px solid var(--line);border-radius:var(--r-md);border-left:.35rem solid var(--marigold);
     padding:.75rem 1rem;max-width:64ch;margin:1.1rem 0;
     /* minmax(0,1fr), not 1fr. A grid item's default min-width is auto, so
        a track sized 1fr still refuses to go narrower than its widest
@@ -205,29 +205,33 @@
   .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(15rem,100%),1fr));gap:.7rem;}
   @media(min-width:52rem){.cards{grid-template-columns:repeat(2,1fr);}}
   .card{
-    background:var(--card);border:2px solid var(--ink);padding:.9rem 1rem;
+    background:var(--card);border:1px solid var(--line);border-radius:var(--r-md);padding:1rem 1.05rem;
     display:grid;grid-template-columns:1fr auto;gap:.15rem .8rem;align-items:center;
     text-align:left;font-family:inherit;color:inherit;text-transform:none;letter-spacing:0;
     cursor:pointer;width:100%;min-height:0;
     transition:transform .17s var(--e-out1), box-shadow .17s var(--e-out1), border-color .17s var(--e-out1);
   }
-  .card:hover,.card:focus-visible{transform:translate(-2px,-2px);box-shadow:4px 4px 0 var(--heal);border-color:var(--heal);}
-  .card .tag{font-family:ui-monospace,'Cascadia Mono',Menlo,Consolas,monospace;font-size:.66rem;letter-spacing:.08em;text-transform:uppercase;color:var(--heal);grid-column:1;}
-  .card h3{font-size:1.15rem;font-weight:700;grid-column:1;}
-  .card p{font-size:.82rem;color:var(--muted);grid-column:1/-1;margin-top:.2rem;}
+  .card:hover,.card:focus-visible{transform:translate(-2px,-2px);box-shadow:var(--shadow-soft);border-color:var(--heal);}
+  /* Stack, not a two-column grid: the subject, what it asks about, then the
+     credit and Start sharing the last line. */
+  .card{display:flex;flex-direction:column;align-items:stretch;gap:.15rem;}
+  .card h3{font-size:1.2rem;font-weight:650;line-height:1.25;}
+  .card .about{font-size:.88rem;color:var(--muted);margin:.1rem 0 .5rem;line-height:1.45;}
+  .card .credit{font-size:.74rem;color:var(--muted);font-variant-numeric:tabular-nums;}
+  .card .go{align-self:flex-start;margin-top:.45rem;}
   .card .meta{
-    font-family:ui-monospace,'Cascadia Mono',Menlo,Consolas,monospace;font-size:.7rem;color:var(--muted);
+    font-family:var(--font-ui);font-size:.7rem;color:var(--muted);
     grid-column:2;grid-row:1/3;text-align:right;white-space:nowrap;
   }
   .card .go{
-    grid-column:2;grid-row:3;text-align:right;font-family:ui-monospace,'Cascadia Mono',Menlo,Consolas,monospace;
+    grid-column:2;grid-row:3;text-align:right;font-family:var(--font-ui);
     font-size:.75rem;color:var(--heal);font-weight:600;white-space:nowrap;
     transition:transform .17s var(--e-out1);
   }
   .card:hover .go{transform:translateX(3px);}
 
   button,.btn{
-    font-family:'Anton',sans-serif;text-transform:uppercase;letter-spacing:.05em;
+    font-weight:700;letter-spacing:.05em;
     font-size:.95rem;background:var(--ink);color:var(--paper);border:none;
     padding:.75rem 1.3rem;cursor:pointer;transition:transform .12s;text-decoration:none;
     display:inline-block;min-height:2.75rem;
@@ -236,7 +240,7 @@
   :lang(hi) .btn,:lang(mr) .btn,:lang(bn) .btn,:lang(ta) .btn,:lang(te) .btn{
     font-family:system-ui,-apple-system,'Segoe UI','Noto Sans',Roboto,Arial,sans-serif;font-weight:700;text-transform:none;letter-spacing:0;
   }
-  button:hover,.btn:hover{transform:translate(-2px,-2px);box-shadow:4px 4px 0 var(--heal);}
+  button:hover,.btn:hover{transform:translate(-2px,-2px);box-shadow:var(--shadow-soft);}
   :where(button,a,select,input,[tabindex]):focus-visible{outline:3px solid var(--stamp);outline-offset:3px;}
   button.secondary{background:transparent;color:var(--ink);border:2px solid var(--ink);}
   button.danger{background:var(--stamp-bg);color:var(--on-stamp);}
@@ -247,21 +251,22 @@
     position:sticky;top:0;z-index:20;background:var(--ink);color:var(--paper);
     padding:.55rem 0;margin-bottom:1rem;
   }
+  .tokenbar[hidden]{display:none;}
   .tokenbar .wrap{display:flex;align-items:center;gap:.8rem;flex-wrap:wrap;}
   .tokenbar .tk{
-    font-family:ui-monospace,'Cascadia Mono',Menlo,Consolas,monospace;font-size:.72rem;letter-spacing:.12em;
+    font-family:var(--font-ui);font-size:.72rem;letter-spacing:.12em;
     border:1.5px solid var(--marigold);color:var(--marigold);padding:.15rem .5rem;white-space:nowrap;
   }
-  .tokenbar .tkname{font-family:ui-monospace,'Cascadia Mono',Menlo,Consolas,monospace;font-size:.78rem;opacity:.85;margin-right:auto;}
-  .tokenbar .tkclock{font-family:ui-monospace,'Cascadia Mono',Menlo,Consolas,monospace;font-size:.72rem;opacity:.55;font-variant-numeric:tabular-nums;}
+  .tokenbar .tkname{font-family:var(--font-ui);font-size:.78rem;opacity:.85;margin-right:auto;}
+  .tokenbar .tkclock{font-family:var(--font-ui);font-size:.72rem;opacity:.55;font-variant-numeric:tabular-nums;}
   .pbar{height:.35rem;background:rgba(246,244,238,.2);width:100%;margin-top:.5rem;}
   .pfill{height:100%;background:var(--marigold);width:0%;transition:width .32s var(--e-out2);}
   .testhead{margin-bottom:.9rem;}
   .testhead .period{
     background:var(--ink);color:var(--paper);display:inline-block;
-    font-family:ui-monospace,'Cascadia Mono',Menlo,Consolas,monospace;font-size:.74rem;padding:.25rem .6rem;margin-top:.5rem;
+    font-family:var(--font-ui);font-size:.74rem;padding:.25rem .6rem;margin-top:.5rem;
   }
-  .progress{font-family:ui-monospace,'Cascadia Mono',Menlo,Consolas,monospace;font-size:.78rem;color:var(--muted);margin:.3rem 0 .8rem;}
+  .progress{font-family:var(--font-ui);font-size:.78rem;color:var(--muted);margin:.3rem 0 .8rem;}
   /* The card slides in from 14px to the right, which is a transform and so
      costs no layout — but it does extend the scrollable area, and when the
      card already fills the width that is 14px of document wider than the
@@ -276,17 +281,30 @@
      rings sit well within the wrap's own padding so none of them is cut.
      A browser too old for clip simply behaves as it did before. */
   #view-test{overflow-x:clip;}
-  .qbox{background:var(--card);border:2px solid var(--ink);padding:1.2rem 1.3rem;max-width:48rem;animation:qin .3s var(--e-out2);}
+  .primer{
+    background:var(--card);border:1px solid var(--line);border-radius:var(--r-lg);
+    padding:1.3rem 1.2rem;max-width:34rem;margin:.4rem 0 1rem;
+  }
+  .primer[hidden]{display:none;}
+  .primer h2{font-size:1.22rem;font-weight:650;line-height:1.3;margin-bottom:.7rem;}
+  .primer ul{list-style:none;display:flex;flex-direction:column;gap:.5rem;margin-bottom:1.1rem;}
+  .primer li{font-size:.92rem;color:var(--muted);line-height:1.5;padding-left:1.1rem;position:relative;}
+  .primer li::before{content:"";position:absolute;left:0;top:.62em;width:.42rem;height:.42rem;
+    border-radius:50%;background:var(--heal);}
+  .primer-go{display:flex;gap:.6rem;flex-wrap:wrap;}
+  .primer-go #primerStart{flex:1 1 9rem;min-height:3rem;font-size:1rem;}
+  .primer-go #primerBack{flex:0 1 auto;min-height:3rem;}
+  .qbox{background:var(--card);border:1px solid var(--line);border-radius:var(--r-lg);padding:1.2rem 1.3rem;max-width:48rem;animation:qin .3s var(--e-out2);}
   @keyframes qin{from{opacity:0;transform:translateX(14px);}to{opacity:1;transform:none;}}
   .qbox.back{animation:qinback .3s var(--e-out2);}
   @keyframes qinback{from{opacity:0;transform:translateX(-14px);}to{opacity:1;transform:none;}}
   .qtext{font-size:1.12rem;font-weight:600;margin-bottom:.9rem;text-wrap:balance;}
-  .qtext .qnum{font-family:ui-monospace,'Cascadia Mono',Menlo,Consolas,monospace;color:var(--heal);font-size:.85rem;margin-right:.5rem;}
+  .qtext .qnum{font-family:var(--font-ui);color:var(--heal);font-size:.85rem;margin-right:.5rem;}
   .bigopts{display:flex;flex-direction:column;gap:.6rem;}
   .bigopts button{
     font-family:system-ui,-apple-system,'Segoe UI','Noto Sans',Roboto,Arial,sans-serif;font-weight:400;text-transform:none;letter-spacing:0;
     font-size:.98rem;background:var(--paper);color:var(--ink);
-    border:2px solid var(--line);padding:.65rem .9rem;text-align:left;
+    border:1.5px solid var(--line);border-radius:var(--r-md);padding:.7rem .95rem;text-align:left;
     display:flex;align-items:center;gap:.7rem;cursor:pointer;min-height:2.9rem;
     transition:border-color .17s var(--e-out1), background .17s var(--e-out1), transform .17s var(--e-out1);
   }
@@ -296,8 +314,15 @@
   @media (prefers-reduced-motion: reduce){ .bigopts button.picked{animation:none;} }
   .bigopts button[aria-checked="true"]{border-color:var(--heal);border-width:3px;background:#e9f1ee;font-weight:600;}
   :root[data-contrast="high"] .bigopts button[aria-checked="true"]{background:#d7e8e1;}
+  /* These digits are keyboard shortcuts. On a touch screen there is no
+     keyboard to shortcut, and next to "Not at all" a boxed 1 reads as a
+     score — which is not even the right score, since PHQ options are worth
+     0 to 3. So a phone was showing every answer labelled one point higher
+     than it counts for. Hidden where there is no keyboard; kept where
+     there is, because there it genuinely helps. */
+  @media (pointer: coarse){ .bigopts .kbd{display:none;} }
   .bigopts .kbd{
-    font-family:ui-monospace,'Cascadia Mono',Menlo,Consolas,monospace;font-size:.75rem;border:1.5px solid var(--line);
+    font-family:var(--font-ui);font-size:.75rem;border:1.5px solid var(--line);
     padding:.05rem .45rem;color:var(--muted);flex:none;
   }
   .bigopts button[aria-checked="true"] .kbd{border-color:var(--heal);color:var(--heal);}
@@ -312,8 +337,8 @@
     background:var(--ink);color:var(--paper);padding:1rem;text-align:center;
     display:flex;flex-direction:column;justify-content:center;
   }
-  .scorebox .num{font-family:'Anton',sans-serif;font-size:2.7rem;line-height:1;font-variant-numeric:tabular-nums;}
-  .scorebox .of{font-family:ui-monospace,'Cascadia Mono',Menlo,Consolas,monospace;font-size:.75rem;opacity:.8;margin-top:.25rem;}
+  .scorebox .num{font-weight:700;font-size:2.7rem;line-height:1;font-variant-numeric:tabular-nums;}
+  .scorebox .of{font-family:var(--font-ui);font-size:.75rem;opacity:.8;margin-top:.25rem;}
   .verdict{padding:1rem 1.1rem;}
 
   /* the reveal that lands the manifesto's argument at the moment it bites */
@@ -322,7 +347,7 @@
     background:var(--card);padding:.85rem 1.1rem;
   }
   .timecard .t{
-    font-family:ui-monospace,'Cascadia Mono',Menlo,Consolas,monospace;font-size:.82rem;color:var(--ink);
+    font-family:var(--font-ui);font-size:.82rem;color:var(--ink);
     font-weight:600;font-variant-numeric:tabular-nums;
   }
   .timecard .c{font-size:.86rem;color:var(--muted);margin-top:.3rem;}
@@ -341,7 +366,7 @@
   details.acc ul{margin:0 0 0 1.2rem;}
   details.acc li{margin-bottom:.45rem;font-size:.92rem;}
   .band{
-    display:inline-block;font-family:'Anton',sans-serif;text-transform:uppercase;
+    display:inline-block;font-weight:700;
     letter-spacing:.04em;font-size:1.05rem;padding:.25rem .8rem;border:2px solid;margin-bottom:.6rem;
   }
   :lang(hi) .band,:lang(mr) .band,:lang(bn) .band,:lang(ta) .band,:lang(te) .band{
@@ -356,7 +381,7 @@
   .sevscale{max-width:48rem;margin:-.2rem 0 1.6rem;position:relative;padding-top:1.5rem;}
   .sevmarker{
     position:absolute;top:0;transform:translateX(-50%);text-align:center;
-    font-family:ui-monospace,'Cascadia Mono',Menlo,Consolas,monospace;font-size:.78rem;font-weight:700;
+    font-family:var(--font-ui);font-size:.78rem;font-weight:700;
     font-variant-numeric:tabular-nums;transition:left .5s ease;
   }
   .sevtri{width:0;height:0;border-left:.38rem solid transparent;border-right:.38rem solid transparent;border-top:.45rem solid var(--ink);margin:0 auto;}
@@ -365,20 +390,20 @@
   .sevseg:last-child{border-right:none;}
   .sevseg.s0{background:#A9C9BB;} .sevseg.s1{background:#E8D08E;}
   .sevseg.s2{background:#E0A878;} .sevseg.s3{background:#D68C83;}
-  .sevlabels{display:flex;font-family:ui-monospace,'Cascadia Mono',Menlo,Consolas,monospace;font-size:.68rem;color:var(--muted);margin-top:.25rem;font-variant-numeric:tabular-nums;}
+  .sevlabels{display:flex;font-family:var(--font-ui);font-size:.68rem;color:var(--muted);margin-top:.25rem;font-variant-numeric:tabular-nums;}
   .sevlabels div{text-align:center;}
 
   .safety{
     background:var(--stamp-bg);color:var(--on-stamp);padding:1.3rem 1.4rem;margin-bottom:1.4rem;
-    border:2px solid var(--ink);max-width:48rem;
+    border-radius:var(--r-md);max-width:48rem;
   }
-  .safety h3{font-family:'Anton',sans-serif;text-transform:uppercase;font-size:1.2rem;margin-bottom:.6rem;letter-spacing:.03em;}
+  .safety h3{font-weight:700;font-size:1.2rem;margin-bottom:.6rem;letter-spacing:.03em;}
   :lang(hi) .safety h3,:lang(mr) .safety h3,:lang(bn) .safety h3,:lang(ta) .safety h3,:lang(te) .safety h3{
     font-family:system-ui,-apple-system,'Segoe UI','Noto Sans',Roboto,Arial,sans-serif;text-transform:none;letter-spacing:0;
   }
   .safety p{font-size:.95rem;margin-bottom:.5rem;}
   .safety a{color:#fff;font-weight:700;}
-  .safety .lines{font-family:ui-monospace,'Cascadia Mono',Menlo,Consolas,monospace;font-size:.85rem;margin-top:.6rem;line-height:2;}
+  .safety .lines{font-family:var(--font-ui);font-size:.85rem;margin-top:.6rem;line-height:2;}
 
   .nextsteps{max-width:62ch;}
   .nextsteps h3{font-size:1.12rem;margin:1.3rem 0 .6rem;font-weight:700;}
@@ -390,6 +415,10 @@
   }
   .rescreen b{color:var(--heal);}
   .actionrow{display:flex;gap:.75rem;flex-wrap:wrap;margin-top:1.6rem;}
+  /* `hidden` is only a UA rule and display:flex beats it — the same trap
+     noted on .intro. Every element here that toggles via the attribute
+     needs this. */
+  .actionrow[hidden]{display:none;}
   .sheetnudge{
     border-left:.3rem solid var(--heal);padding:.6rem .85rem;margin-top:1.4rem;
     background:color-mix(in srgb,var(--heal) 9%,transparent);
@@ -401,17 +430,17 @@
   .histblock{background:var(--card);border:2px solid var(--ink);padding:1.3rem;margin-bottom:1.2rem;max-width:52rem;}
   .histsheet{margin-top:.9rem;font-size:.85rem;}
   .histblock h3{font-size:1.12rem;font-weight:700;margin-bottom:.2rem;}
-  .histblock .sub{font-family:ui-monospace,'Cascadia Mono',Menlo,Consolas,monospace;font-size:.75rem;color:var(--muted);margin-bottom:.9rem;}
+  .histblock .sub{font-family:var(--font-ui);font-size:.75rem;color:var(--muted);margin-bottom:.9rem;}
   .chartwrap{overflow-x:auto;position:relative;}
   table.histtable{border-collapse:collapse;width:100%;margin-top:.9rem;font-size:.85rem;}
   table.histtable th,table.histtable td{border:1px solid var(--line);padding:.45rem .65rem;text-align:left;}
-  table.histtable th{font-family:ui-monospace,'Cascadia Mono',Menlo,Consolas,monospace;font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;background:var(--paper);}
+  table.histtable th{font-family:var(--font-ui);font-size:.72rem;letter-spacing:.06em;background:var(--paper);}
   table.histtable td:nth-child(2){font-variant-numeric:tabular-nums;}
   table.histtable caption{text-align:left;font-size:.78rem;color:var(--muted);padding-bottom:.4rem;}
   .histctl{display:flex;gap:.75rem;flex-wrap:wrap;margin-top:.6rem;}
   .ctip{
     position:absolute;pointer-events:none;background:var(--ink);color:var(--paper);
-    font-family:ui-monospace,'Cascadia Mono',Menlo,Consolas,monospace;font-size:.75rem;padding:.3rem .55rem;
+    font-family:var(--font-ui);font-size:.75rem;padding:.3rem .55rem;
     transform:translate(-50%,-120%);white-space:nowrap;display:none;z-index:5;
   }
 
@@ -427,14 +456,14 @@
   }
   .stat{background:var(--ink);color:var(--paper);padding:1rem .9rem;}
   .stat .n{
-    font-family:'Anton',sans-serif;font-size:2.1rem;line-height:1;color:var(--marigold);
+    font-weight:700;font-size:2.1rem;line-height:1;color:var(--marigold);
     font-variant-numeric:tabular-nums;display:block;
   }
   :lang(hi) .stat .n,:lang(mr) .stat .n,:lang(bn) .stat .n,:lang(ta) .stat .n,:lang(te) .stat .n{
     font-family:system-ui,-apple-system,'Segoe UI','Noto Sans',Roboto,Arial,sans-serif;font-weight:700;
   }
   .stat .l{font-size:.8rem;line-height:1.45;margin-top:.4rem;opacity:.92;}
-  .stat .s{font-family:ui-monospace,'Cascadia Mono',Menlo,Consolas,monospace;font-size:.62rem;opacity:.55;margin-top:.45rem;display:block;}
+  .stat .s{font-family:var(--font-ui);font-size:.62rem;opacity:.55;margin-top:.45rem;display:block;}
   /* Dimming is a way of saying "this matters less". Someone who has
      turned on high contrast is telling us they cannot afford that, and
      the citation is the part that makes a claim checkable. */
@@ -450,14 +479,14 @@
   /* ── global helplines ── */
   .dirlist{display:grid;gap:.6rem;max-width:52rem;margin-bottom:1.2rem;}
   .dir{
-    background:var(--card);border:2px solid var(--ink);border-left:.5rem solid var(--stamp);
+    background:var(--card);border:1px solid var(--line);border-radius:var(--r-md);border-left:.35rem solid var(--stamp);
     padding:.85rem 1.1rem;
   }
   .dir a{font-weight:700;font-size:1rem;color:var(--stamp);}
   .dir p{font-size:.86rem;color:var(--muted);margin-top:.2rem;}
   .regiontabs{display:flex;gap:.4rem;flex-wrap:wrap;margin-bottom:.8rem;}
   .regiontabs button{
-    font-family:ui-monospace,'Cascadia Mono',Menlo,Consolas,monospace;text-transform:none;letter-spacing:.02em;
+    font-family:var(--font-ui);text-transform:none;letter-spacing:.02em;
     font-size:.78rem;background:var(--card);color:var(--ink);border:2px solid var(--ink);
     padding:.35rem .7rem;min-height:2.2rem;
   }
@@ -465,9 +494,9 @@
   .regiontabs button[aria-pressed="true"]{background:var(--ink);color:var(--paper);}
   table.lines{border-collapse:collapse;width:100%;max-width:52rem;font-size:.86rem;background:var(--card);}
   table.lines th,table.lines td{border:1px solid var(--line);padding:.5rem .65rem;text-align:left;vertical-align:top;}
-  table.lines th{font-family:ui-monospace,'Cascadia Mono',Menlo,Consolas,monospace;font-size:.68rem;text-transform:uppercase;letter-spacing:.06em;background:var(--paper);}
+  table.lines th{font-family:var(--font-ui);font-size:.68rem;letter-spacing:.06em;background:var(--paper);}
   table.lines td a{font-weight:700;white-space:nowrap;}
-  .reviewed{font-family:ui-monospace,'Cascadia Mono',Menlo,Consolas,monospace;font-size:.72rem;color:var(--muted);margin-top:.6rem;}
+  .reviewed{font-family:var(--font-ui);font-size:.72rem;color:var(--muted);margin-top:.6rem;}
 
   /* ── the helpline directory, on a phone ──
      Three columns of country/service/number is a table on a desktop and a
@@ -492,8 +521,8 @@
     }
     table.lines td{border:0;padding:.1rem 0;}
     table.lines td:first-child{
-      font-family:ui-monospace,'Cascadia Mono',Menlo,Consolas,monospace;
-      font-size:.68rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);
+      font-family:var(--font-ui);
+      font-size:.68rem;letter-spacing:.06em;color:var(--muted);
     }
     table.lines td a{
       display:inline-flex;align-items:center;min-height:44px;
@@ -523,7 +552,7 @@
   .bub.u{background:var(--ink);color:var(--paper);align-self:flex-end;text-align:right;}
   .bub.crisis{background:var(--stamp-bg);color:var(--on-stamp);border-color:var(--ink);align-self:stretch;max-width:100%;}
   .bub.crisis a{color:#fff;font-weight:700;}
-  .bub .lines{font-family:ui-monospace,'Cascadia Mono',Menlo,Consolas,monospace;font-size:.85rem;line-height:2;margin-top:.5rem;}
+  .bub .lines{font-family:var(--font-ui);font-size:.85rem;line-height:2;margin-top:.5rem;}
   .typing{display:inline-flex;gap:.22rem;align-items:center;padding:.15rem 0;}
   .typing i{width:.36rem;height:.36rem;border-radius:50%;background:var(--muted);animation:blink 1.1s infinite;}
   .typing i:nth-child(2){animation-delay:.18s;} .typing i:nth-child(3){animation-delay:.36s;}
@@ -563,10 +592,10 @@
   .orb.out{transform:scale(.62);transition-duration:6s;}
   @media (prefers-reduced-motion: reduce){ .orb{transition:none!important;transform:scale(.85)!important;} }
   .orb span{
-    font-family:ui-monospace,'Cascadia Mono',Menlo,Consolas,monospace;
+    font-family:var(--font-ui);
     font-size:.78rem;color:var(--heal);font-weight:600;padding:0 .4rem;line-height:1.3;
   }
-  .breathemeta{font-family:ui-monospace,'Cascadia Mono',Menlo,Consolas,monospace;font-size:.78rem;color:var(--muted);}
+  .breathemeta{font-family:var(--font-ui);font-size:.78rem;color:var(--muted);}
   .breathebtns{display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.4rem;}
 
   /* install prompt — only appears if the browser offers it */
@@ -593,7 +622,7 @@
   #overture.closing{animation:otOut .5s var(--e-out2) forwards;}
   @keyframes otOut{to{opacity:0;visibility:hidden;}}
   .ot-top{padding:.55rem 0;background:var(--stamp-bg);color:var(--on-stamp);
-    font-family:ui-monospace,'Cascadia Mono',Menlo,Consolas,monospace;font-size:.72rem;}
+    font-family:var(--font-ui);font-size:.72rem;}
   .ot-top .wrap{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap;align-items:center;}
   .ot-top a{color:#fff;font-weight:700;}
   .ot-stage{display:grid;place-items:center;padding:1rem;min-height:0;}
@@ -606,7 +635,7 @@
      desktop instead of the width the stage had given it */
   .ot-frame{width:100%;display:grid;place-items:center;min-height:0;}
   .ot-cap{
-    font-family:ui-monospace,'Cascadia Mono',Menlo,Consolas,monospace;
+    font-family:var(--font-ui);
     font-size:.8rem;color:var(--muted);text-align:center;margin:0;max-width:34ch;
   }
   /* Six names, wrapping to as many rows as they need. Each is a real
@@ -631,7 +660,7 @@
   .ot-bottom{padding:.9rem 0 1.4rem;}
   .ot-bottom .wrap{display:flex;justify-content:center;align-items:center;gap:1rem;flex-wrap:wrap;}
   #skipIntro{
-    font-family:ui-monospace,'Cascadia Mono',Menlo,Consolas,monospace;
+    font-family:var(--font-ui);
     text-transform:none;letter-spacing:.04em;font-size:.85rem;
     background:transparent;color:var(--ink);border:2px solid var(--ink);padding:.5rem 1.1rem;
   }
@@ -854,7 +883,7 @@
   .intro-dots{font-size:.75rem;color:var(--muted);letter-spacing:.25em;}
   .intro-skip{
     background:transparent;color:var(--muted);border:0;
-    font-family:ui-monospace,'Cascadia Mono',Menlo,Consolas,monospace;
+    font-family:var(--font-ui);
     text-transform:none;letter-spacing:0;font-size:.8rem;
     min-height:2.75rem;padding:.4rem .6rem;text-decoration:underline;
   }
@@ -967,7 +996,7 @@
   .tour-nav #tourPrev,.tour-nav #tourNext{min-width:2.75rem;padding:.5rem;font-size:1.1rem;}
   .tour-nav #tourSkip{
     margin-left:auto;background:transparent;color:var(--muted);
-    font-family:ui-monospace,'Cascadia Mono',Menlo,Consolas,monospace;
+    font-family:var(--font-ui);
     text-transform:none;letter-spacing:0;font-size:.8rem;min-height:auto;padding:.4rem .2rem;
   }
   .tour-nav #tourPrev:disabled{opacity:.3;cursor:default;}
@@ -1070,7 +1099,7 @@
          because that is the axis the bar can afford to grow on. */
       gap:.18rem;min-height:3.9rem;padding:.35rem 2px;
       color:rgba(255,255,255,.62);text-decoration:none;
-      font-family:ui-monospace,'Cascadia Mono',Menlo,Consolas,monospace;
+      font-family:var(--font-ui);
       font-size:.6rem;letter-spacing:.02em;text-align:center;line-height:1.15;
     }
     .tabbar svg{
@@ -1104,7 +1133,7 @@
   .byline{
     margin-top:1.1rem;padding-top:1rem;border-top:1px solid var(--line);
     display:flex;gap:.8rem;flex-wrap:wrap;align-items:baseline;
-    font-family:ui-monospace,'Cascadia Mono',Menlo,Consolas,monospace;font-size:.78rem;
+    font-family:var(--font-ui);font-size:.78rem;
   }
   .byline strong{color:var(--ink);font-size:.85rem;}
   .byline a{color:var(--heal);}
@@ -1123,7 +1152,7 @@
      !important. JS still toggles display, which is why it starts hidden. */
   .ledemore{
     display:none;
-    font-family:ui-monospace,'Cascadia Mono',Menlo,Consolas,monospace;
+    font-family:var(--font-ui);
     text-transform:none;letter-spacing:0;font-size:.76rem;
     padding:.2rem .5rem;min-height:0;border-width:1.5px;margin-bottom:.8rem;
   }
@@ -1148,7 +1177,7 @@
     /* Tighter than it was below the cards, where vertical room was free.
        Above them every pixel is competing with the first screener. */
     margin:.55rem 0 .85rem;font-size:.82rem;
-    font-family:ui-monospace,'Cascadia Mono',Menlo,Consolas,monospace;
+    font-family:var(--font-ui);
     text-transform:none;letter-spacing:0;min-height:2.4rem;
   }
   @media(max-width:640px){
@@ -1167,7 +1196,6 @@
     h2{margin-bottom:.6rem;}
     .cards{gap:.5rem;}
     .card{padding:.75rem .85rem;}
-    .card p{display:none;}          /* description lives in the aria-label */
     .card h3{font-size:1.05rem;}
     /* Two columns stop working before the text does. At 320px the label
        column was down to about nine characters, so "QUICK CHECK · START
@@ -1182,9 +1210,9 @@
          PHQ-4" — the answer before the question. Flex follows the markup,
          which is already in the order the card should be read: what it
          is, its name, how long it takes, and how to begin. */
-      .card{display:flex;flex-direction:column;align-items:flex-start;gap:.1rem;}
-      .card .meta{margin-top:.15rem;}
-      .card .go{align-self:flex-end;margin-top:.35rem;}
+      /* The card is a stack at every width now, so the reordering this
+         block existed to undo cannot happen. */
+      .card h3{font-size:1.08rem;}
     }
     /* .topstrip sizing lives in site.css, so the strip is identical on
        every page — it used to be overridden here, one page out of six. */
@@ -1201,30 +1229,30 @@
   .sheet, .sheet *{overflow-wrap:anywhere;}
   .sheet .sh-top{border-bottom:2px solid var(--ink);padding-bottom:.8rem;margin-bottom:1rem;}
   .sheet .sh-kicker{
-    font-family:ui-monospace,'Cascadia Mono',Menlo,Consolas,monospace;
-    font-size:.68rem;letter-spacing:.13em;text-transform:uppercase;color:var(--stamp);
+    font-family:var(--font-ui);
+    font-size:.68rem;letter-spacing:.13em;color:var(--stamp);
   }
   .sheet h2{font-size:1.35rem;margin:.2rem 0 .1rem;}
   .sheet .sh-meta{
-    font-family:ui-monospace,'Cascadia Mono',Menlo,Consolas,monospace;
+    font-family:var(--font-ui);
     font-size:.74rem;color:var(--muted);
   }
   .sheet h3{
-    font-family:ui-monospace,'Cascadia Mono',Menlo,Consolas,monospace;
-    font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;
+    font-family:var(--font-ui);
+    font-size:.7rem;letter-spacing:.12em;
     color:var(--stamp);margin:1.4rem 0 .5rem;
   }
   .sheet .sh-score{display:flex;align-items:baseline;gap:.9rem;flex-wrap:wrap;margin-bottom:.4rem;}
   .sheet .sh-score .n{
-    font-family:'Anton',sans-serif;font-size:2.6rem;line-height:1;
+    font-weight:700;font-size:2.6rem;line-height:1;
     font-variant-numeric:tabular-nums;
   }
   .sheet .sh-verdict{font-weight:700;}
   .sheet table{border-collapse:collapse;width:100%;font-size:.84rem;}
   .sheet th,.sheet td{border:1px solid var(--line);padding:.4rem .55rem;text-align:left;vertical-align:top;}
   .sheet th{
-    font-family:ui-monospace,'Cascadia Mono',Menlo,Consolas,monospace;
-    font-size:.64rem;letter-spacing:.06em;text-transform:uppercase;background:var(--paper);
+    font-family:var(--font-ui);
+    font-size:.64rem;letter-spacing:.06em;background:var(--paper);
   }
   .sheet td.v{text-align:center;font-variant-numeric:tabular-nums;width:3.2rem;font-weight:700;}
   .sheet tr.hit td{background:color-mix(in srgb,var(--marigold) 15%,transparent);}
@@ -1295,15 +1323,15 @@
     padding:.95rem 1.1rem;text-decoration:none;color:inherit;display:block;
     transition:transform .17s var(--e-out1), box-shadow .17s var(--e-out1), border-color .17s var(--e-out1);
   }
-  .bcard:hover,.bcard:focus-visible{transform:translate(-2px,-2px);box-shadow:4px 4px 0 var(--heal);border-color:var(--heal);}
+  .bcard:hover,.bcard:focus-visible{transform:translate(-2px,-2px);box-shadow:var(--shadow-soft);border-color:var(--heal);}
   .bcard .k{
-    font-family:ui-monospace,'Cascadia Mono',Menlo,Consolas,monospace;
-    font-size:.66rem;letter-spacing:.09em;text-transform:uppercase;color:var(--heal);
+    font-family:var(--font-ui);
+    font-size:.66rem;letter-spacing:.09em;color:var(--heal);
   }
   .bcard h3{font-size:1.02rem;font-weight:700;margin:.2rem 0 .25rem;}
   .bcard p{font-size:.83rem;color:var(--muted);}
   .bcard .go{
-    font-family:ui-monospace,'Cascadia Mono',Menlo,Consolas,monospace;
+    font-family:var(--font-ui);
     font-size:.72rem;color:var(--heal);font-weight:600;margin-top:.5rem;display:inline-block;
     transition:transform .17s var(--e-out1);
   }
@@ -1693,6 +1721,23 @@
       <p class="lede" id="testIntro" style="margin-bottom:0;"></p>
       <div class="period mono" id="testPeriod"></div>
     </div>
+    <!-- Shown once per instrument, before the first question. Four facts,
+         one button: how long, where the answers go, what you get, and that
+         it is not a diagnosis. Those are the things people are actually
+         holding when they hesitate, and none of them were answered
+         anywhere before you were already inside the questionnaire. -->
+    <div class="primer" id="primer" hidden>
+      <h2 id="primerHead"></h2>
+      <ul>
+        <li id="primerPrivate"></li>
+        <li id="primerGet"></li>
+        <li id="primerNot"></li>
+      </ul>
+      <div class="primer-go">
+        <button type="button" id="primerStart"></button>
+        <button type="button" class="secondary" id="primerBack"></button>
+      </div>
+    </div>
     <p class="progress" aria-live="polite" id="progress"></p>
     <div id="qcard"></div>
     <div class="actionrow">
@@ -2071,12 +2116,20 @@ function renderCards(){
     card.className = "card reveal";
     card.dataset.delay = "1";
     card.style.setProperty("--i", i);
-    card.setAttribute("aria-label", T.ui.start + " " + t.name + " — " + t.tag);
+    /* The plain words were always here — "Depression", "Anxiety", "Alcohol
+       use" — sitting in small type ABOVE a code set in the largest text on
+       the card. A person cannot tell PHQ-9 from AUDIT-C, and should not
+       have to. So the hierarchy is swapped rather than rewritten: the
+       subject leads, the symptoms it asks about follow so a reader can
+       recognise themselves, and the instrument drops to a credit line at
+       the foot — where it still reassures the patient that this is a real
+       questionnaire and tells a clinician exactly which one was used. */
+    const about = (t.about || "");
+    card.setAttribute("aria-label", t.tag + (about ? " — " + about : "") + ". " + t.meta + ". " + T.ui.start);
     card.innerHTML =
-      '<span class="tag">'+esc(t.tag)+'</span>'+
-      '<h3>'+esc(t.name)+'</h3>'+
-      '<span class="meta">'+esc(t.meta)+'</span>'+
-      '<p>'+esc(t.desc)+'</p>'+
+      '<h3>'+esc(t.tag)+'</h3>'+
+      (about ? '<p class="about">'+esc(about)+'</p>' : '')+
+      '<span class="credit">'+esc(t.name)+' · '+esc(t.meta)+'</span>'+
       '<span class="go">'+esc(T.ui.start)+' →</span>';
     card.addEventListener("click", ()=> startTest(id));
     grid.appendChild(card);
@@ -2127,9 +2180,70 @@ function startTest(id){
   document.getElementById("testIntro").textContent = t.intro;
   document.getElementById("testPeriod").textContent = t.period;
   startClock();
-  renderQ();
+  /* The primer sits between setup and the first question. It reuses this
+     same view, so there is no new route and the token bar and Cancel are
+     the ones already here. Counts and duration are read from the
+     instrument itself, so the panel cannot drift out of sync with it.
+     Shown the first time each instrument is opened, not on every run —
+     a person taking PHQ-9 weekly does not need telling four times. */
+  if(primerSeen(id)){
+    document.getElementById("primer").hidden = true;
+    document.querySelector(".tokenbar").hidden = false;
+    document.querySelector(".actionrow").hidden = false;
+    renderQ();
+  } else {
+    showPrimer(id);
+  }
   showView("test");
 }
+
+const PRIMER_KEY = "psych-seen-primer";
+function primerSeen(id){
+  try{ return (JSON.parse(localStorage.getItem(PRIMER_KEY)) || []).includes(id); }
+  catch(e){ return true; }
+}
+function primerMark(id){
+  try{
+    const a = JSON.parse(localStorage.getItem(PRIMER_KEY)) || [];
+    if(!a.includes(id)){ a.push(id); localStorage.setItem(PRIMER_KEY, JSON.stringify(a)); }
+  }catch(e){}
+}
+function showPrimer(id){
+  const t = T.inst[id];
+  document.getElementById("primerHead").textContent = t.meta;
+  document.getElementById("primerPrivate").textContent = T.ui.primerPrivate || "";
+  document.getElementById("primerGet").textContent     = T.ui.primerGet || "";
+  document.getElementById("primerNot").textContent     = T.ui.primerNot || "";
+  document.getElementById("primerStart").textContent   = T.ui.start;
+  document.getElementById("primerBack").textContent    = T.ui.primerBack || T.ui.cancel;
+  document.getElementById("primer").hidden = false;
+  document.getElementById("qcard").innerHTML = "";
+  document.getElementById("progress").textContent = "";
+  document.getElementById("testHead").style.display = "none";
+  /* The token chip, the progress rail and the Back/Cancel row all describe
+     a question that is not on screen yet — an empty numbered box and a
+     zero-length bar read as something failing to load. They come back with
+     the first question. Back/Cancel would also be a third and fourth way
+     to leave a panel that already offers one. */
+  document.querySelector(".tokenbar").hidden = true;
+  document.querySelector(".actionrow").hidden = true;
+  setTimeout(()=> document.getElementById("primerStart").focus(), 80);
+}
+document.getElementById("primerStart").addEventListener("click", ()=>{
+  if(!current) return;
+  primerMark(current.id);
+  document.getElementById("primer").hidden = true;
+  document.querySelector(".tokenbar").hidden = false;
+  document.querySelector(".actionrow").hidden = false;
+  renderQ();
+  setTimeout(()=>{ const b=document.querySelector("#qcard .bigopts button"); if(b) b.focus(); }, 60);
+});
+document.getElementById("primerBack").addEventListener("click", ()=>{
+  /* Same exit the Cancel button takes — going back to the list before you
+     have answered anything is not a cancellation worth ceremony. */
+  document.getElementById("primer").hidden = true;
+  stopClock(); current = null; showView("home");
+});
 
 /* elapsed clock — quiet, monospace, no pressure; feeds the results reveal */
 let clockTimer = null;
@@ -2158,7 +2272,10 @@ function renderQ(){
     T.ui.tokenLabel + " " + String(i+1).padStart(2,"0") + "/" + String(n).padStart(2,"0");
   document.getElementById("pfill").style.width = (i/n*100) + "%";
   document.getElementById("progress").textContent =
-    fmt(T.ui.qOf,{i:i+1,n}) + " — " + fmt(T.ui.tapOrPress,{k:opts.length});
+    fmt(T.ui.qOf,{i:i+1,n}) +
+    /* "(or press 1-4)" is help on a keyboard and noise on a phone, where it
+       sits under an answer list that has no numbers on it any more. */
+    (matchMedia("(pointer: coarse)").matches ? "" : " — " + fmt(T.ui.tapOrPress,{k:opts.length}));
   document.getElementById("backBtn").style.visibility = i === 0 ? "hidden" : "visible";
   /* the intro only earns screen space on the first question */
   document.getElementById("testHead").style.display = i === 0 ? "" : "none";

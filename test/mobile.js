@@ -23,6 +23,21 @@ const head = m => console.log('\n\x1b[1m' + m + '\x1b[0m');
 const seen = ()=> ['psych-seen-overture','psych-seen-tour','psych-seen-intro']
                    .forEach(k=>localStorage.setItem(k,'2'));
 
+/* The primer sits between tapping a screener and question one, once per
+   instrument. Tests that walk questions have to get past it — and must
+   assert it appeared, because a silently-missing primer would otherwise
+   let a question loop "pass" by finding no questions at all. */
+async function pastPrimer(p, label){
+  const shown = await p.evaluate(()=> {
+    const el = document.getElementById('primer');
+    return !!el && !el.hidden;
+  });
+  if (shown) { await p.evaluate(()=>document.getElementById('primerStart').click());
+               await p.waitForTimeout(250); }
+  else if (label) fail(`${label}: primer did not appear before question one`);
+  return shown;
+}
+
 /* WCAG contrast of an element against whatever is actually painted behind it */
 const CR = `(sel)=>{
   const lin=c=>{c/=255;return c<=0.03928?c/12.92:Math.pow((c+0.055)/1.055,2.4);};
@@ -171,6 +186,7 @@ const OVERFLOW = `(()=>{
     await p.goto(URL,{waitUntil:'networkidle'}); await p.waitForTimeout(600);
     for (const id of ['phq4','phq9','gad7','who5','auditc']) {
       await p.evaluate(i=>startTest(i), id); await p.waitForTimeout(400);
+      await pastPrimer(p, id);
       let n=0;
       for(let k=0;k<30;k++){
         if(await p.evaluate(()=>document.getElementById('view-results').classList.contains('active'))) break;
@@ -291,6 +307,7 @@ const OVERFLOW = `(()=>{
         localStorage.setItem('psych-prefs',JSON.stringify({lang:l,scale:1.35}));},lang);
       await p.goto(URL,{waitUntil:'networkidle'}); await p.waitForTimeout(400);
       await p.evaluate(()=>startTest('phq9')); await p.waitForTimeout(400);
+      await pastPrimer(p, lang);
       let worst=0, small=0;
       for(let q=0;q<9;q++){
         const m=await p.evaluate(OVERFLOW);
