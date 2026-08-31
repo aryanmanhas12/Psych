@@ -10,611 +10,395 @@
 <link rel="manifest" href="manifest.webmanifest">
 <script src="nav.js" defer></script>
 <link rel="icon" href="icon-192.png" type="image/png">
+<script>
+(function(){
+  var root = document.documentElement;
+  root.className += (root.className ? " " : "") + "js";
+  var p;
+  try{ p = JSON.parse(localStorage.getItem("psych-prefs")) || {}; }
+  catch(e){ return; }
+  if(p.theme && p.theme !== "auto") root.setAttribute("data-theme", p.theme);
+  if(p.contrast) root.setAttribute("data-contrast", "high");
+  if(p.scale && p.scale !== 1) root.style.setProperty("--scale", p.scale);
+})();
+</script>
 <link rel="apple-touch-icon" href="icon-192.png">
-<script src="prefs.js"></script>
 <link rel="stylesheet" href="site.css">
 <style>
-/* Dark theme. People in distress use phones at 2am; a wall of light
-     is a real usability problem, not a preference. Tokens only —
-     components never restyle themselves per theme. */
+  /* ── Dark theme & Color Tokens (mirrored with site.css) ── */
   @media (prefers-color-scheme: dark){
     :root:not([data-theme="light"]){
-      --ink:#EDEAE2; --paper:#12161F; --card:#1A1F2B;
-      --line:#333B4C; --muted:#9AA3B5;
-      --marigold:#F0B53C; --stamp:#E4796B; --heal:#5FB39C;
+      --ink:#F0EDE6; --paper:#0E131D; --card:#151B27;
+      --line:#273042; --muted:#9BA4B6;
+      --marigold:#F0B53C; --stamp:#E4796B; --heal:#56B89E;
+      --deep:#090C12; --on-deep:#F0EDE6;
     }
   }
   :root[data-theme="dark"]{
-    --ink:#EDEAE2; --paper:#12161F; --card:#1A1F2B;
-    --line:#333B4C; --muted:#9AA3B5;
-    --marigold:#F0B53C; --stamp:#E4796B; --heal:#5FB39C;
+    --ink:#F0EDE6; --paper:#0E131D; --card:#151B27;
+    --line:#273042; --muted:#9BA4B6;
+    --marigold:#F0B53C; --stamp:#E4796B; --heal:#56B89E;
+    --deep:#090C12; --on-deep:#F0EDE6;
   }
-  /* The ink-on-dark blocks invert so they stay distinct from the page.
-     Excluded under high contrast: this rule pins a literal near-black
-     background but takes its text from --ink, and high contrast sets
-     --ink to pure black — so the two combined rendered black on black
-     and the figures and their citations disappeared entirely. Opting out
-     lets the plain rule below apply instead, which is already the
-     maximum-contrast pairing those two settings are asking for. */
+  :root[data-contrast="high"]{
+    --ink:#000000; --paper:#FFFFFF; --card:#FFFFFF;
+    --marigold:#8A5D00; --stamp:#8E1B10; --heal:#0F4A3C;
+    --line:#000000; --muted:#1A1A1A;
+  }
+
   :root[data-theme="dark"]:not([data-contrast="high"]) .scorebox,
   :root[data-theme="dark"]:not([data-contrast="high"]) nav,
   :root[data-theme="dark"]:not([data-contrast="high"]) .tokenbar,
   :root[data-theme="dark"]:not([data-contrast="high"]) .stat,
   :root[data-theme="dark"]:not([data-contrast="high"]) .statband,
-  :root[data-theme="dark"]:not([data-contrast="high"]) .bub.u{background:#0A0D14;color:var(--ink);}
+  :root[data-theme="dark"]:not([data-contrast="high"]) .bub.u{background:#090C12;color:var(--ink);}
 
-  /* high-contrast mode: user-toggled, overrides tokens only */
-  :root[data-contrast="high"]{
-    --ink:#000000;
-    --paper:#FFFFFF;
-    --marigold:#8A5D00;
-    --stamp:#8E1B10;
-    --heal:#0F4A3C;
-    --line:#000000;
-    --muted:#1A1A1A;
-    --card:#FFFFFF;
-  }
   :lang(hi) body,:lang(mr) body,:lang(bn) body,:lang(ta) body,:lang(te) body{line-height:1.8;}
   @media (prefers-reduced-motion: reduce){
     *,*::before,*::after{animation:none!important;transition:none!important;}
     html{scroll-behavior:auto;}
   }
-  /* Indic scripts set taller; give them the room. */
-  :lang(hi) .display,:lang(mr) .display,:lang(bn) .display,:lang(ta) .display,:lang(te) .display{
-    font-family:system-ui,-apple-system,'Segoe UI','Noto Sans',Roboto,Arial,sans-serif;font-weight:700;text-transform:none;line-height:1.25;
-  }
+
   .topstrip a,.safety a,.bub.crisis a,footer .byline a{color:inherit;}
   .topstrip a,.safety a,.bub.crisis a{color:#fff;}
 
   /* skip link */
   .skip{
     position:absolute;left:-9999px;top:0;z-index:99;background:var(--ink);color:var(--paper);
-    padding:.7rem 1.1rem;font-weight:700;text-decoration:none;
+    padding:.7rem 1.1rem;font-weight:700;text-decoration:none;border-radius:var(--r-sm);
   }
   .skip:focus{left:.5rem;top:.5rem;}
 
   /* ── nav ── */
-  nav{background:var(--ink);padding:.8rem 0;}
+  nav{background:var(--deep);padding:.8rem 0;border-bottom:1px solid color-mix(in srgb, var(--line) 40%, transparent);}
   nav .wrap{display:flex;align-items:center;gap:1.1rem;flex-wrap:wrap;}
-  .brand{font-weight:700;color:var(--on-deep);font-size:1.15rem;letter-spacing:.04em;margin-right:auto;}
+  .brand{font-weight:700;color:var(--on-deep);font-size:1.15rem;letter-spacing:.03em;margin-right:auto;}
   .brand .accent{color:var(--marigold);}
   nav a.navlink{
     color:var(--paper);text-decoration:none;font-family:var(--font-ui);
-    font-size:.79rem;letter-spacing:.06em;
-    padding:.5rem .15rem;border-bottom:2px solid transparent;cursor:pointer;display:inline-block;
+    font-size:.82rem;letter-spacing:.04em;
+    padding:.5rem .25rem;border-bottom:2.5px solid transparent;cursor:pointer;display:inline-block;
+    transition:border-color .15s ease, color .15s ease;
   }
-  nav a.navlink:hover,nav a.navlink:focus-visible{border-bottom-color:var(--marigold);}
-  nav a.navlink[aria-current="page"]{border-bottom-color:var(--marigold);font-weight:500;}
+  nav a.navlink:hover,nav a.navlink:focus-visible{border-bottom-color:var(--marigold);color:var(--marigold);}
+  nav a.navlink[aria-current="page"]{border-bottom-color:var(--marigold);font-weight:600;}
 
-  /* ── settings popover (replaces the old full-width a11y bar) ── */
+  /* ── settings popover ── */
   .setbtn{
-    font-family:var(--font-ui);text-transform:none;letter-spacing:.04em;
-    /* --on-deep, not --paper. The nav is the always-dark surface, and
-       --paper flips with the theme while --deep barely moves: in dark mode
-       this was #12161F on #0A0D14, measured 1.07:1 — text the same colour
-       as the thing behind it. That is the button holding the language
-       switch, which is the one control a reader who cannot read this page
-       needs to find first, so it was invisible to precisely the person it
-       exists for. --on-deep is the token that means "text on the dark
-       surface" and is light in both themes. Third instance of this fault
-       class here; see --stamp-bg in site.css for the first. */
+    font-family:var(--font-ui);text-transform:none;letter-spacing:.03em;
     background:transparent;color:var(--on-deep);
-    border:1.5px solid color-mix(in srgb, var(--on-deep) 45%, transparent);
-    padding:.3rem .7rem;font-size:.78rem;min-height:2rem;cursor:pointer;
+    border:1.5px solid color-mix(in srgb, var(--on-deep) 35%, transparent);
+    padding:.35rem .75rem;font-size:.8rem;min-height:2.1rem;cursor:pointer;border-radius:var(--r-sm);
+    transition:all .15s ease;
   }
-  .setbtn:hover{border-color:var(--marigold);transform:none;box-shadow:none;}
-  /* --deep, not --ink. --marigold is gold in BOTH themes while --ink flips
-     to near-white in dark, so the open state was near-white on gold —
-     1.54:1, unreadable, on the control that had just been pressed. A
-     background that does not flip needs foreground that does not flip
-     either, and --deep is dark in both themes. */
+  .setbtn:hover{border-color:var(--marigold);color:var(--marigold);box-shadow:none;}
   .setbtn[aria-expanded="true"]{background:var(--marigold);color:var(--on-marigold);border-color:var(--marigold);}
   .setwrap{position:relative;}
   .setpanel{
     display:none;position:absolute;right:0;top:calc(100% + .5rem);z-index:40;
     background:var(--card);border:1px solid var(--line);border-radius:var(--r-lg);box-shadow:var(--shadow-soft);
-    padding:1rem;min-width:15rem;
+    padding:1.1rem;min-width:16rem;
   }
   .setpanel.open{display:block;animation:pop .18s cubic-bezier(.25,.46,.45,.94);}
   @keyframes pop{from{opacity:0;transform:translateY(-4px);}to{opacity:1;transform:none;}}
-  .setrow{display:flex;flex-direction:column;gap:.4rem;margin-bottom:.9rem;}
+  .setrow{display:flex;flex-direction:column;gap:.45rem;margin-bottom:1rem;}
   .setrow:last-child{margin-bottom:0;}
   .setrow .lbl{
-    font-family:var(--font-ui);font-size:.68rem;letter-spacing:.08em;
-    color:var(--muted);
+    font-family:var(--font-ui);font-size:.74rem;letter-spacing:.02em;
+    color:var(--muted);font-weight:600;
   }
-  .setrow .btns{display:flex;gap:.4rem;}
+  .setrow .btns{display:flex;gap:.45rem;}
   select.langsel{
-    font-family:system-ui,-apple-system,'Segoe UI','Noto Sans',Roboto,Arial,sans-serif;font-size:.9rem;padding:.45rem .5rem;width:100%;
-    background:var(--paper);color:var(--ink);border:2px solid var(--ink);cursor:pointer;
+    font-family:system-ui,-apple-system,'Segoe UI','Noto Sans',Roboto,Arial,sans-serif;font-size:.92rem;padding:.5rem .6rem;width:100%;
+    background:var(--paper);color:var(--ink);border:1.5px solid var(--line);border-radius:var(--r-sm);cursor:pointer;
   }
   .setpanel button{
     font-family:var(--font-ui);text-transform:none;letter-spacing:0;
-    background:var(--paper);color:var(--ink);border:2px solid var(--line);
-    padding:.35rem .7rem;font-size:.85rem;min-height:2.2rem;flex:1;cursor:pointer;
+    background:var(--paper);color:var(--ink);border:1.5px solid var(--line);border-radius:var(--r-sm);
+    padding:.4rem .7rem;font-size:.86rem;min-height:2.3rem;flex:1;cursor:pointer;
+    transition:all .15s ease;
   }
-  .setpanel button:hover{border-color:var(--ink);transform:none;box-shadow:none;}
+  .setpanel button:hover{border-color:var(--heal);box-shadow:none;}
   .setpanel button[aria-pressed="true"]{background:var(--heal);color:var(--paper);border-color:var(--heal);font-weight:700;}
-  /* Visible by default. Only a page that has proven JS runs AND has an
-     IntersectionObserver opts into hiding, so content can never be
-     stranded invisible — the failure mode the motion guidance warns about. */
-  .reveal{opacity:1;transform:none;}
-  html.reveal-ready .reveal{opacity:0;transform:translateY(14px);}
-  html.reveal-ready .reveal.in{
-    opacity:1;transform:none;
-    transition:opacity .35s var(--e-out1), transform .35s var(--e-out1);
-  }
-  html.reveal-ready .reveal.in[data-delay]{transition-delay:calc(var(--i,0) * 80ms);}
-  @media (prefers-reduced-motion: reduce){
-    html.reveal-ready .reveal{opacity:1;transform:none;}
-  }
 
-  /* dot motif — the manifesto's "1 psychiatrist among 133,000" signature */
-  .dotrule{display:flex;gap:.28rem;align-items:center;margin:.4rem 0 1.1rem;}
-  .dotrule i{width:.32rem;height:.32rem;border-radius:50%;background:var(--ink);opacity:.22;}
-  .dotrule i.on{background:var(--marigold);opacity:1;box-shadow:0 0 0 .12rem rgba(230,161,28,.3);}
+  /* ── Dot motif ── */
+  .dotrule{display:flex;gap:.32rem;align-items:center;margin:.5rem 0 1.2rem;}
+  .dotrule i{width:.36rem;height:.36rem;border-radius:50%;background:var(--ink);opacity:.2;}
+  .dotrule i.on{background:var(--marigold);opacity:1;box-shadow:0 0 0 .15rem rgba(223,153,22,.25);}
 
-  /* ── views ── */
-  .view{display:none;padding:1.9rem 0 3rem;}
+  /* ── Views ── */
+  .view{display:none;padding:1.8rem 0 3.2rem;}
   .view.active{display:block;animation:vin .25s ease;}
   @keyframes vin{from{opacity:0;}to{opacity:1;}}
   .view:focus{outline:none;}
-  @media(min-width:700px){.lede{max-width:64ch;}}
+  @media(min-width:700px){.lede{max-width:65ch;}}
 
-  /* collapsed-by-default disclosure — keeps the fold clear */
+  /* collapsed-by-default notice */
   details.notice{
-    background:var(--card);border:2px solid var(--ink);border-left:.5rem solid var(--marigold);
-    padding:.6rem 1rem;font-size:.9rem;max-width:64ch;margin-bottom:1.1rem;
+    background:var(--card);border:1px solid var(--line);border-left:.45rem solid var(--marigold);
+    border-radius:var(--r-md);box-shadow:var(--shadow-card);
+    padding:.75rem 1.1rem;font-size:.92rem;max-width:64ch;margin-bottom:1.2rem;
   }
   details.notice summary{
-    cursor:pointer;font-weight:700;font-size:.85rem;letter-spacing:.05em;
-    list-style:none;display:flex;align-items:center;gap:.5rem;padding:.15rem 0;
+    cursor:pointer;font-weight:700;font-size:.88rem;letter-spacing:.03em;
+    list-style:none;display:flex;align-items:center;gap:.5rem;padding:.2rem 0;
   }
   details.notice summary::-webkit-details-marker{display:none;}
   details.notice summary::before{content:"▸";color:var(--marigold);transition:transform .2s var(--e-out1);display:inline-block;}
   details.notice[open] summary::before{transform:rotate(90deg);}
-  details.notice .inner{padding-top:.6rem;animation:slidedown .25s var(--e-out2);}
+  details.notice .inner{padding-top:.7rem;animation:slidedown .25s var(--e-out2);}
   @keyframes slidedown{from{opacity:0;transform:translateY(-6px);}to{opacity:1;transform:none;}}
-  .notice .sub{display:block;margin-top:.5rem;font-size:.78rem;color:var(--heal);font-family:var(--font-ui);}
+  .notice .sub{display:block;margin-top:.5rem;font-size:.8rem;color:var(--heal);font-family:var(--font-ui);font-weight:600;}
 
-  /* ── mood: collapsed to a single compact row ── */
+  /* ── Mood Check-in: Tactile single row ── */
   .mood{
-    background:var(--card);border:1px solid var(--line);border-radius:var(--r-md);border-left:.35rem solid var(--marigold);
-    padding:.75rem 1rem;max-width:64ch;margin:1.1rem 0;
-    /* minmax(0,1fr), not 1fr. A grid item's default min-width is auto, so
-       a track sized 1fr still refuses to go narrower than its widest
-       child — here the five mood buttons, whose min-width is in rem and
-       therefore grows with the text-size control. At 1.35 that row is
-       368px inside a 320px screen, and the whole page scrolled sideways
-       because of it. minmax(0,…) lets the track shrink and the flex row
-       inside it wrap, which is what it was always meant to do. */
-    display:grid;grid-template-columns:minmax(0,1fr) auto;gap:.5rem 1rem;align-items:center;
+    background:var(--card);border:1px solid var(--line);border-radius:var(--r-lg);border-left:.45rem solid var(--marigold);
+    box-shadow:var(--shadow-card);padding:.85rem 1.15rem;max-width:64ch;margin:1.2rem 0;
+    display:grid;grid-template-columns:minmax(0,1fr) auto;gap:.6rem 1.1rem;align-items:center;
   }
   @media(max-width:640px){.mood{grid-template-columns:minmax(0,1fr);}}
-  .mood .moodhead{font-size:.85rem;font-weight:700;}
-  .moodbtns{display:flex;gap:.35rem;flex-wrap:wrap;min-width:0;}
-  .moodbtns button{font-size:1.25rem;background:var(--paper);border:2px solid var(--line);padding:.25rem .45rem;line-height:1;min-width:2.75rem;min-height:2.75rem;transition:transform .16s var(--e-out1),border-color .16s var(--e-out1);}
-  .moodbtns button:hover{border-color:var(--ink);box-shadow:none;transform:translateY(-2px);}
-  .moodbtns button[aria-pressed="true"]{border-color:var(--heal);background:#e9f1ee;border-width:3px;}
-  :root[data-contrast="high"] .moodbtns button[aria-pressed="true"]{background:#d7e8e1;}
-  /* min-width:0 and hidden overflow: this is a sparkline of past days, it
-     grows by one cell a day, and it must never be the thing that widens
-     the page. */
-  .moodstrip{display:flex;gap:.2rem;align-items:flex-end;height:1.6rem;grid-column:1/-1;min-width:0;overflow:hidden;}
-  .moodcell{width:.75rem;background:var(--line);transition:height .3s var(--e-out2);}
+  .mood .moodhead{font-size:.9rem;font-weight:700;}
+  .moodbtns{display:flex;gap:.4rem;flex-wrap:wrap;min-width:0;}
+  .moodbtns button{
+    font-size:1.3rem;background:var(--paper);border:1.5px solid var(--line);border-radius:var(--r-md);
+    padding:.35rem .55rem;line-height:1;min-width:2.85rem;min-height:2.85rem;
+    transition:transform .14s var(--e-out1),border-color .14s var(--e-out1),box-shadow .14s var(--e-out1);
+  }
+  .moodbtns button:hover{border-color:var(--heal);box-shadow:var(--shadow-subtle);transform:translateY(-2px);}
+  .moodbtns button:active{transform:scale(0.96);}
+  .moodbtns button[aria-pressed="true"]{
+    border-color:var(--heal);background:color-mix(in srgb, var(--heal) 14%, var(--card));border-width:2.5px;
+    box-shadow:0 0 0 2px color-mix(in srgb, var(--heal) 25%, transparent);
+  }
+  .moodstrip{display:flex;gap:.25rem;align-items:flex-end;height:1.7rem;grid-column:1/-1;min-width:0;overflow:hidden;margin-top:.3rem;}
+  .moodcell{width:.8rem;border-radius:2px 2px 0 0;background:var(--line);transition:height .3s var(--e-out2);}
   .moodcell.v1{background:var(--stamp);}
   .moodcell.v2{background:#B0521A;}
   .moodcell.v3{background:var(--marigold);}
   .moodcell.v4{background:#6E9683;}
   .moodcell.v5{background:var(--heal);}
 
-  /* ── cards: whole card is the control, tighter grid ── */
-  /* minmax(min(Xrem,100%),1fr), not minmax(Xrem,1fr). auto-fit gives every
-     track a hard minimum, and a rem minimum grows with the text-size
-     control while the column it sits in does not: at 1.35 the 15rem floor
-     becomes 365px inside a 297px column, so every card hung off the right
-     of the screen and the page scrolled sideways. Reported from a phone —
-     "Start →" was cut in half. min() lets the track shrink to the
-     container when there isn't room for the ideal width, which is what
-     auto-fit was supposed to do. */
-  .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(15rem,100%),1fr));gap:.7rem;}
+  /* ── Screener Cards: Tactile elevation ── */
+  .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(16rem,100%),1fr));gap:.85rem;}
   @media(min-width:52rem){.cards{grid-template-columns:repeat(2,1fr);}}
   .card{
-    background:var(--card);border:1px solid var(--line);border-radius:var(--r-md);padding:1rem 1.05rem;
-    display:grid;grid-template-columns:1fr auto;gap:.15rem .8rem;align-items:center;
+    background:var(--card);border:1px solid var(--line);border-radius:var(--r-lg);padding:1.15rem 1.25rem;
+    display:flex;flex-direction:column;align-items:stretch;gap:.2rem;
     text-align:left;font-family:inherit;color:inherit;text-transform:none;letter-spacing:0;
-    cursor:pointer;width:100%;min-height:0;
-    transition:transform .17s var(--e-out1), box-shadow .17s var(--e-out1), border-color .17s var(--e-out1);
+    cursor:pointer;width:100%;min-height:0;box-shadow:var(--shadow-card);
+    transition:transform .16s var(--e-out1), box-shadow .16s var(--e-out1), border-color .16s var(--e-out1);
   }
-  .card:hover,.card:focus-visible{transform:translate(-2px,-2px);box-shadow:var(--shadow-soft);border-color:var(--heal);}
-  /* Stack, not a two-column grid: the subject, what it asks about, then the
-     credit and Start sharing the last line. */
-  .card{display:flex;flex-direction:column;align-items:stretch;gap:.15rem;}
-  .card h3{font-size:1.2rem;font-weight:650;line-height:1.25;}
-  .card .about{font-size:.88rem;color:var(--muted);margin:.1rem 0 .5rem;line-height:1.45;}
-  .card .credit{font-size:.74rem;color:var(--muted);font-variant-numeric:tabular-nums;}
-  .card .go{align-self:flex-start;margin-top:.45rem;}
-  .card .meta{
-    font-family:var(--font-ui);font-size:.7rem;color:var(--muted);
-    grid-column:2;grid-row:1/3;text-align:right;white-space:nowrap;
+  .card:hover,.card:focus-visible{
+    transform:translateY(-3px);box-shadow:var(--shadow-soft);border-color:var(--heal);
   }
+  .card:active{transform:scale(0.985);}
+  .card h3{font-size:1.25rem;font-weight:700;line-height:1.28;color:var(--ink);}
+  .card .about{font-size:.9rem;color:var(--muted);margin:.15rem 0 .55rem;line-height:1.5;}
+  .card .credit{font-size:.76rem;color:var(--muted);font-variant-numeric:tabular-nums;}
   .card .go{
-    grid-column:2;grid-row:3;text-align:right;font-family:var(--font-ui);
-    font-size:.75rem;color:var(--heal);font-weight:600;white-space:nowrap;
-    transition:transform .17s var(--e-out1);
+    align-self:flex-start;margin-top:.5rem;font-family:var(--font-ui);
+    font-size:.8rem;color:var(--heal);font-weight:700;white-space:nowrap;
+    transition:transform .16s var(--e-out1);
   }
-  .card:hover .go{transform:translateX(3px);}
+  .card:hover .go{transform:translateX(4px);}
 
-  button,.btn{
-    font-weight:700;letter-spacing:.05em;
-    font-size:.95rem;background:var(--ink);color:var(--paper);border:none;
-    padding:.75rem 1.3rem;cursor:pointer;transition:transform .12s;text-decoration:none;
-    display:inline-block;min-height:2.75rem;
-  }
-  :lang(hi) button,:lang(mr) button,:lang(bn) button,:lang(ta) button,:lang(te) button,
-  :lang(hi) .btn,:lang(mr) .btn,:lang(bn) .btn,:lang(ta) .btn,:lang(te) .btn{
-    font-family:system-ui,-apple-system,'Segoe UI','Noto Sans',Roboto,Arial,sans-serif;font-weight:700;text-transform:none;letter-spacing:0;
-  }
-  button:hover,.btn:hover{transform:translate(-2px,-2px);box-shadow:var(--shadow-soft);}
-  :where(button,a,select,input,[tabindex]):focus-visible{outline:3px solid var(--stamp);outline-offset:3px;}
-  button.secondary{background:transparent;color:var(--ink);border:2px solid var(--ink);}
-  button.danger{background:var(--stamp-bg);color:var(--on-stamp);}
-  button:disabled{opacity:.45;cursor:not-allowed;transform:none;box-shadow:none;}
-
-  /* ── test: sticky OPD-token header, everything else fits under it ── */
+  /* ── Test View: OPD-Token Header & Questions ── */
   .tokenbar{
-    position:sticky;top:0;z-index:20;background:var(--ink);color:var(--paper);
-    padding:.55rem 0;margin-bottom:1rem;
+    position:sticky;top:0;z-index:20;background:var(--deep);color:var(--on-deep);
+    padding:.65rem 0;margin-bottom:1.1rem;box-shadow:var(--shadow-subtle);
   }
   .tokenbar[hidden]{display:none;}
-  .tokenbar .wrap{display:flex;align-items:center;gap:.8rem;flex-wrap:wrap;}
+  .tokenbar .wrap{display:flex;align-items:center;gap:.9rem;flex-wrap:wrap;}
   .tokenbar .tk{
-    font-family:var(--font-ui);font-size:.72rem;letter-spacing:.12em;
-    border:1.5px solid var(--marigold);color:var(--marigold);padding:.15rem .5rem;white-space:nowrap;
+    font-family:var(--font-ui);font-size:.75rem;letter-spacing:.1em;
+    border:1.5px solid var(--marigold);color:var(--marigold);padding:.2rem .55rem;border-radius:var(--r-sm);white-space:nowrap;
   }
-  .tokenbar .tkname{font-family:var(--font-ui);font-size:.78rem;opacity:.85;margin-right:auto;}
-  .tokenbar .tkclock{font-family:var(--font-ui);font-size:.72rem;opacity:.55;font-variant-numeric:tabular-nums;}
-  .pbar{height:.35rem;background:rgba(246,244,238,.2);width:100%;margin-top:.5rem;}
+  .tokenbar .tkname{font-family:var(--font-ui);font-size:.82rem;font-weight:600;opacity:.9;margin-right:auto;}
+  .tokenbar .tkclock{font-family:var(--font-ui);font-size:.75rem;opacity:.65;font-variant-numeric:tabular-nums;}
+  .pbar{height:.38rem;background:rgba(246,244,238,.18);border-radius:2px;width:100%;margin-top:.6rem;overflow:hidden;}
   .pfill{height:100%;background:var(--marigold);width:0%;transition:width .32s var(--e-out2);}
-  .testhead{margin-bottom:.9rem;}
-  .testhead .period{
-    background:var(--ink);color:var(--paper);display:inline-block;
-    font-family:var(--font-ui);font-size:.74rem;padding:.25rem .6rem;margin-top:.5rem;
-  }
-  .progress{font-family:var(--font-ui);font-size:.78rem;color:var(--muted);margin:.3rem 0 .8rem;}
-  /* The card slides in from 14px to the right, which is a transform and so
-     costs no layout — but it does extend the scrollable area, and when the
-     card already fills the width that is 14px of document wider than the
-     screen for the length of the animation. A horizontal scrollbar
-     flickering in and out on every question, nine times in a PHQ-9, which
-     is precisely the sort of thing that reads as "clunky" without ever
-     being obviously broken. Clipping it at the view boundary keeps the
-     motion and drops the overflow.
 
-     overflow-x:clip rather than hidden: clip does not make a scroll
-     container, so nothing inside changes behaviour, and the buttons' focus
-     rings sit well within the wrap's own padding so none of them is cut.
-     A browser too old for clip simply behaves as it did before. */
   #view-test{overflow-x:clip;}
   .primer{
-    background:var(--card);border:1px solid var(--line);border-radius:var(--r-lg);
-    padding:1.3rem 1.2rem;max-width:34rem;margin:.4rem 0 1rem;
+    background:var(--card);border:1px solid var(--line);border-radius:var(--r-lg);box-shadow:var(--shadow-card);
+    padding:1.4rem 1.3rem;max-width:35rem;margin:.5rem 0 1.2rem;
   }
   .primer[hidden]{display:none;}
-  .primer h2{font-size:1.22rem;font-weight:650;line-height:1.3;margin-bottom:.7rem;}
-  .primer ul{list-style:none;display:flex;flex-direction:column;gap:.5rem;margin-bottom:1.1rem;}
-  .primer li{font-size:.92rem;color:var(--muted);line-height:1.5;padding-left:1.1rem;position:relative;}
-  .primer li::before{content:"";position:absolute;left:0;top:.62em;width:.42rem;height:.42rem;
-    border-radius:50%;background:var(--heal);}
-  .primer-go{display:flex;gap:.6rem;flex-wrap:wrap;}
-  .primer-go #primerStart{flex:1 1 9rem;min-height:3rem;font-size:1rem;}
-  .primer-go #primerBack{flex:0 1 auto;min-height:3rem;}
-  .qbox{background:var(--card);border:1px solid var(--line);border-radius:var(--r-lg);padding:1.2rem 1.3rem;max-width:48rem;animation:qin .3s var(--e-out2);}
+  .primer h2{font-size:1.28rem;font-weight:700;line-height:1.3;margin-bottom:.8rem;}
+  .primer ul{list-style:none;display:flex;flex-direction:column;gap:.6rem;margin-bottom:1.2rem;}
+  .primer li{font-size:.94rem;color:var(--muted);line-height:1.5;padding-left:1.2rem;position:relative;}
+  .primer li::before{content:"";position:absolute;left:0;top:.62em;width:.45rem;height:.45rem;border-radius:50%;background:var(--heal);}
+  .primer-go{display:flex;gap:.7rem;flex-wrap:wrap;}
+  .primer-go #primerStart{flex:1 1 10rem;min-height:3.2rem;font-size:1rem;}
+  .primer-go #primerBack{flex:0 1 auto;min-height:3.2rem;}
+
+  .qbox{
+    background:var(--card);border:1px solid var(--line);border-radius:var(--r-lg);box-shadow:var(--shadow-card);
+    padding:1.4rem 1.45rem;max-width:48rem;animation:qin .3s var(--e-out2);
+  }
   @keyframes qin{from{opacity:0;transform:translateX(14px);}to{opacity:1;transform:none;}}
   .qbox.back{animation:qinback .3s var(--e-out2);}
   @keyframes qinback{from{opacity:0;transform:translateX(-14px);}to{opacity:1;transform:none;}}
-  .qtext{font-size:1.12rem;font-weight:600;margin-bottom:.9rem;text-wrap:balance;}
-  .qtext .qnum{font-family:var(--font-ui);color:var(--heal);font-size:.85rem;margin-right:.5rem;}
-  .bigopts{display:flex;flex-direction:column;gap:.6rem;}
+  .qtext{font-size:1.2rem;font-weight:650;margin-bottom:1.1rem;text-wrap:balance;color:var(--ink);line-height:1.4;}
+  .qtext .qnum{font-family:var(--font-ui);color:var(--heal);font-size:.9rem;margin-right:.6rem;font-weight:700;}
+
+  .bigopts{display:flex;flex-direction:column;gap:.7rem;}
   .bigopts button{
-    font-family:system-ui,-apple-system,'Segoe UI','Noto Sans',Roboto,Arial,sans-serif;font-weight:400;text-transform:none;letter-spacing:0;
-    font-size:.98rem;background:var(--paper);color:var(--ink);
-    border:1.5px solid var(--line);border-radius:var(--r-md);padding:.7rem .95rem;text-align:left;
-    display:flex;align-items:center;gap:.7rem;cursor:pointer;min-height:2.9rem;
-    transition:border-color .17s var(--e-out1), background .17s var(--e-out1), transform .17s var(--e-out1);
+    font-family:-apple-system,BlinkMacSystemFont,'Segoe UI Variable Text','Segoe UI',system-ui,sans-serif;
+    font-weight:500;text-transform:none;letter-spacing:0;
+    font-size:1.02rem;background:var(--paper);color:var(--ink);
+    border:1.5px solid var(--line);border-radius:var(--r-md);padding:.85rem 1.15rem;text-align:left;
+    display:flex;align-items:center;gap:.85rem;cursor:pointer;min-height:3.4rem;
+    transition:border-color .15s var(--e-out1), background .15s var(--e-out1), transform .12s var(--e-out1), box-shadow .15s var(--e-out1);
   }
-  .bigopts button:hover{border-color:var(--ink);transform:translateX(2px);box-shadow:none;}
+  .bigopts button:hover{border-color:var(--heal);box-shadow:var(--shadow-subtle);transform:translateX(3px);}
+  .bigopts button:active{transform:scale(0.985);}
   .bigopts button.picked{animation:pick .32s var(--e-out2);}
   @keyframes pick{0%{transform:scale(1);}40%{transform:scale(1.02);}100%{transform:scale(1);}}
   @media (prefers-reduced-motion: reduce){ .bigopts button.picked{animation:none;} }
-  .bigopts button[aria-checked="true"]{border-color:var(--heal);border-width:3px;background:#e9f1ee;font-weight:600;}
-  :root[data-contrast="high"] .bigopts button[aria-checked="true"]{background:#d7e8e1;}
-  /* These digits are keyboard shortcuts. On a touch screen there is no
-     keyboard to shortcut, and next to "Not at all" a boxed 1 reads as a
-     score — which is not even the right score, since PHQ options are worth
-     0 to 3. So a phone was showing every answer labelled one point higher
-     than it counts for. Hidden where there is no keyboard; kept where
-     there is, because there it genuinely helps. */
+  .bigopts button[aria-checked="true"]{
+    border-color:var(--heal);border-width:2.5px;background:color-mix(in srgb, var(--heal) 12%, var(--card));
+    font-weight:600;box-shadow:0 0 0 2px color-mix(in srgb, var(--heal) 25%, transparent);
+  }
   @media (pointer: coarse){ .bigopts .kbd{display:none;} }
   .bigopts .kbd{
-    font-family:var(--font-ui);font-size:.75rem;border:1.5px solid var(--line);
-    padding:.05rem .45rem;color:var(--muted);flex:none;
+    font-family:var(--font-ui);font-size:.76rem;border:1.5px solid var(--line);border-radius:var(--r-sm);
+    padding:.1rem .5rem;color:var(--muted);flex:none;
   }
-  .bigopts button[aria-checked="true"] .kbd{border-color:var(--heal);color:var(--heal);}
+  .bigopts button[aria-checked="true"] .kbd{border-color:var(--heal);color:var(--heal);background:var(--card);}
 
-  /* ── results ── */
+  /* ── Results View: Scoreboard & Clinical Ergonomics ── */
   .scoreboard{
-    display:grid;grid-template-columns:9.5rem 1fr;gap:0;border:2px solid var(--ink);
-    background:var(--card);margin-bottom:.9rem;max-width:48rem;
+    display:grid;grid-template-columns:10.5rem 1fr;gap:0;border:1px solid var(--line);border-radius:var(--r-lg);
+    background:var(--card);margin-bottom:1.1rem;max-width:48rem;box-shadow:var(--shadow-card);overflow:hidden;
   }
   @media(max-width:600px){.scoreboard{grid-template-columns:1fr;}}
   .scorebox{
-    background:var(--ink);color:var(--paper);padding:1rem;text-align:center;
+    background:var(--deep);color:var(--on-deep);padding:1.3rem 1.1rem;text-align:center;
     display:flex;flex-direction:column;justify-content:center;
   }
-  .scorebox .num{font-weight:700;font-size:2.7rem;line-height:1;font-variant-numeric:tabular-nums;}
-  .scorebox .of{font-family:var(--font-ui);font-size:.75rem;opacity:.8;margin-top:.25rem;}
-  .verdict{padding:1rem 1.1rem;}
+  .scorebox .num{font-weight:700;font-size:2.8rem;line-height:1;font-variant-numeric:tabular-nums;color:var(--marigold);}
+  .scorebox .of{font-family:var(--font-ui);font-size:.78rem;opacity:.85;margin-top:.35rem;}
+  .verdict{padding:1.2rem 1.3rem;}
 
-  /* the reveal that lands the manifesto's argument at the moment it bites */
   .timecard{
-    max-width:48rem;margin:0 0 1.2rem;border:2px solid var(--ink);border-left:.5rem solid var(--marigold);
-    background:var(--card);padding:.85rem 1.1rem;
+    max-width:48rem;margin:0 0 1.3rem;border:1px solid var(--line);border-left:.5rem solid var(--marigold);
+    border-radius:var(--r-md);background:var(--card);padding:.95rem 1.2rem;box-shadow:var(--shadow-subtle);
   }
-  .timecard .t{
-    font-family:var(--font-ui);font-size:.82rem;color:var(--ink);
-    font-weight:600;font-variant-numeric:tabular-nums;
-  }
-  .timecard .c{font-size:.86rem;color:var(--muted);margin-top:.3rem;}
+  .timecard .t{font-family:var(--font-ui);font-size:.85rem;color:var(--ink);font-weight:700;font-variant-numeric:tabular-nums;}
+  .timecard .c{font-size:.88rem;color:var(--muted);margin-top:.35rem;line-height:1.5;}
 
-  /* progressive disclosure for the long guidance blocks */
-  details.acc{border:2px solid var(--ink);background:var(--card);margin-bottom:.6rem;max-width:64ch;}
+  details.acc{border:1px solid var(--line);background:var(--card);border-radius:var(--r-md);box-shadow:var(--shadow-subtle);margin-bottom:.75rem;max-width:64ch;overflow:hidden;}
   details.acc > summary{
-    cursor:pointer;padding:.7rem 1rem;font-weight:700;font-size:.95rem;
-    list-style:none;display:flex;align-items:center;gap:.55rem;
+    cursor:pointer;padding:.8rem 1.1rem;font-weight:700;font-size:.96rem;
+    list-style:none;display:flex;align-items:center;gap:.6rem;
   }
   details.acc > summary::-webkit-details-marker{display:none;}
   details.acc > summary::before{content:"▸";color:var(--heal);transition:transform .2s var(--e-out1);display:inline-block;}
-  details.acc[open] > summary{border-bottom:2px solid var(--line);}
+  details.acc[open] > summary{border-bottom:1px solid var(--line);background:color-mix(in srgb, var(--paper) 40%, var(--card));}
   details.acc[open] > summary::before{transform:rotate(90deg);}
-  details.acc .accbody{padding:.8rem 1rem 1rem;animation:slidedown .25s var(--e-out2);}
+  details.acc .accbody{padding:.9rem 1.1rem 1.1rem;animation:slidedown .25s var(--e-out2);}
   details.acc ul{margin:0 0 0 1.2rem;}
-  details.acc li{margin-bottom:.45rem;font-size:.92rem;}
-  .band{
-    display:inline-block;font-weight:700;
-    letter-spacing:.04em;font-size:1.05rem;padding:.25rem .8rem;border:2px solid;margin-bottom:.6rem;
-  }
-  :lang(hi) .band,:lang(mr) .band,:lang(bn) .band,:lang(ta) .band,:lang(te) .band{
-    font-family:system-ui,-apple-system,'Segoe UI','Noto Sans',Roboto,Arial,sans-serif;font-weight:700;text-transform:none;letter-spacing:0;
-  }
-  .band.b0{color:var(--heal);border-color:var(--heal);}
-  .band.b1{color:#7A5A00;border-color:#7A5A00;}
-  .band.b2{color:#8F4409;border-color:#8F4409;}
-  .band.b3{color:var(--stamp);border-color:var(--stamp);}
-  .verdict p{font-size:.95rem;}
+  details.acc li{margin-bottom:.5rem;font-size:.93rem;line-height:1.55;}
 
-  .sevscale{max-width:48rem;margin:-.2rem 0 1.6rem;position:relative;padding-top:1.5rem;}
+  .band{
+    display:inline-block;font-weight:700;letter-spacing:.03em;
+    font-size:1.05rem;padding:.3rem .9rem;border:1.5px solid;border-radius:var(--r-sm);margin-bottom:.7rem;
+  }
+  .band.b0{color:var(--heal);border-color:var(--heal);background:color-mix(in srgb, var(--heal) 10%, transparent);}
+  .band.b1{color:#8A6200;border-color:#8A6200;background:rgba(223,153,22,.1);}
+  .band.b2{color:#9E4B0B;border-color:#9E4B0B;background:rgba(176,82,26,.1);}
+  .band.b3{color:var(--stamp);border-color:var(--stamp);background:color-mix(in srgb, var(--stamp) 10%, transparent);}
+  .verdict p{font-size:.98rem;line-height:1.55;}
+
+  .sevscale{max-width:48rem;margin:-.1rem 0 1.7rem;position:relative;padding-top:1.6rem;}
   .sevmarker{
     position:absolute;top:0;transform:translateX(-50%);text-align:center;
-    font-family:var(--font-ui);font-size:.78rem;font-weight:700;
+    font-family:var(--font-ui);font-size:.8rem;font-weight:700;
     font-variant-numeric:tabular-nums;transition:left .5s ease;
   }
-  .sevtri{width:0;height:0;border-left:.38rem solid transparent;border-right:.38rem solid transparent;border-top:.45rem solid var(--ink);margin:0 auto;}
-  .sevtrack{display:flex;height:.9rem;border:2px solid var(--ink);background:var(--card);}
-  .sevseg{border-right:2px solid var(--ink);}
+  .sevtri{width:0;height:0;border-left:.4rem solid transparent;border-right:.4rem solid transparent;border-top:.5rem solid var(--ink);margin:0 auto;}
+  .sevtrack{display:flex;height:1rem;border:1.5px solid var(--ink);border-radius:var(--r-sm);background:var(--card);overflow:hidden;}
+  .sevseg{border-right:1px solid var(--ink);}
   .sevseg:last-child{border-right:none;}
   .sevseg.s0{background:#A9C9BB;} .sevseg.s1{background:#E8D08E;}
   .sevseg.s2{background:#E0A878;} .sevseg.s3{background:#D68C83;}
-  .sevlabels{display:flex;font-family:var(--font-ui);font-size:.68rem;color:var(--muted);margin-top:.25rem;font-variant-numeric:tabular-nums;}
+  .sevlabels{display:flex;font-family:var(--font-ui);font-size:.7rem;color:var(--muted);margin-top:.3rem;font-variant-numeric:tabular-nums;}
   .sevlabels div{text-align:center;}
 
   .safety{
-    background:var(--stamp-bg);color:var(--on-stamp);padding:1.3rem 1.4rem;margin-bottom:1.4rem;
-    border-radius:var(--r-md);max-width:48rem;
+    background:var(--stamp-bg);color:var(--on-stamp);padding:1.4rem 1.5rem;margin-bottom:1.5rem;
+    border-radius:var(--r-lg);box-shadow:var(--shadow-card);max-width:48rem;
   }
-  .safety h3{font-weight:700;font-size:1.2rem;margin-bottom:.6rem;letter-spacing:.03em;}
-  :lang(hi) .safety h3,:lang(mr) .safety h3,:lang(bn) .safety h3,:lang(ta) .safety h3,:lang(te) .safety h3{
-    font-family:system-ui,-apple-system,'Segoe UI','Noto Sans',Roboto,Arial,sans-serif;text-transform:none;letter-spacing:0;
-  }
-  .safety p{font-size:.95rem;margin-bottom:.5rem;}
-  .safety a{color:#fff;font-weight:700;}
-  .safety .lines{font-family:var(--font-ui);font-size:.85rem;margin-top:.6rem;line-height:2;}
+  .safety h3{font-weight:700;font-size:1.25rem;margin-bottom:.65rem;letter-spacing:.02em;}
+  .safety p{font-size:.98rem;margin-bottom:.55rem;line-height:1.55;}
+  .safety a{color:#fff;font-weight:700;text-decoration:underline;text-underline-offset:2px;}
+  .safety .lines{font-family:var(--font-ui);font-size:.88rem;margin-top:.7rem;line-height:2.1;}
 
-  .nextsteps{max-width:62ch;}
-  .nextsteps h3{font-size:1.12rem;margin:1.3rem 0 .6rem;font-weight:700;}
-  .nextsteps ul{margin:0 0 1.1rem 1.4rem;}
-  .nextsteps li{margin-bottom:.5rem;font-size:.95rem;}
-  .rescreen{
-    background:var(--card);border:2px dashed var(--heal);padding:1rem 1.2rem;margin:1.2rem 0;
-    font-size:.93rem;max-width:62ch;
-  }
-  .rescreen b{color:var(--heal);}
-  .actionrow{display:flex;gap:.75rem;flex-wrap:wrap;margin-top:1.6rem;}
-  /* `hidden` is only a UA rule and display:flex beats it — the same trap
-     noted on .intro. Every element here that toggles via the attribute
-     needs this. */
-  .actionrow[hidden]{display:none;}
-  .sheetnudge{
-    border-left:.3rem solid var(--heal);padding:.6rem .85rem;margin-top:1.4rem;
-    background:color-mix(in srgb,var(--heal) 9%,transparent);
-    font-size:.9rem;max-width:60ch;
-  }
-
-  /* ── history ── */
-  .histempty{color:var(--muted);font-size:.95rem;}
-  .histblock{background:var(--card);border:2px solid var(--ink);padding:1.3rem;margin-bottom:1.2rem;max-width:52rem;}
-  .histsheet{margin-top:.9rem;font-size:.85rem;}
-  .histblock h3{font-size:1.12rem;font-weight:700;margin-bottom:.2rem;}
-  .histblock .sub{font-family:var(--font-ui);font-size:.75rem;color:var(--muted);margin-bottom:.9rem;}
-  .chartwrap{overflow-x:auto;position:relative;}
-  table.histtable{border-collapse:collapse;width:100%;margin-top:.9rem;font-size:.85rem;}
-  table.histtable th,table.histtable td{border:1px solid var(--line);padding:.45rem .65rem;text-align:left;}
-  table.histtable th{font-family:var(--font-ui);font-size:.72rem;letter-spacing:.06em;background:var(--paper);}
-  table.histtable td:nth-child(2){font-variant-numeric:tabular-nums;}
-  table.histtable caption{text-align:left;font-size:.78rem;color:var(--muted);padding-bottom:.4rem;}
-  .histctl{display:flex;gap:.75rem;flex-wrap:wrap;margin-top:.6rem;}
-  .ctip{
-    position:absolute;pointer-events:none;background:var(--ink);color:var(--paper);
-    font-family:var(--font-ui);font-size:.75rem;padding:.3rem .55rem;
-    transform:translate(-50%,-120%);white-space:nowrap;display:none;z-index:5;
-  }
-
-  /* ── resources ── */
-  .res{background:var(--card);border:2px solid var(--ink);border-left:.5rem solid var(--heal);padding:1.2rem 1.3rem;margin-bottom:.9rem;max-width:52rem;}
-  .res h3{font-size:1.1rem;font-weight:700;margin-bottom:.35rem;}
-  .res p{font-size:.93rem;}
-
-  /* ── global stat band: the eye-opening numbers ── */
-  .statband{
-    display:grid;grid-template-columns:repeat(auto-fit,minmax(min(11rem,100%),1fr));
-    border:2px solid var(--ink);background:var(--ink);gap:2px;margin:1.2rem 0 1.4rem;max-width:64rem;
-  }
-  .stat{background:var(--ink);color:var(--paper);padding:1rem .9rem;}
-  .stat .n{
-    font-weight:700;font-size:2.1rem;line-height:1;color:var(--marigold);
-    font-variant-numeric:tabular-nums;display:block;
-  }
-  :lang(hi) .stat .n,:lang(mr) .stat .n,:lang(bn) .stat .n,:lang(ta) .stat .n,:lang(te) .stat .n{
-    font-family:system-ui,-apple-system,'Segoe UI','Noto Sans',Roboto,Arial,sans-serif;font-weight:700;
-  }
-  .stat .l{font-size:.8rem;line-height:1.45;margin-top:.4rem;opacity:.92;}
-  .stat .s{font-family:var(--font-ui);font-size:.62rem;opacity:.55;margin-top:.45rem;display:block;}
-  /* Dimming is a way of saying "this matters less". Someone who has
-     turned on high contrast is telling us they cannot afford that, and
-     the citation is the part that makes a claim checkable. */
-  :root[data-contrast="high"] .stat .l,
-  :root[data-contrast="high"] .stat .s{opacity:1;}
-  /* High contrast darkens the marigold so it holds up on white — but this
-     band is black in that mode, where the same colour drops to 3.65:1.
-     A literal rather than a token because it is the one place the accent
-     sits on a guaranteed-black surface, and the token cannot be right for
-     both directions at once. 13.4:1 here. */
-  :root[data-contrast="high"] .stat .n{color:#FFC64D;}
-
-  /* ── global helplines ── */
-  .dirlist{display:grid;gap:.6rem;max-width:52rem;margin-bottom:1.2rem;}
-  .dir{
-    background:var(--card);border:1px solid var(--line);border-radius:var(--r-md);border-left:.35rem solid var(--stamp);
-    padding:.85rem 1.1rem;
-  }
-  .dir a{font-weight:700;font-size:1rem;color:var(--stamp);}
-  .dir p{font-size:.86rem;color:var(--muted);margin-top:.2rem;}
-  .regiontabs{display:flex;gap:.4rem;flex-wrap:wrap;margin-bottom:.8rem;}
-  .regiontabs button{
-    font-family:var(--font-ui);text-transform:none;letter-spacing:.02em;
-    font-size:.78rem;background:var(--card);color:var(--ink);border:2px solid var(--ink);
-    padding:.35rem .7rem;min-height:2.2rem;
-  }
-  .regiontabs button:hover{transform:none;box-shadow:none;background:var(--paper);}
-  .regiontabs button[aria-pressed="true"]{background:var(--ink);color:var(--paper);}
-  table.lines{border-collapse:collapse;width:100%;max-width:52rem;font-size:.86rem;background:var(--card);}
-  table.lines th,table.lines td{border:1px solid var(--line);padding:.5rem .65rem;text-align:left;vertical-align:top;}
-  table.lines th{font-family:var(--font-ui);font-size:.68rem;letter-spacing:.06em;background:var(--paper);}
-  table.lines td a{font-weight:700;white-space:nowrap;}
-  .reviewed{font-family:var(--font-ui);font-size:.72rem;color:var(--muted);margin-top:.6rem;}
-
-  /* ── the helpline directory, on a phone ──
-     Three columns of country/service/number is a table on a desktop and a
-     sideways-scrolling strip at 390px: 383px of table in a 343px column,
-     with Number — the only column anyone came for — the one pushed off
-     the right edge. And the numbers themselves were 54x18 links, an 18px
-     target for a crisis line, which is the same fault the top strip had
-     before its numbers were made dialable and padded.
-
-     Below 640px each row becomes its own block: country and service as
-     label lines, the number as a full-width control with a real 44px
-     target. Nothing scrolls sideways, and the number is the largest
-     thing in the row, which is the right order of importance for a page
-     someone opens because they need to call someone. */
-  @media(max-width:640px){
-    table.lines,table.lines tbody,table.lines tr,table.lines td{display:block;width:100%;}
-    table.lines thead{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;}
-    table.lines{border-collapse:separate;background:transparent;}
-    table.lines tr{
-      border:1px solid var(--line);background:var(--card);
-      padding:.6rem .75rem;margin-bottom:.5rem;
-    }
-    table.lines td{border:0;padding:.1rem 0;}
-    table.lines td:first-child{
-      font-family:var(--font-ui);
-      font-size:.68rem;letter-spacing:.06em;color:var(--muted);
-    }
-    table.lines td a{
-      display:inline-flex;align-items:center;min-height:44px;
-      padding:0 .7rem;margin-top:.2rem;font-size:1.05rem;
-      border:1.5px solid currentColor;border-radius:.4rem;
-    }
-  }
-  /* 21px and 40px respectively — both real controls that had been sized
-     for a cursor. */
-  .dir a{display:inline-flex;align-items:center;min-height:44px;}
-  #view-results a[data-i18n="whyTrust"]{display:inline-flex;align-items:center;min-height:44px;}
-
-  /* ── guided conversation ── */
-  .guidewrap{max-width:44rem;}
-  .guidenote{
-    background:var(--card);border:2px dashed var(--ink);padding:.75rem 1rem;
-    font-size:.83rem;color:var(--muted);margin-bottom:.9rem;
-  }
-  .transcript{display:flex;flex-direction:column;gap:.6rem;margin-bottom:1rem;}
-  .bub{
-    padding:.8rem 1rem;max-width:90%;border:2px solid var(--ink);font-size:.97rem;
-    animation:bubin .32s var(--e-out2);
-  }
-  @media (prefers-reduced-motion: reduce){ .bub{animation:none;} }
-  @keyframes bubin{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:none;}}
-  .bub.g{background:var(--card);align-self:flex-start;border-left:.4rem solid var(--heal);}
-  .bub.u{background:var(--ink);color:var(--paper);align-self:flex-end;text-align:right;}
-  .bub.crisis{background:var(--stamp-bg);color:var(--on-stamp);border-color:var(--ink);align-self:stretch;max-width:100%;}
-  .bub.crisis a{color:#fff;font-weight:700;}
-  .bub .lines{font-family:var(--font-ui);font-size:.85rem;line-height:2;margin-top:.5rem;}
-  .typing{display:inline-flex;gap:.22rem;align-items:center;padding:.15rem 0;}
-  .typing i{width:.36rem;height:.36rem;border-radius:50%;background:var(--muted);animation:blink 1.1s infinite;}
-  .typing i:nth-child(2){animation-delay:.18s;} .typing i:nth-child(3){animation-delay:.36s;}
-  @keyframes blink{0%,60%,100%{opacity:.25;}30%{opacity:1;}}
-  @media (prefers-reduced-motion: reduce){ .typing i{animation:none;opacity:.6;} }
-  .choices{display:flex;flex-direction:column;gap:.5rem;}
-  .choices button{
-    font-family:system-ui,-apple-system,'Segoe UI','Noto Sans',Roboto,Arial,sans-serif;font-weight:400;text-transform:none;letter-spacing:0;
-    background:var(--paper);color:var(--ink);border:2px solid var(--line);
-    padding:.7rem .9rem;text-align:left;font-size:.95rem;min-height:2.9rem;
-    transition:border-color .17s var(--e-out1), transform .17s var(--e-out1);
-  }
-  .choices button:hover{border-color:var(--heal);transform:translateX(2px);box-shadow:none;}
-  .choices button.now{border-color:var(--stamp);color:var(--stamp);font-weight:700;}
-  .choices button.go{background:var(--heal);color:var(--paper);border-color:var(--heal);font-weight:700;}
-  .guidebar{display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:.9rem;}
-
-  /* ── grounding: paced breathing ──
-     ~6 breaths/min (4s in · 4s hold · 6s out) — the rate that engages
-     the parasympathetic response. Never presented as a substitute for
-     help; the helplines stay on screen throughout. */
+  /* ── Paced Breathing & Somatic Grounder ── */
   .breathe{
-    background:var(--card);border:2px solid var(--ink);border-left:.5rem solid var(--heal);
-    padding:1.1rem 1.2rem;margin:.9rem 0;max-width:44rem;
+    background:var(--card);border:1px solid var(--line);border-left:.45rem solid var(--heal);
+    border-radius:var(--r-lg);box-shadow:var(--shadow-card);
+    padding:1.3rem 1.4rem;margin:1.1rem 0;max-width:44rem;
   }
-  .breathe h3{font-size:1.05rem;font-weight:700;margin-bottom:.4rem;}
-  .breathe p{font-size:.87rem;color:var(--muted);margin-bottom:.8rem;}
-  .breathestage{display:flex;align-items:center;gap:1.1rem;flex-wrap:wrap;}
+  .breathe h3{font-size:1.12rem;font-weight:700;margin-bottom:.45rem;color:var(--ink);}
+  .breathe p{font-size:.9rem;color:var(--muted);margin-bottom:.9rem;line-height:1.5;}
+  .breathestage{display:flex;align-items:center;gap:1.3rem;flex-wrap:wrap;}
   .orb{
-    width:7.5rem;height:7.5rem;border-radius:50%;flex:none;
-    border:3px solid var(--heal);background:rgba(47,110,94,.12);
+    width:7.8rem;height:7.8rem;border-radius:50%;flex:none;
+    border:2.5px solid var(--heal);background:color-mix(in srgb, var(--heal) 14%, var(--card));
+    box-shadow:0 0 24px color-mix(in srgb, var(--heal) 20%, transparent);
     display:grid;place-items:center;text-align:center;
-    transform:scale(.62);transition:transform 4s linear;
+    transform:scale(.65);transition:transform 4s ease-in-out, background-color 2s ease;
   }
-  .orb.in{transform:scale(1);transition-duration:4s;}
-  .orb.hold{transform:scale(1);transition-duration:4s;}
-  .orb.out{transform:scale(.62);transition-duration:6s;}
+  .orb.in{transform:scale(1.08);transition-duration:4s;background:color-mix(in srgb, var(--heal) 22%, var(--card));}
+  .orb.hold{transform:scale(1.08);transition-duration:4s;background:color-mix(in srgb, var(--heal) 28%, var(--card));}
+  .orb.out{transform:scale(.65);transition-duration:6s;background:color-mix(in srgb, var(--heal) 10%, var(--card));}
   @media (prefers-reduced-motion: reduce){ .orb{transition:none!important;transform:scale(.85)!important;} }
   .orb span{
     font-family:var(--font-ui);
-    font-size:.78rem;color:var(--heal);font-weight:600;padding:0 .4rem;line-height:1.3;
+    font-size:.82rem;color:var(--heal);font-weight:700;padding:0 .5rem;line-height:1.3;
   }
-  .breathemeta{font-family:var(--font-ui);font-size:.78rem;color:var(--muted);}
-  .breathebtns{display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.4rem;}
+  .breathemeta{font-family:var(--font-ui);font-size:.8rem;color:var(--muted);}
+  .breathebtns{display:flex;gap:.6rem;flex-wrap:wrap;margin-top:.5rem;}
 
-  /* install prompt — only appears if the browser offers it */
-  #installBtn{display:none;}
+  /* ── Guided Conversation Bubbles ── */
+  .guidewrap{max-width:44rem;}
+  .guidenote{
+    background:var(--card);border:1.5px dashed var(--line);border-radius:var(--r-md);padding:.85rem 1.1rem;
+    font-size:.85rem;color:var(--muted);margin-bottom:1rem;
+  }
+  .transcript{display:flex;flex-direction:column;gap:.7rem;margin-bottom:1.1rem;}
+  .bub{
+    padding:.9rem 1.15rem;max-width:88%;border:1.5px solid var(--line);border-radius:1.1rem;
+    font-size:.98rem;line-height:1.55;animation:bubin .32s var(--e-out2);box-shadow:var(--shadow-subtle);
+  }
+  @media (prefers-reduced-motion: reduce){ .bub{animation:none;} }
+  @keyframes bubin{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:none;}}
+  .bub.g{background:var(--card);align-self:flex-start;border-left:.4rem solid var(--heal);border-bottom-left-radius:.3rem;}
+  .bub.u{background:var(--deep);color:var(--on-deep);align-self:flex-end;text-align:right;border-bottom-right-radius:.3rem;}
+  .bub.crisis{background:var(--stamp-bg);color:var(--on-stamp);border-color:var(--stamp);align-self:stretch;max-width:100%;}
+  .bub.crisis a{color:#fff;font-weight:700;}
+  .bub .lines{font-family:var(--font-ui);font-size:.88rem;line-height:2.1;margin-top:.6rem;}
+  .typing{display:inline-flex;gap:.25rem;align-items:center;padding:.2rem 0;}
+  .typing i{width:.38rem;height:.38rem;border-radius:50%;background:var(--muted);animation:blink 1.1s infinite;}
+  .typing i:nth-child(2){animation-delay:.18s;} .typing i:nth-child(3){animation-delay:.36s;}
+  @keyframes blink{0%,60%,100%{opacity:.25;}30%{opacity:1;}}
+  @media (prefers-reduced-motion: reduce){ .typing i{animation:none;opacity:.6;} }
+
+  .choices{display:flex;flex-direction:column;gap:.55rem;}
+  .choices button{
+    font-family:-apple-system,BlinkMacSystemFont,'Segoe UI Variable Text','Segoe UI',system-ui,sans-serif;
+    font-weight:500;text-transform:none;letter-spacing:0;
+    background:var(--paper);color:var(--ink);border:1.5px solid var(--line);border-radius:var(--r-md);
+    padding:.75rem 1rem;text-align:left;font-size:.96rem;min-height:3rem;box-shadow:var(--shadow-subtle);
+    transition:border-color .15s var(--e-out1), transform .15s var(--e-out1);
+  }
+  .choices button:hover{border-color:var(--heal);transform:translateX(3px);box-shadow:none;}
+  .choices button:active{transform:scale(0.985);}
+  .choices button.now{border-color:var(--stamp);color:var(--stamp);font-weight:700;}
+  .choices button.go{background:var(--heal);color:var(--paper);border-color:var(--heal);font-weight:700;}
+  .guidebar{display:flex;gap:.6rem;flex-wrap:wrap;margin-bottom:1rem;}
 
   /* ═══════════════════════════════════════════════════════════════
      THE OVERTURE — a wordless opening
@@ -1627,6 +1411,7 @@
     <span class="eyebrow reveal" data-i18n="homeEyebrow">Screen Early · Act Early</span>
     <h1 class="display reveal" id="homeH1"><span data-i18n="homeTitle1"></span> <span class="accent" data-i18n="homeTitle2"></span></h1>
     <div class="dotrule reveal" id="dotrule" aria-hidden="true"></div>
+    <p class="lede reveal" id="homeSubtitle" data-i18n="homeSubtitle" style="max-width:58ch;margin-bottom:1.4rem;font-size:1.05rem;line-height:1.6;color:var(--ink);"></p>
 
     <!-- The screener is what this site IS, so it is the first thing under
          the headline — not something you scroll past a disclaimer and a
@@ -1970,8 +1755,68 @@
 </footer>
 
 <script src="i18n.js"></script>
-<script src="helplines.js"></script>
 <script>
+window.HELP = {
+  LAST_REVIEWED: "2026-07",
+  directories: [
+    { name: "Find A Helpline",
+      url:  "https://findahelpline.com",
+      note: "Free, verified helplines in 130+ countries. Pick your country, get numbers, live chat and text options that are checked and kept current." },
+    { name: "IASP — Crisis Centres",
+      url:  "https://www.iasp.info/crisis-centres-helplines/",
+      note: "The International Association for Suicide Prevention's global directory of crisis centres, listed country by country." },
+    { name: "Befrienders Worldwide",
+      url:  "https://befrienders.org",
+      note: "Emotional-support centres across 30+ countries offering confidential listening, in local languages." }
+  ],
+  emergency: [
+    { where: "India, EU, and much of the world", num: "112" },
+    { where: "United States & Canada",           num: "911" },
+    { where: "United Kingdom",                   num: "999" },
+    { where: "Australia",                        num: "000" },
+    { where: "New Zealand",                      num: "111" }
+  ],
+  regions: [
+    { id: "sa", label: "South Asia", lines: [
+      { country:"India",       org:"Tele-MANAS (Govt. of India)", num:"14416",          tel:"14416",        note:"24×7, free, 20+ languages" },
+      { country:"India",       org:"KIRAN",                       num:"1800-599-0019",  tel:"18005990019",  note:"24×7, free, 13 languages" },
+      { country:"India",       org:"AASRA",                       num:"+91 98204 66726",tel:"+919820466726",note:"24×7 volunteer-run" },
+      { country:"Bangladesh",  org:"Kaan Pete Roi",               num:"09612-119911",   tel:"09612119911",  note:"Emotional support" },
+      { country:"Pakistan",    org:"Umang",                       num:"0311-7786264",   tel:"03117786264",  note:"Trained volunteers" },
+      { country:"Sri Lanka",   org:"CCCline",                     num:"1333",           tel:"1333",         note:"24×7 free" },
+      { country:"Nepal",       org:"TUTH Suicide Hotline",        num:"1166",           tel:"1166",         note:"24×7" }
+    ]},
+    { id: "ap", label: "Asia-Pacific", lines: [
+      { country:"Australia",   org:"Lifeline",                    num:"13 11 14",       tel:"131114",       note:"24×7 crisis support" },
+      { country:"Australia",   org:"Beyond Blue",                 num:"1300 22 4636",   tel:"1300224636",   note:"24×7" },
+      { country:"New Zealand", org:"Need to Talk?",               num:"1737",           tel:"1737",         note:"Call or text, 24×7" },
+      { country:"Japan",       org:"TELL Lifeline",               num:"03-5774-0992",   tel:"0357740992",   note:"English-language support" },
+      { country:"Singapore",   org:"Samaritans of Singapore",     num:"1767",           tel:"1767",         note:"24×7" },
+      { country:"Philippines", org:"NCMH Crisis Hotline",         num:"1553",           tel:"1553",         note:"24×7 toll-free" },
+      { country:"Malaysia",    org:"Befrienders KL",              num:"03-7627 2929",   tel:"0376272929",   note:"24×7" }
+    ]},
+    { id: "eu", label: "Europe", lines: [
+      { country:"UK & Ireland",org:"Samaritans",                  num:"116 123",        tel:"116123",       note:"24×7, free" },
+      { country:"Many EU states", org:"Emotional support line",   num:"116 123",        tel:"116123",       note:"EU-harmonised number; availability varies by country" },
+      { country:"France",      org:"3114 — Souffrance & prévention", num:"3114",       tel:"3114",         note:"24×7 national line" },
+      { country:"Germany",     org:"Telefonseelsorge",            num:"0800 111 0 111", tel:"08001110111",  note:"24×7, free" },
+      { country:"Netherlands", org:"113 Zelfmoordpreventie",      num:"113",            tel:"113",          note:"24×7" }
+    ]},
+    { id: "am", label: "Americas", lines: [
+      { country:"USA & Canada",org:"Suicide & Crisis Lifeline",   num:"988",            tel:"988",          note:"Call or text, 24×7" },
+      { country:"Brazil",      org:"CVV",                         num:"188",            tel:"188",          note:"24×7, free" },
+      { country:"Mexico",      org:"Línea de la Vida",            num:"800 911 2000",   tel:"8009112000",   note:"24×7" },
+      { country:"Argentina",   org:"Salud Mental Responde",       num:"0800-345-1435",  tel:"08003451435",  note:"Free" }
+    ]},
+    { id: "af", label: "Africa & Middle East", lines: [
+      { country:"South Africa",org:"SADAG",                       num:"0800 567 567",   tel:"0800567567",   note:"24×7 free" },
+      { country:"Kenya",       org:"Befrienders Kenya",           num:"+254 722 178 177",tel:"+254722178177",note:"Emotional support" },
+      { country:"Nigeria",     org:"SURPIN",                      num:"+234 806 210 6493",tel:"+2348062106493",note:"Suicide research & prevention" },
+      { country:"Israel",      org:"ERAN",                        num:"1201",           tel:"1201",         note:"24×7" }
+    ]}
+  ]
+};
+
 /* ════════ language-independent instrument structure ════════ */
 const META = {
   phq4:   { max:12, cutoff:6,  bands:[[0,2,0],[3,5,1],[6,8,2],[9,12,3]] },
@@ -3175,11 +3020,17 @@ document.querySelectorAll("[data-view]").forEach(el=>
 (function trackTabbar(){
   const bar = document.querySelector(".tabbar");
   if(!bar) return;
-  const sync = ()=> document.documentElement.style.setProperty(
-    "--tabbar-h", (bar.offsetHeight || 0) + "px");
+  let rafId = null;
+  const sync = ()=>{
+    if(rafId) cancelAnimationFrame(rafId);
+    rafId = requestAnimationFrame(()=>{
+      const h = bar.offsetHeight || 0;
+      document.documentElement.style.setProperty("--tabbar-h", h + "px");
+    });
+  };
   sync();
   if(typeof ResizeObserver !== "undefined") new ResizeObserver(sync).observe(bar);
-  addEventListener("resize", sync);
+  addEventListener("resize", sync, {passive:true});
 })();
 
 /* The tab bar yields while you read. Down hides it, up brings it back,

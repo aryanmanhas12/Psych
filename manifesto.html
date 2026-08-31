@@ -32,60 +32,59 @@
   .dotcaption b{color:var(--ink);}
 
   /* ── crisis stats ── */
-  .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(210px,100%),1fr));gap:0;border:2px solid var(--ink);}
-  .stat{padding:22px 20px;border-right:2px solid var(--ink);border-bottom:2px solid var(--ink);background:#fff;}
-  .stat:last-child{border-right:none;}
-  @media(max-width:700px){.stat{border-right:none;}}
+  .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(210px,100%),1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:var(--r-md);overflow:hidden;}
+  .stat{padding:22px 20px;background:var(--card);}
   .stat .num{font-weight:700;font-size:44px;line-height:1;color:var(--stamp);}
   .stat .lbl{font-size:14.5px;margin-top:8px;}
-  .stat .src{font-family:var(--font-ui);font-size:11px;color:#7a7f8d;margin-top:10px;}
+  .stat .src{font-family:var(--font-ui);font-size:11px;color:var(--muted);margin-top:10px;}
   .crisis-copy{max-width:660px;margin-top:30px;}
-  .crisis-copy p{margin-bottom:16px;}
+  .crisis-copy p{margin-bottom:16px;line-height:1.6;}
 
   /* ── manifesto ── */
-  .manifesto{background:var(--ink);color:var(--paper);}
+  .manifesto{background:var(--deep);color:var(--on-deep);}
   .manifesto .sec-label{color:var(--marigold);}
   .declaration{
-    border-top:1px solid rgba(246,244,238,.22);
+    border-top:1px solid rgba(246,244,238,.18);
     padding:26px 0;display:grid;grid-template-columns:88px 1fr;gap:18px;align-items:start;
   }
-  .declaration:last-of-type{border-bottom:1px solid rgba(246,244,238,.22);}
+  .declaration:last-of-type{border-bottom:1px solid rgba(246,244,238,.18);}
   .declaration .roman{
     font-weight:700;font-size:34px;color:var(--marigold);line-height:1;
   }
   .declaration h3{font-weight:700;font-size:22px;letter-spacing:.02em;margin-bottom:8px;}
-  .declaration p{font-size:16px;color:rgba(246,244,238,.82);max-width:640px;}
+  .declaration p{font-size:16px;color:rgba(246,244,238,.85);max-width:640px;line-height:1.6;}
   @media(max-width:560px){.declaration{grid-template-columns:1fr;gap:6px;}}
 
   /* ── solutions ── */
   .solutions h2 .accent{color:var(--heal);}
   .solutions .sec-label{color:var(--heal);}
   .sol{
-    background:#fff;border:2px solid var(--ink);border-left:8px solid var(--heal);
-    padding:22px 24px;margin-bottom:16px;
+    background:var(--card);border:1px solid var(--line);border-left:.45rem solid var(--heal);
+    border-radius:var(--r-md);box-shadow:var(--shadow-card);padding:22px 24px;margin-bottom:16px;
   }
-  .sol h3{font-size:19px;font-weight:700;margin-bottom:6px;}
+  .sol h3{font-size:19px;font-weight:700;margin-bottom:6px;color:var(--ink);}
   .sol .who{
-    font-family:var(--font-ui);font-size:12px;letter-spacing:.08em;
-    color:var(--heal);margin-bottom:8px;
+    font-family:var(--font-ui);font-size:12px;letter-spacing:.05em;
+    color:var(--heal);margin-bottom:8px;font-weight:600;
   }
-  .sol p{font-size:15.5px;}
+  .sol p{font-size:15.5px;line-height:1.6;}
 
   /* ── pledge ── */
-  .pledge{background:var(--marigold);border-top:3px solid var(--ink);border-bottom:3px solid var(--ink);}
-  .pledge h2{color:var(--ink);}
+  .pledge{background:var(--marigold);border-top:1px solid var(--line);border-bottom:1px solid var(--line);}
+  .pledge h2{color:var(--on-marigold);}
   .pledge .sec-label{color:var(--stamp);}
-  .pledge-card{background:var(--paper);border:2px solid var(--ink);padding:28px;max-width:640px;}
+  .pledge-card{background:var(--paper);border:1px solid var(--line);border-radius:var(--r-lg);box-shadow:var(--shadow-soft);padding:28px;max-width:640px;}
   .pledge-lines{list-style:none;margin:0 0 22px;}
-  .pledge-lines li{padding:8px 0;border-bottom:1px dashed var(--line);font-size:16px;display:flex;gap:10px;}
+  .pledge-lines li{padding:8px 0;border-bottom:1px dashed var(--line);font-size:16px;display:flex;gap:10px;line-height:1.5;}
   .pledge-lines li::before{content:"☐";color:var(--heal);font-size:18px;}
   .pledge-lines li.done::before{content:"☑";}
-  button:hover{transform:translate(-2px,-2px);box-shadow:4px 4px 0 var(--stamp);}
+  button:hover{transform:translateY(-1px);box-shadow:var(--shadow-soft);}
+  button:active{transform:scale(0.985);}
   button:focus-visible{outline:3px solid var(--stamp);outline-offset:3px;}
   .pledge-count{font-family:var(--font-ui);font-size:14px;margin-top:14px;}
   .sharebox{
-    display:none;margin-top:18px;background:#fff;border:2px dashed var(--ink);
-    padding:16px;font-size:14.5px;
+    display:none;margin-top:18px;background:var(--card);border:1.5px dashed var(--line);
+    border-radius:var(--r-md);padding:16px;font-size:14.5px;
   }
   .sharebox.show{display:block;}
   .sharebox .mono{font-size:12px;color:var(--heal);margin-top:10px;display:block;}
@@ -93,18 +92,19 @@
   /* ── screener banner ── */
   .screenerlink{background:var(--heal);color:var(--paper);padding:34px 0;}
   .screenerlink .wrap{display:flex;justify-content:space-between;align-items:center;gap:18px;flex-wrap:wrap;}
-  .screenerlink h3{font-weight:700;font-size:24px;letter-spacing:.03em;}
-  .screenerlink p{font-size:15px;opacity:.9;max-width:520px;}
+  .screenerlink h3{font-weight:700;font-size:24px;letter-spacing:.02em;}
+  .screenerlink p{font-size:15px;opacity:.92;max-width:520px;line-height:1.55;}
   .screenerlink a{
-    font-weight:700;letter-spacing:.05em;
+    font-weight:700;letter-spacing:.03em;border-radius:var(--r-sm);
     font-size:17px;background:var(--paper);color:var(--ink);text-decoration:none;
-    padding:13px 26px;display:inline-block;transition:transform .12s;
+    padding:13px 26px;display:inline-block;transition:transform .12s, box-shadow .12s;
   }
-  .screenerlink a:hover{transform:translate(-2px,-2px);box-shadow:4px 4px 0 var(--ink);}
+  .screenerlink a:hover{transform:translateY(-1px);box-shadow:var(--shadow-soft);}
+  .screenerlink a:active{transform:scale(0.985);}
   .stampmark{
-    display:inline-block;font-weight:700;
-    border:3px double var(--stamp);color:var(--stamp);padding:6px 14px;
-    transform:rotate(-2deg);font-size:15px;letter-spacing:.08em;margin-bottom:16px;
+    display:inline-block;font-weight:700;border-radius:var(--r-sm);
+    border:2px solid var(--stamp);color:var(--stamp);padding:6px 14px;
+    transform:rotate(-2deg);font-size:15px;letter-spacing:.05em;margin-bottom:16px;
   }
 </style>
 </head>

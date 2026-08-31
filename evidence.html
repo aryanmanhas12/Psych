@@ -13,29 +13,29 @@
 <style>
 .method{
     font-family:var(--font-ui);font-size:13px;color:var(--muted);
-    border:2px dashed var(--ink);padding:14px 18px;max-width:660px;margin-top:24px;background:#fff;
+    border:1.5px dashed var(--line);border-radius:var(--r-md);padding:14px 18px;max-width:660px;margin-top:24px;background:var(--card);
   }
   .method b{color:var(--ink);}
 
   .claim{
-    background:#fff;border:2px solid var(--ink);margin-bottom:18px;max-width:860px;
-    display:grid;grid-template-columns:190px 1fr;
+    background:var(--card);border:1px solid var(--line);border-radius:var(--r-lg);box-shadow:var(--shadow-card);
+    margin-bottom:18px;max-width:860px;display:grid;grid-template-columns:190px 1fr;overflow:hidden;
   }
   @media(max-width:640px){.claim{grid-template-columns:1fr;}}
   .claim .stat{
-    background:var(--ink);color:var(--paper);padding:20px;display:flex;flex-direction:column;justify-content:center;
+    background:var(--deep);color:var(--on-deep);padding:20px;display:flex;flex-direction:column;justify-content:center;
   }
   .claim .stat .num{font-weight:700;font-size:38px;line-height:1;color:var(--marigold);}
   .claim .stat .cap{font-family:var(--font-ui);font-size:11.5px;margin-top:8px;opacity:.85;}
   .claim .body{padding:20px 24px;}
-  .claim .body h3{font-size:18px;font-weight:700;margin-bottom:6px;}
-  .claim .body p{font-size:15px;margin-bottom:10px;}
+  .claim .body h3{font-size:18px;font-weight:700;margin-bottom:6px;color:var(--ink);}
+  .claim .body p{font-size:15px;margin-bottom:10px;line-height:1.55;}
   .claim .refs{font-family:var(--font-ui);font-size:12.5px;color:var(--heal);}
   .claim .refs a{color:var(--heal);}
 
   .honesty{
-    background:#fff;border:2px solid var(--ink);border-left:8px solid var(--marigold);
-    padding:18px 22px;max-width:860px;margin:8px 0 20px;font-size:15px;
+    background:var(--card);border:1px solid var(--line);border-left:.45rem solid var(--marigold);
+    border-radius:var(--r-md);box-shadow:var(--shadow-card);padding:18px 22px;max-width:860px;margin:8px 0 20px;font-size:15px;
   }
   .honesty b{font-size:13px;letter-spacing:.06em;}
 </style>

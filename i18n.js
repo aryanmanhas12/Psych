@@ -79,6 +79,7 @@ en: {
 
     homeEyebrow: "Screen Early · Act Early",
     homeTitle1: "Five minutes now beats", homeTitle2: "five years of silence.",
+    homeSubtitle: "Check in on your mood, anxiety, or stress. Free, private, on-device screening with immediate guidance on what to do next — nothing leaves your phone.",
     homeLede: "India's treatment gap for mental illness is 70–92% — most people who need care never reach it, and many who do get a prescription refill instead of a plan. This tool uses the same validated questionnaires doctors use, tells you what your score means, and shows you how to get real care and real follow-up.",
     noticeTitle: "⚠ This is a screening tool, not a diagnosis.",
     noticeBody: "Only a qualified clinician can diagnose a mental illness. A high score means \"talk to a professional,\" never \"you have X.\" A low score with ongoing distress still deserves attention.",
@@ -306,6 +307,7 @@ hi: {
 
     homeEyebrow: "जल्दी जाँच · जल्दी कदम",
     homeTitle1: "आज के पाँच मिनट", homeTitle2: "पाँच साल की चुप्पी से बेहतर हैं।",
+    homeSubtitle: "अपने मन, तनाव या चिंता की जाँच करें। पूरी तरह निःशुल्क और गोपनीय — आपकी जानकारी केवल आपके फ़ोन पर रहती है।",
     homeLede: "भारत में मानसिक बीमारी का उपचार अंतर 70–92% है — जिन्हें इलाज चाहिए, उनमें से अधिकांश तक यह पहुँचता ही नहीं, और जिन तक पहुँचता है उन्हें अक्सर योजना नहीं, सिर्फ़ दवा की पर्ची मिलती है। यह टूल वही प्रमाणित प्रश्नावलियाँ इस्तेमाल करता है जो डॉक्टर इस्तेमाल करते हैं, आपको बताता है कि आपके अंक का क्या अर्थ है, और असली इलाज व असली फ़ॉलो-अप तक पहुँचने का रास्ता दिखाता है।",
     noticeTitle: "⚠ यह जाँच का साधन है, निदान नहीं।",
     noticeBody: "केवल योग्य चिकित्सक ही मानसिक बीमारी का निदान कर सकते हैं। अधिक अंक का अर्थ है \"किसी विशेषज्ञ से बात करें\", यह नहीं कि \"आपको फ़लाँ बीमारी है\"। कम अंक के बावजूद यदि परेशानी बनी हुई है, तो वह भी ध्यान देने योग्य है।",

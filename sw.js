@@ -47,12 +47,12 @@
    read the page needs to find first. Fixed with an --on-marigold token, and
    the nav's own controls added to the contrast suite so the gap that hid it
    closes with it. site.css and index.html both changed. */
-const CACHE = "psych-screener-v7";
+const CACHE = "psych-screener-v8";
 const ASSETS = [
   "./", "./index.html", "./i18n.js", "./helplines.js", "./nav.js",
   "./ethics.html", "./evidence.html", "./manifesto.html",
   "./global.html", "./poster.html", "./qr-site.svg",
-  "./anton.woff2", "./site.css", "./manifest.webmanifest",
+  "./site.css", "./manifest.webmanifest",
   "./icon-192.png", "./icon-512.png", "./icon-maskable.png"
 ];
 
