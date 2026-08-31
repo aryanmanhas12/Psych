@@ -11,7 +11,109 @@
 <script src="nav.js" defer></script>
 <link rel="icon" href="icon-192.png" type="image/png">
 <link rel="apple-touch-icon" href="icon-192.png">
-<script src="prefs.js"></script>
+<script>
+/* ══════════════════════════════════════════════════════════════
+   Shared display preferences
+   ──────────────────────────────────────────────────────────────
+   Theme, text size and high contrast are chosen in the screener's
+   settings panel, which lives only on index.html. Everything else —
+   the evidence register, the ethics page, the manifesto — had no code
+   reading those choices, so turning on high contrast and then opening
+   any of them silently dropped back to defaults. For a setting someone
+   turns on because they otherwise cannot read the page, that is not a
+   cosmetic inconsistency.
+
+   Loaded WITHOUT defer, deliberately. These attributes decide what the
+   first paint looks like; applying them after parsing means a flash of
+   the wrong theme, which is worst for exactly the people who changed
+   the setting. It is a few lines and one localStorage read.
+   ══════════════════════════════════════════════════════════════ */
+(function(){
+  var root = document.documentElement;
+
+  /* ── "scripts are running", decided before the first paint ──
+     nav.js ships the navigation as nine plain links and collapses them
+     into a menu once it has run, which keeps the nav usable if that file
+     never arrives. The cost was paid by everyone else: on a phone the
+     nine links render as a 229px block, then jump to 64px when nav.js
+     executes, and the entire page below lurches 165px upwards. Measured
+     at 0.169 cumulative layout shift — all of the page's CLS, and above
+     the 0.1 that counts as good.
+
+     This class lets the stylesheet collapse the nav from the very first
+     paint, so the height never changes. It is set here, in the one file
+     that already loads synchronously in <head> for exactly this reason,
+     because a deferred script would set it after the paint it is meant
+     to fix. No script, no class, and the links stay visible — which is
+     the guarantee nav.js was written to make in the first place. */
+  root.className += (root.className ? " " : "") + "js";
+
+  var p;
+  try{ p = JSON.parse(localStorage.getItem("psych-prefs")) || {}; }
+  catch(e){ return; }              /* storage blocked — defaults are fine */
+
+  if(p.theme && p.theme !== "auto") root.setAttribute("data-theme", p.theme);
+  if(p.contrast) root.setAttribute("data-contrast", "high");
+  if(p.scale && p.scale !== 1) root.style.setProperty("--scale", p.scale);
+})();
+
+/* ══════════════════════════════════════════════════════════════
+   Translation loading — one language, not six
+   ──────────────────────────────────────────────────────────────
+   i18n.js held all six languages in one object: 283KB raw, 63.9KB
+   gzipped, the single longest bar in the waterfall at ~1,050ms, and
+   every reader downloaded all six in order to read one. It is now
+   six files, and this picks the one the reader actually needs.
+
+   It runs here, in the synchronous head script, rather than at the
+   <script> tag further down the body, because that is roughly 1900
+   lines of HTML earlier — the request starts alongside the stylesheet
+   instead of after it. The tag it replaces was parser-blocking; this
+   is not, so the app script below runs whether or not the strings have
+   landed yet. That was already true and already handled: boot() has
+   always been gated on the translations existing, because a dropped
+   translation file is the most likely single failure on a bad
+   connection.
+
+   The other five are fetched at idle after first paint, so switching
+   language stays instant and offline keeps working in all six. */
+(function(){
+  var CODES = { en:1, hi:1, mr:1, bn:1, ta:1, te:1 };
+  var waiting = {};                       /* code -> [callbacks] */
+
+  /* cb receives the code on success, or null if it could not be had.
+     One retry, because a dropped script on a patchy connection usually
+     just works the second time — the same reasoning as the old boot
+     retry, kept rather than lost in the split. */
+  window.loadLang = function(code, cb){
+    if(!CODES[code]) code = "en";
+    if(window.I18N && window.I18N[code]){ if(cb) cb(code); return; }
+    if(waiting[code]){ if(cb) waiting[code].push(cb); return; }
+    waiting[code] = cb ? [cb] : [];
+    var tries = 0;
+    (function go(){
+      var s = document.createElement("script");
+      s.src = "i18n." + code + ".js";
+      s.async = false;
+      s.onload  = function(){ settle(window.I18N && window.I18N[code] ? code : null); };
+      s.onerror = function(){ if(++tries < 2) go(); else settle(null); };
+      document.head.appendChild(s);
+    })();
+    function settle(got){
+      var list = waiting[code]; delete waiting[code];
+      for(var i = 0; i < list.length; i++) list[i](got);
+    }
+  };
+
+  var want = "en";
+  try{
+    var p = JSON.parse(localStorage.getItem("psych-prefs")) || {};
+    want = p.lang || (navigator.language || "en").slice(0, 2);
+  }catch(e){}
+  window.LANG0 = CODES[want] ? want : "en";
+  window.loadLang(window.LANG0);
+})();
+</script>
 <link rel="stylesheet" href="site.css">
 <style>
 /* Dark theme. People in distress use phones at 2am; a wall of light
@@ -1532,10 +1634,12 @@
   <div class="wrap">
     <!-- The numbers are anchors in the markup, not only after dialable()
          has run. This text is the pre-JavaScript fallback: it paints with
-         the document, but until i18n.js arrives — 275KB, and the largest
-         thing this page fetches — the numbers used to be inert text, so
-         on a slow connection there is a window where the helpline is
-         legible and not callable. Measured first paint at 2.4s against
+         the document, but until the translations arrive the numbers used
+         to be inert text, so on a slow connection there is a window where
+         the helpline is legible and not callable. That window is far
+         shorter since the languages were split — one ~24KB file instead
+         of one 283KB file — but it is not zero, and a helpline you can
+         read and cannot ring is the one failure this page must not have. Measured first paint at 2.4s against
          DOMContentLoaded at 10.6s on a poor 3G link; that window is the
          better part of eight seconds, and it belongs to exactly the
          person this strip is for.
@@ -1969,8 +2073,103 @@
   </div>
 </footer>
 
-<script src="i18n.js"></script>
-<script src="helplines.js"></script>
+<!-- helplines.js and prefs.js are inlined on this page only. Both are
+     tiny — 2.3KB and 1.2KB gzipped — and both cost a full round trip,
+     measured at ~450ms each on mobile. That is not bandwidth, it is
+     latency, so the fix is removing the request, not shrinking the file.
+     The other five pages still load them as files; only this one, the
+     entry point people land on, pays to inline them. -->
+<script>
+/* ══════════════════════════════════════════════════════════════
+   Psych Screener — crisis & support lines, worldwide
+   ──────────────────────────────────────────────────────────────
+   SAFETY ARCHITECTURE — read before editing:
+
+   Helpline numbers change, merge, and get discontinued. A hardcoded
+   list in a static site WILL go stale. So this file is deliberately
+   DIRECTORY-FIRST: the maintained international directories below are
+   always shown at the top of the help view and are always current,
+   because they are maintained by organisations whose job that is.
+   The per-region numbers are a convenience layer beneath them, never
+   the only path to help.
+
+   If you add a number: cite where you verified it, and update
+   LAST_REVIEWED. If you cannot verify a number, do not add it —
+   an unanswered crisis number is worse than no number.
+
+   Names, numbers and org titles are intentionally NOT translated:
+   they are proper nouns and dialable strings, identical in every
+   language. Only the surrounding UI chrome is translated.
+   ══════════════════════════════════════════════════════════════ */
+
+window.HELP = {
+
+  LAST_REVIEWED: "2026-07",
+
+  /* Always-current, maintained directories. Shown first, everywhere. */
+  directories: [
+    { name: "Find A Helpline",
+      url:  "https://findahelpline.com",
+      note: "Free, verified helplines in 130+ countries. Pick your country, get numbers, live chat and text options that are checked and kept current." },
+    { name: "IASP — Crisis Centres",
+      url:  "https://www.iasp.info/crisis-centres-helplines/",
+      note: "The International Association for Suicide Prevention's global directory of crisis centres, listed country by country." },
+    { name: "Befrienders Worldwide",
+      url:  "https://befrienders.org",
+      note: "Emotional-support centres across 30+ countries offering confidential listening, in local languages." }
+  ],
+
+  /* Emergency services — for immediate danger to life. */
+  emergency: [
+    { where: "India, EU, and much of the world", num: "112" },
+    { where: "United States & Canada",           num: "911" },
+    { where: "United Kingdom",                   num: "999" },
+    { where: "Australia",                        num: "000" },
+    { where: "New Zealand",                      num: "111" }
+  ],
+
+  /* Regional lines. `tel` is stripped to digits for the dial link. */
+  regions: [
+    { id: "sa", label: "South Asia", lines: [
+      { country:"India",       org:"Tele-MANAS (Govt. of India)", num:"14416",          tel:"14416",        note:"24×7, free, 20+ languages" },
+      { country:"India",       org:"KIRAN",                       num:"1800-599-0019",  tel:"18005990019",  note:"24×7, free, 13 languages" },
+      { country:"India",       org:"AASRA",                       num:"+91 98204 66726",tel:"+919820466726",note:"24×7 volunteer-run" },
+      { country:"Bangladesh",  org:"Kaan Pete Roi",               num:"09612-119911",   tel:"09612119911",  note:"Emotional support" },
+      { country:"Pakistan",    org:"Umang",                       num:"0311-7786264",   tel:"03117786264",  note:"Trained volunteers" },
+      { country:"Sri Lanka",   org:"CCCline",                     num:"1333",           tel:"1333",         note:"24×7 free" },
+      { country:"Nepal",       org:"TUTH Suicide Hotline",        num:"1166",           tel:"1166",         note:"24×7" }
+    ]},
+    { id: "ap", label: "Asia-Pacific", lines: [
+      { country:"Australia",   org:"Lifeline",                    num:"13 11 14",       tel:"131114",       note:"24×7 crisis support" },
+      { country:"Australia",   org:"Beyond Blue",                 num:"1300 22 4636",   tel:"1300224636",   note:"24×7" },
+      { country:"New Zealand", org:"Need to Talk?",               num:"1737",           tel:"1737",         note:"Call or text, 24×7" },
+      { country:"Japan",       org:"TELL Lifeline",               num:"03-5774-0992",   tel:"0357740992",   note:"English-language support" },
+      { country:"Singapore",   org:"Samaritans of Singapore",     num:"1767",           tel:"1767",         note:"24×7" },
+      { country:"Philippines", org:"NCMH Crisis Hotline",         num:"1553",           tel:"1553",         note:"24×7 toll-free" },
+      { country:"Malaysia",    org:"Befrienders KL",              num:"03-7627 2929",   tel:"0376272929",   note:"24×7" }
+    ]},
+    { id: "eu", label: "Europe", lines: [
+      { country:"UK & Ireland",org:"Samaritans",                  num:"116 123",        tel:"116123",       note:"24×7, free" },
+      { country:"Many EU states", org:"Emotional support line",   num:"116 123",        tel:"116123",       note:"EU-harmonised number; availability varies by country" },
+      { country:"France",      org:"3114 — Souffrance & prévention", num:"3114",       tel:"3114",         note:"24×7 national line" },
+      { country:"Germany",     org:"Telefonseelsorge",            num:"0800 111 0 111", tel:"08001110111",  note:"24×7, free" },
+      { country:"Netherlands", org:"113 Zelfmoordpreventie",      num:"113",            tel:"113",          note:"24×7" }
+    ]},
+    { id: "am", label: "Americas", lines: [
+      { country:"USA & Canada",org:"Suicide & Crisis Lifeline",   num:"988",            tel:"988",          note:"Call or text, 24×7" },
+      { country:"Brazil",      org:"CVV",                         num:"188",            tel:"188",          note:"24×7, free" },
+      { country:"Mexico",      org:"Línea de la Vida",            num:"800 911 2000",   tel:"8009112000",   note:"24×7" },
+      { country:"Argentina",   org:"Salud Mental Responde",       num:"0800-345-1435",  tel:"08003451435",  note:"Free" }
+    ]},
+    { id: "af", label: "Africa & Middle East", lines: [
+      { country:"South Africa",org:"SADAG",                       num:"0800 567 567",   tel:"0800567567",   note:"24×7 free" },
+      { country:"Kenya",       org:"Befrienders Kenya",           num:"+254 722 178 177",tel:"+254722178177",note:"Emotional support" },
+      { country:"Nigeria",     org:"SURPIN",                      num:"+234 806 210 6493",tel:"+2348062106493",note:"Suicide research & prevention" },
+      { country:"Israel",      org:"ERAN",                        num:"1201",           tel:"1201",         note:"24×7" }
+    ]}
+  ]
+};
+</script>
 <script>
 /* ════════ language-independent instrument structure ════════ */
 const META = {
@@ -2030,9 +2229,38 @@ function fmt(str, vals){ return String(str).replace(/\{(\w+)\}/g, (m,k)=> k in v
 function localeOf(){ return LANG === "en" ? "en-IN" : LANG + "-IN"; }
 function dateStr(d, opts){ try{ return new Date(d).toLocaleDateString(localeOf(), opts); }catch(e){ return new Date(d).toLocaleDateString("en-IN", opts); } }
 
-/* ════════ language ════════ */
-function setLang(code){
-  if(!window.I18N[code]) code = "en";
+/* ════════ language ════════
+   The list of languages is declared here rather than read off
+   window.I18N, because window.I18N now holds only the languages that
+   have actually been fetched — and the whole point of the split is that
+   on first paint that is one of them. Building the picker from what is
+   loaded would offer a Hindi speaker a menu containing only English,
+   which is precisely backwards: the language control exists for the
+   person who cannot read the page it is on. Six codes and six labels
+   cost nothing to carry, and they are always all offered. */
+const LANGS = [
+  ["en", "English", "en"],
+  ["hi", "हिन्दी",   "hi"],
+  ["mr", "मराठी",   "mr"],
+  ["bn", "বাংলা",    "bn"],
+  ["ta", "தமிழ்",    "ta"],
+  ["te", "తెలుగు",   "te"]
+];
+
+/* `after` runs once the language is on screen — otBuildLangs needs it,
+   because replaying the opening before its caption exists shows the
+   scene in the language the reader just rejected. */
+function setLang(code, after){
+  if(!window.I18N || !window.I18N[code]){
+    /* Not fetched yet. In practice this is rare — the idle preload has
+       usually finished long before anyone opens the picker — so no
+       spinner: the page simply changes a moment later. */
+    loadLang(code, got=>{
+      if(got) setLang(got, after);
+      else if(code !== "en" && window.I18N && window.I18N.en) setLang("en", after);
+    });
+    return;
+  }
   LANG = code; T = window.I18N[code];
   document.documentElement.lang = T.htmlLang;
   const p = prefs(); p.lang = code; savePrefs(p);
@@ -2067,16 +2295,30 @@ function setLang(code){
   if(document.getElementById("view-history").classList.contains("active")) renderHistory();
   if(current) renderQ();
   if(lastResult && document.getElementById("view-results").classList.contains("active")) renderResults(false);
+  if(after) after();
 }
 
 function buildLangSelect(){
   const sel = document.getElementById("langsel");
-  Object.keys(window.I18N).forEach(code=>{
+  LANGS.forEach(([code, label, htmlLang])=>{
     const o = document.createElement("option");
-    o.value = code; o.textContent = window.I18N[code].label;
+    o.value = code; o.textContent = label; o.lang = htmlLang;
     sel.appendChild(o);
   });
   sel.addEventListener("change", ()=> setLang(sel.value));
+}
+
+/* The other five, once the page is up and idle. Switching language then
+   costs nothing, and an installed copy still works offline in all six —
+   which is the whole reason this site caches anything. Sequential on
+   purpose: five parallel requests on a phone that has just finished
+   painting would compete with whatever the reader does next. */
+function preloadLangs(){
+  const rest = LANGS.map(l=> l[0]).filter(c=> !(window.I18N && window.I18N[c]));
+  (function next(){
+    const c = rest.shift();
+    if(c) loadLang(c, ()=> setTimeout(next, 120));
+  })();
 }
 
 /* ════════ accessibility prefs ════════ */
@@ -2672,11 +2914,22 @@ function openSheetFor(inst){
   showView("summary");
 }
 
+/* The clinical summary is written in English on purpose — it is the
+   sheet a patient hands to a doctor — so it needs window.I18N.en even
+   when the reader has never been in English. With the languages split
+   that is no longer guaranteed to be in memory, so fetch it if it is
+   missing. Nearly always it is not: the idle preload takes English
+   first, and this screen is several taps and one completed screener
+   away from first paint. */
 function renderSummary(){
   const r = sheetFor || lastResult;
   if(!r){ showView("home"); return; }
-  document.getElementById("sheetBody").innerHTML = buildSheet(r);
-  sheetFor = null;   /* one-shot: the results view owns the default again */
+  const draw = ()=>{
+    document.getElementById("sheetBody").innerHTML = buildSheet(r);
+    sheetFor = null;   /* one-shot: the results view owns the default again */
+  };
+  if(window.I18N && window.I18N.en) draw();
+  else loadLang("en", got=>{ if(got) draw(); });
 }
 
 /* ════════ history ════════ */
@@ -3104,8 +3357,8 @@ function breatheStop(finished){
    Everything below this line needs window.I18N. Every visible string on
    the page is a data-i18n key filled in by setLang, and the screener
    cards, the guide and the results are all built from T at runtime — so
-   if i18n.js does not arrive, 62 of 98 text nodes stay empty, the card
-   grid renders nothing, and the <h1> is a blank line.
+   if the translations do not arrive, 62 of 98 text nodes stay empty, the
+   card grid renders nothing, and the <h1> is a blank line.
 
    That was not a graceful degradation, it was a crash. buildLangSelect
    opens with Object.keys(window.I18N), which throws "Cannot convert
@@ -3114,12 +3367,16 @@ function breatheStop(finished){
    a phone, was a white screen with one working phone number on it — the
    only text on the page that is hard-coded rather than translated.
 
-   i18n.js is 275KB, the largest thing this page fetches, which makes it
-   the most likely single request to be dropped on a bad connection. So:
-   try once more before giving up, since a retry usually just works, and
-   if it still fails say so in plain English instead of showing a blank
-   page. The crisis strip above is unaffected either way — its numbers
-   are in the markup and callable with no JavaScript at all. */
+   The translations were 275KB in one file — the largest thing this page
+   fetched, which made it the most likely single request to be dropped on
+   a bad connection. They are six files now, roughly 24KB each, so the
+   exposure is smaller; it is not gone, and a dropped file still empties
+   the page. So: try once more before giving up, since a retry usually
+   just works, and if it still fails say so in plain English instead of
+   showing a blank page. That retry now lives in loadLang, in the head,
+   where every fetch of a language goes through it. The crisis strip
+   above is unaffected either way — its numbers are in the markup and
+   callable with no JavaScript at all. */
 function boot(){
   buildLangSelect();
   const P = prefs();
@@ -3129,6 +3386,9 @@ function boot(){
   applyContrast(!!P.contrast);
   /* last, and only once the strings exist — see startOpening */
   startOpening();
+  /* and the other five languages, once there is nothing else to do */
+  if(window.requestIdleCallback) requestIdleCallback(preloadLangs, {timeout:4000});
+  else setTimeout(preloadLangs, 1500);
 }
 
 function bootFailed(){
@@ -3457,18 +3717,18 @@ function otBuildLangs(){
   if(!host) return;
   host.setAttribute("aria-label", (T.ui.langLabel || "Language"));
   host.textContent = "";
-  Object.keys(window.I18N).forEach(code=>{
+  LANGS.forEach(([code, label, htmlLang])=>{
     const b = document.createElement("button");
     b.type = "button";
-    b.textContent = window.I18N[code].label;
-    b.lang = window.I18N[code].htmlLang;
+    b.textContent = label;
+    b.lang = htmlLang;
     b.setAttribute("aria-pressed", String(code === LANG));
     b.addEventListener("click", ()=>{
       /* Already in this language: do nothing, so a stray second tap on the
          chip that is already pressed does not restart anything. */
       if(code === LANG) return;
-      setLang(code);
-      otReplay();
+      /* Replay only once the new strings are in the DOM — see setLang. */
+      setLang(code, otReplay);
     });
     host.appendChild(b);
   });
@@ -3521,7 +3781,7 @@ ot.addEventListener("keydown", e=>{ if(e.key === "Escape") otEnd(true); });
    walkthrough's copy, the three questions. This used to run inline here,
    which was fine only because setLang had always already happened by the
    time the parser reached it. Now that boot() can be deferred by a retry
-   — or never run at all, when i18n.js does not arrive — starting the
+   — or never run at all, when the translations do not arrive — starting
    opening from here threw "Cannot read properties of null (reading
    'ui')" and took the rest of the script down with it. The opening is
    the one thing that must not run before the words it is made of. */
@@ -3981,15 +4241,16 @@ observeReveals();
 
 /* ════════ start ════════
    Last statement in the file, so every declaration above it exists. */
-if(window.I18N && window.I18N.en){
-  boot();
-}else{
-  const again = document.createElement("script");
-  again.src = "i18n.js";
-  again.onload  = ()=> (window.I18N && window.I18N.en) ? boot() : bootFailed();
-  again.onerror = bootFailed;
-  document.head.appendChild(again);
-}
+/* The reader's own language was requested from the head script, roughly
+   1900 lines ago, and may or may not have landed by now — it is no longer
+   parser-blocking, which is most of where the time saved comes from. So
+   boot when it arrives rather than assuming it already has. loadLang
+   returns immediately if it did. */
+loadLang(window.LANG0 || "en", got=>{
+  if(got) boot();
+  else if((window.LANG0 || "en") !== "en") loadLang("en", g=> g ? boot() : bootFailed());
+  else bootFailed();
+});
 
 if(location.hash){
   const v = location.hash.slice(1);

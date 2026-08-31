@@ -225,23 +225,26 @@ const OVERFLOW = `(()=>{
   }
 
   /* 6 ── the app must degrade, not die, when a file does not arrive.
-         A blocked i18n.js used to throw and leave a blank page. */
+         A blocked translation file used to throw and leave a blank page.
+         It is i18n.en.js now rather than one 283KB i18n.js, and the retry
+         moved into loadLang in the head — so this blocks every i18n.*.js
+         to prove the split did not quietly drop the recovery with it. */
   head('6. DEGRADATION');
   {
     const ctx = await b.newContext(phone()); const p = await ctx.newPage();
     const errs=[]; p.on('pageerror',e=>errs.push(e.message));
     let n=0;
-    await p.route('**/i18n.js', r=>(++n===1)?r.abort():r.continue());
+    await p.route('**/i18n.*.js', r=>(++n===1)?r.abort():r.continue());
     await p.goto(URL,{waitUntil:'domcontentloaded'}); await p.waitForTimeout(2500);
     let s=await p.evaluate(()=>({cards:document.querySelectorAll('#cardGrid .card').length,
                                  panel:!!document.querySelector('.loadfail')}));
-    (s.cards>0&&!s.panel)?ok('a dropped i18n.js recovers on retry'):fail('did not recover on retry');
+    (s.cards>0&&!s.panel)?ok('a dropped translation file recovers on retry'):fail('did not recover on retry');
     errs.length?fail('threw: '+errs.join('; ')):ok('no uncaught exception');
     await ctx.close();
 
     const ctx2 = await b.newContext(phone()); const p2 = await ctx2.newPage();
     const errs2=[]; p2.on('pageerror',e=>errs2.push(e.message));
-    await p2.route('**/i18n.js', r=>r.abort());
+    await p2.route('**/i18n.*.js', r=>r.abort());
     await p2.goto(URL,{waitUntil:'domcontentloaded'}); await p2.waitForTimeout(2500);
     s=await p2.evaluate(()=>({panel:!!document.querySelector('.loadfail'),
                               tels:document.querySelectorAll('.topstrip a[href^="tel:"]').length}));
@@ -268,6 +271,20 @@ const OVERFLOW = `(()=>{
                                      cards:document.querySelectorAll('#cardGrid .card').length}));
       (s.tel&&s.cards>0)?ok(`offline: helpline dialable, ${s.cards} screeners available`)
                         :fail('offline: strip or screeners missing');
+
+      /* The languages are six files now, fetched one at a time. That saves
+         52KB on the critical path and introduces exactly one new way to
+         break: if the service worker stops precaching all six, an installed
+         copy silently loses the ability to change language with no signal —
+         for the reader least able to work around it. So switch language
+         with the network off and check the page actually came out in it. */
+      await p.evaluate(()=>setLang('ta'));
+      await p.waitForTimeout(1200);
+      const sw = await p.evaluate(()=>({lang:document.documentElement.lang,
+                                        h1:(document.querySelector('h1')||{}).textContent||''}));
+      (sw.lang==='ta' && /[\u0B80-\u0BFF]/.test(sw.h1))
+        ? ok('offline: language switches, page renders in Tamil')
+        : fail(`offline: language switch failed (lang=${sw.lang}) — are all six in the SW ASSETS?`);
     }
     await ctx.close();
   }
