@@ -1201,7 +1201,8 @@
         <path class="lb" d="M341 210 L335 238"/>
         <path class="lb" d="M335 238 L299 230 L294 247"/>
         <path class="lb" id="otArmB" d="M339 218 L306 231"/>
-      </g>
+      <g id="otField" class="ot-field"></g>
+      <circle id="otGold" class="gold-ring" r="10" cx="-100" cy="-100"/>
     </svg>
     </div>
     <!-- Caption and progress belong to the picture, not to the far edge of
@@ -3369,7 +3370,7 @@ function otAt(ms, fn){ otTimers.push(setTimeout(fn, ms)); }
    the figure stands — the distance is the argument. */
 function otBuildField(){
   const g = document.getElementById("otField");
-  if(g.childElementCount) return;
+  if(!g || g.childElementCount) return;
   const cols = 19, rows = 7, x0 = 42, y0 = 62, dx = 28, dy = 29;
   const GOLD = 4 * cols + 15;                    /* lower-right, away from centre */
   for(let i = 0; i < 133; i++){
@@ -3381,7 +3382,7 @@ function otBuildField(){
     if(i === GOLD){
       el.setAttribute("class","gold");
       const ring = document.getElementById("otGold");
-      ring.setAttribute("cx", cx); ring.setAttribute("cy", cy);
+      if(ring){ ring.setAttribute("cx", cx); ring.setAttribute("cy", cy); }
     }
     g.appendChild(el);
   }
