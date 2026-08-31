@@ -21,10 +21,66 @@
   if(p.contrast) root.setAttribute("data-contrast", "high");
   if(p.scale && p.scale !== 1) root.style.setProperty("--scale", p.scale);
 })();
+
+/* ══════════════════════════════════════════════════════════════
+   Translation loading — one language, not six
+   ──────────────────────────────────────────────────────────────
+   i18n.js held all six languages in one object: 283KB raw, 63.9KB
+   gzipped, the single longest bar in the waterfall at ~1,050ms, and
+   every reader downloaded all six in order to read one. It is now six
+   files, and this picks the one the reader actually needs.
+
+   It runs here, in the synchronous head script, rather than at the
+   <script> tag that used to sit down in the body — that is roughly 1,700
+   lines of HTML earlier, so the request starts alongside the stylesheet
+   instead of after it, and the preload hint it replaces is no longer
+   needed. The tag it replaces was parser-blocking; this is not, so the
+   app script below runs whether or not the strings have landed yet.
+   That was already true and already handled: boot() has always been
+   gated on the translations existing, because a dropped translation file
+   is the most likely single failure on a bad connection.
+
+   The other five are fetched at idle after first paint, so switching
+   language stays instant and offline keeps working in all six. */
+(function(){
+  var CODES = { en:1, hi:1, mr:1, bn:1, ta:1, te:1 };
+  var waiting = {};                       /* code -> [callbacks] */
+
+  /* cb receives the code on success, or null if it could not be had.
+     One retry, because a dropped script on a patchy connection usually
+     just works the second time — the same reasoning as the old boot
+     retry, kept rather than lost in the split. */
+  window.loadLang = function(code, cb){
+    if(!CODES[code]) code = "en";
+    if(window.I18N && window.I18N[code]){ if(cb) cb(code); return; }
+    if(waiting[code]){ if(cb) waiting[code].push(cb); return; }
+    waiting[code] = cb ? [cb] : [];
+    var tries = 0;
+    (function go(){
+      var s = document.createElement("script");
+      s.src = "i18n." + code + ".js";
+      s.async = false;
+      s.onload  = function(){ settle(window.I18N && window.I18N[code] ? code : null); };
+      s.onerror = function(){ if(++tries < 2) go(); else settle(null); };
+      document.head.appendChild(s);
+    })();
+    function settle(got){
+      var list = waiting[code]; delete waiting[code];
+      for(var i = 0; i < list.length; i++) list[i](got);
+    }
+  };
+
+  var want = "en";
+  try{
+    var q = JSON.parse(localStorage.getItem("psych-prefs")) || {};
+    want = q.lang || (navigator.language || "en").slice(0, 2);
+  }catch(e){}
+  window.LANG0 = CODES[want] ? want : "en";
+  window.loadLang(window.LANG0);
+})();
 </script>
 <link rel="apple-touch-icon" href="icon-192.png">
 <link rel="preload" href="site.css" as="style">
-<link rel="preload" href="i18n.js" as="script">
 <link rel="stylesheet" href="site.css">
 <style>
   /* ── Dark theme & Color Tokens (mirrored with site.css) ── */
@@ -1414,7 +1470,7 @@
     <span class="eyebrow reveal" data-i18n="homeEyebrow">Screen Early · Act Early</span>
     <h1 class="display reveal" id="homeH1"><span data-i18n="homeTitle1"></span> <span class="accent" data-i18n="homeTitle2"></span></h1>
     <div class="dotrule reveal" id="dotrule" aria-hidden="true"></div>
-    <p class="lede reveal" id="homeSubtitle" data-i18n="homeSubtitle" style="max-width:58ch;margin-bottom:1.4rem;font-size:1.05rem;line-height:1.6;color:var(--ink);"></p>
+    <p class="lede reveal" id="homeSubtitle" data-i18n="homeSubtitle" data-i18n-optional style="max-width:58ch;margin-bottom:1.4rem;font-size:1.05rem;line-height:1.6;color:var(--ink);"></p>
 
     <!-- The screener is what this site IS, so it is the first thing under
          the headline — not something you scroll past a disclaimer and a
@@ -1789,7 +1845,6 @@
   </div>
 </footer>
 
-<script src="i18n.js"></script>
 <script>
 window.HELP = {
   LAST_REVIEWED: "2026-07",
@@ -1910,9 +1965,38 @@ function fmt(str, vals){ return String(str).replace(/\{(\w+)\}/g, (m,k)=> k in v
 function localeOf(){ return LANG === "en" ? "en-IN" : LANG + "-IN"; }
 function dateStr(d, opts){ try{ return new Date(d).toLocaleDateString(localeOf(), opts); }catch(e){ return new Date(d).toLocaleDateString("en-IN", opts); } }
 
-/* ════════ language ════════ */
-function setLang(code){
-  if(!window.I18N[code]) code = "en";
+/* ════════ language ════════
+   The list of languages is declared here rather than read off
+   window.I18N, because window.I18N now holds only the languages that
+   have actually been fetched — and the whole point of the split is that
+   on first paint that is one of them. Building the picker from what is
+   loaded would offer a Hindi speaker a menu containing only English,
+   which is precisely backwards: the language control exists for the
+   person who cannot read the page it is on. Six codes and six labels
+   cost nothing to carry, and they are always all offered. */
+const LANGS = [
+  ["en", "English", "en"],
+  ["hi", "हिन्दी",   "hi"],
+  ["mr", "मराठी",   "mr"],
+  ["bn", "বাংলা",    "bn"],
+  ["ta", "தமிழ்",    "ta"],
+  ["te", "తెలుగు",   "te"]
+];
+
+/* `after` runs once the language is on screen — otBuildLangs needs it,
+   because replaying the opening before its caption exists shows the
+   scene in the language the reader just rejected. */
+function setLang(code, after){
+  if(!window.I18N || !window.I18N[code]){
+    /* Not fetched yet. In practice this is rare — the idle preload has
+       usually finished long before anyone opens the picker — so no
+       spinner: the page simply changes a moment later. */
+    loadLang(code, got=>{
+      if(got) setLang(got, after);
+      else if(code !== "en" && window.I18N && window.I18N.en) setLang("en", after);
+    });
+    return;
+  }
   LANG = code; T = window.I18N[code];
   document.documentElement.lang = T.htmlLang;
   const p = prefs(); p.lang = code; savePrefs(p);
@@ -1947,16 +2031,44 @@ function setLang(code){
   if(document.getElementById("view-history").classList.contains("active")) renderHistory();
   if(current) renderQ();
   if(lastResult && document.getElementById("view-results").classList.contains("active")) renderResults(false);
+  hideMissing();
+  if(after) after();
+}
+
+/* Some strings exist in English and Hindi and not yet in the other four —
+   homeSubtitle is the current one. The loop above fills a node only when
+   the value is a string, which is right, but it leaves the element in the
+   layout: an empty <p> still carries its margin, so three of the six
+   languages got a 1.4rem hole where a sentence should be. Mark those
+   nodes data-i18n-optional and they are hidden outright when their key is
+   missing, and shown again the moment a translation for it lands. */
+function hideMissing(){
+  document.querySelectorAll("[data-i18n-optional]").forEach(el=>{
+    el.hidden = typeof T.ui[el.dataset.i18n] !== "string";
+  });
 }
 
 function buildLangSelect(){
   const sel = document.getElementById("langsel");
-  Object.keys(window.I18N).forEach(code=>{
+  LANGS.forEach(([code, label, htmlLang])=>{
     const o = document.createElement("option");
-    o.value = code; o.textContent = window.I18N[code].label;
+    o.value = code; o.textContent = label; o.lang = htmlLang;
     sel.appendChild(o);
   });
   sel.addEventListener("change", ()=> setLang(sel.value));
+}
+
+/* The other five, once the page is up and idle. Switching language then
+   costs nothing, and an installed copy still works offline in all six —
+   which is the whole reason this site caches anything. Sequential on
+   purpose: five parallel requests on a phone that has just finished
+   painting would compete with whatever the reader does next. */
+function preloadLangs(){
+  const rest = LANGS.map(l=> l[0]).filter(c=> !(window.I18N && window.I18N[c]));
+  (function next(){
+    const c = rest.shift();
+    if(c) loadLang(c, ()=> setTimeout(next, 120));
+  })();
 }
 
 /* ════════ accessibility prefs ════════ */
@@ -2568,11 +2680,21 @@ function openSheetFor(inst){
   showView("summary");
 }
 
+/* The clinical summary is written in English on purpose — it is the sheet
+   a patient hands to a doctor — so buildSheet needs window.I18N.en even
+   when the reader has never been in English. With the languages split that
+   is no longer guaranteed to be in memory, so fetch it if it is missing.
+   Nearly always it is not: the idle preload takes English first, and this
+   screen is several taps and a completed screener away from first paint. */
 function renderSummary(){
   const r = sheetFor || lastResult;
   if(!r){ showView("home"); return; }
-  document.getElementById("sheetBody").innerHTML = buildSheet(r);
-  sheetFor = null;   /* one-shot: the results view owns the default again */
+  const draw = ()=>{
+    document.getElementById("sheetBody").innerHTML = buildSheet(r);
+    sheetFor = null;   /* one-shot: the results view owns the default again */
+  };
+  if(window.I18N && window.I18N.en) draw();
+  else loadLang("en", got=>{ if(got) draw(); });
 }
 
 /* ════════ history ════════ */
@@ -3152,6 +3274,9 @@ function boot(){
   applyContrast(!!P.contrast);
   /* last, and only once the strings exist — see startOpening */
   startOpening();
+  /* and the other five languages, once there is nothing else to do */
+  if(window.requestIdleCallback) requestIdleCallback(preloadLangs, {timeout:4000});
+  else setTimeout(preloadLangs, 1500);
 }
 
 function bootFailed(){
@@ -3508,18 +3633,18 @@ function otBuildLangs(){
   if(!host) return;
   host.setAttribute("aria-label", (T.ui.langLabel || "Language"));
   host.textContent = "";
-  Object.keys(window.I18N).forEach(code=>{
+  LANGS.forEach(([code, label, htmlLang])=>{
     const b = document.createElement("button");
     b.type = "button";
-    b.textContent = window.I18N[code].label;
-    b.lang = window.I18N[code].htmlLang;
+    b.textContent = label;
+    b.lang = htmlLang;
     b.setAttribute("aria-pressed", String(code === LANG));
     b.addEventListener("click", ()=>{
       /* Already in this language: do nothing, so a stray second tap on the
          chip that is already pressed does not restart anything. */
       if(code === LANG) return;
-      setLang(code);
-      otReplay();
+      /* Replay only once the new strings are in the DOM — see setLang. */
+      setLang(code, otReplay);
     });
     host.appendChild(b);
   });
@@ -4032,15 +4157,17 @@ observeReveals();
 
 /* ════════ start ════════
    Last statement in the file, so every declaration above it exists. */
-if(window.I18N && window.I18N.en){
-  boot();
-}else{
-  const again = document.createElement("script");
-  again.src = "i18n.js";
-  again.onload  = ()=> (window.I18N && window.I18N.en) ? boot() : bootFailed();
-  again.onerror = bootFailed;
-  document.head.appendChild(again);
-}
+/* The reader's own language was requested from the head script, roughly
+   1,700 lines ago, and may or may not have landed by now — it is no longer
+   parser-blocking, which is most of where the saved time comes from. So
+   boot when it arrives rather than assuming it already has; loadLang
+   returns immediately if it did, and carries the retry that used to live
+   here. */
+loadLang(window.LANG0 || "en", got=>{
+  if(got) boot();
+  else if((window.LANG0 || "en") !== "en") loadLang("en", g=> g ? boot() : bootFailed());
+  else bootFailed();
+});
 
 if(location.hash){
   const v = location.hash.slice(1);

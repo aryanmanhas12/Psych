@@ -46,10 +46,22 @@
    same colour as what is behind it, on the one control a reader who cannot
    read the page needs to find first. Fixed with an --on-marigold token, and
    the nav's own controls added to the contrast suite so the gap that hid it
-   closes with it. site.css and index.html both changed. */
-const CACHE = "psych-screener-v8";
+   closes with it. site.css and index.html both changed.
+
+   v9: i18n.js is gone, replaced by i18n.<lang>.js — all six are listed
+   below, and all six must stay listed. The app fetches only the reader's
+   own language on the critical path and the rest at idle, which is the
+   whole saving; but an installed copy has to keep switching language with
+   no network at all, and that only works if every one of them was
+   precached here. Dropping five names from this array would look like a
+   tidy-up and would silently break offline language switching for the
+   people most likely to need it. There is a test that switches language
+   with the network off, so it would not stay silent for long. */
+const CACHE = "psych-screener-v9";
 const ASSETS = [
-  "./", "./index.html", "./i18n.js", "./helplines.js", "./nav.js",
+  "./", "./index.html", "./helplines.js", "./nav.js",
+  "./i18n.en.js", "./i18n.hi.js", "./i18n.mr.js",
+  "./i18n.bn.js", "./i18n.ta.js", "./i18n.te.js",
   "./ethics.html", "./evidence.html", "./manifesto.html",
   "./global.html", "./poster.html", "./qr-site.svg",
   "./site.css", "./manifest.webmanifest",
