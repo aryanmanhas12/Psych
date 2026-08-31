@@ -19,111 +19,70 @@
 
 /* ── tokens ── */
 :root{
-  --ink:#151C2E;
-  --paper:#F6F4EE;
+  --ink:#161B26;
+  --paper:#FAF8F5;
   --card:#FFFFFF;
-  --marigold:#E6A11C;
-  --stamp:#B23A2E;
-  --heal:#2F6E5E;
-  --line:#D8D3C6;
-  --muted:#54596A;
-  --deep:#151C2E;          /* the always-dark surface: nav, stat bands */
-  --on-deep:#F6F4EE;
-  /* ── the red that has to carry white text ──
-     --stamp does two unrelated jobs: it is the accent red for text and
-     rules ON the page, and it is the fill BEHIND the white text of the
-     crisis strip. Those want opposite things from a dark theme. The dark
-     token lightened --stamp to #E4796B so it would read against a near
-     black page, which is right for a rule and wrong for a background:
-     white on #E4796B is 2.90:1, so in dark mode the helpline numbers —
-     the most safety-critical text on the site, read at 2am on a phone,
-     by someone we have just told is in distress — were the single
-     hardest thing here to read, and failed WCAG AA outright.
-
-     Split into its own token, and deliberately the same value in both
-     themes: white on it is 5.94:1, it still sits 3.05:1 clear of the
-     dark page so the band reads as a band, and a crisis affordance that
-     does not move or change colour between themes is one less thing to
-     re-learn at the worst possible moment. */
-  --stamp-bg:#B23A2E;
+  --marigold:#DF9916;
+  --stamp:#B8382A;
+  --heal:#246554;
+  --line:#E4DED4;
+  --muted:#585E70;
+  --deep:#161B26;          /* the always-dark surface: nav, stat bands */
+  --on-deep:#FAF8F5;
+  --stamp-bg:#B8382A;
   --on-stamp:#FFFFFF;
-  /* Text on a marigold fill. --marigold is a light gold in the normal
-     themes and a DARK gold under high contrast, so nothing that flips with
-     the theme works on it — dark text is right twice and wrong once. Same
-     pairing idea as --stamp-bg/--on-stamp above, for the same reason. */
-  --on-marigold:#151C2E;
-  /* The opening's progress rule, which has to be visible against paper to
-     do its one job — say that this is timed and nearly over. Plain
-     --marigold is 2.01:1 on light paper and the --line track is 1.36:1,
-     so on a light phone the bar was, in practice, not there. */
+  --on-marigold:#161B26;
   --bar:#B87D0E;
-  /* ── one interface face, and it is the reader's own ──
-     The interface was set in monospace in 57 places — nav, the crisis
-     strip, tags, captions, buttons. Monospace means "code", and on a page
-     asking someone how often they have felt hopeless it reads as a
-     terminal, not a person. It is also, with stark borders and shouting
-     capitals, the house style of every site an AI has ever generated,
-     which is the first thing the person paying for this said about it.
-
-     No font file is added. system-ui already resolves to Roboto on
-     Android and SF on iOS: humanist faces, drawn for exactly this, that
-     cost nothing to download and keep the promise that this page never
-     phones home. Using the reader's own platform type is what makes a
-     page feel like it belongs on their phone rather than like a template.
-
-     Tabular numerals stay wherever figures have to line up; that is a
-     numeric property, not a reason to set a whole interface in mono. */
-  --font-ui:system-ui,-apple-system,'Segoe UI','Noto Sans',Roboto,Arial,sans-serif;
-  /* Softened geometry. Everything was square with hard 4px offset
-     shadows — confident, and far too loud for the moment it is used in. */
-  --r-sm:.4rem; --r-md:.6rem; --r-lg:.9rem;
-  --shadow-soft:0 1px 2px rgba(21,28,46,.05), 0 4px 14px rgba(21,28,46,.07);
+  --font-ui:-apple-system,BlinkMacSystemFont,'Segoe UI Variable Display','Segoe UI','Noto Sans',Roboto,system-ui,sans-serif;
+  --font-serif:'Charter','Bitstream Charter','Sitka Text','Cambria',Georgia,serif;
+  --r-sm:.45rem; --r-md:.75rem; --r-lg:1.1rem;
+  --shadow-soft:0 2px 4px rgba(22,27,38,.03), 0 8px 22px rgba(22,27,38,.05);
+  --shadow-card:0 1px 3px rgba(22,27,38,.04), 0 6px 18px rgba(22,27,38,.05);
+  --shadow-subtle:0 1px 2px rgba(22,27,38,.04);
   --e-out1:cubic-bezier(.25,.46,.45,.94);
   --e-out2:cubic-bezier(.215,.61,.355,1);
   --scale:1;
 }
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]){
-    --ink:#EDEAE2;
-    --paper:#12161F;
-    --card:#1A1F2B;
-    --line:#333B4C;
-    --muted:#9AA3B5;
+    --ink:#F0EDE6;
+    --paper:#0E131D;
+    --card:#151B27;
+    --line:#273042;
+    --muted:#9BA4B6;
     --marigold:#F0B53C;
     --stamp:#E4796B;
-    --heal:#5FB39C;
-    --deep:#0A0D14;
-    --on-deep:#EDEAE2;
-    --stamp-bg:#B23A2E;
+    --heal:#56B89E;
+    --deep:#090C12;
+    --on-deep:#F0EDE6;
+    --stamp-bg:#B8382A;
     --on-stamp:#FFFFFF;
     --bar:#F0B53C;
-    --on-marigold:#0A0D14;
+    --on-marigold:#090C12;
+    --shadow-soft:0 2px 6px rgba(0,0,0,.25), 0 8px 24px rgba(0,0,0,.3);
+    --shadow-card:0 1px 4px rgba(0,0,0,.2), 0 6px 18px rgba(0,0,0,.25);
   }
 }
 :root[data-theme="dark"]{
-  --ink:#EDEAE2; --paper:#12161F; --card:#1A1F2B; --line:#333B4C;
-  --muted:#9AA3B5; --marigold:#F0B53C; --stamp:#E4796B; --heal:#5FB39C;
-  --deep:#0A0D14; --on-deep:#EDEAE2;
-  --stamp-bg:#B23A2E; --on-stamp:#FFFFFF; --bar:#F0B53C; --on-marigold:#0A0D14;
+  --ink:#F0EDE6; --paper:#0E131D; --card:#151B27; --line:#273042;
+  --muted:#9BA4B6; --marigold:#F0B53C; --stamp:#E4796B; --heal:#56B89E;
+  --deep:#090C12; --on-deep:#F0EDE6;
+  --stamp-bg:#B8382A; --on-stamp:#FFFFFF; --bar:#F0B53C; --on-marigold:#090C12;
+  --shadow-soft:0 2px 6px rgba(0,0,0,.25), 0 8px 24px rgba(0,0,0,.3);
+  --shadow-card:0 1px 4px rgba(0,0,0,.2), 0 6px 18px rgba(0,0,0,.25);
 }
 :root[data-contrast="high"]{
   --ink:#000; --paper:#FFF; --card:#FFF; --line:#000; --muted:#1A1A1A;
   --marigold:#8A5D00; --stamp:#8E1B10; --heal:#0F4A3C; --deep:#000; --on-deep:#FFF;
   --stamp-bg:#8E1B10; --on-stamp:#FFF; --bar:#8A5D00; --on-marigold:#FFF;
+  --shadow-soft:none; --shadow-card:none;
 }
 
 /* ── reset & base ── */
 *{margin:0;padding:0;box-sizing:border-box;}
 html{
-  /* 18px rather than 17, and more air between lines: the previous scale
-     read as slightly clinical at body size, which fights the "someone who
-     has been putting this off for years" reader this project is for. */
   scroll-behavior:smooth;font-size:calc(18px * var(--scale));
-  /* Tells the browser to render its own furniture — scrollbars, native
-     select popups, form controls — in the matching scheme. Without it a
-     dark page keeps a bright white scrollbar. */
   color-scheme:light dark;
-  /* Anchored headings otherwise land underneath the sticky crisis strip. */
   scroll-padding-top:4.5rem;
   -webkit-text-size-adjust:100%;
 }
@@ -131,13 +90,19 @@ html{
 :root[data-theme="dark"]{color-scheme:dark;}
 body{
   background:var(--paper);color:var(--ink);
-  font-family:system-ui,-apple-system,'Segoe UI','Noto Sans',Roboto,Arial,sans-serif;
-  line-height:1.7;font-size:1rem;
-  /* the 300ms double-tap-zoom delay makes every tap feel a beat late */
+  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI Variable Text','Segoe UI','Noto Sans',Roboto,system-ui,sans-serif;
+  line-height:1.68;font-size:1rem;
   touch-action:manipulation;
-  -webkit-tap-highlight-color:rgba(47,110,94,.18);
+  -webkit-tap-highlight-color:rgba(36,101,84,.14);
   text-rendering:optimizeLegibility;
+  font-feature-settings:"cv02","cv03","cv04","cv11","kern","liga";
 }
+
+/* Indic script specific font stacks for flawless rendering across all devices */
+:lang(hi) body,:lang(mr) body{font-family:'Noto Sans Devanagari','Kohinoor Devanagari','Mangal','Nirmala UI',system-ui,sans-serif;line-height:1.8;}
+:lang(bn) body{font-family:'Noto Sans Bengali','Shonar Bangla','Vrinda','Nirmala UI',system-ui,sans-serif;line-height:1.8;}
+:lang(ta) body{font-family:'Noto Sans Tamil','Latha','Nirmala UI',system-ui,sans-serif;line-height:1.8;}
+:lang(te) body{font-family:'Noto Sans Telugu','Gautami','Nirmala UI',system-ui,sans-serif;line-height:1.8;}
 h1,h2,h3{scroll-margin-top:4.5rem;}
 /* Ragged last lines read better than a single orphaned word. */
 p,li{text-wrap:pretty;}
@@ -517,9 +482,27 @@ footer .byline strong{color:var(--ink);font-size:.85rem;}
   nav.site .navtoggle,
   nav.site select,
   nav.site .setbtn{min-height:44px;}
-  /* The brand is the way back to the screener from every reading page,
-     which makes it a real control and not decoration. It measured 35px.
-     inline-flex rather than a bare min-height because an inline anchor
-     ignores height entirely. */
   nav.site .brand{display:inline-flex;align-items:center;min-height:44px;}
 }
+
+/* ════════ HIGH-PERFORMANCE RENDERING & GPU COMPOSITING ════════ */
+html {
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+body {
+  overscroll-behavior-y: contain;
+}
+button, a, input, select, summary, .btn, .card {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+.view, .qcard, .orb, .panel, .popover, .dialog, .breathe {
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+.card, .choice, .screener-card, .evidence-item {
+  contain: layout style paint;
+}
+
