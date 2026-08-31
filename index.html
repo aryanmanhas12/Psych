@@ -236,11 +236,11 @@
 
   .qbox{
     background:var(--card);border:1px solid var(--line);border-radius:var(--r-lg);box-shadow:var(--shadow-card);
-    padding:1.4rem 1.45rem;max-width:48rem;animation:qin .3s var(--e-out2);
+    padding:1.4rem 1.45rem;max-width:48rem;animation:qin .28s cubic-bezier(0.16, 1, 0.3, 1);
   }
-  @keyframes qin{from{opacity:0;transform:translateX(14px);}to{opacity:1;transform:none;}}
-  .qbox.back{animation:qinback .3s var(--e-out2);}
-  @keyframes qinback{from{opacity:0;transform:translateX(-14px);}to{opacity:1;transform:none;}}
+  @keyframes qin{from{opacity:0;transform:translateX(16px) scale(0.985);}to{opacity:1;transform:translateX(0) scale(1);}}
+  .qbox.back{animation:qinback .28s cubic-bezier(0.16, 1, 0.3, 1);}
+  @keyframes qinback{from{opacity:0;transform:translateX(-16px) scale(0.985);}to{opacity:1;transform:translateX(0) scale(1);}}
   .qtext{font-size:1.2rem;font-weight:650;margin-bottom:1.1rem;text-wrap:balance;color:var(--ink);line-height:1.4;}
   .qtext .qnum{font-family:var(--font-ui);color:var(--heal);font-size:.9rem;margin-right:.6rem;font-weight:700;}
 
@@ -351,11 +351,11 @@
     border:2.5px solid var(--heal);background:color-mix(in srgb, var(--heal) 14%, var(--card));
     box-shadow:0 0 24px color-mix(in srgb, var(--heal) 20%, transparent);
     display:grid;place-items:center;text-align:center;
-    transform:scale(.65);transition:transform 4s ease-in-out, background-color 2s ease;
+    transform:scale(.65);transition:transform 4s cubic-bezier(0.4, 0, 0.2, 1), background-color 2s ease, box-shadow 3s ease;
   }
-  .orb.in{transform:scale(1.08);transition-duration:4s;background:color-mix(in srgb, var(--heal) 22%, var(--card));}
-  .orb.hold{transform:scale(1.08);transition-duration:4s;background:color-mix(in srgb, var(--heal) 28%, var(--card));}
-  .orb.out{transform:scale(.65);transition-duration:6s;background:color-mix(in srgb, var(--heal) 10%, var(--card));}
+  .orb.in{transform:scale(1.08);transition-duration:4s;background:color-mix(in srgb, var(--heal) 22%, var(--card));box-shadow:0 0 40px 8px color-mix(in srgb, var(--heal) 38%, transparent);}
+  .orb.hold{transform:scale(1.08);transition-duration:4s;background:color-mix(in srgb, var(--heal) 28%, var(--card));box-shadow:0 0 48px 12px color-mix(in srgb, var(--heal) 46%, transparent);}
+  .orb.out{transform:scale(.65);transition-duration:6s;background:color-mix(in srgb, var(--heal) 10%, var(--card));box-shadow:0 0 16px color-mix(in srgb, var(--heal) 15%, transparent);}
   @media (prefers-reduced-motion: reduce){ .orb{transition:none!important;transform:scale(.85)!important;} }
   .orb span{
     font-family:var(--font-ui);
