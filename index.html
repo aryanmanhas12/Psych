@@ -299,6 +299,17 @@
   @keyframes qinback{from{opacity:0;transform:translateX(-14px);}to{opacity:1;transform:none;}}
   .qtext{font-size:1.2rem;font-weight:650;margin-bottom:1.1rem;text-wrap:balance;color:var(--ink);line-height:1.4;}
   .qtext .qnum{font-family:var(--font-ui);color:var(--heal);font-size:.9rem;margin-right:.6rem;font-weight:700;}
+  /* the label is what makes it read as a control; the target is 44px even
+     though the icon inside it is 18 */
+  .qspeak-btn{display:inline-flex;align-items:center;gap:.45rem;
+    min-height:44px;padding:0 .7rem;margin:-.55rem 0 .55rem -.7rem;
+    background:none;border:none;border-radius:var(--r-md);
+    color:var(--muted);font:inherit;font-size:.86rem;font-weight:600;cursor:pointer;}
+  .qspeak-btn svg{width:18px;height:18px;flex:none;fill:none;stroke:currentColor;
+    stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;}
+  .qspeak-btn:hover{color:var(--heal);background:color-mix(in srgb, var(--heal) 10%, transparent);}
+  .qspeak-btn:focus-visible{outline:3px solid var(--heal);outline-offset:2px;}
+  .qspeak-btn.speaking{color:var(--heal);}
 
   .bigopts{display:flex;flex-direction:column;gap:.7rem;}
   .bigopts button{
@@ -1496,6 +1507,7 @@
     <h2 class="display reveal" id="chooseH2" data-i18n="chooseScreener">Choose a screener</h2>
     <div class="cards" id="cardGrid"></div>
 
+    <h2 class="display reveal" style="margin-top:1.9rem;" data-i18n="homeLedeHead">Why this exists</h2>
     <p class="lede reveal clamped" id="homeLede" data-i18n="homeLede"></p>
     <button type="button" id="ledeMore" class="secondary ledemore"
             aria-expanded="false" aria-controls="homeLede" data-i18n="readMore"></button>
@@ -1633,24 +1645,24 @@
       <p style="margin-top:.6rem;" data-i18n="safety3"></p>
 
       <details class="safetyplan-acc" style="margin-top:1.1rem;background:rgba(0,0,0,0.18);padding:.9rem 1.1rem;border-radius:var(--r-md);border:1px solid rgba(255,255,255,0.25);">
-        <summary style="cursor:pointer;font-weight:700;color:#fff;font-size:.95rem;">Personal Safety Plan (Stanley-Brown Protocol) ↓</summary>
+        <summary style="cursor:pointer;font-weight:700;color:#fff;font-size:.95rem;" data-i18n="spTitle">Make a safety plan</summary>
         <div style="margin-top:.85rem;font-size:.88rem;line-height:1.55;color:#fff;">
-          <p style="margin-bottom:.6rem;">A safety plan is a private list of warning signs, coping mechanisms, and trusted contacts to help guide you through a moment of crisis. Saved only on this phone.</p>
-          <div style="display:flex;flex-direction:column;gap:.65rem;">
-            <label style="font-size:.82rem;display:flex;flex-direction:column;gap:3px;">1. My Warning Signs (mood, physical cues, thoughts):
-              <input type="text" id="spWarning" placeholder="e.g. Isolating, racing thoughts, insomnia" style="width:100%;padding:.45rem;border-radius:4px;border:none;background:#fff;color:#1c2033;font-size:.85rem;">
+          <p style="margin-bottom:.7rem;" data-i18n="spIntro">A short private list you write for yourself now, so that a worse hour later has something to follow. It is saved only on this phone.</p>
+          <div style="display:flex;flex-direction:column;gap:.7rem;">
+            <label style="font-size:.85rem;display:flex;flex-direction:column;gap:4px;"><span data-i18n="sp1">1. Warning signs — what it feels like when it starts</span>
+              <input type="text" id="spWarning" data-i18n-placeholder="spPh1" placeholder="restless, not sleeping, shutting people out" style="width:100%;padding:.5rem;border-radius:4px;border:none;background:#fff;color:#1c2033;font-size:.88rem;">
             </label>
-            <label style="font-size:.82rem;display:flex;flex-direction:column;gap:3px;">2. Internal Coping Strategies (what I can do on my own):
-              <input type="text" id="spCoping" placeholder="e.g. Warm shower, slow breathing, listening to favorite music" style="width:100%;padding:.45rem;border-radius:4px;border:none;background:#fff;color:#1c2033;font-size:.85rem;">
+            <label style="font-size:.85rem;display:flex;flex-direction:column;gap:4px;"><span data-i18n="sp2">2. What helps me on my own</span>
+              <input type="text" id="spCoping" data-i18n-placeholder="spPh2" placeholder="a walk, a warm shower, slow breathing, music" style="width:100%;padding:.5rem;border-radius:4px;border:none;background:#fff;color:#1c2033;font-size:.88rem;">
             </label>
-            <label style="font-size:.82rem;display:flex;flex-direction:column;gap:3px;">3. Safe Places & Distractions:
-              <input type="text" id="spSocial" placeholder="e.g. Walking in the park, calling a friend" style="width:100%;padding:.45rem;border-radius:4px;border:none;background:#fff;color:#1c2033;font-size:.85rem;">
+            <label style="font-size:.85rem;display:flex;flex-direction:column;gap:4px;"><span data-i18n="sp3">3. Places and people that steady me</span>
+              <input type="text" id="spSocial" data-i18n-placeholder="spPh3" placeholder="the terrace, the park, my sister's place" style="width:100%;padding:.5rem;border-radius:4px;border:none;background:#fff;color:#1c2033;font-size:.88rem;">
             </label>
-            <label style="font-size:.82rem;display:flex;flex-direction:column;gap:3px;">4. Trusted Person I Can Talk To:
-              <input type="text" id="spTrusted" placeholder="e.g. Family member, friend, counselor" style="width:100%;padding:.45rem;border-radius:4px;border:none;background:#fff;color:#1c2033;font-size:.85rem;">
+            <label style="font-size:.85rem;display:flex;flex-direction:column;gap:4px;"><span data-i18n="sp4">4. Someone I can call</span>
+              <input type="text" id="spTrusted" data-i18n-placeholder="spPh4" placeholder="a name and a number" style="width:100%;padding:.5rem;border-radius:4px;border:none;background:#fff;color:#1c2033;font-size:.88rem;">
             </label>
             <div style="display:flex;align-items:center;gap:.8rem;margin-top:.3rem;">
-              <button type="button" id="spSaveBtn" style="padding:.45rem 1rem;background:#fff;color:#80161a;border:none;font-weight:700;border-radius:4px;cursor:pointer;font-size:.85rem;">Save Plan</button>
+              <button type="button" id="spSaveBtn" data-i18n="spSave" style="padding:.6rem 1.1rem;min-height:44px;background:#fff;color:#80161a;border:none;font-weight:700;border-radius:4px;cursor:pointer;font-size:.88rem;">Save plan</button>
               <span id="spMsg" style="font-size:.82rem;color:#ffe6e6;"></span>
             </div>
           </div>
@@ -1700,8 +1712,10 @@
 
     <div class="actionrow noprint">
       <button id="sheetBtn" data-i18n="sheetBtn"></button>
-      <button class="secondary" id="sbarBtn">Copy SBAR Note for Doctor</button>
-      <button class="secondary" id="shareBtn" style="display:none;">Share Results</button>
+      <button class="secondary" id="sbarBtn" data-i18n="sbarBtn">Copy note for doctor</button>
+      <button class="secondary" id="shareToolBtn" style="display:none;" data-i18n="shareTool">Share this tool</button>
+      <button class="secondary" id="shareResultBtn" style="display:none;" data-i18n="shareResult"
+              data-i18n-title="shareResultNote" title="This one includes your score.">Share my result</button>
       <button class="secondary" id="printBtn" data-i18n="printBtn"></button>
       <button class="secondary" id="icsBtn" data-i18n="reminderBtn"></button>
       <button class="secondary" data-view="history" data-i18n="viewHistory"></button>
@@ -1758,9 +1772,9 @@
       <h3 data-i18n="breatheTitle">Slow breathing</h3>
       <p data-i18n="breatheNote"></p>
       <div style="display:flex;gap:.5rem;margin-bottom:1rem;flex-wrap:wrap;">
-        <button type="button" class="breathe-proto" id="protoVagal" style="padding:5px 11px;font-size:.82rem;font-weight:600;border-radius:6px;border:1px solid var(--heal);background:color-mix(in srgb, var(--heal) 15%, var(--card));color:var(--ink);cursor:pointer;" data-proto="vagal">4-7-8 Vagal Reset</button>
-        <button type="button" class="breathe-proto" id="protoBox" style="padding:5px 11px;font-size:.82rem;border-radius:6px;border:1px solid var(--line);background:var(--card);color:var(--muted);cursor:pointer;" data-proto="box">Box Breathing (4-4-4-4)</button>
-        <button type="button" class="breathe-proto" id="protoCoh" style="padding:5px 11px;font-size:.82rem;border-radius:6px;border:1px solid var(--line);background:var(--card);color:var(--muted);cursor:pointer;" data-proto="coh">Resonance (5.5s HRV)</button>
+        <button type="button" class="breathe-proto" id="protoVagal" style="padding:5px 13px;min-height:44px;font-size:.82rem;font-weight:600;border-radius:6px;border:1px solid var(--heal);background:color-mix(in srgb, var(--heal) 15%, var(--card));color:var(--ink);cursor:pointer;" data-proto="vagal" data-i18n="protoVagal" data-i18n-title="protoVagalT" title="4-7-8 breathing (vagal reset): in for 4, hold 7, out 8">4-7-8 · calming</button>
+        <button type="button" class="breathe-proto" id="protoBox" style="padding:5px 13px;min-height:44px;font-size:.82rem;border-radius:6px;border:1px solid var(--line);background:var(--card);color:var(--muted);cursor:pointer;" data-proto="box" data-i18n="protoBox" data-i18n-title="protoBoxT" title="Box breathing: 4 in, 4 hold, 4 out, 4 hold">Box · steady</button>
+        <button type="button" class="breathe-proto" id="protoCoh" style="padding:5px 13px;min-height:44px;font-size:.82rem;border-radius:6px;border:1px solid var(--line);background:var(--card);color:var(--muted);cursor:pointer;" data-proto="coh" data-i18n="protoCoh" data-i18n-title="protoCohT" title="Resonance breathing at 5.5 seconds each way">5.5 · even</button>
       </div>
       <div class="breathestage">
         <div class="orb" id="orb" aria-hidden="true"><span id="orbLabel"></span></div>
@@ -2017,6 +2031,16 @@ function setLang(code, after){
     const v = T.ui[el.dataset.i18nHtml];
     if(typeof v === "string") el.innerHTML = v;
   });
+  /* placeholders and tooltips are text a person reads too — the safety plan
+     is four inputs whose only instruction is the placeholder inside them. */
+  document.querySelectorAll("[data-i18n-placeholder]").forEach(el=>{
+    const v = T.ui[el.dataset.i18nPlaceholder];
+    if(typeof v === "string") el.placeholder = v;
+  });
+  document.querySelectorAll("[data-i18n-title]").forEach(el=>{
+    const v = T.ui[el.dataset.i18nTitle];
+    if(typeof v === "string") el.title = v;
+  });
   document.getElementById("langsel").value = code;
   document.getElementById("moodBtns").setAttribute("aria-label", T.ui.moodTitle);
   dialable();
@@ -2223,14 +2247,37 @@ function primerMark(id){
     if(!a.includes(id)){ a.push(id); localStorage.setItem(PRIMER_KEY, JSON.stringify(a)); }
   }catch(e){}
 }
+/* `T.ui.x || ""` is never right for a list item. The four primer strings
+   exist in en and hi only, so in the other four languages this panel — the
+   one built specifically to stop people being confused — rendered three
+   empty <li>, and their ::before dots still painted: a heading, three
+   orphan dots, and two buttons. Fall back to English, which is what the
+   rest of the untranslated page already does, and hide the row only if
+   even that is missing. */
+function primerText(key){
+  if(typeof T.ui[key] === "string") return T.ui[key];
+  const en = window.I18N && window.I18N.en;
+  return en && typeof en.ui[key] === "string" ? en.ui[key] : "";
+}
+function fillLi(id, key){
+  const el = document.getElementById(id), v = primerText(key);
+  el.textContent = v;
+  el.hidden = !v;
+}
 function showPrimer(id){
   const t = T.inst[id];
+  /* English is not guaranteed loaded for a Hindi reader — one language is
+     the whole point of the split — so fetch it if the fallback needs it,
+     the same way the clinical sheet does. */
+  if(typeof T.ui.primerPrivate !== "string" && !(window.I18N && window.I18N.en)){
+    loadLang("en", ()=> showPrimer(id));
+  }
   document.getElementById("primerHead").textContent = t.meta;
-  document.getElementById("primerPrivate").textContent = T.ui.primerPrivate || "";
-  document.getElementById("primerGet").textContent     = T.ui.primerGet || "";
-  document.getElementById("primerNot").textContent     = T.ui.primerNot || "";
+  fillLi("primerPrivate", "primerPrivate");
+  fillLi("primerGet",     "primerGet");
+  fillLi("primerNot",     "primerNot");
   document.getElementById("primerStart").textContent   = T.ui.start;
-  document.getElementById("primerBack").textContent    = T.ui.primerBack || T.ui.cancel;
+  document.getElementById("primerBack").textContent    = primerText("primerBack") || T.ui.cancel;
   document.getElementById("primer").hidden = false;
   document.getElementById("qcard").innerHTML = "";
   document.getElementById("progress").textContent = "";
@@ -2279,9 +2326,22 @@ function readQuestionAloud(text){
   if(!('speechSynthesis' in window)) return;
   window.speechSynthesis.cancel();
   const utter = new SpeechSynthesisUtterance(text);
-  const langMap = { en:'en-US', hi:'hi-IN', mr:'mr-IN', bn:'bn-IN', ta:'ta-IN', te:'te-IN' };
-  utter.lang = langMap[currentLang] || 'en-US';
+  const langMap = { en:'en-IN', hi:'hi-IN', mr:'mr-IN', bn:'bn-IN', ta:'ta-IN', te:'te-IN' };
+  /* LANG is the app's language variable, set by setLang. The name this line
+     used before — currentLang — was never declared anywhere in the repo, so
+     every tap of the speaker threw a ReferenceError inside its own click
+     handler and the button silently did nothing, in all six languages. */
+  utter.lang = langMap[LANG] || 'en-IN';
   utter.rate = 0.92;
+  /* Some of these voices are not installed on every phone, and a silent
+     button is indistinguishable from a broken one — which is exactly how
+     this feature spent its whole life. Mark it while it runs. */
+  const btn = document.getElementById("qSpeakBtn");
+  if(btn){
+    utter.onstart = ()=> btn.classList.add("speaking");
+    utter.onend   = ()=> btn.classList.remove("speaking");
+    utter.onerror = ()=> btn.classList.remove("speaking");
+  }
   window.speechSynthesis.speak(utter);
 }
 
@@ -2308,9 +2368,23 @@ function renderQ(){
   const card = document.createElement("div");
   card.className = "qbox" + (current.goingBack ? " back" : "");
   current.goingBack = false;
+  /* The speaker sits after the question, not inside it. #qLabel is the
+     radiogroup's aria-labelledby target, so anything in there is read out as
+     part of the answer group's name — a screen reader was announcing
+     "Over the last two weeks... Listen to question". */
   const speechAvail = ('speechSynthesis' in window);
-  const speechBtn = speechAvail ? '<button type="button" class="qspeak-btn" id="qSpeakBtn" title="Listen to question" aria-label="Listen to question" style="background:none;border:none;cursor:pointer;color:var(--heal);font-size:1.15rem;padding:2px 6px;margin-left:6px;vertical-align:middle;">🔊</button>' : '';
-  card.innerHTML = '<p class="qtext" id="qLabel"><span class="qnum">Q'+(i+1)+'</span>'+esc(t.q[i])+speechBtn+'</p>';
+  const listen = T.ui.listen || "Listen to this question";
+  /* An inline SVG rather than the 🔊 emoji: the rest of the page draws its
+     icons this way, and an emoji renders as a different picture on every
+     platform. The word beside it is what makes it read as a control at all
+     — a bare glyph under a question looks like a typo. */
+  const speechBtn = speechAvail
+    ? '<button type="button" class="qspeak-btn" id="qSpeakBtn" aria-label="'+esc(listen)+'">'
+      + '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h3l5-4v14l-5-4H4z"/>'
+      + '<path d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"/></svg>'
+      + '<span>'+esc(listen)+'</span></button>'
+    : '';
+  card.innerHTML = '<p class="qtext" id="qLabel"><span class="qnum">Q'+(i+1)+'</span>'+esc(t.q[i])+'</p>'+speechBtn;
   if(speechAvail){
     const sb = card.querySelector("#qSpeakBtn");
     if(sb) sb.addEventListener("click", (e)=>{ e.stopPropagation(); readQuestionAloud(t.q[i]); });
@@ -3182,46 +3256,59 @@ function copySBARSummary(){
   if(!lastResult) return;
   const r = lastResult, meta = META[r.inst], t = T.inst[r.inst];
   const dateFormatted = new Date(r.date).toLocaleDateString("en-GB", {day:"numeric",month:"short",year:"numeric"});
-  
-  let icd = "Z13.89 (Screening for behavioral/mental disorder)";
-  if(r.inst === "phq9") icd = "ICD-11: 6A70 (Single episode depressive disorder) / DSM-5: 296.2x";
-  if(r.inst === "gad7") icd = "ICD-11: 6B00 (Generalized anxiety disorder) / DSM-5: 300.02";
-  if(r.inst === "auditc") icd = "ICD-11: 6C40.1 (Harmful pattern of alcohol use)";
 
-  const sbar = [
+  /* The instrument's own name and cutoff label live on T.inst, not on META —
+     META carries only the arithmetic (max, cutoff, bands). Reading them off
+     META printed the word "undefined" into the sheet a patient hands to a
+     doctor. No diagnosis code is printed either: this is a screening score,
+     and a code beside it is a code somebody transcribes into a chart. */
+  const lines = [
     "=== PSYCHIATRIC SCREENING REPORT (SBAR TRIAGE FORMAT) ===",
     "DATE: " + dateFormatted + " | SOURCE: Psych Screener (On-Device Private PWA)",
     "",
     "[S] SITUATION:",
-    "Patient self-administered standard screening for " + t.name + " (" + meta.name + ").",
+    "Patient self-administered a standard screening instrument: " + t.name + ".",
     "",
     "[B] BACKGROUND:",
-    "Completed independently. Target: " + (t.desc || meta.name) + ".",
+    "Completed independently, unsupervised. Instrument measures: " + (t.desc || t.tag) + ".",
     "",
     "[A] ASSESSMENT:",
-    "• Instrument: " + t.name + " (" + meta.name + ")",
-    "• Total Score: " + r.score + " / " + meta.max + " (" + t.bands[r.bandIdx] + ")",
-    "• Clinical Cutoff: " + (meta.cutoffLabel || "Threshold") + " (Score " + (r.score >= meta.cutoff ? "MET/EXCEEDED" : "NOT MET") + ")",
-    (r.safetyFlag ? "• CRITICAL SAFETY ALERT: Suicide / self-harm ideation reported (Score > 0 on Item 9)" : "• Critical Safety Flags: None flagged"),
-    "• Diagnostic Correlate: " + icd,
-    "",
+    "\u2022 Instrument: " + t.name + " (" + t.tag + ")",
+    "\u2022 Total Score: " + r.score + " / " + meta.max + " (" + t.bands[r.bandIdx] + ")",
+    "\u2022 " + (t.cutoffLabel || "Clinical cutoff") + ": score " +
+      (meta.inverse ? (r.score <= meta.cutoff ? "AT/BELOW" : "ABOVE")
+                    : (r.score >= meta.cutoff ? "MET/EXCEEDED" : "NOT MET")) +
+      " (cutoff " + meta.cutoff + ")"
+  ];
+  lines.push(r.safetyFlag
+    ? "\u2022 CRITICAL SAFETY ALERT: self-harm / suicidal ideation item endorsed"
+    : "\u2022 Critical safety flags: none endorsed");
+  lines.push("",
     "[R] RECOMMENDATION / NEXT STEPS:",
-    "• Clinical interview to evaluate functional impairment and symptom chronicity.",
-    "• Review evidence-based psychotherapy (CBT/ACT) and pharmacotherapy if indicated.",
-    (r.safetyFlag ? "• IMMEDIATE ACTION: Conduct comprehensive safety assessment (Stanley-Brown protocol) & provide Tele-MANAS (14416) emergency connection." : ""),
-    "",
-    "CONFIDENTIALITY NOTE: Zero health data transmitted over network. All calculations performed client-side."
-  ].filter(Boolean).join("\n");
+    "\u2022 A screening score is not a diagnosis. Clinical interview required to",
+    "  evaluate functional impairment, chronicity and differential.",
+    "\u2022 Consider evidence-based psychotherapy and pharmacotherapy if indicated.");
+  if(r.safetyFlag){
+    lines.push("\u2022 IMMEDIATE: comprehensive safety assessment (Stanley-Brown protocol);",
+               "  Tele-MANAS 14416 available 24/7.");
+  }
+  lines.push("",
+    "Item-level responses are available in the Clinical Summary sheet in-app.",
+    "CONFIDENTIALITY: no health data transmitted. All scoring is client-side.");
 
+  /* join, not filter(Boolean) — that dropped the "" entries that separate
+     [S] from [B] from [A] from [R], and ran the whole note into one block. */
+  const sbar = lines.join("\n");
+
+  const btn = document.getElementById("sbarBtn");
+  const flash = ()=>{
+    if(!btn) return;
+    const orig = btn.textContent;
+    btn.textContent = T.ui.sbarCopied || "Copied";
+    setTimeout(()=> btn.textContent = orig, 3000);
+  };
   if(navigator.clipboard && navigator.clipboard.writeText){
-    navigator.clipboard.writeText(sbar).then(()=>{
-      const btn = document.getElementById("sbarBtn");
-      if(btn){
-        const orig = btn.textContent;
-        btn.textContent = "✓ SBAR Note Copied!";
-        setTimeout(()=> btn.textContent = orig, 3000);
-      }
-    }).catch(()=> alert(sbar));
+    navigator.clipboard.writeText(sbar).then(flash).catch(()=> alert(sbar));
   } else {
     alert(sbar);
   }
@@ -3248,7 +3335,7 @@ function saveSafetyPlan(){
     };
     localStorage.setItem("psych-safety-plan", JSON.stringify(sp));
     const msg = document.getElementById("spMsg");
-    msg.textContent = "✓ Plan saved privately on your device.";
+    msg.textContent = T.ui.spSaved || "Saved on this phone only.";
     setTimeout(()=> msg.textContent = "", 3500);
   } catch(e){}
 }
@@ -3437,18 +3524,41 @@ const spSaveBtn = document.getElementById("spSaveBtn");
 if(spSaveBtn) spSaveBtn.addEventListener("click", saveSafetyPlan);
 loadSafetyPlan();
 
-const shareBtn = document.getElementById("shareBtn");
-if(shareBtn && navigator.share){
-  shareBtn.style.display = "";
-  shareBtn.addEventListener("click", ()=>{
-    if(!lastResult) return;
-    const t = T.inst[lastResult.inst], meta = META[lastResult.inst];
-    navigator.share({
-      title: t.name + " Screening Result",
-      text: "I checked my wellbeing privately on-device (" + t.name + ": " + lastResult.score + "/" + meta.max + " - " + t.bands[lastResult.bandIdx] + "). Check yours privately at https://aryanmanhas12.github.io/Psych/",
-      url: "https://aryanmanhas12.github.io/Psych/"
-    }).catch(()=>{});
-  });
+/* Two buttons, because they do very different things. The old single
+   "Share Results" put the person's actual score into the share sheet by
+   default — one tap and a PHQ-9 of 18 is sitting in a WhatsApp draft, from
+   the tool whose whole promise is that nothing leaves the phone. Sharing the
+   site is the safe, common case; sharing a score is a deliberate act and now
+   says so on the button. */
+const SITE_URL = "https://aryanmanhas12.github.io/Psych/";
+const shareToolBtn   = document.getElementById("shareToolBtn");
+const shareResultBtn = document.getElementById("shareResultBtn");
+if(navigator.share){
+  if(shareToolBtn){
+    shareToolBtn.style.display = "";
+    shareToolBtn.addEventListener("click", ()=>{
+      navigator.share({
+        title: T.ui.shareToolTitle || "Psych Screener",
+        text:  T.ui.shareToolText  || "A private mental health check you can do on your own phone. Nothing is sent anywhere.",
+        url:   SITE_URL
+      }).catch(()=>{});
+    });
+  }
+  if(shareResultBtn){
+    shareResultBtn.style.display = "";
+    shareResultBtn.addEventListener("click", ()=>{
+      if(!lastResult) return;
+      const t = T.inst[lastResult.inst], meta = META[lastResult.inst];
+      navigator.share({
+        title: fmt(T.ui.shareResultTitle || "{name} result", {name:t.name}),
+        text:  fmt(T.ui.shareResultText  ||
+                 "My {name} screening came out {score}/{max} ({band}). Taken privately on my own phone at {url}",
+                 {name:t.name, score:lastResult.score, max:meta.max,
+                  band:t.bands[lastResult.bandIdx], url:SITE_URL}),
+        url:   SITE_URL
+      }).catch(()=>{});
+    });
+  }
 }
 
 /* ── offline: register the service worker, offer install when the browser does ── */
