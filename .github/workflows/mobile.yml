@@ -1,0 +1,59 @@
+# ══════════════════════════════════════════════════════════════
+#  Open the site in a real browser, on every push.
+#
+#  This exists because of one bug. The speaker button on every
+#  question threw a ReferenceError on every tap, in every
+#  language, from the day it was written — and it shipped to
+#  production green, because the check that ran alongside it read
+#  the source as text and asserted that the string
+#  "speechSynthesis" was present. It was. The file could not
+#  parse, and the check still passed.
+#
+#  A test that never opens a browser cannot see a dead button, a
+#  1.07:1 contrast ratio, a layout that scrolls sideways at
+#  320px, or a screener that does not complete. This one does.
+#  If it is red, the push is not ready, whatever the diff looks
+#  like.
+# ══════════════════════════════════════════════════════════════
+name: mobile regression suite
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  browser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      # No package.json in the repo: the site itself has no build step and no
+      # dependencies, which is the point. Playwright is a test-time tool only.
+      - name: Install Playwright and its Chromium
+        run: |
+          npm install --no-save playwright@1.47.2
+          npx playwright install --with-deps chromium
+
+      - name: Serve the site
+        run: |
+          python3 -m http.server 8099 &
+          for i in $(seq 1 30); do
+            curl -sf http://127.0.0.1:8099/index.html >/dev/null && break
+            sleep 1
+          done
+
+      # PW_CHROME is unset here on purpose: with no override the suite falls
+      # back to Playwright's own resolution, which is what `playwright
+      # install` just populated. The hard-coded path in the file is for the
+      # container this was written in.
+      - name: Run the suite
+        env:
+          PSYCH_URL: http://127.0.0.1:8099/index.html
+        run: node test/mobile.js

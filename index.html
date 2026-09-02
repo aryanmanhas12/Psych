@@ -311,6 +311,20 @@
   .qspeak-btn:focus-visible{outline:3px solid var(--heal);outline-offset:2px;}
   .qspeak-btn.speaking{color:var(--heal);}
 
+  /* The results screen ended with eight buttons stacked one per line, ragged
+     and unsorted, and two pairs of them do nearly the same thing. Nobody
+     reads a list like that; they read the first one and leave. Three named
+     jobs, laid out as rows, and the way out on its own underneath. */
+  .actionrow{display:flex;flex-wrap:wrap;gap:.55rem;}
+  .actionrow button{flex:1 1 11rem;}
+  .resgroup{margin-top:1.15rem;}
+  .resgroup-h{
+    font-family:var(--font-ui);font-size:.76rem;font-weight:700;
+    letter-spacing:.11em;color:var(--muted);margin-bottom:.5rem;
+  }
+  .resexit{margin-top:1.5rem;padding-top:1.1rem;border-top:1px solid var(--line);}
+  .resexit button{width:100%;}
+
   .bigopts{display:flex;flex-direction:column;gap:.7rem;}
   .bigopts button{
     font-family:-apple-system,BlinkMacSystemFont,'Segoe UI Variable Text','Segoe UI',system-ui,sans-serif;
@@ -1710,15 +1724,33 @@
 
     <p class="sheetnudge" id="sheetNudge" hidden data-i18n="sheetNudge"></p>
 
-    <div class="actionrow noprint">
-      <button id="sheetBtn" data-i18n="sheetBtn"></button>
-      <button class="secondary" id="sbarBtn" data-i18n="sbarBtn">Copy note for doctor</button>
-      <button class="secondary" id="shareToolBtn" style="display:none;" data-i18n="shareTool">Share this tool</button>
-      <button class="secondary" id="shareResultBtn" style="display:none;" data-i18n="shareResult"
-              data-i18n-title="shareResultNote" title="This one includes your score.">Share my result</button>
-      <button class="secondary" id="printBtn" data-i18n="printBtn"></button>
-      <button class="secondary" id="icsBtn" data-i18n="reminderBtn"></button>
-      <button class="secondary" data-view="history" data-i18n="viewHistory"></button>
+    <div class="resgroup noprint">
+      <h3 class="resgroup-h" data-i18n="groupDoctor">To take to a doctor</h3>
+      <div class="actionrow noprint">
+        <button id="sheetBtn" data-i18n="sheetBtn"></button>
+        <button class="secondary" id="sbarBtn" data-i18n="sbarBtn">Copy note for doctor</button>
+        <button class="secondary" id="printBtn" data-i18n="printBtn"></button>
+      </div>
+    </div>
+
+    <div class="resgroup noprint">
+      <h3 class="resgroup-h" data-i18n="groupTrack">To come back to</h3>
+      <div class="actionrow noprint">
+        <button class="secondary" id="icsBtn" data-i18n="reminderBtn"></button>
+        <button class="secondary" data-view="history" data-i18n="viewHistory"></button>
+      </div>
+    </div>
+
+    <div class="resgroup noprint" id="resShareGroup" hidden>
+      <h3 class="resgroup-h" data-i18n="groupShare">To share</h3>
+      <div class="actionrow noprint">
+        <button class="secondary" id="shareToolBtn" style="display:none;" data-i18n="shareTool">Share this tool</button>
+        <button class="secondary" id="shareResultBtn" style="display:none;" data-i18n="shareResult"
+                data-i18n-title="shareResultNote" title="This one includes your score.">Share my result</button>
+      </div>
+    </div>
+
+    <div class="actionrow resexit noprint">
       <button class="secondary" data-view="home" data-i18n="backHome"></button>
     </div>
   </div>
@@ -3534,6 +3566,8 @@ const SITE_URL = "https://aryanmanhas12.github.io/Psych/";
 const shareToolBtn   = document.getElementById("shareToolBtn");
 const shareResultBtn = document.getElementById("shareResultBtn");
 if(navigator.share){
+  const grp = document.getElementById("resShareGroup");
+  if(grp) grp.hidden = false;
   if(shareToolBtn){
     shareToolBtn.style.display = "";
     shareToolBtn.addEventListener("click", ()=>{

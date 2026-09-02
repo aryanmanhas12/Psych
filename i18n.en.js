@@ -139,6 +139,10 @@
 
     /* ── the heading over the treatment-gap argument ── */
     homeLedeHead: "Why this exists",
+    /* the three jobs the results screen's buttons actually do */
+    groupDoctor: "To take to a doctor",
+    groupTrack: "To come back to",
+    groupShare: "To share",
     /* The five working documents, and the section that introduces them.
        These were hard-coded English in the markup — a reader who had set
        the site to Hindi scrolled past the screeners and hit a block of

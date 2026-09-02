@@ -14,7 +14,12 @@
 const { chromium } = require('playwright');
 const URL = process.env.PSYCH_URL || 'http://127.0.0.1:8099/index.html';
 const BASE = URL.replace(/index\.html$/, '');
-const EXE = process.env.PW_CHROME || '/opt/pw-browsers/chromium-1194/chrome-linux/chrome';
+/* The pinned path is the browser that ships in the dev container. On CI —
+   and on anyone else's machine — it does not exist, and Playwright's own
+   resolution is right. Explicit PW_CHROME still wins over both. */
+const LOCAL_CHROME = '/opt/pw-browsers/chromium-1194/chrome-linux/chrome';
+const EXE = process.env.PW_CHROME
+  || (require('fs').existsSync(LOCAL_CHROME) ? LOCAL_CHROME : null);
 
 let FAILS = [];
 const fail = m => { FAILS.push(m); console.log('   \x1b[31m✗\x1b[0m ' + m); };
@@ -69,7 +74,7 @@ const OVERFLOW = `(()=>{
   return {scrollW:document.documentElement.scrollWidth,vw,over:out.slice(0,4)};})()`;
 
 (async () => {
-  const b = await chromium.launch({ executablePath: EXE });
+  const b = await chromium.launch(EXE ? { executablePath: EXE } : {});
   const phone = extra => ({ viewport:{width:390,height:844}, isMobile:true, hasTouch:true, ...extra });
 
   /* ── the guard that was missing ──

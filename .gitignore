@@ -9,3 +9,7 @@
 .DS_Store
 Thumbs.db
 *.swp
+
+# Playwright, installed with --no-save for the test suite. The site itself
+# has no build step and no dependencies; this is test tooling only.
+node_modules/
