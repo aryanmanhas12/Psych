@@ -72,6 +72,27 @@ const OVERFLOW = `(()=>{
   const b = await chromium.launch({ executablePath: EXE });
   const phone = extra => ({ viewport:{width:390,height:844}, isMobile:true, hasTouch:true, ...extra });
 
+  /* ── the guard that was missing ──
+     The speaker button on every question threw a ReferenceError on every
+     tap, in every language, for as long as it existed — `currentLang` was
+     never declared. Nothing here caught it, because nothing here was
+     listening for an uncaught exception outside the two places that
+     deliberately break the page. So every page this suite opens now
+     reports its own exceptions, and any of them fails the run. This one
+     listener is worth more than all the feature checks below it. */
+  const PAGE_ERRORS = [];
+  const _newContext = b.newContext.bind(b);
+  b.newContext = async (...a) => {
+    const ctx = await _newContext(...a);
+    const _newPage = ctx.newPage.bind(ctx);
+    ctx.newPage = async (...q) => {
+      const pg = await _newPage(...q);
+      pg.on('pageerror', e => PAGE_ERRORS.push(e.message));
+      return pg;
+    };
+    return ctx;
+  };
+
   /* 1 ── reflow: no sideways scrolling at any width or text size.
          Reported with a recording: menu links cut off, "Start →" sliced,
          "History" clipped to "Histo". WCAG 1.4.10. */
@@ -432,9 +453,187 @@ const OVERFLOW = `(()=>{
     }
   }
 
+  /* 11 ── the five features that were merged without ever being run.
+           Every check below is one tap that nobody took. */
+  head('11. THE FEATURES NOBODY TAPPED');
+  {
+    const ctx = await b.newContext(phone());
+    try { await ctx.grantPermissions(['clipboard-read','clipboard-write'],{origin:BASE.replace(/\/$/,'')}); }
+    catch(e){ /* older builds: the writeText stub below still exercises the note */ }
+    const p = await ctx.newPage();
+    await p.addInitScript(()=>{
+      /* headless Chromium has no share sheet, and the button is behind a
+         `if(navigator.share)` guard, so nothing would be tested at all */
+      window.__shared = [];
+      Object.defineProperty(navigator,'share',{configurable:true,
+        value: payload => { window.__shared.push(payload); return Promise.resolve(); }});
+      window.__copied = [];
+      window.__origWrite = null;
+    });
+    await p.goto(URL); await p.evaluate(seen);
+    await p.goto(URL,{waitUntil:'networkidle'});
+    await p.waitForSelector('#cardGrid .card',{timeout:15000});
+    await p.waitForTimeout(400);
+
+    /* ── the speaker. This is the check that was missing. ── */
+    const before = PAGE_ERRORS.length;
+    await p.evaluate(()=>document.querySelectorAll('#cardGrid .card')[1].click());
+    await p.waitForTimeout(350);
+    await pastPrimer(p,'features');
+    const spk = await p.$('#qSpeakBtn');
+    if(!spk) fail('no speaker button on the question');
+    else {
+      await spk.click(); await p.waitForTimeout(400);
+      (PAGE_ERRORS.length === before)
+        ? ok('speaker: tapping it throws nothing')
+        : fail('speaker threw: ' + PAGE_ERRORS.slice(before).join('; '));
+      const box = await spk.boundingBox();
+      (box && box.width >= 44 && box.height >= 44)
+        ? ok(`speaker: ${Math.round(box.width)}×${Math.round(box.height)} tap target`)
+        : fail(`speaker tap target too small: ${box && Math.round(box.width)}×${box && Math.round(box.height)}`);
+      const inLabel = await p.evaluate(()=>!!document.querySelector('#qLabel #qSpeakBtn'));
+      inLabel ? fail('speaker is inside #qLabel — it is read out as part of the radiogroup name')
+              : ok('speaker sits outside the radiogroup label');
+    }
+
+    /* ── walk PHQ-9 to the end, endorsing item 9, so the crisis panel and
+           the safety flag are both exercised ── */
+    for(let i=0;i<9;i++){
+      await p.evaluate(k=>{
+        const bs=[...document.querySelectorAll('#qcard .bigopts button')];
+        (bs[k===8?1:1]||bs[0]).click();
+      }, i);
+      await p.waitForTimeout(320);
+    }
+    await p.waitForTimeout(600);
+    const onResults = await p.evaluate(()=>document.getElementById('view-results').classList.contains('active'));
+    onResults ? ok('PHQ-9 completes and lands on results') : fail('PHQ-9 did not reach results');
+
+    /* ── the note handed to a doctor ── */
+    await p.evaluate(()=>{
+      window.__copied = [];
+      const w = navigator.clipboard && navigator.clipboard.writeText;
+      if(w) navigator.clipboard.writeText = t => { window.__copied.push(t); return w.call(navigator.clipboard,t); };
+    });
+    await p.evaluate(()=>document.getElementById('sbarBtn').click());
+    await p.waitForTimeout(500);
+    let note = await p.evaluate(()=> window.__copied[0] || '');
+    if(!note){ try{ note = await p.evaluate(()=>navigator.clipboard.readText()); }catch(e){} }
+    if(!note) fail('doctor note: nothing was produced');
+    else {
+      /undefined/.test(note)
+        ? fail('doctor note contains "undefined": ' + note.split('\n').find(l=>/undefined/.test(l)))
+        : ok('doctor note: no undefined fields');
+      /\[S\][\s\S]*\n\n[\s\S]*\[B\][\s\S]*\n\n[\s\S]*\[A\][\s\S]*\n\n[\s\S]*\[R\]/.test(note)
+        ? ok('doctor note: the four sections are separated')
+        : fail('doctor note: sections run together — did filter(Boolean) eat the blank lines?');
+      /ICD|DSM|6A70|296\.2/.test(note)
+        ? fail('doctor note still prints a diagnosis code off a screening score')
+        : ok('doctor note: no diagnosis code');
+      /CRITICAL SAFETY ALERT/.test(note)
+        ? ok('doctor note: the safety flag is carried')
+        : fail('doctor note: item-9 endorsement not carried into the note');
+    }
+
+    /* ── sharing: the tool, and the score, are two different acts ── */
+    const score = await p.evaluate(()=>lastResult.score);
+    await p.evaluate(()=>{ window.__shared = []; document.getElementById('shareToolBtn').click(); });
+    await p.waitForTimeout(250);
+    const tool = await p.evaluate(()=> window.__shared[0] || null);
+    if(!tool) fail('share-this-tool produced no payload');
+    else {
+      const blob = (tool.title||'') + ' ' + (tool.text||'') + ' ' + (tool.url||'');
+      new RegExp('\\b' + score + '\\s*/').test(blob) || /\/27\b/.test(blob)
+        ? fail('share-this-tool leaks the score: ' + blob)
+        : ok('share-this-tool carries no score');
+    }
+    await p.evaluate(()=>{ window.__shared = []; document.getElementById('shareResultBtn').click(); });
+    await p.waitForTimeout(250);
+    const res = await p.evaluate(()=> window.__shared[0] || null);
+    (res && new RegExp(score + '/27').test(res.text || ''))
+      ? ok('share-my-result carries the score, on its own button')
+      : fail('share-my-result did not include the score');
+
+    /* ── the safety plan sits inside the crisis panel ── */
+    const sp = await p.evaluate(()=>{
+      const box = document.getElementById('safetyBox');
+      return { shown: box && box.style.display !== 'none',
+               title: (document.querySelector('.safetyplan-acc summary')||{}).textContent||'',
+               ph: [...document.querySelectorAll('.safetyplan-acc input')].map(i=>i.placeholder) };
+    });
+    sp.shown ? ok('crisis panel is shown after an item-9 endorsement')
+             : fail('crisis panel did not appear');
+    await ctx.close();
+  }
+
+  /* 11b ── the same screens in a language that has none of the new strings,
+            and in the one that has all of them */
+  head('11b. THE NEW STRINGS IN HINDI, AND THE FALLBACK IN MARATHI');
+  {
+    const DEV = /[\u0900-\u097F]/;
+    for (const lang of ['mr','hi']) {
+      const ctx = await b.newContext(phone()); const p = await ctx.newPage();
+      await p.goto(URL);
+      await p.evaluate(l=>{['psych-seen-overture','psych-seen-tour','psych-seen-intro']
+          .forEach(k=>localStorage.setItem(k,'2'));
+        localStorage.removeItem('psych-seen-primer');
+        localStorage.setItem('psych-prefs',JSON.stringify({lang:l}));}, lang);
+      await p.goto(URL,{waitUntil:'networkidle'});
+      await p.waitForSelector('#cardGrid .card',{timeout:15000});
+      await p.waitForTimeout(400);
+
+      await p.evaluate(()=>document.querySelectorAll('#cardGrid .card')[1].click());
+      await p.waitForTimeout(500);
+      const pr = await p.evaluate(()=>['primerPrivate','primerGet','primerNot'].map(id=>{
+        const el=document.getElementById(id);
+        return { t:(el.textContent||'').trim(), h:el.hidden, box:el.getBoundingClientRect().height };
+      }));
+      const blank = pr.filter(r=> !r.t && !r.h && r.box > 0);
+      blank.length
+        ? fail(`${lang}: ${blank.length} empty primer bullet(s) still taking space — the orphan dots are back`)
+        : ok(`${lang}: primer has ${pr.filter(r=>r.t).length} readable bullets, no empty rows`);
+      if(lang==='hi'){
+        pr.every(r=>DEV.test(r.t)) ? ok('hi: the primer is in Hindi')
+                                   : fail('hi: primer bullets are not Devanagari');
+      }
+
+      /* the crisis panel's safety plan, and the breathing protocols */
+      const txt = await p.evaluate(()=>({
+        sp: (document.querySelector('.safetyplan-acc summary')||{}).textContent||'',
+        ph: ([...document.querySelectorAll('.safetyplan-acc input')][0]||{}).placeholder||'',
+        proto: [...document.querySelectorAll('.breathe-proto')].map(b=>b.textContent.trim())
+      }));
+      if(lang==='hi'){
+        DEV.test(txt.sp) ? ok('hi: the safety plan is in Hindi')
+                         : fail('hi: safety plan still English — "'+txt.sp.slice(0,40)+'"');
+        DEV.test(txt.ph) ? ok('hi: its input placeholders are in Hindi too')
+                         : fail('hi: placeholders still English — "'+txt.ph.slice(0,40)+'"');
+        txt.proto.some(t=>DEV.test(t)) ? ok('hi: breathing protocols are in Hindi')
+                                       : fail('hi: protocols still English — '+txt.proto.join(' / '));
+      } else {
+        /HRV/.test(txt.proto.join(' '))
+          ? fail('mr: a protocol button still says "HRV"')
+          : ok('mr: falls back to plain English, no clinician jargon');
+      }
+      await ctx.close();
+    }
+  }
+
+  /* 12 ── every uncaught exception, from every page this suite opened.
+           Anything the sections above did not deliberately provoke lands
+           here, and fails the run. */
+  head('12. UNCAUGHT EXCEPTIONS, EVERY PAGE');
+  {
+    const noise = /Failed to fetch|net::ERR|ServiceWorker/i;
+    const real = PAGE_ERRORS.filter(m=>!noise.test(m));
+    real.length ? real.slice(0,6).forEach(m=>fail('uncaught: '+m))
+                : ok(`no uncaught exceptions across ${PAGE_ERRORS.length ? PAGE_ERRORS.length + ' filtered' : 'any'} page`);
+  }
+
   console.log('\n' + '─'.repeat(58));
   console.log(FAILS.length ? `\x1b[31m${FAILS.length} PROBLEM(S)\x1b[0m` : '\x1b[32mALL CHECKS PASS\x1b[0m');
   FAILS.forEach(f=>console.log('  • '+f));
+
   await b.close();
   process.exit(FAILS.length?1:0);
 })();

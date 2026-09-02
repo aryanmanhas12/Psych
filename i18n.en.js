@@ -95,6 +95,50 @@
     primerGet: "At the end you get a score, what it means, and what to do next.",
     primerNot: "This is not a diagnosis.",
     primerBack: "Choose a different one",
+
+    /* ── the speaker on each question ── */
+    listen: "Listen to this question",
+
+    /* ── the note a patient hands to a clinician ── */
+    sbarBtn: "Copy note for doctor",
+    sbarCopied: "\u2713 Copied \u2014 paste it anywhere",
+
+    /* ── sharing ──
+       Two separate things, because they carry very different weight. The
+       tool is safe to pass around; a score is the person's own. */
+    shareTool: "Share this tool",
+    shareToolTitle: "Psych Screener",
+    shareToolText: "A private mental health check you can do on your own phone \u2014 free, offline, in six languages. Nothing you answer leaves your device.",
+    shareResult: "Share my result",
+    shareResultNote: "This one includes your score.",
+    shareResultTitle: "My {name} result",
+    shareResultText: "My {name} screening came out {score}/{max} \u2014 {band}. I took it privately on my own phone at {url}",
+
+    /* ── the safety plan, inside the crisis panel ── */
+    spTitle: "Make a safety plan",
+    spIntro: "A short private list you write for yourself now, so that a worse hour later has something to follow. It is saved only on this phone.",
+    sp1: "1. Warning signs \u2014 what it feels like when it starts",
+    sp2: "2. What helps me on my own",
+    sp3: "3. Places and people that steady me",
+    sp4: "4. Someone I can call",
+    spPh1: "restless, not sleeping, shutting people out",
+    spPh2: "a walk, a warm shower, slow breathing, music",
+    spPh3: "the terrace, the park, my sister's place",
+    spPh4: "a name and a number",
+    spSave: "Save plan",
+    spSaved: "\u2713 Saved on this phone only.",
+
+    /* ── breathing: plain word first, clinical name in the tooltip, the
+         same headline-and-credit split the screener cards use ── */
+    protoVagal: "4-7-8 \u00b7 calming",
+    protoVagalT: "4-7-8 breathing (vagal reset): in for 4, hold 7, out 8",
+    protoBox: "Box \u00b7 steady",
+    protoBoxT: "Box breathing: 4 in, 4 hold, 4 out, 4 hold",
+    protoCoh: "5.5 \u00b7 even",
+    protoCohT: "Resonance breathing at 5.5 seconds each way",
+
+    /* ── the heading over the treatment-gap argument ── */
+    homeLedeHead: "Why this exists",
     /* The five working documents, and the section that introduces them.
        These were hard-coded English in the markup — a reader who had set
        the site to Hindi scrolled past the screeners and hit a block of
