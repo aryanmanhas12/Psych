@@ -7,7 +7,13 @@
 <meta name="description" content="A printable A4 poster in six languages linking to free, private mental health screening. For clinic walls, colleges, and waiting rooms.">
 <meta name="author" content="Aryan Manhas">
 <script src="nav.js" defer></script>
-<link rel="icon" href="icon-192.png" type="image/png">
+<!-- The 192px PNG was fetched as the favicon on every page: 11.4KB gzip
+     on the critical path, for something drawn at 16px. The SVG is 1.6KB
+     and sharp at every size. No PNG fallback link: Chromium fetches every
+     declared icon and then picks, so the fallback cost more than it saved.
+     A browser too old for SVG favicons simply shows none — cosmetic, and
+     apple-touch-icon still covers the iOS home screen. -->
+<link rel="icon" href="icon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="icon-192.png">
 <script src="prefs.js"></script>
 <link rel="stylesheet" href="site.css">

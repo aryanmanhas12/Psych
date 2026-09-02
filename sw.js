@@ -63,7 +63,7 @@
 
    v11: index.html and both English and Hindi string files changed — the
    "what's behind this" section is translated now. */
-const CACHE = "psych-screener-v13";
+const CACHE = "psych-screener-v14";
 const ASSETS = [
   "./", "./index.html", "./helplines.js", "./nav.js",
   "./i18n.en.js", "./i18n.hi.js", "./i18n.mr.js",
@@ -71,7 +71,7 @@ const ASSETS = [
   "./ethics.html", "./evidence.html", "./manifesto.html",
   "./global.html", "./poster.html", "./qr-site.svg",
   "./site.css", "./manifest.webmanifest",
-  "./icon-192.png", "./icon-512.png", "./icon-maskable.png"
+  "./icon.svg", "./icon-192.png", "./icon-512.png", "./icon-maskable.png"
 ];
 
 self.addEventListener("install", e=>{
