@@ -504,19 +504,72 @@ footer .byline strong{color:var(--ink);font-size:.85rem;}
   nav.site .brand{display:inline-flex;align-items:center;min-height:44px;}
 }
 
-/* ════════ HIGH-PERFORMANCE RENDERING & GPU COMPOSITING ════════ */
+/* ════════ HIGH-PERFORMANCE RENDERING, SPRING PHYSICS & UI POLISH ════════ */
 html {
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
 }
 body {
   overscroll-behavior-y: contain;
 }
-button, a, input, select, summary, .btn, .card {
+
+/* ── Ultra-Refined Slim Translucent Scrollbars ── */
+::-webkit-scrollbar {
+  width: 7px;
+  height: 7px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: color-mix(in srgb, var(--ink) 18%, transparent);
+  border-radius: 999px;
+  border: 1.5px solid transparent;
+  background-clip: padding-box;
+  transition: background-color 0.2s ease;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: color-mix(in srgb, var(--ink) 34%, transparent);
+  background-clip: padding-box;
+}
+
+/* ── Tactile Spring Physics & Button Micro-Interactions ── */
+button, a, input, select, summary, .btn, .card, .choice, .screener-card {
   touch-action: manipulation;
   -webkit-tap-highlight-color: transparent;
+  transition: transform 0.16s cubic-bezier(0.34, 1.56, 0.64, 1),
+              box-shadow 0.24s cubic-bezier(0.16, 1, 0.3, 1),
+              background-color 0.15s ease,
+              border-color 0.15s ease,
+              color 0.15s ease;
 }
+button:active, .btn:active, .choice:active {
+  transform: scale(0.972);
+}
+.screener-card:hover {
+  transform: translateY(-2.5px);
+  box-shadow: 0 4px 12px rgba(22,27,38,.06), 0 14px 30px rgba(22,27,38,.09);
+}
+
+/* ── Ambient Glassmorphism & Diffuse Depth ── */
+nav.site {
+  backdrop-filter: blur(18px) saturate(180%);
+  -webkit-backdrop-filter: blur(18px) saturate(180%);
+  background-color: color-mix(in srgb, var(--paper) 86%, transparent);
+}
+.topstrip {
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+.popover, .dialog, .modal {
+  backdrop-filter: blur(24px) saturate(190%);
+  -webkit-backdrop-filter: blur(24px) saturate(190%);
+  box-shadow: 0 24px 56px -12px rgba(0,0,0,0.32), 0 0 0 1px color-mix(in srgb, var(--ink) 9%, transparent);
+}
+
 .view, .qcard, .orb, .panel, .popover, .dialog, .breathe {
   transform: translateZ(0);
   backface-visibility: hidden;
@@ -524,4 +577,5 @@ button, a, input, select, summary, .btn, .card {
 .card, .choice, .screener-card, .evidence-item {
   contain: layout style paint;
 }
+
 
