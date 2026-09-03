@@ -214,6 +214,13 @@ const OVERFLOW = `(()=>{
     const openC = await p.evaluate(`(${CR})('#setBtn')`);
     if (openC !== null) openC>=4.5 ? ok(`${label}: settings button while open ${openC}:1`)
                                    : fail(`${label}: settings button while open ${openC}:1 (needs 4.5)`);
+    /* The language code sits INSIDE that button and carries its own colour,
+       so the button passing says nothing about it. It was marigold on a
+       marigold fill — 1:1, invisible — in both themes, on the control a
+       reader who cannot read this page has to find first. */
+    const openL = await p.evaluate(`(${CR})('#setLangCode')`);
+    if (openL !== null) openL>=4.5 ? ok(`${label}: language code while open ${openL}:1`)
+                                   : fail(`${label}: language code while open ${openL}:1 (needs 4.5)`);
     await ctx.close();
   }
 
@@ -622,6 +629,57 @@ const OVERFLOW = `(()=>{
       }
       await ctx.close();
     }
+  }
+
+  /* 13 ── tablets and desktops. Every check in this suite was written at
+           phone widths, so nothing here ever looked above 720px — where the
+           nav had been TWO ROWS at every width, on desktop as well as
+           tablet, with Settings marooned at the left of the second row and
+           its popover opening 44px off the left edge of an iPad. */
+  head('13. TABLET AND DESKTOP — the nav row and the settings popover');
+  {
+    const SIZES = [
+      [768,1024,'iPad portrait'], [820,1180,'iPad 10.9 portrait'],
+      [1024,768,'iPad 9.7 landscape'], [1080,810,'iPad 10.9 landscape'],
+      [1112,834,'iPad Pro 10.5 landscape'], [1194,834,'iPad Pro 11 landscape'],
+      [1366,1024,'iPad Pro 12.9 landscape'], [1440,900,'laptop']
+    ];
+    let rows = 0, off = 0, wide = 0;
+    for (const [w,h,label] of SIZES) {
+      const ctx = await b.newContext({viewport:{width:w,height:h}, hasTouch:true, deviceScaleFactor:2});
+      const p = await ctx.newPage();
+      await p.goto(URL); await p.evaluate(seen);
+      await p.goto(URL,{waitUntil:'networkidle'});
+      await p.waitForSelector('#cardGrid .card',{timeout:15000});
+      await p.waitForTimeout(350);
+
+      /* the nav is one row: the settings control shares the brand's line */
+      const oneRow = await p.evaluate(()=>{
+        const brand = document.querySelector('nav.site .brand');
+        const set   = document.querySelector('.setwrap');
+        return Math.round(brand.getBoundingClientRect().top)
+             === Math.round(set.getBoundingClientRect().top);
+      });
+      if(!oneRow){ rows++; fail(`${label} ${w}px: the nav wrapped to two rows`); }
+
+      /* the popover holding the language switch opens fully on screen */
+      await p.evaluate(()=>document.getElementById('setBtn').click());
+      await p.waitForTimeout(400);
+      const pan = await p.evaluate(()=>{
+        const r = document.getElementById('setPanel').getBoundingClientRect();
+        return {l:Math.round(r.left), r:Math.round(r.right),
+                vw:document.documentElement.clientWidth};
+      });
+      if(pan.l < 0 || pan.r > pan.vw){
+        off++; fail(`${label} ${w}px: settings panel at ${pan.l}..${pan.r} of ${pan.vw} — off screen`);
+      }
+      const m = await p.evaluate(OVERFLOW);
+      if(m.scrollW > m.vw+1 || m.over.length){ wide++; fail(`${label} ${w}px: ${m.over.join(', ')}`); }
+      await ctx.close();
+    }
+    if(!rows) ok(`the nav is one row at all ${SIZES.length} tablet and desktop sizes`);
+    if(!off)  ok('the settings popover opens fully on screen at every one of them');
+    if(!wide) ok('no sideways scrolling at any of them');
   }
 
   /* 12 ── every uncaught exception, from every page this suite opened.

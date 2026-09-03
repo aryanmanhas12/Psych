@@ -157,11 +157,18 @@
   }
   .setbtn:hover{border-color:var(--marigold);color:var(--marigold);box-shadow:none;}
   .setbtn[aria-expanded="true"]{background:var(--marigold);color:var(--on-marigold);border-color:var(--marigold);}
+  /* The language code is marigold text, and the open button is a marigold
+     fill — measured at 1:1 in both themes: the same colour on itself. It
+     disappeared at exactly the moment you opened the panel to change the
+     language, which is the one control a person who cannot read this page
+     needs. Third instance of this fault class here, and --on-marigold is
+     the token that exists for it. */
+  .setbtn[aria-expanded="true"] .setlang{color:var(--on-marigold);}
   .setwrap{position:relative;}
   .setpanel{
     display:none;position:absolute;right:0;top:calc(100% + .5rem);z-index:40;
     background:var(--card);border:1px solid var(--line);border-radius:var(--r-lg);box-shadow:var(--shadow-soft);
-    padding:1.1rem;min-width:16rem;
+    padding:1.1rem;min-width:16rem;max-width:calc(100vw - 1.6rem);
   }
   .setpanel.open{display:block;animation:pop .18s cubic-bezier(.25,.46,.45,.94);}
   @keyframes pop{from{opacity:0;transform:translateY(-4px);}to{opacity:1;transform:none;}}
@@ -3520,6 +3527,29 @@ const setBtn = document.getElementById("setBtn"), setPanel = document.getElement
 function toggleSettings(open){
   setPanel.classList.toggle("open", open);
   setBtn.setAttribute("aria-expanded", String(open));
+  if(open) keepPanelOnScreen(); else setPanel.style.removeProperty("right");
+}
+/* The panel is anchored right:0 to its button, which is correct as long as
+   the button is near the right edge. It has not always been: when the nav
+   row wrapped, the button landed at the left of a second line and 288px of
+   popover opened past the left edge of the screen — reported on an iPad,
+   reproducible at 1080x810 with the panel's left edge at -44px. The layout
+   fix is in site.css; this is the guarantee that no future layout can put
+   the language switch somewhere it cannot be reached. Read then write, in
+   one frame, so it costs no extra reflow. */
+function keepPanelOnScreen(){
+  setPanel.style.removeProperty("right");
+  /* `right`, not `transform`: the open animation ends on transform:none, and
+     an animation beats an inline style, so a transform nudge would sit
+     off-screen for its whole 180ms and then snap into place. */
+  requestAnimationFrame(()=>{
+    const r = setPanel.getBoundingClientRect();
+    const pad = 8, vw = document.documentElement.clientWidth;
+    let dx = 0;
+    if(r.left < pad) dx = pad - r.left;
+    else if(r.right > vw - pad) dx = (vw - pad) - r.right;
+    if(dx) setPanel.style.right = Math.round(-dx) + "px";
+  });
 }
 setBtn.addEventListener("click", e=>{
   e.stopPropagation();

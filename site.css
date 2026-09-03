@@ -194,7 +194,15 @@ nav.site .setlang{
 
 /* ── navigation: one order, everywhere ── */
 nav.site{background:var(--deep);padding:.8rem 0;}
-nav.site .wrap,nav.site .wrap-wide{display:flex;align-items:center;gap:1.1rem;flex-wrap:wrap;}
+/* The bar is chrome, not prose, so it is not held to the 60rem measure the
+   reading column is. It was: brand 191px + nine links 691px + settings 146px
+   + ten gaps came to 1,226px inside a 1,033px container, so the row wrapped
+   and Settings dropped to a second line — at EVERY width above 720px, on
+   desktop as well as tablet, not only on the iPad where it was reported. */
+nav.site .wrap,nav.site .wrap-wide{
+  display:flex;align-items:center;gap:1.1rem;flex-wrap:wrap;
+  max-width:min(78rem,100%);
+}
 nav.site .brand{
   font-weight:700;color:var(--on-deep);font-size:1.15rem;
   letter-spacing:.04em;margin-right:auto;text-decoration:none;
@@ -360,23 +368,16 @@ footer .byline{
 }
 footer .byline strong{color:var(--ink);font-size:.85rem;}
 
-/* ── small screens ── */
-@media(max-width:720px){
-  /* One row: brand, menu, settings. The links live behind the button. */
-  nav.site{padding:.55rem 0;}
-  /* nowrap on the closed row, at every phone width — not just under 380px.
-     Anton was a CONDENSED face; the system bold that replaced it is much
-     wider, so "PsychScreener" + Menu + Settings stopped fitting one line
-     and the row wrapped to two. That grew the nav from 64px to 119px the
-     moment nav.js inserted the toggle, shoving the whole page down 55px
-     while it was being read — 0.282 of layout shift, all of the page's
-     CLS, and a regression of the fix that got it to zero.
-
-     The brand already carries min-width:0 and an ellipsis, so with nowrap
-     it gives way instead of wrapping. It is the only thing in the row that
-     can shorten without costing a control. The menu, when open, still
-     needs a line of its own — hence the override below. */
-  nav.site .wrap,nav.site .wrap-wide{gap:.6rem;flex-wrap:nowrap;}
+/* ── anything narrower than a laptop: the links live behind the button ──
+   Nine top-level links, a wordmark and a settings control need about
+   1,075px of row, and the row only clears that with room to spare past
+   1,200px — measured, not guessed. Below that they wrapped,
+   and the wrapped line had no auto margin to push it right, so Settings —
+   which holds the language switch — landed at the FAR LEFT of a second
+   row, and its right-anchored popover opened 44px off the left edge of an
+   iPad. Collapsing the links here is what the phone layout already does;
+   this only moves the width at which it starts. */
+@media(max-width:1200px){
   nav.site.menu-open .wrap,nav.site.menu-open .wrap-wide{flex-wrap:wrap;}
   nav.site .navtoggle{display:inline-flex;}
   nav.site .navlinks{
@@ -401,6 +402,36 @@ footer .byline strong{color:var(--ink);font-size:.85rem;}
   html.js nav.site > .wrap > a.navlink,
   html.js nav.site > .wrap-wide > a.navlink{display:none;}
   nav.site a.navlink[aria-current="page"]{border-bottom-color:var(--marigold);}
+}
+
+/* Above that the nine links do fit, but only just — so they are set a
+   little tighter than they were, which buys ~185px of row. */
+@media(min-width:1201px){
+  nav.site .wrap,nav.site .wrap-wide{gap:.75rem;}
+  nav.site a.navlink{font-size:.76rem;letter-spacing:.015em;padding-inline:.1rem;}
+}
+
+/* ── small screens ── */
+@media(max-width:720px){
+  /* One row: brand, menu, settings. The links live behind the button. */
+  nav.site{padding:.55rem 0;}
+  /* nowrap on the closed row, at every phone width — not just under 380px.
+     Anton was a CONDENSED face; the system bold that replaced it is much
+     wider, so "PsychScreener" + Menu + Settings stopped fitting one line
+     and the row wrapped to two. That grew the nav from 64px to 119px the
+     moment nav.js inserted the toggle, shoving the whole page down 55px
+     while it was being read — 0.282 of layout shift, all of the page's
+     CLS, and a regression of the fix that got it to zero.
+
+     The brand already carries min-width:0 and an ellipsis, so with nowrap
+     it gives way instead of wrapping. It is the only thing in the row that
+     can shorten without costing a control. The menu, when open, still
+     needs a line of its own — hence the override below. */
+  nav.site .wrap,nav.site .wrap-wide{gap:.6rem;flex-wrap:nowrap;}
+  /* The collapse itself — the toggle, the stacked links, and hiding the
+     inline ones — now lives in the max-width:1100px block above, so that
+     a tablet gets the same one clean row a phone does. Only the things
+     that are genuinely about a PHONE are left here. */
   /* Settings stays on the top row — it holds the language switch, which is
      the one control a reader may need before they can read anything. The
      word is hidden from sight but not from the accessibility tree. */
