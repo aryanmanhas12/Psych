@@ -682,6 +682,136 @@ const OVERFLOW = `(()=>{
     if(!wide) ok('no sideways scrolling at any of them');
   }
 
+  /* 14 ── the tour's install step. It points at a button inside the
+           settings popover, and it only exists when the browser has
+           actually offered an install — two conditions nothing else in
+           this suite covers. */
+  head('14. THE TOUR REACHES THE INSTALL STEP');
+  {
+    for (const lang of ['en','hi','mr']) {
+      const ctx = await b.newContext(phone()); const p = await ctx.newPage();
+      await p.goto(URL);
+      await p.evaluate(l=>{
+        ['psych-seen-overture','psych-seen-intro'].forEach(k=>localStorage.setItem(k,'2'));
+        localStorage.removeItem('psych-seen-tour');
+        localStorage.setItem('psych-prefs',JSON.stringify({lang:l}));
+      }, lang);
+      await p.goto(URL,{waitUntil:'networkidle'});
+      await p.waitForSelector('#cardGrid .card',{timeout:15000});
+      await p.waitForTimeout(500);
+
+      /* headless Chromium never fires beforeinstallprompt, so stand in for
+         it exactly as the real handler does */
+      await p.evaluate(()=>{
+        document.getElementById('installBtn').style.display = 'block';
+        if(typeof tourAddInstallStep === 'function') tourAddInstallStep();
+      });
+      await p.evaluate(()=>{ if(typeof tourStart === 'function') tourStart(); });
+      await p.waitForTimeout(500);
+
+      const total = await p.evaluate(()=> TOUR_STEPS.length);
+      const has   = await p.evaluate(()=> TOUR_STEPS.some(s=> s.key==='tourInstall'));
+      if(!has){ fail(`${lang}: the tour has no install step`); await ctx.close(); continue; }
+
+      /* walk to it and check the popover opened and the ring is on the button */
+      let reached = false, ringOK = false, panelOpen = false, title = '';
+      for(let i=0;i<10;i++){
+        const at = await p.evaluate(()=> TOUR_STEPS[tourIdx].key);
+        if(at === 'tourInstall'){
+          reached = true;
+          /* tourPlace repaints at 560ms once the ring and bubble have
+             finished animating. Measuring before that settle passed while
+             the ring was still drifting — it ended up on a screener card,
+             and the screenshot showed it even though the check was green. */
+          await p.waitForTimeout(900);
+          const m = await p.evaluate(()=>{
+            const btn = document.getElementById('installBtn');
+            const ring = document.getElementById('tourRing');
+            const card = document.getElementById('tourCard');
+            const br = btn.getBoundingClientRect(), rr = ring.getBoundingClientRect();
+            const cr = card.getBoundingClientRect();
+            const onScreen = br.top >= 0 && br.bottom <= innerHeight + 1
+                          && br.left >= 0 && br.right <= innerWidth + 1;
+            /* Paint order, not mere presence in the stack. The first check
+               here used .includes(), which passes for an element buried
+               under a screener card — which is exactly what was happening:
+               a marigold ring around a blank box, because nav.site is
+               position:static above the phone breakpoint and z-index does
+               nothing to a static element. */
+            const stack = document.elementsFromPoint(
+              br.left + br.width/2, br.top + br.height/2)
+              .filter(e => e.id !== 'tourBlock' && e.id !== 'tour'
+                        && e.id !== 'tourRing' && e.id !== 'tourArrow');
+            const painted = stack[0] === btn;
+            /* the ring cannot be drawn over the lifted popover, so the
+               target has to carry the highlight itself — without this the
+               step points at nothing anyone can see */
+            const marked = btn.classList.contains('tour-target')
+                        && getComputedStyle(btn).outlineStyle !== 'none';
+            /* the bubble is a bottom sheet on a phone, and it was sitting
+               directly on top of the button it was describing */
+            const covered = !(br.bottom <= cr.top || br.top >= cr.bottom
+                           || br.right <= cr.left || br.left >= cr.right);
+            return {open: document.getElementById('setPanel').classList.contains('open'),
+                    vis: br.width>0 && br.height>0 && onScreen,
+                    painted, marked, topmost: stack[0] ? (stack[0].id||stack[0].className) : null,
+                    covered,
+                    near: Math.abs(rr.left-br.left)<24 && Math.abs(rr.top-br.top)<24,
+                    title: document.getElementById('tourTitle').textContent.trim()};
+          });
+          if(m.covered) fail(`${lang}: the tour bubble covers the install button it points at`);
+          else ok(`${lang}: the bubble does not cover the button`);
+          m.painted ? ok(`${lang}: the button is the topmost thing under the spotlight`)
+                    : fail(`${lang}: "${m.topmost}" paints over the install button`);
+          m.marked ? ok(`${lang}: the button is visibly highlighted`)
+                   : fail(`${lang}: the step points at the button with no visible marker`);
+          panelOpen = m.open && m.vis; ringOK = m.near; title = m.title;
+          break;
+        }
+        await p.evaluate(()=> document.getElementById('tourNext').click());
+        await p.waitForTimeout(420);
+      }
+      if(!reached){ fail(`${lang}: never reached the install step in ${total} steps`); await ctx.close(); continue; }
+      panelOpen ? ok(`${lang}: install step opens the settings panel, button visible`)
+                : fail(`${lang}: install step did not open the settings panel`);
+      ringOK ? ok(`${lang}: the spotlight is on the install button`)
+             : fail(`${lang}: the spotlight is not on the install button`);
+      if(lang==='hi'){
+        /[ऀ-ॿ]/.test(title) ? ok('hi: the install step is in Hindi')
+                                      : fail(`hi: install step not translated — "${title}"`);
+      }
+      if(lang==='mr'){
+        title ? ok(`mr: falls back to English rather than throwing ("${title.slice(0,32)}")`)
+              : fail('mr: install step has no title at all');
+      }
+      /* and it must close the panel again on the way out */
+      await p.evaluate(()=> document.getElementById('tourSkip').click());
+      await p.waitForTimeout(300);
+      const left = await p.evaluate(()=> document.getElementById('setPanel').classList.contains('open'));
+      left ? fail(`${lang}: the settings panel was left open after the tour`)
+           : ok(`${lang}: the panel closes when the tour ends`);
+      await ctx.close();
+    }
+
+    /* and when the browser cannot install, the step is simply not there */
+    const ctx = await b.newContext(phone()); const p = await ctx.newPage();
+    await p.goto(URL);
+    await p.evaluate(()=>{['psych-seen-overture','psych-seen-intro'].forEach(k=>localStorage.setItem(k,'2'));
+                          localStorage.removeItem('psych-seen-tour');});
+    await p.goto(URL,{waitUntil:'networkidle'});
+    await p.waitForSelector('#cardGrid .card',{timeout:15000}); await p.waitForTimeout(500);
+    await p.evaluate(()=>{ if(typeof tourStart === 'function') tourStart(); });
+    await p.waitForTimeout(400);
+    const m = await p.evaluate(()=>({
+      has: TOUR_STEPS.some(s=>s.key==='tourInstall'),
+      total: TOUR_STEPS.length,
+      shown: document.getElementById('tourCount').textContent
+    }));
+    m.has ? fail('the install step is offered on a browser that cannot install')
+          : ok(`no install offer, no install step (${m.total} steps, "${m.shown}")`);
+    await ctx.close();
+  }
+
   /* 12 ── every uncaught exception, from every page this suite opened.
            Anything the sections above did not deliberately provoke lands
            here, and fails the run. */

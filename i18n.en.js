@@ -121,10 +121,10 @@
     sp2: "2. What helps me on my own",
     sp3: "3. Places and people that steady me",
     sp4: "4. Someone I can call",
-    spPh1: "restless, not sleeping, shutting people out",
-    spPh2: "a walk, a warm shower, slow breathing, music",
-    spPh3: "the terrace, the park, my sister's place",
-    spPh4: "a name and a number",
+    spPh1: "restless, not sleeping, shutting people out\u2026",
+    spPh2: "a walk, a warm shower, slow breathing, music\u2026",
+    spPh3: "the terrace, the park, my sister's place\u2026",
+    spPh4: "a name and a number\u2026",
     spSave: "Save plan",
     spSaved: "\u2713 Saved on this phone only.",
 
@@ -230,7 +230,7 @@
     introQuestion: "Do you agree with the statement?", introYes: "Yes", introNo: "No", introSkip: "Skip these questions",
     introCrisisLead: "In distress right now? You can go straight to",
     introStatements: ["Feeling low for weeks at a time is just part of life — not something a doctor can help with.","I would find it hard to tell a doctor how I have actually been feeling.","If something were wrong, I would rather know sooner than later."],
-    sheetNudge: "You said it would be hard to put this into words with a doctor. That is what the sheet below is for — it says it for you, item by item.", tourStart: "Take the tour", tourSkip: "Skip tour", tourNext: "Next", tourDone: "Done", tourCount: "Step {n} of {total}", tour: { tourSettings: { t:"Change how the page looks", b:"Language, text size, contrast and light or dark — all here, and nothing you pick leaves this device." }, tourScreeners: { t:"Pick a screener to begin", b:"Four to five minutes, whichever one fits what's on your mind right now. You can always take another later." }, tourCrisis: { t:"These numbers are always here", b:"Pinned to the top of every page, in every language. If today is urgent, start here instead." }, tourManifesto: { t:"Why this exists", b:"The argument behind the project, in full — the treatment gap this is trying to close, and why a five-minute screen matters." }, tourHowThis: { t:"What this is — and isn't", b:"Read this once. It says plainly what the tool can tell you and what only a clinician can." }, },
+    sheetNudge: "You said it would be hard to put this into words with a doctor. That is what the sheet below is for — it says it for you, item by item.", tourStart: "Take the tour", tourSkip: "Skip tour", tourNext: "Next", tourDone: "Done", tourCount: "Step {n} of {total}", tour: { tourSettings: { t:"Change how the page looks", b:"Language, text size, contrast and light or dark — all here, and nothing you pick leaves this device." }, tourScreeners: { t:"Pick a screener to begin", b:"Four to five minutes, whichever one fits what's on your mind right now. You can always take another later." }, tourCrisis: { t:"These numbers are always here", b:"Pinned to the top of every page, in every language. If today is urgent, start here instead." }, tourManifesto: { t:"Why this exists", b:"The argument behind the project, in full — the treatment gap this is trying to close, and why a five-minute screen matters." }, tourInstall: { t:"Keep it on your home screen", b:"Installs like an app and then works with no signal at all — the questions, your scores and the helpline numbers. Nothing is uploaded; it just stops needing the internet." }, tourHowThis: { t:"What this is — and isn't", b:"Read this once. It says plainly what the tool can tell you and what only a clinician can." }, },
     notePhq4: " The PHQ-4 is a quick triage tool — if you scored 3+ on the first two questions, take the GAD-7; if 3+ on the last two, take the PHQ-9.",
 
     histTitle: "My score history", histEyebrow: "Follow-Up",

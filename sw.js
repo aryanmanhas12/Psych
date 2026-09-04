@@ -63,7 +63,7 @@
 
    v11: index.html and both English and Hindi string files changed — the
    "what's behind this" section is translated now. */
-const CACHE = "psych-screener-v15";
+const CACHE = "psych-screener-v16";
 const ASSETS = [
   "./", "./index.html", "./helplines.js", "./nav.js",
   "./i18n.en.js", "./i18n.hi.js", "./i18n.mr.js",

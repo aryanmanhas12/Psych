@@ -153,7 +153,7 @@
     background:transparent;color:var(--on-deep);
     border:1.5px solid color-mix(in srgb, var(--on-deep) 35%, transparent);
     padding:.35rem .75rem;font-size:.8rem;min-height:2.1rem;cursor:pointer;border-radius:var(--r-sm);
-    transition:all .15s ease;
+    transition:color .15s ease, background-color .15s ease, border-color .15s ease;
   }
   .setbtn:hover{border-color:var(--marigold);color:var(--marigold);box-shadow:none;}
   .setbtn[aria-expanded="true"]{background:var(--marigold);color:var(--on-marigold);border-color:var(--marigold);}
@@ -169,6 +169,13 @@
     display:none;position:absolute;right:0;top:calc(100% + .5rem);z-index:40;
     background:var(--card);border:1px solid var(--line);border-radius:var(--r-lg);box-shadow:var(--shadow-soft);
     padding:1.1rem;min-width:16rem;max-width:calc(100vw - 1.6rem);
+    /* The panel had no height limit and no scroll. Measured with the text
+       size control at 135%: 117px of it below the fold on an iPad in
+       landscape, and 350px on a phone held sideways — and what falls off
+       the bottom is the last two rows, "Take the tour" and "Install app".
+       A floor in CSS; keepPanelOnScreen sets the exact figure from where
+       the panel actually landed. */
+    max-height:calc(100vh - 7rem);overflow-y:auto;overscroll-behavior:contain;
   }
   .setpanel.open{display:block;animation:pop .18s cubic-bezier(.25,.46,.45,.94);}
   @keyframes pop{from{opacity:0;transform:translateY(-4px);}to{opacity:1;transform:none;}}
@@ -187,7 +194,7 @@
     font-family:var(--font-ui);text-transform:none;letter-spacing:0;
     background:var(--paper);color:var(--ink);border:1.5px solid var(--line);border-radius:var(--r-sm);
     padding:.4rem .7rem;font-size:.86rem;min-height:2.3rem;flex:1;cursor:pointer;
-    transition:all .15s ease;
+    transition:color .15s ease, background-color .15s ease, border-color .15s ease;
   }
   .setpanel button:hover{border-color:var(--heal);box-shadow:none;}
   .setpanel button[aria-pressed="true"]{background:var(--heal);color:var(--paper);border-color:var(--heal);font-weight:700;}
@@ -813,6 +820,26 @@
      dimming; a #tourBlock still sits underneath it purely to catch clicks,
      since a box-shadow has no hit-testing of its own. */
   .tour{position:fixed;inset:0;z-index:900;}
+  /* A step that points inside the settings popover has to lift it above the
+     ring's dimming shadow, or the target is the only thing still in the
+     dark. The nav goes with it so the panel stays attached to its button. */
+  /* position:relative matters as much as the z-index — nav.site is static
+     above the phone breakpoint, and z-index on a static element does
+     nothing at all. Without it the popover kept its 902 but the whole nav
+     stayed unpositioned, so a screener card painted straight over the
+     button the tour was pointing at: a marigold ring around a blank box. */
+  body.tour-in-panel nav.site{position:relative;z-index:901;}
+  body.tour-in-panel .setpanel{z-index:902;}
+  /* With the popover lifted above the tour, the ring is behind it and
+     cannot be raised out — it lives inside .tour's own stacking context,
+     and raising that would put the dimming shadow back over the popover.
+     So for these steps the target wears the highlight itself. Same two
+     colours as the ring: marigold line, white halo to keep it legible. */
+  .tour-target{
+    position:relative;z-index:1;
+    outline:2.5px solid var(--marigold);outline-offset:3px;
+    box-shadow:0 0 0 6px rgba(255,255,255,.9);border-radius:var(--r-sm);
+  }
   .tour-block{position:fixed;inset:0;background:transparent;cursor:default;}
   .tour-ring{
     position:fixed;border-radius:.6rem;pointer-events:none;
@@ -1479,7 +1506,7 @@
         <div class="setrow">
           <span class="lbl" data-i18n="contrast">High contrast</span>
           <div class="btns">
-            <button type="button" id="contrastBtn" aria-pressed="false">A<span aria-hidden="true">◐</span></button>
+            <button type="button" id="contrastBtn" aria-pressed="false" data-i18n-label="contrast" aria-label="High contrast">A<span aria-hidden="true">◐</span></button>
           </div>
         </div>
         <div class="setrow">
@@ -1677,16 +1704,16 @@
           <p style="margin-bottom:.7rem;" data-i18n="spIntro">A short private list you write for yourself now, so that a worse hour later has something to follow. It is saved only on this phone.</p>
           <div style="display:flex;flex-direction:column;gap:.7rem;">
             <label style="font-size:.85rem;display:flex;flex-direction:column;gap:4px;"><span data-i18n="sp1">1. Warning signs — what it feels like when it starts</span>
-              <input type="text" id="spWarning" data-i18n-placeholder="spPh1" placeholder="restless, not sleeping, shutting people out" style="width:100%;padding:.5rem;border-radius:4px;border:none;background:#fff;color:#1c2033;font-size:.88rem;">
+              <input type="text" id="spWarning" name="safety-warning" autocomplete="off" spellcheck="false" data-i18n-placeholder="spPh1" placeholder="restless, not sleeping, shutting people out…" style="width:100%;padding:.5rem;border-radius:4px;border:none;background:#fff;color:#1c2033;font-size:.88rem;">
             </label>
             <label style="font-size:.85rem;display:flex;flex-direction:column;gap:4px;"><span data-i18n="sp2">2. What helps me on my own</span>
-              <input type="text" id="spCoping" data-i18n-placeholder="spPh2" placeholder="a walk, a warm shower, slow breathing, music" style="width:100%;padding:.5rem;border-radius:4px;border:none;background:#fff;color:#1c2033;font-size:.88rem;">
+              <input type="text" id="spCoping" name="safety-coping" autocomplete="off" spellcheck="false" data-i18n-placeholder="spPh2" placeholder="a walk, a warm shower, slow breathing, music…" style="width:100%;padding:.5rem;border-radius:4px;border:none;background:#fff;color:#1c2033;font-size:.88rem;">
             </label>
             <label style="font-size:.85rem;display:flex;flex-direction:column;gap:4px;"><span data-i18n="sp3">3. Places and people that steady me</span>
-              <input type="text" id="spSocial" data-i18n-placeholder="spPh3" placeholder="the terrace, the park, my sister's place" style="width:100%;padding:.5rem;border-radius:4px;border:none;background:#fff;color:#1c2033;font-size:.88rem;">
+              <input type="text" id="spSocial" name="safety-social" autocomplete="off" spellcheck="false" data-i18n-placeholder="spPh3" placeholder="the terrace, the park, my sister's place…" style="width:100%;padding:.5rem;border-radius:4px;border:none;background:#fff;color:#1c2033;font-size:.88rem;">
             </label>
             <label style="font-size:.85rem;display:flex;flex-direction:column;gap:4px;"><span data-i18n="sp4">4. Someone I can call</span>
-              <input type="text" id="spTrusted" data-i18n-placeholder="spPh4" placeholder="a name and a number" style="width:100%;padding:.5rem;border-radius:4px;border:none;background:#fff;color:#1c2033;font-size:.88rem;">
+              <input type="text" id="spTrusted" name="safety-trusted" autocomplete="off" spellcheck="false" data-i18n-placeholder="spPh4" placeholder="a name and a number…" style="width:100%;padding:.5rem;border-radius:4px;border:none;background:#fff;color:#1c2033;font-size:.88rem;">
             </label>
             <div style="display:flex;align-items:center;gap:.8rem;margin-top:.3rem;">
               <button type="button" id="spSaveBtn" data-i18n="spSave" style="padding:.6rem 1.1rem;min-height:44px;background:#fff;color:#80161a;border:none;font-weight:700;border-radius:4px;cursor:pointer;font-size:.88rem;">Save plan</button>
@@ -2085,6 +2112,10 @@ function setLang(code, after){
   document.querySelectorAll("[data-i18n-title]").forEach(el=>{
     const v = T.ui[el.dataset.i18nTitle];
     if(typeof v === "string") el.title = v;
+  });
+  document.querySelectorAll("[data-i18n-label]").forEach(el=>{
+    const v = T.ui[el.dataset.i18nLabel];
+    if(typeof v === "string") el.setAttribute("aria-label", v);
   });
   document.getElementById("langsel").value = code;
   document.getElementById("moodBtns").setAttribute("aria-label", T.ui.moodTitle);
@@ -3542,6 +3573,7 @@ function keepPanelOnScreen(){
   /* `right`, not `transform`: the open animation ends on transform:none, and
      an animation beats an inline style, so a transform nudge would sit
      off-screen for its whole 180ms and then snap into place. */
+  setPanel.style.removeProperty("max-height");
   requestAnimationFrame(()=>{
     const r = setPanel.getBoundingClientRect();
     const pad = 8, vw = document.documentElement.clientWidth;
@@ -3549,6 +3581,20 @@ function keepPanelOnScreen(){
     if(r.left < pad) dx = pad - r.left;
     else if(r.right > vw - pad) dx = (vw - pad) - r.right;
     if(dx) setPanel.style.right = Math.round(-dx) + "px";
+    /* and the exact height left below wherever it opened, so the last row
+       is always reachable rather than merely usually reachable.
+       On a phone the tour's bubble is pinned as a bottom sheet, so during
+       the tour the floor is the top of that sheet, not the bottom of the
+       screen — otherwise the panel runs on underneath it and the install
+       button it is pointing at sits behind the words describing it. */
+    let floor = window.innerHeight;
+    const tourEl = document.getElementById("tour");
+    const cardEl = document.getElementById("tourCard");
+    if(tourEl && !tourEl.hidden && cardEl){
+      const cr = cardEl.getBoundingClientRect();
+      if(cr.height && cr.top > r.top + 80) floor = Math.min(floor, cr.top - 8);
+    }
+    setPanel.style.maxHeight = Math.max(120, floor - r.top - 12) + "px";
   });
 }
 setBtn.addEventListener("click", e=>{
@@ -3639,6 +3685,12 @@ let deferredInstall = null;
 addEventListener("beforeinstallprompt", e=>{
   e.preventDefault(); deferredInstall = e;
   document.getElementById("installBtn").style.display = "block";
+  /* The tour auto-starts on a first visit and this event usually arrives a
+     second or so after load — often after the step list has been filtered.
+     Rather than leave the install step out of the very visit it was written
+     for, fold it in, as long as the tour has not already walked past where
+     it belongs. */
+  if(typeof tourAddInstallStep === "function") tourAddInstallStep();
 });
 document.getElementById("installBtn").addEventListener("click", async ()=>{
   if(!deferredInstall) return;
@@ -4063,13 +4115,66 @@ document.getElementById("intro").addEventListener("keydown", e=>{
    nothing" if a selector ever stops matching — the tour is a courtesy,
    not something worth a blank spotlight over. */
 const TOUR_KEY = "psych-seen-tour";
-const TOUR_STEPS = [
+const TOUR_ALL = [
   { sel:"#cardGrid",                     key:"tourScreeners" },
   { sel:".topstrip",                     key:"tourCrisis" },
   { sel:"#setBtn",                       key:"tourSettings" },
+  /* Installing is the step that makes the offline promise real, and it was
+     the one thing the tour never mentioned — the button sits inside the
+     settings popover, three taps deep, where nobody finds it by accident.
+     `panel` says this step needs that popover open to point at anything.
+     `when` decides whether the step exists at all: the browser only lets
+     us offer an install when it has fired beforeinstallprompt, which is
+     also what sets the button's display, so that is the honest test. On a
+     browser that cannot install, or one where the app already is, the step
+     is not in the tour rather than pointing at something invisible. */
+  { sel:"#installBtn", key:"tourInstall", panel:true,
+    when:()=>{ const b = document.getElementById("installBtn");
+               return !!b && b.style.display && b.style.display !== "none"; } },
   { sel:'a.bcard[href="manifesto.html"]',key:"tourManifesto" },
   { sel:"details.notice",                key:"tourHowThis" }
 ];
+/* The steps this particular run will show. Filtered at tourStart, because
+   "Step 3 of 6" has to count the steps a person is actually going to see —
+   a step skipped at render time left the total overstating the tour. */
+let TOUR_STEPS = TOUR_ALL;
+/* beforeinstallprompt lands after the tour has usually already started, so
+   the step is spliced back into its proper place — but only ahead of where
+   the reader currently is, because moving a step they have already passed
+   would renumber the ones behind them. */
+function tourAddInstallStep(){
+  const tour = document.getElementById("tour");
+  if(!tour || tour.hidden) return;
+  if(TOUR_STEPS.some(s=> s.key === "tourInstall")) return;
+  const step = TOUR_ALL.find(s=> s.key === "tourInstall");
+  if(!step || !tourAvailable(step)) return;
+  const at = TOUR_ALL.indexOf(step);
+  let pos = TOUR_STEPS.findIndex(s=> TOUR_ALL.indexOf(s) > at);
+  if(pos === -1) pos = TOUR_STEPS.length;
+  if(pos <= tourIdx) return;
+  TOUR_STEPS = TOUR_STEPS.slice(0, pos).concat([step], TOUR_STEPS.slice(pos));
+  document.getElementById("tourProgress").innerHTML =
+    TOUR_STEPS.map(()=> "<i></i>").join("");
+  tourPlace();
+}
+/* The reader's language first, English second — the same fallback the rest
+   of the untranslated page uses, so a new step reads in English in mr, bn,
+   ta and te instead of not existing. */
+function tourText(key){
+  const mine = T.ui.tour && T.ui.tour[key];
+  if(mine && mine.t) return mine;
+  const en = window.I18N && window.I18N.en;
+  const alt = en && en.ui.tour && en.ui.tour[key];
+  return alt && alt.t ? alt : null;
+}
+function tourAvailable(s){
+  if(s.when && !s.when()) return false;
+  const el = document.querySelector(s.sel);
+  if(!el) return false;
+  /* An element inside a closed popover has no layout box at all, so a step
+     that opens the popover is judged on its `when` alone. */
+  return s.panel ? true : el.getClientRects().length > 0;
+}
 /* 4.8s a box. The earlier 2.8s was long enough to see a box but not to
    finish reading one — two sentences is more than a two-second glance,
    especially for anyone reading a second language. Four transitions at
@@ -4120,7 +4225,17 @@ function tourSetPaused(p){
 function tourPlace(){
   const el = tourTarget();
   if(!el){ tourEnd(); return; }
-  const step = TOUR_STEPS[tourIdx], tt = T.ui.tour[step.key];
+  const step = TOUR_STEPS[tourIdx], tt = tourText(step.key);
+  /* No copy in this language and none in English either: skip the step
+     rather than throw. Reading .t off undefined would have taken the whole
+     tour down in the four languages that do not carry the newest strings —
+     which is exactly how a step gets added and quietly breaks four
+     translations at once. */
+  if(!tt){
+    TOUR_STEPS = TOUR_STEPS.filter((s,i)=> i !== tourIdx);
+    if(!TOUR_STEPS.length || tourIdx >= TOUR_STEPS.length){ tourEnd(); return; }
+    tourPlace(); return;
+  }
   document.getElementById("tourTitle").textContent = tt.t;
   document.getElementById("tourBody").textContent = tt.b;
   document.getElementById("tourCount").textContent =
@@ -4136,6 +4251,20 @@ function tourPlace(){
   tourPlacedAt = Date.now();
   tourArmTimer();
 
+  /* The install button lives inside the settings popover, so a step that
+     points at it has to open the popover first — synchronously, before the
+     measurement below, or the ring is drawn around an element with no
+     layout box. Every other step closes it again, so the tour never leaves
+     it hanging open behind a spotlight somewhere else. */
+  toggleSettings(!!step.panel);
+  document.body.classList.toggle("tour-in-panel", !!step.panel);
+  document.querySelectorAll(".tour-target").forEach(n=> n.classList.remove("tour-target"));
+  if(step.panel) el.classList.add("tour-target");
+  /* the ring and its arrow are both inside .tour, so on a panel step they
+     would be drawn underneath the popover — hidden rather than misleading */
+  document.getElementById("tourRing").style.visibility  = step.panel ? "hidden" : "";
+  document.getElementById("tourArrow").style.visibility = step.panel ? "hidden" : "";
+
   /* The scroll jump is always instant — the ring's own CSS transition is
      what supplies the sense of motion between steps. A smooth scroll
      racing a smooth ring animation, measured after a fixed delay, is
@@ -4147,8 +4276,24 @@ function tourPlace(){
      own scroll-behavior", which site.css sets to smooth on <html> for
      anchor links. Passing "auto" here silently re-smooths every jump and
      reproduces exactly the staleness this rAF rewrite was meant to fix. */
-  el.scrollIntoView({ block:"center", behavior:"instant" });
+  /* A target inside the settings popover cannot be scrolled "into view" —
+     the popover hangs off a sticky nav, so it travels with the scroll and
+     scrollIntoView chases it, landing the ring on whatever ends up under
+     the old coordinates. (It landed on a screener card's "4 questions ·
+     ~1 min" line.) The nav is at the top of the document, so going to the
+     top is what actually puts that button on screen. */
+  if(step.panel) window.scrollTo({ top:0, behavior:"instant" });
+  else el.scrollIntoView({ block:"center", behavior:"instant" });
   const paint = ()=>{
+    /* The popover is a scroller of its own once it is taller than the room
+       it has. Bring the row this step is about into that scroller before
+       measuring, or the ring is drawn around a button parked outside it. */
+    if(step.panel){
+      const sp = document.getElementById("setPanel");
+      if(sp && sp.scrollHeight > sp.clientHeight + 1){
+        sp.scrollTop = Math.max(0, el.offsetTop - 8);
+      }
+    }
     const r = el.getBoundingClientRect(), pad = 6;
     const ring = document.getElementById("tourRing");
     ring.style.top    = (r.top - pad) + "px";
@@ -4166,7 +4311,14 @@ function tourPlace(){
       card.style.right = card.style.bottom = "";
       const below = r.bottom + 16 + chh0 < innerHeight;
       const cTop  = below ? r.bottom + 16 : Math.max(16, r.top - 16 - chh0);
-      const cLeft = Math.min(Math.max(16, r.left), innerWidth - cw - 16);
+      let cLeft = Math.min(Math.max(16, r.left), innerWidth - cw - 16);
+      /* The bubble was landing on top of the popover it was describing —
+         they both want the right-hand side. The popover is anchored there,
+         so the bubble takes the room beside it. */
+      if(step.panel){
+        const pr = document.getElementById("setPanel").getBoundingClientRect();
+        if(pr.width) cLeft = Math.max(16, pr.left - cw - 24);
+      }
       card.style.top  = cTop + "px";
       card.style.left = cLeft + "px";
       c = { left:cLeft, top:cTop, right:cLeft + cw, bottom:cTop + chh0 };
@@ -4241,6 +4393,8 @@ function tourPlace(){
 function tourStart(){
   tourIdx = 0; tourPaused = false;
   toggleSettings(false);
+  TOUR_STEPS = TOUR_ALL.filter(tourAvailable);
+  if(!TOUR_STEPS.length){ TOUR_STEPS = TOUR_ALL; }
   document.getElementById("tourProgress").innerHTML =
     TOUR_STEPS.map(()=> "<i></i>").join("");
   document.getElementById("tour").style.setProperty("--tour-dur", TOUR_STEP_MS + "ms");
@@ -4261,6 +4415,13 @@ function tourEnd(){
   clearTimeout(tourTimer); tourTimer = null;
   document.getElementById("tour").hidden = true;
   removeEventListener("resize", tourPlace);
+  /* leaving from the install step must not strand the popover open, nor
+     leave the nav lifted above everything else */
+  toggleSettings(false);
+  document.body.classList.remove("tour-in-panel");
+  document.querySelectorAll(".tour-target").forEach(n=> n.classList.remove("tour-target"));
+  document.getElementById("tourRing").style.visibility = "";
+  document.getElementById("tourArrow").style.visibility = "";
   onboardMark(TOUR_KEY);
   /* The three opening questions come last, not first. Asking someone what
      they believe about getting help before they have any idea what this
@@ -4313,9 +4474,13 @@ document.getElementById("startTour").addEventListener("click", ()=>{ toggleSetti
 /* the one obvious way back to the whole opening, on the page itself
    rather than behind the settings panel where nobody found it */
 document.getElementById("tourCta").addEventListener("click", playOpening);
-document.getElementById("tourNext").addEventListener("click", ()=> tourStep(1));
-document.getElementById("tourPrev").addEventListener("click", ()=> tourStep(-1));
-document.getElementById("tourSkip").addEventListener("click", tourEnd);
+/* stopPropagation because a click anywhere on the document closes the
+   settings popover, and the install step needs it open — without this,
+   pressing Next to arrive at that step opens the panel and then the same
+   click closes it again on its way up. Same guard setPanel already uses. */
+document.getElementById("tourNext").addEventListener("click", e=>{ e.stopPropagation(); tourStep(1); });
+document.getElementById("tourPrev").addEventListener("click", e=>{ e.stopPropagation(); tourStep(-1); });
+document.getElementById("tourSkip").addEventListener("click", e=>{ e.stopPropagation(); tourEnd(); });
 /* The backdrop swallows the tap and does nothing else. It used to end the
    tour, which is the one dismissal nobody chooses on purpose: on a phone
    the dimmed area is most of the screen, so a thumb landing anywhere off

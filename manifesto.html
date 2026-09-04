@@ -11,6 +11,12 @@
      declared icon and then picks, so the fallback cost more than it saved.
      A browser too old for SVG favicons simply shows none — cosmetic, and
      apple-touch-icon still covers the iOS home screen. -->
+<!-- index.html swaps this from JS when the theme changes; these pages carry
+     no theme script, so the two variants do the same job declaratively.
+     Without it iOS and Android tint the browser chrome white against a
+     dark page. -->
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#151C2E">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0A0D14">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="icon-192.png">
 <script src="prefs.js"></script>
