@@ -1,5 +1,5 @@
 /* ══════════════════════════════════════════════════════════════
-   Psych Screener — shared design system
+   Ronak — shared design system
    ──────────────────────────────────────────────────────────────
    One source of truth for the whole site. Before this file existed
    each page carried its own copied base styles, which had already
@@ -370,14 +370,18 @@ footer .byline strong{color:var(--ink);font-size:.85rem;}
 
 /* ── anything narrower than a laptop: the links live behind the button ──
    Nine top-level links, a wordmark and a settings control need about
-   1,075px of row, and the row only clears that with room to spare past
-   1,200px — measured, not guessed. Below that they wrapped,
+   960px of row. Measured per language, because the links are translated
+   and the widths differ a lot: Bengali needs a 737px viewport, English
+   1,008, and Telugu — the widest — 1,037. The breakpoint is set above the
+   worst of those, not the one the developer happens to be reading in.
+   (It was 1,200 when the wordmark was "Psych Screener"; at 77px instead
+   of 191px the same row now fits three more iPad sizes.) Below that they wrapped,
    and the wrapped line had no auto margin to push it right, so Settings —
    which holds the language switch — landed at the FAR LEFT of a second
    row, and its right-anchored popover opened 44px off the left edge of an
    iPad. Collapsing the links here is what the phone layout already does;
    this only moves the width at which it starts. */
-@media(max-width:1200px){
+@media(max-width:1080px){
   nav.site.menu-open .wrap,nav.site.menu-open .wrap-wide{flex-wrap:wrap;}
   nav.site .navtoggle{display:inline-flex;}
   nav.site .navlinks{
@@ -406,7 +410,7 @@ footer .byline strong{color:var(--ink);font-size:.85rem;}
 
 /* Above that the nine links do fit, but only just — so they are set a
    little tighter than they were, which buys ~185px of row. */
-@media(min-width:1201px){
+@media(min-width:1081px){
   nav.site .wrap,nav.site .wrap-wide{gap:.75rem;}
   nav.site a.navlink{font-size:.76rem;letter-spacing:.015em;padding-inline:.1rem;}
 }
@@ -589,7 +593,13 @@ button:active, .btn:active, .choice:active {
 nav.site {
   backdrop-filter: blur(18px) saturate(180%);
   -webkit-backdrop-filter: blur(18px) saturate(180%);
-  background-color: color-mix(in srgb, var(--paper) 86%, transparent);
+  /* --deep, not --paper. This rule comes after nav.site{background:var(--deep)}
+     and so replaced it, and every piece of text in the bar is --on-deep — so
+     in LIGHT mode the whole navigation was #FAF8F5 on #FAF8F5: the wordmark,
+     all nine links, Menu and Settings, at 1:1, on every page. It only looked
+     right in dark mode, where --paper is already dark, which is why it went
+     unseen. The glass effect is unchanged; only which surface it frosts. */
+  background-color: color-mix(in srgb, var(--deep) 86%, transparent);
 }
 .topstrip {
   backdrop-filter: blur(14px);

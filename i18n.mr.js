@@ -1,5 +1,5 @@
 /* ══════════════════════════════════════════════════════════════
-   Psych Screener — translation layer
+   Ronak — translation layer
    Languages: English, हिन्दी, मराठी, বাংলা, தமிழ், తెలుగు
 
    NOTE ON CLINICAL USE: the English items are the original published

@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Psych Screener — Free Mental Health Screening, Worldwide</title>
+<title>Ronak — Free Mental Health Screening, Worldwide</title>
 <meta name="description" content="Free, private, on-device mental health screening (PHQ-9, GAD-7, PHQ-4, AUDIT-C) in six languages, with crisis helplines worldwide. Works offline. Nothing leaves your device. Not a diagnosis.">
 <meta name="author" content="Aryan Manhas">
 <meta name="theme-color" content="#151C2E">
@@ -1460,7 +1460,7 @@
 
 <nav class="site noprint" aria-label="Main">
   <div class="wrap">
-    <a class="brand" href="index.html"><span class="name">Psych <span class="accent">Screener</span></span></a>
+    <a class="brand" href="index.html"><span class="name">Ronak</span></a>
     <a class="navlink" href="#home" data-view="home" data-i18n="navScreeners">Screener</a>
     <a class="navlink" href="#guide" data-view="guide" data-i18n="navGuide">Talk it through</a>
     <a class="navlink" href="#resources" data-view="resources" data-i18n="navHelp">Get Help</a>
@@ -2634,7 +2634,7 @@ function downloadReminder(){
   const d = new Date(); d.setDate(d.getDate() + lastResult.rescreenDays);
   const stamp = d.toISOString().slice(0,10).replace(/-/g,"");
   const now = new Date().toISOString().replace(/[-:]/g,"").slice(0,15)+"Z";
-  const ics = ["BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//PsychScreener//EN","BEGIN:VEVENT",
+  const ics = ["BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//Ronak//EN","BEGIN:VEVENT",
     "UID:"+Date.now()+"@psych-screener","DTSTAMP:"+now,"DTSTART;VALUE=DATE:"+stamp,
     "SUMMARY:"+t.name+" — "+T.ui.histEyebrow,
     "DESCRIPTION:"+T.ui.whyRescreen.replace(/[,;\\]/g,"\\$&").slice(0,400)+" ("+lastResult.score+"/"+meta.max+")",
@@ -3340,7 +3340,7 @@ function copySBARSummary(){
      and a code beside it is a code somebody transcribes into a chart. */
   const lines = [
     "=== PSYCHIATRIC SCREENING REPORT (SBAR TRIAGE FORMAT) ===",
-    "DATE: " + dateFormatted + " | SOURCE: Psych Screener (On-Device Private PWA)",
+    "DATE: " + dateFormatted + " | SOURCE: Ronak (On-Device Private PWA)",
     "",
     "[S] SITUATION:",
     "Patient self-administered a standard screening instrument: " + t.name + ".",
@@ -3654,7 +3654,7 @@ if(navigator.share){
     shareToolBtn.style.display = "";
     shareToolBtn.addEventListener("click", ()=>{
       navigator.share({
-        title: T.ui.shareToolTitle || "Psych Screener",
+        title: T.ui.shareToolTitle || "Ronak",
         text:  T.ui.shareToolText  || "A private mental health check you can do on your own phone. Nothing is sent anywhere.",
         url:   SITE_URL
       }).catch(()=>{});

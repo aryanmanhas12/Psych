@@ -1,5 +1,5 @@
 /* ══════════════════════════════════════════════════════════════
-   Psych Screener — mobile regression suite
+   Ronak — mobile regression suite
    ──────────────────────────────────────────────────────────────
    Every check here exists because something broke in the real
    world first, on a real phone, and was reported. It lives in the
@@ -43,14 +43,45 @@ async function pastPrimer(p, label){
   return shown;
 }
 
-/* WCAG contrast of an element against whatever is actually painted behind it */
+/* WCAG contrast of an element against whatever is actually painted behind it.
+   Two things this gets right that the first version did not, and both of them
+   let a real bug through:
+
+   1. color-mix() and other modern values come back from getComputedStyle as
+      `color(srgb 0.98 0.97 0.96 / 0.86)` — components 0-1, not 0-255. Parsing
+      those as bytes made #FAF8F5 read as very nearly black, so a nav bar whose
+      text and background were the SAME COLOUR scored 16.25:1 and passed.
+   2. A background with alpha does not hide what is behind it. Stopping at the
+      first non-transparent layer ignores the blend, which is exactly what a
+      frosted bar is. Composite down until opaque instead. */
 const CR = `(sel)=>{
+  const parse=s=>{
+    const m=(s||'').match(/-?\\d*\\.?\\d+(e-?\\d+)?/gi);
+    if(!m) return null;
+    const n=m.map(Number);
+    const scaled=/^color\\(/i.test(s.trim());        /* color(srgb ...) is 0-1 */
+    const a=n.length>3?n[3]:1;
+    return {r:scaled?n[0]*255:n[0], g:scaled?n[1]*255:n[1], b:scaled?n[2]*255:n[2], a};
+  };
+  const over=(f,b)=>({r:f.r*f.a+b.r*(1-f.a), g:f.g*f.a+b.g*(1-f.a),
+                      b:f.b*f.a+b.b*(1-f.a), a:1});
   const lin=c=>{c/=255;return c<=0.03928?c/12.92:Math.pow((c+0.055)/1.055,2.4);};
-  const lum=s=>{const m=s.match(/\\d+(\\.\\d+)?/g).map(Number);return 0.2126*lin(m[0])+0.7152*lin(m[1])+0.0722*lin(m[2]);};
-  const bg=el=>{let n=el;while(n){const b=getComputedStyle(n).backgroundColor;
-    if(b&&!/rgba\\(0, 0, 0, 0\\)|transparent/.test(b))return b;n=n.parentElement;}return 'rgb(255,255,255)';};
+  const lum=c=>0.2126*lin(c.r)+0.7152*lin(c.g)+0.0722*lin(c.b);
+  const bgOf=el=>{
+    const layers=[];
+    for(let n=el;n;n=n.parentElement){
+      const c=parse(getComputedStyle(n).backgroundColor);
+      if(c&&c.a>0) layers.push(c);
+      if(c&&c.a>=1) break;
+    }
+    let out={r:255,g:255,b:255,a:1};
+    for(let i=layers.length-1;i>=0;i--) out=over(layers[i],out);
+    return out;
+  };
   const el=document.querySelector(sel); if(!el)return null;
-  const a=lum(getComputedStyle(el).color),b=lum(bg(el));
+  let fg=parse(getComputedStyle(el).color); if(!fg)return null;
+  if(fg.a<1) fg=over(fg,bgOf(el));
+  const a=lum(fg), b=lum(bgOf(el));
   const hi=Math.max(a,b),lo=Math.min(a,b);
   return Math.round(((hi+0.05)/(lo+0.05))*100)/100;}`;
 

@@ -1,6 +1,6 @@
 {
-  "name": "Psych Screener — Mental Health Screening",
-  "short_name": "Psych Screener",
+  "name": "Ronak — Mental Health Screening",
+  "short_name": "Ronak",
   "description": "Free, private mental health screening (PHQ-9, GAD-7, PHQ-4, AUDIT-C) in six languages, with crisis helplines worldwide. Works offline. Nothing leaves your device.",
   "start_url": "./index.html",
   "scope": "./",

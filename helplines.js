@@ -1,5 +1,5 @@
 /* ══════════════════════════════════════════════════════════════
-   Psych Screener — crisis & support lines, worldwide
+   Ronak — crisis & support lines, worldwide
    ──────────────────────────────────────────────────────────────
    SAFETY ARCHITECTURE — read before editing:
 

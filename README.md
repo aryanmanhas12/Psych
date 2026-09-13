@@ -1,4 +1,4 @@
-# Psych Screener — Screen Early. Act Early.
+# Ronak — Screen Early. Act Early.
 
 **A free, private, multilingual mental-health screening tool — built for India, usable
 worldwide** — plus the manifesto, evidence register and ethics charter behind it.

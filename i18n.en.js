@@ -1,5 +1,5 @@
 ﻿/* ══════════════════════════════════════════════════════════════
-   Psych Screener — translation layer
+   Ronak — translation layer
    Languages: English, हिन्दी, मराठी, বাংলা, தமிழ், తెలుగు
 
    NOTE ON CLINICAL USE: the English items are the original published
@@ -107,7 +107,7 @@
        Two separate things, because they carry very different weight. The
        tool is safe to pass around; a score is the person's own. */
     shareTool: "Share this tool",
-    shareToolTitle: "Psych Screener",
+    shareToolTitle: "Ronak",
     shareToolText: "A private mental health check you can do on your own phone \u2014 free, offline, in six languages. Nothing you answer leaves your device.",
     shareResult: "Share my result",
     shareResultNote: "This one includes your score.",
@@ -208,7 +208,7 @@
     sheetPatientNote: "The sheet is written in English, the working language of most clinics: a mistranslated clinical form is more dangerous than an untranslated one. Your own answers appear in both English and your language, so you can read exactly what you are handing over. Nothing is sent anywhere — the page is built on your device and is gone when you close it.",
     printBtn: "Print this page", reminderBtn: "📅 Add re-screen reminder",
     viewHistory: "View my history", backHome: "Back to screeners",
-    printHead: "PSYCH SCREENER SUMMARY · {name} · {date} · Self-administered screening — not a diagnosis. For clinical correlation.",
+    printHead: "RONAK SUMMARY · {name} · {date} · Self-administered screening — not a diagnosis. For clinical correlation.",
 
     safetyTitle: "⚠ Please read this first",
     safety1: "You said you've had thoughts of being better off dead or of hurting yourself. Those thoughts are a symptom — they are treatable, and they are more common than you think. You do not have to handle this alone or wait for it to pass.",
@@ -242,7 +242,7 @@
     colDate: "Date", colScore: "Score", colResult: "Result",
     exportBtn: "Export data (JSON)", importBtn: "Import data", deleteBtn: "Delete all my data",
     confirmDelete: "Delete all saved screening history from this device? This cannot be undone.",
-    importOk: "Imported {n} saved screenings.", importFail: "That file didn't look like a Psych Screener export.",
+    importOk: "Imported {n} saved screenings.", importFail: "That file didn't look like a Ronak export.",
     chartAria: "{name} scores over time; clinical cutoff at {cut}",
 
     resTitle: "Where to turn", resEyebrow: "Get Help · India",
