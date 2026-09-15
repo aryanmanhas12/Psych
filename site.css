@@ -203,9 +203,20 @@ nav.site .wrap,nav.site .wrap-wide{
   display:flex;align-items:center;gap:1.1rem;flex-wrap:wrap;
   max-width:min(78rem,100%);
 }
+/* The wordmark is the one place on this site set in the serif. Everything
+   else is the reader's system sans, so a serif in caps with generous
+   tracking reads as a name rather than as another label — and it still
+   costs nothing: Charter ships with macOS and iOS, Sitka and Cambria with
+   Windows, and Georgia is on all of them, so there is no font to fetch and
+   the promise that nothing here phones home is untouched.
+   text-transform rather than capitals in the markup, so the accessible
+   name stays "Ronak" and a screen reader does not spell it out. */
 nav.site .brand{
-  font-weight:700;color:var(--on-deep);font-size:1.15rem;
-  letter-spacing:.04em;margin-right:auto;text-decoration:none;
+  font-family:var(--font-serif);
+  font-weight:700;color:var(--on-deep);font-size:1.16rem;
+  text-transform:uppercase;letter-spacing:.2em;
+  margin-right:auto;text-decoration:none;
+  display:inline-flex;align-items:baseline;
   /* Allowed to give way. On the narrowest phones at a large text size the
      brand, Menu and Settings could not share the one line they are pinned
      to, and Settings — which holds the language switch — was pushed off
@@ -228,6 +239,13 @@ nav.site .brand > .name{
    the page can be. Footer credits should never do that. */
 footer a,.byline a{overflow-wrap:anywhere;}
 nav.site .brand .accent{color:var(--marigold);}
+/* The full stop is the whole of the brand colour in this bar now that the
+   name is one word. Tracking puts .2em of air after the K, so the stop is
+   pulled back against it; it is decorative, so it stays out of the
+   accessible name. */
+nav.site .brand .stop{
+  color:var(--marigold);margin-left:-.14em;letter-spacing:0;flex:none;
+}
 nav.site a.navlink{
   color:var(--on-deep);text-decoration:none;
   font-family:var(--font-ui);
@@ -370,18 +388,20 @@ footer .byline strong{color:var(--ink);font-size:.85rem;}
 
 /* ── anything narrower than a laptop: the links live behind the button ──
    Nine top-level links, a wordmark and a settings control need about
-   960px of row. Measured per language, because the links are translated
-   and the widths differ a lot: Bengali needs a 737px viewport, English
-   1,008, and Telugu — the widest — 1,037. The breakpoint is set above the
-   worst of those, not the one the developer happens to be reading in.
-   (It was 1,200 when the wordmark was "Psych Screener"; at 77px instead
-   of 191px the same row now fits three more iPad sizes.) Below that they wrapped,
+   985px of row. Measured per language, because the links are translated
+   and the widths differ a lot: Bengali needs a 761px viewport, English
+   1,033, and Telugu — the widest — 1,061. The breakpoint is set above the
+   worst of those, not the one the developer happens to be reading in,
+   and with room to spare because the wordmark is now a SERIF: Charter on
+   Apple, Sitka or Cambria on Windows, Noto Serif on Android, and they do
+   not set to the same width. 1,100 carries ~40px of slack for that.
+   (It was 1,200 when the wordmark was "Psych Screener", 191px wide.) Below that they wrapped,
    and the wrapped line had no auto margin to push it right, so Settings —
    which holds the language switch — landed at the FAR LEFT of a second
    row, and its right-anchored popover opened 44px off the left edge of an
    iPad. Collapsing the links here is what the phone layout already does;
    this only moves the width at which it starts. */
-@media(max-width:1080px){
+@media(max-width:1100px){
   nav.site.menu-open .wrap,nav.site.menu-open .wrap-wide{flex-wrap:wrap;}
   nav.site .navtoggle{display:inline-flex;}
   nav.site .navlinks{
@@ -410,7 +430,7 @@ footer .byline strong{color:var(--ink);font-size:.85rem;}
 
 /* Above that the nine links do fit, but only just — so they are set a
    little tighter than they were, which buys ~185px of row. */
-@media(min-width:1081px){
+@media(min-width:1101px){
   nav.site .wrap,nav.site .wrap-wide{gap:.75rem;}
   nav.site a.navlink{font-size:.76rem;letter-spacing:.015em;padding-inline:.1rem;}
 }
@@ -459,7 +479,7 @@ footer .byline strong{color:var(--ink);font-size:.85rem;}
    anyone had touched the text-size control. Shortening the name is the
    graceful part; the ellipsis above is the floor beneath it. */
 @media(max-width:480px){
-  nav.site .brand{font-size:.95rem;letter-spacing:.015em;}
+  nav.site .brand{font-size:1rem;letter-spacing:.12em;}
 }
 @media(max-width:380px){
   nav.site .wrap,nav.site .wrap-wide{flex-wrap:nowrap;gap:.45rem;}
