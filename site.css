@@ -611,6 +611,18 @@ button:active, .btn:active, .choice:active {
 
 /* ── Ambient Glassmorphism & Diffuse Depth ── */
 nav.site {
+  /* backdrop-filter CREATES A STACKING CONTEXT, even here where the element
+     is position:static. That trapped the settings popover's z-index:40
+     inside the nav — and the nav, being unpositioned, painted at in-flow
+     level, below every .view (which carries transform:translateZ(0) and so
+     sits at level 0 of the root). Net effect: the whole page rendered ON
+     TOP of the open popover, and the settings panel looked transparent.
+     Neither declaration is wrong alone; together they invert the layering.
+     Giving the nav a position and a z-index is what makes its children's
+     z-indexes mean anything. 50 is deliberately below the overture (60),
+     which is a full-screen opaque intro that must still cover the bar. */
+  position: relative;
+  z-index: 50;
   backdrop-filter: blur(18px) saturate(180%);
   -webkit-backdrop-filter: blur(18px) saturate(180%);
   /* --deep, not --paper. This rule comes after nav.site{background:var(--deep)}

@@ -165,10 +165,25 @@
      the token that exists for it. */
   .setbtn[aria-expanded="true"] .setlang{color:var(--on-marigold);}
   .setwrap{position:relative;}
+  /* "It's all blending in" — a dark panel on a dark page, with nothing
+     between them, reads as part of the page. The scrim is what makes it an
+     overlay. 45 sits under the nav (50) so the panel stays lit, and under
+     the tab bar (80) so the four primary destinations are never dimmed
+     out of reach. */
+  .setscrim{
+    position:fixed;inset:0;z-index:45;
+    background:rgba(9,12,18,.52);
+    opacity:0;pointer-events:none;transition:opacity .18s ease;
+  }
+  .setscrim.on{opacity:1;pointer-events:auto;}
   .setpanel{
     display:none;position:absolute;right:0;top:calc(100% + .5rem);z-index:40;
     background:var(--card);border:1px solid var(--line);border-radius:var(--r-lg);box-shadow:var(--shadow-soft);
     padding:1.1rem;min-width:16rem;max-width:calc(100vw - 1.6rem);
+    /* a real cast shadow, not the page's ambient one: this thing is meant
+       to look like it is floating above everything behind it */
+    box-shadow:0 18px 44px -12px rgba(0,0,0,.55), 0 4px 14px rgba(0,0,0,.28),
+               0 0 0 1px color-mix(in srgb, var(--ink) 10%, transparent);
     /* The panel had no height limit and no scroll. Measured with the text
        size control at 135%: 117px of it below the fold on an iPad in
        landscape, and 350px on a phone held sideways — and what falls off
@@ -3555,9 +3570,14 @@ document.getElementById("cancelBtn").addEventListener("click", ()=>{ stopClock()
 
 /* settings popover: click-outside + Escape to close, focus returned to trigger */
 const setBtn = document.getElementById("setBtn"), setPanel = document.getElementById("setPanel");
+const setScrim = document.createElement("div");
+setScrim.className = "setscrim";
+setScrim.addEventListener("click", ()=> toggleSettings(false));
+document.body.appendChild(setScrim);
 function toggleSettings(open){
   setPanel.classList.toggle("open", open);
   setBtn.setAttribute("aria-expanded", String(open));
+  setScrim.classList.toggle("on", open);
   if(open) keepPanelOnScreen(); else setPanel.style.removeProperty("right");
 }
 /* The panel is anchored right:0 to its button, which is correct as long as
@@ -3587,7 +3607,12 @@ function keepPanelOnScreen(){
        the tour the floor is the top of that sheet, not the bottom of the
        screen — otherwise the panel runs on underneath it and the install
        button it is pointing at sits behind the words describing it. */
-    let floor = window.innerHeight;
+    /* The tab bar is fixed to the bottom at z-index 80 and so paints over
+       this panel. Stopping above it is the difference between a last row
+       you can reach and one you can see but not tap. */
+    const tabH = parseFloat(getComputedStyle(document.documentElement)
+                   .getPropertyValue("--tabbar-h")) || 0;
+    let floor = window.innerHeight - tabH;
     const tourEl = document.getElementById("tour");
     const cardEl = document.getElementById("tourCard");
     if(tourEl && !tourEl.hidden && cardEl){

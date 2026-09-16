@@ -843,6 +843,60 @@ const OVERFLOW = `(()=>{
     await ctx.close();
   }
 
+  /* 15 ── the settings popover is an OVERLAY, not part of the page.
+           It looked transparent for a whole release: nav.site carries a
+           backdrop-filter, which creates a stacking context even on a
+           static element, so the popover's z-index:40 was trapped inside a
+           nav that painted below every .view (each of which carries
+           transform:translateZ(0)). The page rendered straight through it.
+           Nothing here had ever opened the panel and asked what was on
+           top of it. */
+  head('15. THE SETTINGS PANEL SITS OVER THE PAGE');
+  {
+    for (const [view, scheme] of [['home','light'], ['resources','dark'], ['history','dark']]) {
+      const ctx = await b.newContext(phone({colorScheme:scheme}));
+      const p = await ctx.newPage();
+      await p.goto(URL); await p.evaluate(seen);
+      await p.goto(URL,{waitUntil:'networkidle'});
+      await p.waitForSelector('#cardGrid .card',{timeout:15000});
+      await p.waitForTimeout(350);
+      await p.evaluate(v=>showView(v), view);
+      await p.waitForTimeout(250);
+      await p.evaluate(()=>document.getElementById('setBtn').click());
+      await p.waitForTimeout(500);
+
+      const m = await p.evaluate(()=>{
+        const sp = document.getElementById('setPanel');
+        const r = sp.getBoundingClientRect();
+        /* sample the panel's own area in several places, not just the
+           middle — a partial overlap is still a broken overlay */
+        const pts = [[.5,.25],[.5,.5],[.5,.75],[.25,.5],[.75,.5]];
+        const covered = pts.filter(([fx,fy])=>{
+          const el = document.elementFromPoint(r.left + r.width*fx, r.top + r.height*fy);
+          return !(el === sp || sp.contains(el));
+        }).length;
+        const tab = document.querySelector('.tabbar');
+        const tr = tab && getComputedStyle(tab).display !== 'none'
+                 ? tab.getBoundingClientRect() : null;
+        return {covered, pts: pts.length,
+                scrim: !!document.querySelector('.setscrim.on'),
+                clearsTab: tr ? r.bottom <= tr.top + 1 : true,
+                onScreen: r.top >= 0 && r.left >= 0
+                       && r.right <= document.documentElement.clientWidth + 1};
+      });
+
+      const tag = `${view}/${scheme}`;
+      m.covered === 0 ? ok(`${tag}: nothing paints over the panel`)
+                      : fail(`${tag}: the page paints over the panel at ${m.covered}/${m.pts} points`);
+      m.scrim ? ok(`${tag}: the page behind it is dimmed`)
+              : fail(`${tag}: no scrim — the panel blends into the page`);
+      m.clearsTab ? ok(`${tag}: the panel stops above the tab bar`)
+                  : fail(`${tag}: the panel runs under the tab bar, so its last row cannot be tapped`);
+      if(!m.onScreen) fail(`${tag}: the panel is not fully on screen`);
+      await ctx.close();
+    }
+  }
+
   /* 12 ── every uncaught exception, from every page this suite opened.
            Anything the sections above did not deliberately provoke lands
            here, and fails the run. */
