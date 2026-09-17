@@ -43,6 +43,23 @@ async function pastPrimer(p, label){
   return shown;
 }
 
+/* Endorsing the self-harm item interrupts the questionnaire before the next
+   question and before any score — that is the point of it. Anything walking
+   a PHQ-9 with non-zero answers has to step through it, and should assert it
+   appeared, because a safety step that silently stops appearing is exactly
+   the regression worth failing on. */
+async function pastSafeNow(p, label){
+  const shown = await p.evaluate(()=>{
+    const el = document.getElementById('safeNow');
+    return !!el && !el.hidden;
+  });
+  if(shown){
+    await p.evaluate(()=>document.getElementById('safeNowGo').click());
+    await p.waitForTimeout(260);
+  } else if(label) fail(`${label}: the self-harm item did not interrupt`);
+  return shown;
+}
+
 /* WCAG contrast of an element against whatever is actually painted behind it.
    Two things this gets right that the first version did not, and both of them
    let a real bug through:
@@ -272,6 +289,10 @@ const OVERFLOW = `(()=>{
         const hit=await p.evaluate(()=>{const bs=[...document.querySelectorAll('#qcard .bigopts button')];
           if(!bs.length)return false; bs[bs.length-1].click(); return true;});
         if(!hit) break; n++;
+        await p.waitForTimeout(280);
+        /* worst answers endorse the self-harm item, which is meant to stop
+           the questionnaire right there */
+        if(id === 'phq9') await pastSafeNow(p, null);
         await p.waitForFunction(x=>document.getElementById('view-results').classList.contains('active')||
           (current&&current.idx!==x), before,{timeout:3000}).catch(()=>{});
       }
@@ -547,6 +568,7 @@ const OVERFLOW = `(()=>{
         (bs[k===8?1:1]||bs[0]).click();
       }, i);
       await p.waitForTimeout(320);
+      if(i === 8) await pastSafeNow(p, 'features');
     }
     await p.waitForTimeout(600);
     const onResults = await p.evaluate(()=>document.getElementById('view-results').classList.contains('active'));
@@ -895,6 +917,112 @@ const OVERFLOW = `(()=>{
       if(!m.onScreen) fail(`${tag}: the panel is not fully on screen`);
       await ctx.close();
     }
+  }
+
+  /* 16 ── clinical safety: the two things a screening tool must not get
+           wrong — what it does when someone discloses self-harm, and
+           whether its output reads as a diagnosis. */
+  head('16. CLINICAL SAFETY');
+  {
+    /* (a) the self-harm item interrupts immediately, in every language */
+    for (const lang of ['en','hi','ta']) {
+      const ctx = await b.newContext(phone()); const p = await ctx.newPage();
+      await p.goto(URL);
+      await p.evaluate(l=>{seenKeys(); localStorage.setItem('psych-prefs',JSON.stringify({lang:l}));
+        function seenKeys(){['psych-seen-overture','psych-seen-tour','psych-seen-intro']
+          .forEach(k=>localStorage.setItem(k,'2'));}}, lang);
+      await p.goto(URL,{waitUntil:'networkidle'});
+      await p.waitForSelector('#cardGrid .card',{timeout:15000}); await p.waitForTimeout(400);
+      await p.evaluate(()=>startTest('phq9')); await p.waitForTimeout(350);
+      await pastPrimer(p, null);
+
+      /* answer 0 on items 1-8 so ONLY item 9 is endorsed — this proves the
+         interrupt is driven by the item, not by a high total */
+      for(let i=0;i<8;i++){
+        await p.evaluate(()=>document.querySelectorAll('#qcard .bigopts button')[0].click());
+        await p.waitForTimeout(300);
+      }
+      const atNine = await p.evaluate(()=> current && current.idx === 8);
+      if(!atNine){ fail(`${lang}: did not reach PHQ-9 item 9`); await ctx.close(); continue; }
+      await p.evaluate(()=>document.querySelectorAll('#qcard .bigopts button')[1].click());
+      await p.waitForTimeout(450);
+
+      const m = await p.evaluate(()=>{
+        const box = document.getElementById('safeNow');
+        const shown = box && !box.hidden;
+        return {shown,
+          scored: document.getElementById('view-results').classList.contains('active'),
+          tels: box ? box.querySelectorAll('a[href^="tel:"]').length : 0,
+          smallTarget: box ? [...box.querySelectorAll('a[href^="tel:"]')]
+                              .filter(a=>a.getBoundingClientRect().height < 44).length : 0,
+          role: box ? box.getAttribute('role') : null,
+          answerKept: current ? current.answers[8] : null,
+          focused: document.activeElement ? document.activeElement.id : null};
+      });
+      m.shown ? ok(`${lang}: endorsing the self-harm item stops the questionnaire`)
+              : fail(`${lang}: the self-harm item did NOT interrupt`);
+      !m.scored ? ok(`${lang}: no score is shown before the safety step`)
+                : fail(`${lang}: it scored and showed results anyway`);
+      m.tels >= 3 ? ok(`${lang}: ${m.tels} crisis numbers offered, all dialable`)
+                  : fail(`${lang}: only ${m.tels} crisis numbers on the safety step`);
+      m.smallTarget === 0 ? ok(`${lang}: every crisis number is a 44px+ target`)
+                          : fail(`${lang}: ${m.smallTarget} crisis number(s) under 44px`);
+      m.answerKept === 1 ? ok(`${lang}: the disclosed answer is kept, not discarded`)
+                         : fail(`${lang}: the answer was lost (got ${m.answerKept})`);
+      m.focused === 'safeNowHelp' ? ok(`${lang}: focus moves to the help button`)
+                                  : fail(`${lang}: focus went to "${m.focused}"`);
+
+      /* continuing must still work and must still score */
+      await p.evaluate(()=>document.getElementById('safeNowGo').click());
+      await p.waitForTimeout(700);
+      const done = await p.evaluate(()=>
+        document.getElementById('view-results').classList.contains('active'));
+      done ? ok(`${lang}: continuing finishes the screening normally`)
+           : fail(`${lang}: continuing did not reach results`);
+      await ctx.close();
+    }
+
+    /* (b) the result must not read as a diagnosis */
+    const ctx = await b.newContext(phone()); const p = await ctx.newPage();
+    await p.goto(URL); await p.evaluate(seen);
+    await p.goto(URL,{waitUntil:'networkidle'});
+    await p.waitForSelector('#cardGrid .card',{timeout:15000}); await p.waitForTimeout(400);
+    await p.evaluate(()=>startTest('phq9')); await p.waitForTimeout(350);
+    await pastPrimer(p, null);
+    for(let i=0;i<9;i++){
+      await p.evaluate(()=>document.querySelectorAll('#qcard .bigopts button')[1].click());
+      await p.waitForTimeout(300);
+      if(i===8) await pastSafeNow(p, null);
+    }
+    await p.waitForTimeout(600);
+    const res = await p.evaluate(()=>({
+      lead: (document.getElementById('resBandLead')||{}).textContent || '',
+      band: (document.getElementById('resBand')||{}).textContent || '',
+      notice: document.body.innerText
+    }));
+    res.lead.trim().length > 0
+      ? ok(`the severity band is framed: "${res.lead.trim()}"`)
+      : fail('the severity band is presented bare, with nothing framing it as a range');
+    /* the band label itself must still be the instrument's own wording */
+    /depression/i.test(res.band)
+      ? ok(`the instrument's own band name is preserved ("${res.band}")`)
+      : fail(`the PHQ-9 band name was altered: "${res.band}"`);
+    /* The first version of this matched "if you are in immediate danger" and
+       the disclaimer's own "does not provide ... diagnosis", which are the
+       two sentences you most want to keep. What actually matters is a
+       CONDITION attached to the reader. */
+    const DIAGNOSTIC = [
+      /\byou (?:have|'ve got|suffer from|are suffering from)\s+(?:a |an |mild |moderate |severe |minimal )*(?:depression|anxiety|mental illness|a disorder|bipolar|ptsd)\b/i,
+      /\byou are\s+(?:clinically\s+)?(?:depressed|anxious|mentally ill|bipolar|suicidal)\b/i,
+      /\b(?:you have been|you've been|we have|we've) diagnosed\b/i,
+      /\bdiagnosed with\b/i,
+      /\byour diagnosis\b/i
+    ];
+    const bad = DIAGNOSTIC.filter(re=> re.test(res.notice));
+    bad.length
+      ? fail(`the results screen attaches a condition to the reader: ${res.notice.match(bad[0])[0]}`)
+      : ok('the results screen never attaches a condition to the reader');
+    await ctx.close();
   }
 
   /* 12 ── every uncaught exception, from every page this suite opened.

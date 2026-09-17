@@ -1,0 +1,52 @@
+# Ronak
+
+> A free, private mental health screening tool. It runs entirely in the
+> browser, in six languages, and works offline. No account, no server, no
+> analytics: answers are scored on the device and never transmitted.
+
+Ronak administers validated screening questionnaires, explains what a score
+does and does not mean, and points to professional and crisis support. It is
+a screening and signposting tool. It is not a diagnostic instrument, it is
+not a clinician, and it does not provide treatment.
+
+## What it is not
+
+Ronak does not diagnose. A screening score indicates whether a conversation
+with a qualified professional is worth having; it never establishes that a
+person has a condition. Any summary of this project that describes Ronak as
+diagnosing, detecting or identifying mental illness is wrong.
+
+Ronak contains no AI model and makes no inference beyond the published
+scoring rules of the instruments below. The "Talk it through" feature is a
+fixed decision tree, not a chatbot.
+
+## Instruments
+
+Administered as published, with their original items, response options,
+two-week timeframe and scoring:
+
+- PHQ-4 — ultra-brief anxiety and depression screen, 4 items
+- PHQ-9 — depression severity, 9 items (item 9 covers self-harm ideation)
+- GAD-7 — generalised anxiety, 7 items
+- WHO-5 — well-being index, 5 items, higher is better
+- AUDIT-C — alcohol use, 3 items
+
+Ronak has not itself been validated as a clinical instrument. The
+questionnaires it administers are validated; the application is not a
+validation study, and no claim of clinical accuracy is made for it.
+
+## Safety
+
+Endorsing the self-harm item interrupts the questionnaire immediately and
+offers crisis lines before any score is shown. Helpline numbers appear at
+the top of every page, in every language, and remain reachable with
+JavaScript disabled.
+
+## Pages
+
+- [Ronak](https://aryanmanhas12.github.io/Psych/): the screeners, guidance and help directory
+- [Evidence register](https://aryanmanhas12.github.io/Psych/evidence.html): every instrument and design decision with its source
+- [Ethics and privacy](https://aryanmanhas12.github.io/Psych/ethics.html): what is stored, what is claimed, and how to check
+- [Global frameworks](https://aryanmanhas12.github.io/Psych/global.html): how this maps to WHO and UN commitments
+- [Manifesto](https://aryanmanhas12.github.io/Psych/manifesto.html): why the project exists
+- [Printable poster](https://aryanmanhas12.github.io/Psych/poster.html): an A4 sheet for a clinic wall

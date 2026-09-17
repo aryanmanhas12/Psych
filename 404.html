@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Page not found — Ronak</title>
+<meta name="description" content="That page does not exist on Ronak. The crisis helplines are on this page, and the screeners are one link away.">
+<meta name="robots" content="noindex">
+<meta name="author" content="Aryan Manhas">
+<script src="nav.js" defer></script>
+<!-- The 192px PNG was fetched as the favicon on every page: 11.4KB gzip
+     on the critical path, for something drawn at 16px. The SVG is 1.6KB
+     and sharp at every size. No PNG fallback link: Chromium fetches every
+     declared icon and then picks, so the fallback cost more than it saved.
+     A browser too old for SVG favicons simply shows none — cosmetic, and
+     apple-touch-icon still covers the iOS home screen. -->
+<!-- index.html swaps this from JS when the theme changes; these pages carry
+     no theme script, so the two variants do the same job declaratively.
+     Without it iOS and Android tint the browser chrome white against a
+     dark page. -->
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#151C2E">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0A0D14">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icon-192.png">
+<script src="prefs.js"></script>
+<link rel="stylesheet" href="site.css">
+
+</head>
+<body>
+<nav class="site noprint" aria-label="Main">
+  <div class="wrap">
+    <a class="brand" href="index.html"><span class="name">Ronak</span><span class="stop" aria-hidden="true">.</span></a>
+    <a class="navlink" href="index.html">Screener</a>
+    <a class="navlink" href="index.html#guide">Talk it through</a>
+    <a class="navlink" href="index.html#resources">Get Help</a>
+    <a class="navlink" href="evidence.html">Evidence</a>
+    <a class="navlink" href="global.html">Global</a>
+    <a class="navlink" href="ethics.html" aria-current="page">Ethics</a>
+    <a class="navlink" href="manifesto.html">Manifesto</a>
+    <a class="navlink" href="poster.html">Poster</a>
+  </div>
+</nav>
+<main id="main">
+  <div class="wrap">
+    <section style="padding:3rem 0 4rem;">
+      <span class="eyebrow">404</span>
+      <h1 class="display" style="font-size:clamp(1.8rem,5vw,2.8rem);margin-bottom:.8rem;">
+        That page isn&rsquo;t here.
+      </h1>
+      <p class="lede" style="margin-top:0;">
+        The link may be old, or mistyped. Nothing is wrong with your device, and
+        nothing you have saved has been lost &mdash; your answers live on your
+        own phone, not on this site.
+      </p>
+
+      <!-- The numbers above this line are on every page of Ronak by design,
+           including this one. Someone who lands on a broken link during a bad
+           hour should not have to find their way to a working page first. -->
+      <p style="margin-top:1.6rem;font-weight:700;">If you need help right now</p>
+      <p style="margin-top:.2rem;">
+        Tele-MANAS <a href="tel:14416">14416</a> &middot;
+        KIRAN <a href="tel:18005990019">1800-599-0019</a> &middot;
+        Emergency <a href="tel:112">112</a>.
+        Outside India, <a href="https://findahelpline.com" rel="noopener">findahelpline.com</a>
+        lists verified lines in 130+ countries.
+      </p>
+
+      <h2 style="margin-top:2.4rem;font-size:1.2rem;">Where you were probably going</h2>
+      <ul style="margin-top:.6rem;line-height:2;">
+        <li><a href="index.html">Take a screening</a> &mdash; PHQ-4, PHQ-9, GAD-7, WHO-5 or AUDIT-C</li>
+        <li><a href="index.html#resources">Find professional and crisis support</a></li>
+        <li><a href="evidence.html">The evidence behind each questionnaire</a></li>
+        <li><a href="ethics.html">How Ronak handles your data</a></li>
+        <li><a href="manifesto.html">Why this project exists</a></li>
+      </ul>
+    </section>
+  </div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <p class="byline"><strong>Ronak</strong> &mdash; a free, private mental health screening tool.
+    Screening is not diagnosis.</p>
+  </div>
+</footer>
+
+</body>
+</html>

@@ -63,12 +63,12 @@
 
    v11: index.html and both English and Hindi string files changed — the
    "what's behind this" section is translated now. */
-const CACHE = "ronak-v19";
+const CACHE = "ronak-v20";
 const ASSETS = [
   "./", "./index.html", "./helplines.js", "./nav.js",
   "./i18n.en.js", "./i18n.hi.js", "./i18n.mr.js",
   "./i18n.bn.js", "./i18n.ta.js", "./i18n.te.js",
-  "./ethics.html", "./evidence.html", "./manifesto.html",
+  "./ethics.html", "./evidence.html", "./manifesto.html", "./404.html",
   "./global.html", "./poster.html", "./qr-site.svg",
   "./site.css", "./manifest.webmanifest",
   "./icon.svg", "./icon-192.png", "./icon-512.png", "./icon-maskable.png"

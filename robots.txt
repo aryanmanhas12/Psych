@@ -1,0 +1,19 @@
+# Ronak — mental health screening
+# https://aryanmanhas12.github.io/Psych/
+#
+# NOTE ON PLACEMENT: this is a GitHub Pages PROJECT site served from the
+# /Psych/ subpath. Crawlers only read robots.txt at the DOMAIN root
+# (aryanmanhas12.github.io/robots.txt), which lives in a different
+# repository. This file is therefore advisory here and becomes live if the
+# site ever moves to its own domain. The sitemap has to be submitted
+# directly in Search Console until then.
+#
+# Nothing is disallowed, and that is a statement about the architecture
+# rather than an oversight: there are no private URLs to hide. Screening
+# answers and results are never routed, never queried, and never leave the
+# device, so no page a crawler can reach carries anyone's health data.
+
+User-agent: *
+Allow: /
+
+Sitemap: https://aryanmanhas12.github.io/Psych/sitemap.xml

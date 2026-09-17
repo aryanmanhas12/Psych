@@ -3,8 +3,21 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>RONAK — Free Mental Health Screening, Worldwide</title>
-<meta name="description" content="Free, private, on-device mental health screening (PHQ-9, GAD-7, PHQ-4, AUDIT-C) in six languages, with crisis helplines worldwide. Works offline. Nothing leaves your device. Not a diagnosis.">
+<title>Ronak — Free, Private Mental Health Screening</title>
+<meta name="description" content="Free mental health screening you can do on your own phone, in six languages, offline. PHQ-9, GAD-7, PHQ-4, WHO-5 and AUDIT-C, scored on your device. Screening is not diagnosis.">
+<link rel="canonical" href="https://aryanmanhas12.github.io/Psych/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Ronak">
+<meta property="og:title" content="Ronak — Free, Private Mental Health Screening">
+<meta property="og:description" content="Free mental health screening you can do on your own phone, in six languages, offline. PHQ-9, GAD-7, PHQ-4, WHO-5 and AUDIT-C, scored on your device. Screening is not diagnosis.">
+<meta property="og:url" content="https://aryanmanhas12.github.io/Psych/">
+<meta property="og:image" content="https://aryanmanhas12.github.io/Psych/icon-512.png">
+<meta property="og:image:alt" content="The Ronak mark: a figure with arms raised, inside radiating arcs.">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Ronak — Free, Private Mental Health Screening">
+<meta name="twitter:description" content="Free mental health screening you can do on your own phone, in six languages, offline. PHQ-9, GAD-7, PHQ-4, WHO-5 and AUDIT-C, scored on your device. Screening is not diagnosis.">
+<meta name="twitter:image" content="https://aryanmanhas12.github.io/Psych/icon-512.png">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","name":"Ronak","url":"https://aryanmanhas12.github.io/Psych/","inLanguage":["en","hi","mr","bn","ta","te"],"description":"Free mental health screening you can do on your own phone, in six languages, offline. PHQ-9, GAD-7, PHQ-4, WHO-5 and AUDIT-C, scored on your device. Screening is not diagnosis.","publisher":{"@type":"Organization","name":"Ronak","url":"https://aryanmanhas12.github.io/Psych/","logo":{"@type":"ImageObject","url":"https://aryanmanhas12.github.io/Psych/icon-512.png"}}}</script>
 <meta name="author" content="Aryan Manhas">
 <meta name="theme-color" content="#151C2E">
 <link rel="manifest" href="manifest.webmanifest">
@@ -164,6 +177,10 @@
      needs. Third instance of this fault class here, and --on-marigold is
      the token that exists for it. */
   .setbtn[aria-expanded="true"] .setlang{color:var(--on-marigold);}
+  .bandlead{
+    font-size:.86rem;line-height:1.45;color:var(--muted);
+    margin-bottom:.4rem;max-width:34ch;
+  }
   .setwrap{position:relative;}
   /* "It's all blending in" — a dark panel on a dark page, with nothing
      between them, reads as part of the page. The scrim is what makes it an
@@ -312,6 +329,26 @@
   .pfill{height:100%;background:var(--marigold);width:0%;transition:width .32s var(--e-out2);}
 
   #view-test{overflow-x:clip;}
+  .safenow{
+    background:var(--stamp-bg);color:var(--on-stamp);
+    border-radius:var(--r-lg);padding:1.3rem 1.25rem;margin:.2rem 0 1.2rem;
+    box-shadow:var(--shadow-card);
+  }
+  .safenow[hidden]{display:none;}
+  .safenow h2{font-size:1.24rem;font-weight:700;line-height:1.3;margin-bottom:.55rem;}
+  .safenow p{font-size:.95rem;line-height:1.6;margin-bottom:.9rem;}
+  .safenow-lines{display:flex;flex-direction:column;gap:.5rem;margin-bottom:1.1rem;}
+  .safenow-lines a{
+    display:flex;align-items:center;min-height:48px;padding:.5rem .9rem;
+    background:rgba(255,255,255,.14);border:1.5px solid rgba(255,255,255,.55);
+    border-radius:var(--r-md);color:#fff;font-weight:700;text-decoration:none;
+  }
+  .safenow-lines a:hover,.safenow-lines a:focus-visible{background:rgba(255,255,255,.26);}
+  .safenow-go{display:flex;gap:.6rem;flex-wrap:wrap;}
+  .safenow-go button{flex:1 1 11rem;min-height:3rem;}
+  .safenow-go #safeNowHelp{background:#fff;color:#80161a;border-color:#fff;font-weight:700;}
+  .safenow-go #safeNowGo{background:transparent;color:#fff;border-color:rgba(255,255,255,.7);}
+  .safenow-note{font-size:.84rem;opacity:.85;margin:.85rem 0 0;}
   .primer{
     background:var(--card);border:1px solid var(--line);border-radius:var(--r-lg);box-shadow:var(--shadow-card);
     padding:1.4rem 1.3rem;max-width:35rem;margin:.5rem 0 1.2rem;
@@ -1686,6 +1723,22 @@
         <button type="button" class="secondary" id="primerBack"></button>
       </div>
     </div>
+    <!-- Shown the moment the self-harm item is endorsed, not after scoring.
+         Someone who has just said they have thought about being better off
+         dead should not have to finish a questionnaire, or read a score,
+         before anything acknowledges it. It does not block: continuing is
+         a real choice and the answer is already recorded. -->
+    <div class="safenow" id="safeNow" role="alertdialog" aria-modal="false"
+         aria-labelledby="safeNowTitle" aria-describedby="safeNowBody" hidden>
+      <h2 id="safeNowTitle" data-i18n="safeNowTitle">Thank you for telling us.</h2>
+      <p id="safeNowBody" data-i18n="safeNowBody">You do not have to sit with this on your own. These lines are free, open now, and answered by people trained for exactly this conversation.</p>
+      <div class="safenow-lines" id="safeNowLines"></div>
+      <div class="safenow-go">
+        <button type="button" id="safeNowHelp" data-i18n="safeNowHelp">See all help options</button>
+        <button type="button" class="secondary" id="safeNowGo" data-i18n="safeNowContinue">Continue the screening</button>
+      </div>
+      <p class="safenow-note" data-i18n="safeNowNote">Your answer has been recorded either way.</p>
+    </div>
     <p class="progress" aria-live="polite" id="progress"></p>
     <div id="qcard"></div>
     <div class="actionrow">
@@ -1745,6 +1798,7 @@
         <div class="of" id="resOf"></div>
       </div>
       <div class="verdict">
+        <p class="bandlead" id="resBandLead"></p>
         <span class="band" id="resBand"></span>
         <p id="resMeaning"></p>
         <p class="mono noprint" style="font-size:.78rem;margin-top:.6rem;"><a href="evidence.html" style="color:var(--heal);" data-i18n="whyTrust"></a></p>
@@ -2529,6 +2583,11 @@ function selectOpt(val, btn){
   setTimeout(()=>{
     advancing = false;
     const n = T.inst[current.id].q.length;
+    /* The self-harm item, endorsed at any level, interrupts here — before
+       the next question and before any score. The answer is already in
+       current.answers, so nothing is lost whichever way they go. */
+    const meta = META[current.id];
+    if(meta && meta.safetyIdx === current.idx && val > 0){ showSafeNow(); return; }
     if(current.idx < n-1){ current.idx++; renderQ(); document.querySelector("#qcard button").focus(); }
     else scoreTest();
   }, window.matchMedia("(prefers-reduced-motion: reduce)").matches ? 60 : 240);
@@ -2540,6 +2599,52 @@ document.addEventListener("keydown", e=>{
   const k = parseInt(e.key,10);
   const btns = document.querySelectorAll("#qcard .bigopts button");
   if(k >= 1 && k <= btns.length) btns[k-1].click();
+});
+
+/* The same three numbers the crisis strip carries, as full-width targets.
+   crisisLinesHTML separates with <br>; here each one is its own block so it
+   is a 48px thing to hit rather than a line of text to aim at. */
+function dialLines(){
+  return [["tel:14416", T.ui.lineTelemanas],
+          ["tel:18005990019", T.ui.lineKiran],
+          ["tel:112", T.ui.lineEmergency]]
+    .map(([href,label])=> '<a href="'+href+'">'+esc(label||href.replace("tel:",""))+'</a>')
+    .join("");
+}
+
+/* Shown at the moment of disclosure. Deliberately not a modal trap: a
+   person mid-crisis should never have to defeat a dialog to reach a phone
+   number, and the crisis strip at the top of every page stays reachable
+   throughout. */
+function showSafeNow(){
+  const box = document.getElementById("safeNow");
+  document.getElementById("safeNowLines").innerHTML = dialLines();
+  document.getElementById("qcard").innerHTML = "";
+  document.getElementById("progress").textContent = "";
+  document.querySelector(".tokenbar").hidden = true;
+  document.querySelector("#view-test .actionrow").hidden = true;
+  box.hidden = false;
+  setTimeout(()=> document.getElementById("safeNowHelp").focus(), 80);
+}
+function hideSafeNow(){
+  document.getElementById("safeNow").hidden = true;
+  document.querySelector(".tokenbar").hidden = false;
+  document.querySelector("#view-test .actionrow").hidden = false;
+}
+document.getElementById("safeNowGo").addEventListener("click", ()=>{
+  if(!current) return;
+  hideSafeNow();
+  const n = T.inst[current.id].q.length;
+  if(current.idx < n-1){ current.idx++; renderQ();
+    const b = document.querySelector("#qcard button"); if(b) b.focus(); }
+  else scoreTest();
+});
+document.getElementById("safeNowHelp").addEventListener("click", ()=>{
+  hideSafeNow();
+  /* Leaving mid-screener is allowed and costs them nothing: the answers so
+     far are not scored, because a partial screener has no valid score. */
+  stopClock(); current = null;
+  showView("resources");
 });
 
 function scoreTest(){
@@ -2578,6 +2683,13 @@ function renderResults(animate){
   const bandEl = document.getElementById("resBand");
   bandEl.textContent = label;
   bandEl.className = "band b"+r.sev;
+  /* "Mild depression" sitting alone beside a score reads as a diagnosis.
+     The label itself is the instrument's own severity band — PHQ-9's are
+     Kroenke and Spitzer's exact wording — so it is preserved word for
+     word and framed instead: a statement about which range the answers
+     fell in, which is the only thing a screener can actually say. */
+  const lead = document.getElementById("resBandLead");
+  if(lead) lead.textContent = fmt(T.ui.bandLead || "Your answers fall in the range {name} calls:", {name:t.name});
 
   let extra = "";
   if(r.inst === "auditc") extra = T.ui.noteAuditc;

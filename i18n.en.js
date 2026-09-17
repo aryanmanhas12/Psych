@@ -98,6 +98,13 @@
 
     /* ── the speaker on each question ── */
     listen: "Listen to this question",
+    /* ── the safety step, shown the moment the self-harm item is endorsed ── */
+    safeNowTitle: "Thank you for telling us.",
+    bandLead: "Your answers fall in the range {name} calls:",
+    safeNowBody: "You have just said you have had thoughts of being better off dead, or of hurting yourself. That deserves more than a score at the end of a questionnaire. You do not have to sit with it on your own \u2014 these lines are free, open now, and answered by people trained for exactly this conversation.",
+    safeNowHelp: "See all help options",
+    safeNowContinue: "Continue the screening",
+    safeNowNote: "Your answer has been recorded either way. Nothing you have entered leaves this phone.",
 
     /* ── the note a patient hands to a clinician ── */
     sbarBtn: "Copy note for doctor",
@@ -208,7 +215,7 @@
     sheetPatientNote: "The sheet is written in English, the working language of most clinics: a mistranslated clinical form is more dangerous than an untranslated one. Your own answers appear in both English and your language, so you can read exactly what you are handing over. Nothing is sent anywhere — the page is built on your device and is gone when you close it.",
     printBtn: "Print this page", reminderBtn: "📅 Add re-screen reminder",
     viewHistory: "View my history", backHome: "Back to screeners",
-    printHead: "RONAK SUMMARY · {name} · {date} · Self-administered screening — not a diagnosis. For clinical correlation.",
+    printHead: "Ronak summary · {name} · {date} · Self-administered screening — not a diagnosis. For clinical correlation.",
 
     safetyTitle: "⚠ Please read this first",
     safety1: "You said you've had thoughts of being better off dead or of hurting yourself. Those thoughts are a symptom — they are treatable, and they are more common than you think. You do not have to handle this alone or wait for it to pass.",

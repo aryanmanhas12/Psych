@@ -214,7 +214,7 @@ nav.site .wrap,nav.site .wrap-wide{
 nav.site .brand{
   font-family:var(--font-serif);
   font-weight:700;color:var(--on-deep);font-size:1.16rem;
-  text-transform:uppercase;letter-spacing:.2em;
+  letter-spacing:.14em;
   margin-right:auto;text-decoration:none;
   display:inline-flex;align-items:baseline;
   /* Allowed to give way. On the narrowest phones at a large text size the
