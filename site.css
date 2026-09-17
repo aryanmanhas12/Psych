@@ -118,6 +118,12 @@ a:hover{text-decoration-thickness:2px;}
   outline:3px solid var(--stamp);outline-offset:3px;
 }
 img,svg{max-width:100%;}
+/* The `hidden` attribute is only a user-agent `display:none`, which ANY
+   class-level display wins against. Adding .actionrow{display:flex} silently
+   un-hid the Back/Cancel row behind the primer and behind the safety step —
+   `el.hidden = true` was set, honoured by the attribute and ignored by the
+   layout. This is the guard that makes `hidden` mean hidden everywhere. */
+[hidden]{display:none!important;}
 
 .display{
   /* Anton is gone. It is a condensed poster face — the kind of type used on
@@ -564,7 +570,11 @@ html {
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  scroll-behavior: smooth;
+  /* scroll-behavior is NOT re-declared here. It is set on html at the top of
+     this file and turned off again by the prefers-reduced-motion block that
+     follows it. Repeating it here, at equal specificity but later in the
+     cascade, made that override inert — vestibular readers who had asked
+     their OS for no motion kept getting smooth scrolling. */
   -webkit-overflow-scrolling: touch;
 }
 body {
@@ -573,21 +583,24 @@ body {
 
 /* ── Ultra-Refined Slim Translucent Scrollbars ── */
 ::-webkit-scrollbar {
-  width: 7px;
-  height: 7px;
+  /* 7px with an 18% thumb was close to invisible and awkward to drag. Once
+     the user agent's own scrollbar is replaced, its usability becomes ours:
+     11px is still slim, and the thumb is dark enough to find. */
+  width: 11px;
+  height: 11px;
 }
 ::-webkit-scrollbar-track {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: color-mix(in srgb, var(--ink) 18%, transparent);
+  background: color-mix(in srgb, var(--ink) 38%, transparent);
   border-radius: 999px;
   border: 1.5px solid transparent;
   background-clip: padding-box;
   transition: background-color 0.2s ease;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: color-mix(in srgb, var(--ink) 34%, transparent);
+  background: color-mix(in srgb, var(--ink) 58%, transparent);
   background-clip: padding-box;
 }
 
@@ -633,15 +646,14 @@ nav.site {
      unseen. The glass effect is unchanged; only which surface it frosts. */
   background-color: color-mix(in srgb, var(--deep) 86%, transparent);
 }
-.topstrip {
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-}
-.popover, .dialog, .modal {
-  backdrop-filter: blur(24px) saturate(190%);
-  -webkit-backdrop-filter: blur(24px) saturate(190%);
-  box-shadow: 0 24px 56px -12px rgba(0,0,0,0.32), 0 0 0 1px color-mix(in srgb, var(--ink) 9%, transparent);
-}
+/* Removed: backdrop-filter on .topstrip. --stamp-bg is fully opaque in all
+   three themes, so there was never anything showing through to blur — it
+   cost a compositing layer and a stacking context to change nothing. */
+/* Removed: a .popover/.dialog/.modal rule that matched no element on any
+   page. It carried a backdrop-filter, and backdrop-filter creates a stacking
+   context — so the first person to add class="modal" would have inherited
+   the exact defect that put the settings panel behind the page. The real
+   popover is .setpanel and carries its own shadow. */
 
 .view, .qcard, .orb, .panel, .popover, .dialog, .breathe {
   transform: translateZ(0);

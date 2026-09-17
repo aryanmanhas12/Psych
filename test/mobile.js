@@ -1025,6 +1025,79 @@ const OVERFLOW = `(()=>{
     await ctx.close();
   }
 
+  /* 17 ── the promises that are easy to defeat by accident.
+           prefers-reduced-motion was silently broken for a release:
+           scroll-behavior:smooth was re-declared on html 350 lines after
+           the override that turns it off, at equal specificity, so the
+           later one won and vestibular readers kept getting smooth
+           scrolling. Nothing noticed, because nothing asked. */
+  head('17. REDUCED MOTION AND THE CRISIS STEP IN EVERY LANGUAGE');
+  {
+    const ctx = await b.newContext(phone({reducedMotion:'reduce'}));
+    const p = await ctx.newPage();
+    await p.goto(URL); await p.evaluate(seen);
+    await p.goto(URL,{waitUntil:'networkidle'});
+    await p.waitForSelector('#cardGrid .card',{timeout:15000}); await p.waitForTimeout(400);
+    const rm = await p.evaluate(()=>({
+      scroll: getComputedStyle(document.documentElement).scrollBehavior,
+      asked: matchMedia('(prefers-reduced-motion: reduce)').matches,
+      cardTransition: getComputedStyle(document.querySelector('#cardGrid .card')).transitionDuration
+    }));
+    rm.asked ? ok('the browser is asking for reduced motion') : fail('reduced-motion context did not apply');
+    /* `hidden` is a UA display:none and loses to any class-level display.
+       Adding .actionrow{display:flex} un-hid the Back/Cancel row behind the
+       primer and the safety step while el.hidden stayed true. */
+    const hid = await p.evaluate(()=>{
+      const probe = document.createElement('div');
+      probe.className = 'actionrow'; probe.hidden = true;
+      document.body.appendChild(probe);
+      const d = getComputedStyle(probe).display;
+      probe.remove();
+      return d;
+    });
+    hid === 'none' ? ok('the hidden attribute beats class-level display')
+                   : fail(`[hidden] is overridden by class display: "${hid}"`);
+    rm.scroll === 'auto' ? ok('reduced motion turns smooth scrolling off')
+      : fail(`reduced motion is ignored: scroll-behavior is "${rm.scroll}"`);
+    /^0s(,\s*0s)*$/.test(rm.cardTransition) ? ok('reduced motion turns transitions off')
+      : fail(`transitions still run under reduced motion: ${rm.cardTransition}`);
+    await ctx.close();
+
+    /* the crisis step must be in the reader's own language, not English,
+       in all six — this is the screen someone sees at their worst moment */
+    const SCRIPT = {en:/[A-Za-z]/, hi:/[ऀ-ॿ]/, mr:/[ऀ-ॿ]/,
+                    bn:/[ঀ-৿]/, ta:/[஀-௿]/, te:/[ఀ-౿]/};
+    for(const lang of ['hi','mr','bn','ta','te']){
+      const c2 = await b.newContext(phone()); const q = await c2.newPage();
+      await q.goto(URL);
+      await q.evaluate(l=>{['psych-seen-overture','psych-seen-tour','psych-seen-intro']
+        .forEach(k=>localStorage.setItem(k,'2'));
+        localStorage.setItem('psych-prefs',JSON.stringify({lang:l}));}, lang);
+      await q.goto(URL,{waitUntil:'networkidle'});
+      await q.waitForSelector('#cardGrid .card',{timeout:15000}); await q.waitForTimeout(400);
+      await q.evaluate(()=>startTest('phq9')); await q.waitForTimeout(350);
+      await pastPrimer(q, null);
+      for(let i=0;i<8;i++){
+        await q.evaluate(()=>document.querySelectorAll('#qcard .bigopts button')[0].click());
+        await q.waitForTimeout(290);
+      }
+      await q.evaluate(()=>document.querySelectorAll('#qcard .bigopts button')[1].click());
+      await q.waitForTimeout(500);
+      const t = await q.evaluate(()=>{
+        const box = document.getElementById('safeNow');
+        if(!box || box.hidden) return null;
+        return {title:(document.getElementById('safeNowTitle')||{}).textContent||'',
+                body:(document.getElementById('safeNowBody')||{}).textContent||''};
+      });
+      if(!t){ fail(`${lang}: the safety step did not appear`); await c2.close(); continue; }
+      const re = SCRIPT[lang];
+      (re.test(t.title) && re.test(t.body))
+        ? ok(`${lang}: the crisis step is in the reader's own script`)
+        : fail(`${lang}: the crisis step fell back to English — "${t.title.slice(0,40)}"`);
+      await c2.close();
+    }
+  }
+
   /* 12 ── every uncaught exception, from every page this suite opened.
            Anything the sections above did not deliberately provoke lands
            here, and fails the run. */
