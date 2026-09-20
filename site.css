@@ -305,7 +305,10 @@ section{padding:2.8rem 0 .3rem;}
 
 /* ── the panel: the site's single repeating content block ── */
 .panel{
-  background:var(--card);border:2px solid var(--ink);border-left:.5rem solid var(--heal);
+  /* No accent stripe down the left edge. It ran on every panel equally,
+     so it distinguished nothing — decoration applied by default rather
+     than a mark that means something. The border does the separating. */
+  background:var(--card);border:1.5px solid var(--line);
   padding:1.15rem 1.4rem;margin-bottom:.9rem;
 }
 .panel h3{font-size:1.1rem;font-weight:700;margin-bottom:.4rem;}
@@ -368,7 +371,11 @@ button,.btn{border-radius:var(--r-sm);
 }
 /* Was a 4px hard offset and a 2px lurch — a poster effect, on every button
    on a page about how often you have felt hopeless. Lift and settle. */
-button:hover,.btn:hover{transform:translateY(-1px);box-shadow:var(--shadow-soft);}
+/* No lift on hover. A button that rises when the pointer passes over it is
+   telling the reader something about the pointer, not about the button.
+   Colour and border carry the state; they work under a finger too, where a
+   hover transform does nothing at all. */
+button:hover,.btn:hover{border-color:var(--heal);}
 button.secondary{background:transparent;color:var(--ink);border:2px solid var(--ink);}
 button.danger{background:var(--stamp-bg);color:var(--on-stamp);}
 button:disabled{opacity:.45;cursor:not-allowed;transform:none;box-shadow:none;}
@@ -558,6 +565,34 @@ footer .byline strong{color:var(--ink);font-size:.85rem;}
    .ledemore rule in index.html already carries a note about. Sitting
    earlier in the file, this block lost silently and measured 43px.
    A fingertip is about 44px across and lands where it lands. */
+/* ── touch targets, on touch devices only ──
+   Measured at 320px: the three crisis numbers and the worldwide directory
+   were 28px tall, and the footer links 24px. They cleared WCAG 2.5.8's 24px
+   minimum and nothing else. A phone number somebody is trying to dial
+   during a panic attack is the last control on this site that should be a
+   careful aim, so on a coarse pointer they get the full 44px.
+
+   The strip is allowed to grow for it. The old note here said padding was
+   kept off the block axis so widening the target would not make the strip
+   taller — that was the right trade when the alternative was a desktop
+   layout, but on a phone the strip already wraps to two or three lines and
+   an extra few pixels per line is a cheaper price than a missed number. */
+@media (pointer: coarse){
+  /* Scoped to tel: links only. Applying 44px to every link in the strip —
+     including the worldwide directory, which is a web page rather than a
+     number you stab at during a panic attack — grew the strip from 100px to
+     137px at 320px and pushed the first screener below the fold. A quarter
+     of a small screen spent before the product begins is not an
+     accessibility win, it is a different usability loss. The three numbers
+     get the full target; the directory keeps the text size it reads at. */
+  .topstrip{padding:.3rem 0;}
+  .topstrip a[href^="tel:"]{
+    display:inline-flex;align-items:center;min-height:44px;
+    padding-block:0;margin-block:0;
+  }
+  footer .byline a{display:inline-flex;align-items:center;min-height:44px;}
+}
+
 @media (pointer: coarse){
   nav.site .navtoggle,
   nav.site select,
@@ -608,18 +643,23 @@ body {
 button, a, input, select, summary, .btn, .card, .choice, .screener-card {
   touch-action: manipulation;
   -webkit-tap-highlight-color: transparent;
-  transition: transform 0.16s cubic-bezier(0.34, 1.56, 0.64, 1),
-              box-shadow 0.24s cubic-bezier(0.16, 1, 0.3, 1),
-              background-color 0.15s ease,
+  /* Colour only. The spring curve here overshot (1.56) so every control
+     bounced past its resting size on release — a physical metaphor with
+     nothing physical behind it. Transform and box-shadow are no longer
+     transitioned at all, so there is nothing to bounce. */
+  transition: background-color 0.15s ease,
               border-color 0.15s ease,
               color 0.15s ease;
 }
 button:active, .btn:active, .choice:active {
-  transform: scale(0.972);
+  /* pressed state is a colour change, not a size change */
 }
-.screener-card:hover {
-  transform: translateY(-2.5px);
-  box-shadow: 0 4px 12px rgba(22,27,38,.06), 0 14px 30px rgba(22,27,38,.09);
+/* The screener cards are the primary choice on the page and are already
+   bordered surfaces. Lifting them on hover and stacking two shadow layers
+   underneath was decoration; the border carrying the accent colour says
+   "this one" just as clearly, and says it on a touch screen as well. */
+.screener-card:hover, .card:hover {
+  border-color: var(--heal);
 }
 
 /* ── Ambient Glassmorphism & Diffuse Depth ── */
@@ -636,15 +676,18 @@ nav.site {
      which is a full-screen opaque intro that must still cover the bar. */
   position: relative;
   z-index: 50;
-  backdrop-filter: blur(18px) saturate(180%);
-  -webkit-backdrop-filter: blur(18px) saturate(180%);
+  /* No backdrop-filter. The nav is not sticky, so nothing ever scrolled
+     beneath it for the blur to act on: it bought a compositing layer, a
+     stacking context and a whole class of layering bug in exchange for an
+     effect nobody could see. A bar this important should read as a solid
+     surface, not as frosted glass over nothing. */
   /* --deep, not --paper. This rule comes after nav.site{background:var(--deep)}
      and so replaced it, and every piece of text in the bar is --on-deep — so
      in LIGHT mode the whole navigation was #FAF8F5 on #FAF8F5: the wordmark,
      all nine links, Menu and Settings, at 1:1, on every page. It only looked
      right in dark mode, where --paper is already dark, which is why it went
      unseen. The glass effect is unchanged; only which surface it frosts. */
-  background-color: color-mix(in srgb, var(--deep) 86%, transparent);
+  background-color: var(--deep);
 }
 /* Removed: backdrop-filter on .topstrip. --stamp-bg is fully opaque in all
    three themes, so there was never anything showing through to blur — it

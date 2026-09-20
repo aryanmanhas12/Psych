@@ -396,14 +396,18 @@ const OVERFLOW = `(()=>{
       await p.goto(BASE+f,{waitUntil:'networkidle'}); await p.waitForTimeout(400);
       const m = await p.evaluate(OVERFLOW);
       const s = await p.evaluate(()=>{
-        const tel=[...document.querySelectorAll('.topstrip a')];
+        /* tel: links specifically. The check used to measure every link in
+           the strip and pass at 24px, which quietly certified 28px crisis
+           numbers as fine for three releases. A number somebody dials mid
+           panic attack gets the full 44. */
+        const tel=[...document.querySelectorAll('.topstrip a[href^="tel:"]')];
         return {strip:!!document.querySelector('.topstrip'),
                 minH:tel.length?Math.min(...tel.map(a=>Math.round(a.getBoundingClientRect().height))):null};});
       const issues=[];
       if(m.scrollW>m.vw+1) issues.push(`sideways scroll ${m.scrollW}>${m.vw}`);
       /* poster.html is an A4 print sheet; its numbers are printed on the sheet */
       if(!s.strip&&f!=='poster.html') issues.push('no crisis strip');
-      if(s.minH!==null&&s.minH<24) issues.push(`helpline target ${s.minH}px < 24`);
+      if(s.minH!==null&&s.minH<44) issues.push(`crisis number target ${s.minH}px < 44`);
       issues.length?fail(`${f}: ${issues.join('; ')}`):ok(`${f}: clean${s.strip?`, helpline targets ${s.minH}px`:' (poster: numbers printed on the sheet)'}`);
     }
     await ctx.close();

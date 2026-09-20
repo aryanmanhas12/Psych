@@ -181,6 +181,20 @@
     font-size:.86rem;line-height:1.45;color:var(--muted);
     margin-bottom:.4rem;max-width:34ch;
   }
+  nav.site .seticon{width:1.05em;height:1.05em;vertical-align:-.15em;
+    fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;}
+  .ctricon{width:1.05em;height:1.05em;vertical-align:-.15em;margin-left:.25em;
+    fill:none;stroke:currentColor;stroke-width:1.6;}
+  .ctricon .half{fill:currentColor;stroke:none;}
+  .flagicon{width:1.05em;height:1.05em;vertical-align:-.15em;
+    fill:none;stroke:var(--stamp);stroke-width:1.8;stroke-linejoin:round;}
+  .flagicon circle{fill:var(--stamp);stroke:none;}
+  #moodBtns button svg{
+    width:2rem;height:2rem;display:block;
+    fill:none;stroke:currentColor;stroke-width:1.6;
+    stroke-linecap:round;stroke-linejoin:round;
+  }
+  #moodBtns button svg .eye{fill:currentColor;stroke:none;}
   .setwrap{position:relative;}
   /* "It's all blending in" — a dark panel on a dark page, with nothing
      between them, reads as part of the page. The scrim is what makes it an
@@ -232,9 +246,6 @@
   .setpanel button[aria-pressed="true"]{background:var(--heal);color:var(--paper);border-color:var(--heal);font-weight:700;}
 
   /* ── Dot motif ── */
-  .dotrule{display:flex;gap:.32rem;align-items:center;margin:.5rem 0 1.2rem;}
-  .dotrule i{width:.36rem;height:.36rem;border-radius:50%;background:var(--ink);opacity:.2;}
-  .dotrule i.on{background:var(--marigold);opacity:1;box-shadow:0 0 0 .15rem rgba(223,153,22,.25);}
 
   /* ── Views ── */
   .view{display:none;padding:1.8rem 0 3.2rem;}
@@ -1155,8 +1166,21 @@
     text-transform:none;letter-spacing:0;min-height:2.4rem;
   }
   @media(max-width:640px){
-    .view{padding:1.2rem 0 2.4rem;}
-    h1{font-size:clamp(1.5rem,7vw,1.9rem);margin-bottom:.5rem;}
+    /* ── the vertical budget above the first screener ──
+       Measured at 390x844: the first card began at y=662, so only its top
+       edge cleared the fold and the page looked like a headline with
+       something cut off underneath. The rhythm above it was desktop
+       spacing shrunk by a bit, not spacing chosen for a phone. Every value
+       below was picked by measuring what it moved the first card to, not
+       by taste: the eyebrow loses the air it does not need, the intro
+       button stops being separated like a section of its own, and the
+       heading sits closer to the cards it labels. The copy is untouched. */
+    .view{padding:.9rem 0 2.4rem;}
+    .eyebrow{margin-bottom:.55rem;padding:.2rem .5rem;}
+    h1{font-size:clamp(1.5rem,7vw,1.9rem);margin-bottom:.45rem;}
+    #homeSubtitle{margin-top:.55rem;}
+    .tourcta{margin:.7rem 0 .2rem;}
+    #chooseH2{margin-top:1rem;}
     .lede{font-size:.93rem;margin-bottom:.4rem;}
     /* clamp the argument to 3 lines; full text one tap away */
     #homeLede.clamped{
@@ -1165,7 +1189,6 @@
     }
     #ledeMore{display:inline-block;}
     .eyebrow{margin-bottom:.7rem;font-size:.72rem;}
-    .dotrule{margin:.3rem 0 .7rem;}
     details.notice{margin-bottom:.8rem;padding:.5rem .8rem;}
     h2{margin-bottom:.6rem;}
     .cards{gap:.5rem;}
@@ -1471,9 +1494,9 @@
     </p>
     <h2 class="display" id="introQ" data-i18n="introQuestion"></h2>
     <div class="intro-card">
-      <span class="qm qm-a" aria-hidden="true">❞</span>
+      
       <p id="introStatement"></p>
-      <span class="qm qm-b" aria-hidden="true">❞</span>
+      
     </div>
     <div class="intro-btns">
       <button type="button" class="intro-no"  id="introNo"  data-i18n="introNo"></button>
@@ -1506,7 +1529,7 @@
          these and re-creates them with the right aria-label once the
          translations land — no double-wrapping. -->
     <span><span data-i18n="crisis">IN DISTRESS? TELE-MANAS <a class="dial" href="tel:14416">14416</a> · KIRAN <a class="dial" href="tel:18005990019">1800-599-0019</a> · EMERGENCY <a class="dial" href="tel:112">112</a></span></span>
-    <span><a href="https://findahelpline.com" target="_blank" rel="noopener">🌐 findahelpline.com</a><span class="strip-tail"> — 130+ countries</span></span>
+    <span><a href="https://findahelpline.com" target="_blank" rel="noopener">findahelpline.com</a><span class="strip-tail"> — 130+ countries</span></span>
   </div>
 </div>
 
@@ -1532,7 +1555,7 @@
              0.1 "good" threshold, for two characters. Every language code
              is two characters wide, so reserving it here costs nothing
              and setLang's overwrite is now the same width it already was. -->
-        <span class="setlang" id="setLangCode" aria-hidden="true">EN</span><span aria-hidden="true">⚙</span> <span class="setlabel" data-i18n="settings">Settings</span>
+        <span class="setlang" id="setLangCode" aria-hidden="true">EN</span><svg class="seticon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="3.1"/><path d="M19.4 14.2a1.7 1.7 0 0 0 .34 1.88l.06.06a2 2 0 1 1-2.84 2.84l-.06-.06a1.7 1.7 0 0 0-1.88-.34 1.7 1.7 0 0 0-1.04 1.56V20a2 2 0 1 1-4 0v-.07a1.7 1.7 0 0 0-1.1-1.56 1.7 1.7 0 0 0-1.88.34l-.06.06a2 2 0 1 1-2.84-2.84l.06-.06a1.7 1.7 0 0 0 .34-1.88 1.7 1.7 0 0 0-1.56-1.04H4a2 2 0 1 1 0-4h.07a1.7 1.7 0 0 0 1.56-1.1 1.7 1.7 0 0 0-.34-1.88l-.06-.06a2 2 0 1 1 2.84-2.84l.06.06a1.7 1.7 0 0 0 1.88.34H10a1.7 1.7 0 0 0 1-1.56V4a2 2 0 1 1 4 0v.07a1.7 1.7 0 0 0 1.04 1.56 1.7 1.7 0 0 0 1.88-.34l.06-.06a2 2 0 1 1 2.84 2.84l-.06.06a1.7 1.7 0 0 0-.34 1.88V10a1.7 1.7 0 0 0 1.56 1H20a2 2 0 1 1 0 4h-.07a1.7 1.7 0 0 0-1.56 1.04z"/></svg> <span class="setlabel" data-i18n="settings">Settings</span>
       </button>
       <div class="setpanel" id="setPanel" role="group" aria-labelledby="setBtn">
         <div class="setrow">
@@ -1558,7 +1581,7 @@
         <div class="setrow">
           <span class="lbl" data-i18n="contrast">High contrast</span>
           <div class="btns">
-            <button type="button" id="contrastBtn" aria-pressed="false" data-i18n-label="contrast" aria-label="High contrast">A<span aria-hidden="true">◐</span></button>
+            <button type="button" id="contrastBtn" aria-pressed="false" data-i18n-label="contrast" aria-label="High contrast">A<svg class="ctricon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.6"/><path d="M12 3.4a8.6 8.6 0 0 1 0 17.2z" class="half"/></svg></button>
           </div>
         </div>
         <div class="setrow">
@@ -1586,7 +1609,6 @@
     </div>
     <span class="eyebrow reveal" data-i18n="homeEyebrow">Screen Early · Act Early</span>
     <h1 class="display reveal" id="homeH1"><span data-i18n="homeTitle1"></span> <span class="accent" data-i18n="homeTitle2"></span></h1>
-    <div class="dotrule reveal" id="dotrule" aria-hidden="true"></div>
     <p class="lede reveal" id="homeSubtitle" data-i18n="homeSubtitle" data-i18n-optional style="max-width:58ch;margin-bottom:1.4rem;font-size:1.05rem;line-height:1.6;color:var(--ink);"></p>
 
     <!-- The screener is what this site IS, so it is the first thing under
@@ -2338,16 +2360,12 @@ function observeReveals(){
   }
   document.querySelectorAll(".reveal:not(.in)").forEach(el=> revealIO.observe(el));
 }
-/* dot motif: 24 dots, one gold — the manifesto's ratio, in miniature */
-function renderDotRule(){
-  const el = document.getElementById("dotrule");
-  if(!el || el.childElementCount) return;
-  for(let i=0;i<24;i++){
-    const d = document.createElement("i");
-    if(i === 11) d.className = "on";
-    el.appendChild(d);
-  }
-}
+/* The 24-dot row is gone. It was aria-hidden and carried no caption, so the
+   ratio it was supposed to encode reached nobody who did not already know
+   it: decoration wearing the costume of a statistic. Labelling it would
+   have meant asserting a figure this page does not cite, so it goes
+   instead. The treatment-gap number it gestured at is stated, with its
+   source, further down the page and in the manifesto. */
 
 /* ════════ test flow ════════ */
 function optsFor(id, qi){
@@ -3039,7 +3057,7 @@ function historyTable(entries, id){
   const rows = entries.slice().reverse().map(e=>
     "<tr><td>"+esc(dateStr(e.date,{day:"numeric",month:"short",year:"numeric"}))+"</td>"+
     "<td>"+e.score+" / "+meta.max+"</td><td>"+esc(t.bands[e.bandIdx != null ? e.bandIdx : 0])+
-    (e.safetyFlag ? ' <span style="color:var(--stamp);font-weight:700;" aria-label="safety flag">⚠</span>' : "")+"</td></tr>"
+    (e.safetyFlag ? '<svg class="flagicon" viewBox="0 0 24 24" role="img" aria-label="self-harm item endorsed"><path d="M12 4.5 21 19.5H3z"/><path d="M12 10v4.2"/><circle cx="12" cy="17" r="1"/></svg>' : "")+"</td></tr>"
   ).join("");
   return '<table class="histtable"><caption>'+esc(t.name)+"</caption><thead><tr>"+
     "<th scope='col'>"+esc(T.ui.colDate)+"</th><th scope='col'>"+esc(T.ui.colScore)+
@@ -3144,7 +3162,27 @@ function clearData(){
 }
 
 /* ════════ mood ════════ */
-const MOOD_EMOJI = ["😞","😕","😐","🙂","😄"];
+/* Faces, not emoji. A five-point face scale is the right control for this
+   question — it reads without literacy, which for this audience is the
+   whole point — but emoji render as a different picture on every platform
+   and are somebody else's artwork. These are drawn in the same line weight
+   as the rest of the site's icons, so they are the same on every device
+   and they inherit currentColor with the theme. Mouth path only: the eyes
+   and the circle are shared. */
+const MOOD_FACES = [
+  "M8.5 16.5 Q12 13 15.5 16.5",   /* very low  */
+  "M8.5 15.8 Q12 14 15.5 15.8",   /* low       */
+  "M8.5 15.2 H15.5",              /* okay      */
+  "M8.5 14.2 Q12 16 15.5 14.2",   /* good      */
+  "M8 13.6 Q12 17.6 16 13.6"      /* great     */
+];
+function moodFace(i){
+  return '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">'
+       + '<circle cx="12" cy="12" r="9.2"/>'
+       + '<circle class="eye" cx="9" cy="10" r="1.05"/>'
+       + '<circle class="eye" cx="15" cy="10" r="1.05"/>'
+       + '<path d="' + MOOD_FACES[i] + '"/></svg>';
+}
 function loadMood(){ try{ return JSON.parse(localStorage.getItem(MOOD_KEY)) || {}; }catch(e){ return {}; } }
 function dkey(d){ return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0"); }
 function setMood(v){
@@ -3156,9 +3194,9 @@ function renderMood(){
   const m = loadMood(), today = dkey(new Date());
   const btns = document.getElementById("moodBtns");
   btns.innerHTML = "";
-  MOOD_EMOJI.forEach((emo,i)=>{
+  MOOD_FACES.forEach((_,i)=>{
     const b = document.createElement("button");
-    b.type = "button"; b.textContent = emo;
+    b.type = "button"; b.innerHTML = moodFace(i);
     b.title = T.ui.moods[i];
     b.setAttribute("aria-label", T.ui.moods[i]);
     b.setAttribute("aria-pressed", String(m[today] === i+1));
@@ -4646,7 +4684,6 @@ document.getElementById("tour").addEventListener("keydown", e=>{
   }
 });
 
-renderDotRule();
 renderStats();
 observeReveals();
 

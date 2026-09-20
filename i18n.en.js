@@ -76,12 +76,12 @@
 
     homeEyebrow: "Screen Early · Act Early",
     homeTitle1: "Five minutes now beats", homeTitle2: "five years of silence.",
-    homeSubtitle: "Check in on your mood, anxiety, or stress. Free, private, on-device screening with immediate guidance on what to do next — nothing leaves your phone.",
+    homeSubtitle: "Check your mood, anxiety or stress in about five minutes. Free, private, and nothing you answer leaves your phone.",
     homeLede: "India's treatment gap for mental illness is 70–92% — most people who need care never reach it, and many who do get a prescription refill instead of a plan. This tool uses the same validated questionnaires doctors use, tells you what your score means, and shows you how to get real care and real follow-up.",
-    noticeTitle: "⚠ This is a screening tool, not a diagnosis.",
+    noticeTitle: "This is a screening tool, not a diagnosis.",
     noticeBody: "Only a qualified clinician can diagnose a mental illness. A high score means \"talk to a professional,\" never \"you have X.\" A low score with ongoing distress still deserves attention.",
-    privacy: "🔒 Privacy: everything runs in your browser. Your answers never leave this device.",
-    transNote: "🌐 Translation note: Indian-language versions are working translations for accessibility. Officially validated translations exist for some instruments and should be used for research or formal clinical work.",
+    privacy: "Privacy: everything runs in your browser. Your answers never leave this device.",
+    transNote: "Translation note: Indian-language versions are working translations for accessibility. Officially validated translations exist for some instruments and should be used for research or formal clinical work.",
 
     moodTitle: "Daily one-tap mood check-in",
     moodPrivate: "· private · this device only",
@@ -196,7 +196,7 @@
     resultOf: "out of {max}", yourResult: "Your Result", resultTitle: "{name} Result",
     whyTrust: "Why trust this score? See the evidence register →",
     whatToDo: "What to do with this score",
-    rescreenOn: "📅 Recommended re-screen: {date}",
+    rescreenOn: "Recommended re-screen: {date}",
     rescreenTail: "({n} days from now). Tracking the trend is the follow-up care most OPDs can't give you — use the reminder button below.",
     doctorTitle: "If you see a doctor: get care, not just a prescription",
     doctorPoints: [
@@ -213,11 +213,11 @@
     sheetPrint: "Print / save as PDF",
     sheetLede: "One page to hand to a doctor. It carries your answers item by item, how your scores have moved over time, and the instrument's own accuracy and limits — so the conversation can start further along than a single number allows.",
     sheetPatientNote: "The sheet is written in English, the working language of most clinics: a mistranslated clinical form is more dangerous than an untranslated one. Your own answers appear in both English and your language, so you can read exactly what you are handing over. Nothing is sent anywhere — the page is built on your device and is gone when you close it.",
-    printBtn: "Print this page", reminderBtn: "📅 Add re-screen reminder",
+    printBtn: "Print this page", reminderBtn: "Add re-screen reminder",
     viewHistory: "View my history", backHome: "Back to screeners",
     printHead: "Ronak summary · {name} · {date} · Self-administered screening — not a diagnosis. For clinical correlation.",
 
-    safetyTitle: "⚠ Please read this first",
+    safetyTitle: "Please read this first",
     safety1: "You said you've had thoughts of being better off dead or of hurting yourself. Those thoughts are a symptom — they are treatable, and they are more common than you think. You do not have to handle this alone or wait for it to pass.",
     safety2: "Talk to someone today:",
     safety3: "Tell one person you trust, today. If you can, don't be alone tonight.",
@@ -233,7 +233,7 @@
     ],
     noteAuditc: " Note: the positive-screen cutoff is 4+ for men and 3+ for women.",
     noteWho5: " Note: this scale runs the other way — a higher score is better, and a score of 12 or below (50 out of 100) is the point at which a fuller assessment is worth having.",
-    wellbeingsTag: "Between screenings", wellbeingsTitle: "Keep a weekly pulse on how you're doing", wellbeingsBody: "This screener is for the occasional deeper check. Well-beings is built for the quick weekly one — a single tap that notices if things are slipping, and sends you back here when a fuller look is worth it.", wellbeingsCta: "Open Well-beings →", wbBackTag: "Sent from Well-beings", wbBackBody: "Your weekly check-in flagged that a fuller look might help. Pick a screener below whenever you're ready — there's no rush.", tourCtaBtn: "▶ Watch the intro",
+    wellbeingsTag: "Between screenings", wellbeingsTitle: "Keep a weekly pulse on how you're doing", wellbeingsBody: "This screener is for the occasional deeper check. Well-beings is built for the quick weekly one — a single tap that notices if things are slipping, and sends you back here when a fuller look is worth it.", wellbeingsCta: "Open Well-beings →", wbBackTag: "Sent from Well-beings", wbBackBody: "Your weekly check-in flagged that a fuller look might help. Pick a screener below whenever you're ready — there's no rush.", tourCtaBtn: "Watch the intro",
     introQuestion: "Do you agree with the statement?", introYes: "Yes", introNo: "No", introSkip: "Skip these questions",
     introCrisisLead: "In distress right now? You can go straight to",
     introStatements: ["Feeling low for weeks at a time is just part of life — not something a doctor can help with.","I would find it hard to tell a doctor how I have actually been feeling.","If something were wrong, I would rather know sooner than later."],
@@ -254,13 +254,13 @@
 
     resTitle: "Where to turn", resEyebrow: "Get Help · India",
     resources: [
-      ["☎ Tele-MANAS — 14416 or 1-800-891-4416", "The Government of India's national tele-mental-health service. Free, 24×7, confidential, available in 20+ languages. Trained counsellors handle the call and can escalate to mental-health specialists and link you to services in your district. This is the single best first call for most people."],
-      ["☎ KIRAN — 1800-599-0019", "National toll-free mental-health rehabilitation helpline, 24×7, 13 languages. Support for anxiety, depression, substance use, and crisis."],
-      ["🚨 Emergency — 112", "If you or someone else is in immediate danger of harm, call 112 or go to the nearest hospital emergency department. Say the words \"psychiatric emergency.\""],
-      ["🏥 District Mental Health Programme (DMHP)", "Most districts run a DMHP clinic at the district hospital with a psychiatrist or trained medical officer, free or near-free medicines, and counselling. Ask at your district hospital for the mental health clinic. Under the Mental Healthcare Act 2017, affordable mental healthcare is your legal right."],
-      ["🩺 Your nearest PHC or family doctor", "You don't need a psychiatrist to start. General physicians can diagnose and begin first-line treatment for depression and anxiety, and refer when needed. Bring your printed score summary from this app — it gives a rushed consultation a head start."],
-      ["🧠 Psychotherapy — ask for it by name", "For mild-to-moderate depression and anxiety, talking therapies (CBT, behavioural activation, counselling) are first-line, evidence-based treatment — medication is not the only option. Ask any doctor: \"Is psychotherapy appropriate for me, and where can I get it?\""],
-      ["📱 What \"good follow-up\" looks like", "A named diagnosis (or an honest \"we're not sure yet — here's the plan\"). A treatment plan with a review date, typically 2–4 weeks after starting or changing treatment. Symptom scores repeated over time. A clear answer on therapy, not just tablets. Someone to call between visits — save 14416 in your phone."]
+      ["Tele-MANAS — 14416 or 1-800-891-4416", "The Government of India's national tele-mental-health service. Free, 24×7, confidential, available in 20+ languages. Trained counsellors handle the call and can escalate to mental-health specialists and link you to services in your district. This is the single best first call for most people."],
+      ["KIRAN — 1800-599-0019", "National toll-free mental-health rehabilitation helpline, 24×7, 13 languages. Support for anxiety, depression, substance use, and crisis."],
+      ["Emergency — 112", "If you or someone else is in immediate danger of harm, call 112 or go to the nearest hospital emergency department. Say the words \"psychiatric emergency.\""],
+      ["District Mental Health Programme (DMHP)", "Most districts run a DMHP clinic at the district hospital with a psychiatrist or trained medical officer, free or near-free medicines, and counselling. Ask at your district hospital for the mental health clinic. Under the Mental Healthcare Act 2017, affordable mental healthcare is your legal right."],
+      ["Your nearest PHC or family doctor", "You don't need a psychiatrist to start. General physicians can diagnose and begin first-line treatment for depression and anxiety, and refer when needed. Bring your printed score summary from this app — it gives a rushed consultation a head start."],
+      ["Psychotherapy — ask for it by name", "For mild-to-moderate depression and anxiety, talking therapies (CBT, behavioural activation, counselling) are first-line, evidence-based treatment — medication is not the only option. Ask any doctor: \"Is psychotherapy appropriate for me, and where can I get it?\""],
+      ["What \"good follow-up\" looks like", "A named diagnosis (or an honest \"we're not sure yet — here's the plan\"). A treatment plan with a review date, typically 2–4 weeks after starting or changing treatment. Symptom scores repeated over time. A clear answer on therapy, not just tablets. Someone to call between visits — save 14416 in your phone."]
     ],
 
     disclaimer: "<strong>Disclaimer:</strong> This tool uses public-domain screening instruments (PHQ-4, PHQ-9, GAD-7 — Kroenke, Spitzer &amp; Williams; AUDIT-C — WHO). It provides education and screening only; it does not provide medical advice, diagnosis, or treatment, and it is not a substitute for consultation with a qualified health professional. All data stays on your device.",
