@@ -63,7 +63,14 @@
 
    v11: index.html and both English and Hindi string files changed — the
    "what's behind this" section is translated now. */
-const CACHE = "ronak-v26";
+/* v27: the redesign — night-to-dawn palette, the bloom-sun logo and icons,
+   the check-in scenes, the rebuilt opening, and Baloo as the display face.
+   site.css, nav.js, index.html, every page and all six string files
+   changed. The Latin face is precached with the rest so the brand type
+   survives going offline; the four Indic faces are cached the first time
+   a reader in that script loads them, by the fetch handler below, rather
+   than making every install download all five. anton.woff2 is gone. */
+const CACHE = "ronak-v27";
 const ASSETS = [
   "./", "./index.html", "./helplines.js", "./nav.js",
   "./i18n.en.js", "./i18n.hi.js", "./i18n.mr.js",
@@ -71,7 +78,8 @@ const ASSETS = [
   "./ethics.html", "./evidence.html", "./manifesto.html", "./404.html",
   "./global.html", "./poster.html", "./qr-site.svg",
   "./site.css", "./manifest.webmanifest",
-  "./icon.svg", "./icon-192.png", "./icon-512.png", "./icon-maskable.png"
+  "./icon.svg", "./icon-192.png", "./icon-512.png", "./icon-maskable.png",
+  "./fonts/baloo2-latin.woff2"
 ];
 
 self.addEventListener("install", e=>{

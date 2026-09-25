@@ -103,7 +103,17 @@ const CR = `(sel)=>{
   return Math.round(((hi+0.05)/(lo+0.05))*100)/100;}`;
 
 /* Anything that pushes the document wider than the screen. Elements inside a
-   deliberate horizontal scroller, and the off-screen skip link, are exempt. */
+   deliberate horizontal scroller, and the off-screen skip link, are exempt.
+
+   So is decoration that is BOTH hidden from assistive technology AND clipped
+   by an ancestor — the rising sun, the shooting star, the check-in scenes.
+   They are drawn larger than their frames on purpose (a sun half under the
+   horizon, a scene cropped to the card like a photograph), so their boxes
+   run past the screen edge while nothing of them can be seen there or
+   scrolled to. The exemption is deliberately that narrow: anything a person
+   can read, or a screen reader can reach, is still checked wherever it is,
+   and scrollW below still fails the page outright if the document itself
+   gets one pixel wider than the screen. */
 const OVERFLOW = `(()=>{
   const vw=document.documentElement.clientWidth,out=[];
   for(const el of document.querySelectorAll('body *')){
@@ -117,6 +127,12 @@ const OVERFLOW = `(()=>{
     while(sc&&sc!==document.body){const o=getComputedStyle(sc).overflowX;
       if(o==='auto'||o==='scroll'){inScroll=true;break;}sc=sc.parentElement;}
     if(inScroll)continue;
+    if(el.closest('[aria-hidden="true"]')){
+      let cl=el.parentElement,clipped=false;
+      while(cl&&cl!==document.body){const o=getComputedStyle(cl).overflowX;
+        if(o==='hidden'||o==='clip'){clipped=true;break;}cl=cl.parentElement;}
+      if(clipped)continue;
+    }
     out.push((el.id?'#'+el.id:el.tagName)+' '+Math.round(r.width)+'w');
   }
   return {scrollW:document.documentElement.scrollWidth,vw,over:out.slice(0,4)};})()`;

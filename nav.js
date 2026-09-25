@@ -11,6 +11,39 @@
    collapsing styles key off a wrapper that only exists once this
    script has run.
    ══════════════════════════════════════════════════════════════ */
+/* ── the sky ──
+   One fixed, aria-hidden layer at the very back of every page: the
+   breathing glows and the dawn that warms as you scroll (all of it is in
+   site.css under .sky). It lives here rather than in six copies of the
+   markup because this is the one script every page already loads.
+
+   The dawn follows a CSS scroll timeline where the browser has one. Where
+   it doesn't, a passive, rAF-gated listener writes one number, and writes
+   it on the sky itself — not on <html>, where a custom property changing
+   every frame would restyle the whole document to move one gradient. */
+(function(){
+  if(document.querySelector(".sky")) return;
+  var sky = document.createElement("div");
+  sky.className = "sky";
+  sky.setAttribute("aria-hidden", "true");
+  document.body.insertBefore(sky, document.body.firstChild);
+  var native = window.CSS && CSS.supports && CSS.supports("animation-timeline: scroll()");
+  var still = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if(native || still) return;
+  var ticking = false;
+  function paint(){
+    ticking = false;
+    var max = document.documentElement.scrollHeight - innerHeight;
+    var p = max > 0 ? Math.min(1, Math.max(0, scrollY / max)) : 0;
+    sky.style.setProperty("--dawn", (0.05 + p * 0.95).toFixed(3));
+  }
+  addEventListener("scroll", function(){
+    if(!ticking){ ticking = true; requestAnimationFrame(paint); }
+  }, { passive:true });
+  addEventListener("resize", paint, { passive:true });
+  paint();
+})();
+
 (function(){
   var nav = document.querySelector("nav.site");
   if(!nav) return;
