@@ -1,0 +1,1700 @@
+/* ══════════════════════════════════════════════════════════════
+   Ronak — the app's own stylesheet (index.html only)
+   ──────────────────────────────────────────────────────────────
+   This lived inline in index.html. Pages are fetched fresh on every
+   visit (so a fix reaches people), which meant every visit re-downloaded
+   ~24KB of CSS that had not changed. As its own file, versioned in the
+   URL (?v=), the service worker keeps it and a repeat visit costs only
+   the ~15KB page. Shared styles are in site.css; this is layout, motion
+   and the surfaces that are always night whatever the theme.
+   ══════════════════════════════════════════════════════════════ */
+/* ══════════════════════════════════════════════════════════════
+   The app's own styles. Colour comes from site.css tokens; what is
+   here is layout, motion, and the handful of surfaces that are
+   always night whatever the theme — the hero sky, the check-in
+   scenes, the opening film — because the brand's story (night, then
+   dawn) is told on them.
+   ══════════════════════════════════════════════════════════════ */
+:lang(hi) body,:lang(mr) body,:lang(bn) body,:lang(ta) body,:lang(te) body{line-height:1.8;}
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important;}
+  html{scroll-behavior:auto;}
+}
+
+.safety a,.bub.crisis a,footer .byline a{color:inherit;}
+.safety a,.bub.crisis a{color:#fff;}
+footer .byline a{color:var(--heal);}
+
+/* the shared drawing: the bloom-sun's parts, defined once and <use>d by
+   the hero, the scenes and the opening. Zero-sized rather than
+   display:none, because a gradient inside a display:none <svg> does not
+   paint anywhere it is referenced. */
+.sprite{position:absolute;width:0;height:0;overflow:hidden;}
+
+/* skip link */
+.skip{
+  position:absolute;left:-9999px;top:0;z-index:999;background:var(--ink);color:var(--paper);
+  padding:.7rem 1.1rem;font-weight:700;text-decoration:none;border-radius:999px;
+}
+.skip:focus{left:.5rem;top:.5rem;}
+
+/* ── settings popover ── */
+.setbtn{
+  font-family:var(--font-ui);text-transform:none;letter-spacing:.02em;font-weight:700;
+  background:rgba(255,255,255,.06);background-image:none;color:var(--on-deep);
+  border:1.5px solid rgba(255,246,238,.34);
+  padding:.35rem .8rem;font-size:.8rem;min-height:2.1rem;cursor:pointer;border-radius:999px;
+  display:inline-flex;align-items:center;gap:.1rem;
+}
+.setbtn:hover{border-color:#FFD166;color:#FFD166;box-shadow:none;}
+.setbtn:hover .setlang{color:#FFD166;}
+.setbtn[aria-expanded="true"]{background:#FFD166;color:#1B1030;border-color:#FFD166;}
+/* The language code is gold text, and the open button is a gold fill —
+   measured once at 1:1, the same colour on itself, at exactly the moment
+   you opened the panel to change language. Fixed colours rather than
+   tokens here, because the nav is night in every theme. */
+.setbtn[aria-expanded="true"] .setlang{color:#1B1030;}
+:root[data-contrast="high"] .setbtn{background:#000;border-color:#fff;color:#fff;}
+:root[data-contrast="high"] .setbtn[aria-expanded="true"]{background:#FFE27A;color:#000;border-color:#FFE27A;}
+:root[data-contrast="high"] .setbtn[aria-expanded="true"] .setlang{color:#000;}
+.bandlead{
+  font-size:.86rem;line-height:1.45;color:var(--muted);
+  margin-bottom:.4rem;max-width:34ch;
+}
+nav.site .seticon{width:1.05em;height:1.05em;vertical-align:-.15em;
+  fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;
+  transition:transform .6s var(--e-spring);}
+.setbtn:hover .seticon,.setbtn[aria-expanded="true"] .seticon{transform:rotate(90deg);}
+.ctricon{width:1.05em;height:1.05em;vertical-align:-.15em;margin-left:.25em;
+  fill:none;stroke:currentColor;stroke-width:1.6;}
+.ctricon .half{fill:currentColor;stroke:none;}
+.flagicon{width:1.05em;height:1.05em;vertical-align:-.15em;margin-left:.3em;
+  fill:none;stroke:var(--stamp);stroke-width:1.8;stroke-linejoin:round;}
+.flagicon circle{fill:var(--stamp);stroke:none;}
+.setwrap{position:relative;}
+/* A dark panel on a dark page, with nothing between them, reads as part
+   of the page. The scrim is what makes it an overlay. 45 sits under the
+   nav (50) so the panel stays lit, and under the tab bar (80) so the four
+   primary destinations are never dimmed out of reach. */
+.setscrim{
+  position:fixed;inset:0;z-index:45;
+  background:rgba(11,6,22,.55);
+  opacity:0;pointer-events:none;transition:opacity .22s ease;
+}
+.setscrim.on{opacity:1;pointer-events:auto;}
+.setpanel{
+  display:none;position:absolute;right:0;top:calc(100% + .6rem);z-index:40;
+  background:var(--card);color:var(--ink);border:1px solid var(--line);border-radius:var(--r-lg);
+  padding:1.1rem;min-width:16.5rem;max-width:calc(100vw - 1.6rem);
+  box-shadow:0 24px 50px -14px rgba(20,4,40,.6), 0 4px 14px rgba(0,0,0,.22),
+             0 0 0 1px color-mix(in srgb, var(--heal) 14%, transparent);
+  /* The panel had no height limit and no scroll; at 135% text the last
+     two rows fell off the bottom. A floor in CSS; keepPanelOnScreen sets
+     the exact figure from where the panel actually landed. */
+  max-height:calc(100vh - 7rem);overflow-y:auto;overscroll-behavior:contain;
+}
+.setpanel::before{
+  content:"";position:absolute;left:1.1rem;right:1.1rem;top:0;height:3px;border-radius:0 0 3px 3px;
+  background:var(--grad-bloom);
+}
+.setpanel.open{display:block;animation:pop .32s var(--e-spring);}
+@keyframes pop{from{opacity:0;transform:translateY(-8px) scale(.98);}to{opacity:1;transform:none;}}
+.setrow{display:flex;flex-direction:column;gap:.45rem;margin-bottom:1rem;}
+.setrow:last-child{margin-bottom:0;}
+.setrow .lbl{
+  font-family:var(--font-ui);font-size:.74rem;letter-spacing:.04em;
+  color:var(--muted);font-weight:700;
+}
+.setrow .btns{display:flex;gap:.45rem;}
+select.langsel{
+  font-family:system-ui,-apple-system,'Segoe UI','Noto Sans',Roboto,Arial,sans-serif;font-size:.92rem;padding:.55rem .7rem;width:100%;
+  background:var(--paper);color:var(--ink);border:1.5px solid var(--line);border-radius:var(--r-sm);cursor:pointer;
+}
+.setpanel button{
+  font-family:var(--font-ui);text-transform:none;letter-spacing:0;font-weight:600;
+  background:var(--paper);background-image:none;color:var(--ink);border:1.5px solid var(--line);border-radius:var(--r-sm);
+  padding:.4rem .7rem;font-size:.86rem;min-height:2.3rem;flex:1;cursor:pointer;
+}
+.setpanel button:hover{border-color:var(--heal);box-shadow:none;}
+.setpanel button[aria-pressed="true"]{background-color:#6D28D9;background-image:var(--grad-cta);color:#fff;border-color:transparent;font-weight:700;}
+
+/* ── views ── */
+.view{display:none;padding:1.8rem 0 3.2rem;}
+.view.active{display:block;animation:vin .5s var(--e-spring);}
+@keyframes vin{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateZ(0);}}
+/* during a view transition the browser does the fade; the view's own
+   entrance would only fade the new screen a second time inside it */
+.vt .view.active{animation:none;}
+::view-transition-old(root){animation:vt-out .2s ease both;}
+::view-transition-new(root){animation:vt-in .38s var(--e-spring) both;}
+@keyframes vt-out{to{opacity:0;transform:scale(.985);}}
+@keyframes vt-in{from{opacity:0;transform:translateY(14px);}}
+@media(max-width:640px){
+  .topstrip{view-transition-name:rk-strip;}
+  .tabbar{view-transition-name:rk-tabbar;}
+}
+.view:focus{outline:none;}
+@media(min-width:700px){.lede{max-width:65ch;}}
+
+/* ── reveal on scroll ──
+   Things arrive rather than sit there: a short rise and a fade as each
+   block comes into view, once, and never again. Only with JS (the class
+   is set by the observer that removes it) and never under reduced
+   motion — REVEAL_OK gates both. translate, not transform, so a card
+   can also be scaled by the stacking effect without the two fighting. */
+.reveal-ready .reveal{transition:opacity .8s var(--e-out2),translate .9s var(--e-spring);}
+.reveal-ready .reveal:not(.in){opacity:0;translate:0 26px;}
+
+/* ══════════ HOME: the night sky ══════════
+   The first screen is a sky before dawn, whatever the theme: stars, the
+   three breathing glows, and the bloom-sun just under the horizon. As
+   you scroll it rises out of the mist and opens; by the time the sky has
+   gone, it is morning and the check-ins are in front of you. Nothing
+   about the scroll is hijacked — it moves at exactly your speed, it just
+   has somewhere to go. */
+#view-home{padding-top:0;}
+.hero-sky{
+  position:relative;isolation:isolate;overflow:clip;
+  color:#FFF6EE;
+  min-height:clamp(33rem, calc(100vh - 9rem), 52rem);
+  min-height:clamp(33rem, calc(100svh - 9rem), 52rem);
+  padding:2.4rem 0 0;
+  background:
+    radial-gradient(60% 40% at 15% 12%, rgba(124,58,237,.45), transparent 70%),
+    radial-gradient(50% 36% at 90% 22%, rgba(255,61,139,.30), transparent 72%),
+    linear-gradient(180deg,#0B0616 0%,#130A2A 30%,#26104A 56%,#4E1456 74%,#9A2A64 86%,#E0685A 94%,#FFB35C 100%);
+  --rise:0;
+}
+.hero-sky .wrap{position:relative;z-index:3;}
+.hs-copy{padding-bottom:7.5rem;}
+.hero-sky .panel{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.2);color:#FFF6EE;box-shadow:none;}
+.hero-sky .panel .tag{color:#FFD166;}
+.hero-sky .eyebrow{color:#FFD166;background:rgba(255,209,102,.1);border-color:rgba(255,209,102,.35);}
+.hero-sky h1{color:#FFF6EE;font-size:clamp(2.2rem,7.2vw,4.3rem);max-width:15ch;}
+.hero-sky h1 .accent{
+  color:#FFD166;
+  background:linear-gradient(100deg,#FF8CC6 0%,#FFB36B 55%,#FFE27A 100%);
+  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
+}
+.hero-sky .lede{color:rgba(255,246,238,.86);font-size:1.08rem;max-width:40ch;margin:1.1rem 0 1.5rem;}
+:lang(hi) .hero-sky h1,:lang(mr) .hero-sky h1,:lang(bn) .hero-sky h1,:lang(ta) .hero-sky h1,:lang(te) .hero-sky h1{font-size:clamp(1.8rem,6.4vw,3.4rem);max-width:18ch;}
+.hs-actions{display:flex;gap:.7rem;flex-wrap:wrap;align-items:center;}
+/* the words arrive one after another, like light reaching a room */
+.hs-copy > *{animation:hs-enter 1s var(--e-spring) both;}
+.hs-copy > h1{animation-name:hs-rise-in;}
+.hs-copy > .eyebrow{animation-delay:.1s;}
+.hs-copy > h1{animation-delay:.22s;}
+.hs-copy > .lede{animation-delay:.38s;}
+.hs-copy > .hs-actions{animation-delay:.52s;}
+@keyframes hs-enter{from{opacity:0;transform:translateY(22px);}to{opacity:1;transform:none;}}
+/* the headline rises but never starts invisible: an element at opacity 0
+   does not count as painted, so a fade here held back the page's largest
+   paint by the length of the animation */
+@keyframes hs-rise-in{from{transform:translateY(18px);}to{transform:none;}}
+.hero-sky .tourcta{
+  color:#FFF6EE;border-color:rgba(255,246,238,.42);background:rgba(255,255,255,.08);
+  display:inline-flex;align-items:center;gap:.6rem;
+}
+.hero-sky .tourcta::before{
+  content:"";width:1.5rem;height:1.5rem;border-radius:50%;flex:none;
+  background:#FFD166 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M9 7l9 5-9 5z' fill='%231B1030'/%3E%3C/svg%3E") center/70% no-repeat;
+  box-shadow:0 0 0 4px rgba(255,209,102,.18);animation:rk-ping 2.6s var(--e-out2) infinite;
+}
+@keyframes rk-ping{0%,100%{transform:scale(1);}18%{transform:scale(1.14);}36%{transform:scale(1);}}
+.hero-sky .tourcta:hover{border-color:#FFD166;background:rgba(255,209,102,.12);}
+
+/* stars: two layers of box-shadow dots, twinkling out of step. The
+   twinkle lives on the two pseudo-elements and the scroll fade on the
+   element itself — both were once on the element, where the scroll
+   timeline's animation quietly replaced the twinkle outright. */
+.hs-stars{position:absolute;left:0;top:0;width:100%;height:60%;z-index:0;pointer-events:none;}
+.hs-stars::before,.hs-stars::after{
+  content:"";position:absolute;left:0;top:0;width:2px;height:2px;border-radius:50%;background:transparent;
+  animation:hs-twinkle 5.5s ease-in-out infinite alternate;
+}
+.hs-stars::before{
+  box-shadow:
+    8vw 42px #fff, 22vw 118px rgba(255,255,255,.75), 36vw 30px rgba(255,255,255,.9), 47vw 160px rgba(255,255,255,.6),
+    61vw 76px #fff, 74vw 24px rgba(255,255,255,.8), 86vw 132px rgba(255,255,255,.7), 93vw 58px #fff,
+    14vw 210px rgba(255,255,255,.55), 55vw 236px rgba(255,255,255,.6), 81vw 268px rgba(255,255,255,.5), 30vw 300px rgba(255,255,255,.45);
+}
+.hs-stars::after{
+  box-shadow:
+    4vw 150px rgba(255,209,102,.9), 18vw 64px rgba(255,255,255,.7), 42vw 96px rgba(255,140,198,.9), 52vw 20px rgba(255,255,255,.8),
+    68vw 186px rgba(255,255,255,.6), 79vw 88px rgba(195,166,255,.95), 90vw 206px rgba(255,255,255,.6), 97vw 12px rgba(255,255,255,.8),
+    26vw 250px rgba(255,255,255,.5), 64vw 300px rgba(255,209,102,.6);
+  animation-duration:7s;animation-delay:-3s;
+}
+@keyframes hs-twinkle{from{opacity:.35;}to{opacity:1;}}
+/* one shooting star, now and then, across the upper sky */
+.hs-shoot{
+  position:absolute;top:14%;left:-10%;width:7rem;height:2px;z-index:1;border-radius:2px;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.95));
+  transform:rotate(-18deg);opacity:0;
+  animation:hs-shoot 9s ease-in 4s infinite;
+}
+@keyframes hs-shoot{
+  0%{opacity:0;transform:translate(0,0) rotate(-18deg);}
+  3%{opacity:1;}
+  11%{opacity:0;transform:translate(70vw,22vh) rotate(-18deg);}
+  100%{opacity:0;transform:translate(70vw,22vh) rotate(-18deg);}
+}
+
+/* the sun: the logo, drawn large, half under the horizon */
+.hs-sun{
+  position:absolute;left:50%;bottom:0;z-index:1;
+  width:min(112vw,40rem);aspect-ratio:1;
+  transform:translate(-50%,44%);
+  pointer-events:none;
+}
+.hs-sun > *{position:absolute;inset:0;width:100%;height:100%;max-width:none;display:block;}
+.hs-sun svg{overflow:visible;}
+.hs-halo{
+  border-radius:50%;
+  background:radial-gradient(closest-side,rgba(255,209,102,.7) 0%,rgba(255,138,91,.35) 35%,rgba(255,61,139,.12) 70%,rgba(124,58,237,0) 100%);
+  animation:k-halo var(--breath) ease-in-out infinite alternate;
+}
+.hs-rays{animation:k-spin 90s linear infinite;}
+.lite .hs-halo,.lite .hs-rays,.lite .hs-petals,.lite .hs-core,.lite .hs-shoot,
+.lite .hs-stars::before,.lite .hs-stars::after,.lite .hero-sky .tourcta::before{animation:none;}
+.lite .sc-art *{animation:none!important;}
+.lite .s7-bub,.lite .s5-pollen,.lite .s3-ring,.lite .s3-drop,.lite .hs-shoot{display:none;}
+.lite .scorebox::before,.lite .orb::before{animation:none;}
+.hero-sky.rest .hs-halo,.hero-sky.rest .hs-rays,.hero-sky.rest .hs-petals,.hero-sky.rest .hs-core,
+.hero-sky.rest .hs-shoot,.hero-sky.rest .hs-stars::before,.hero-sky.rest .hs-stars::after{animation-play-state:paused;}
+.hs-petals{animation:k-spin-r 140s linear infinite;}
+/* the core is 60 of the drawing's 300 units: 40% in from every side */
+.hs-core{
+  inset:40%;width:auto;height:auto;border-radius:50%;
+  background:radial-gradient(circle at 50% 50%,#FFFBE3 0%,#FFD83F 45%,#FF9F1C 100%);
+  box-shadow:0 0 0 .9vmin rgba(255,212,59,.2),0 0 40px rgba(255,200,61,.55);
+  animation:k-core var(--breath) ease-in-out infinite alternate;
+}
+/* ── the loop vocabulary: transform and opacity, and nothing else ──
+   Measured on a 4x-throttled phone: the same turn written as the
+   individual `rotate:` property ran on the main thread (1,163ms of work
+   in 4s idle); written as `transform:` it ran on the compositor (10ms).
+   Every infinite animation on the site uses these. */
+@keyframes k-spin{to{transform:rotate(360deg);}}
+@keyframes k-spin-r{to{transform:rotate(-360deg);}}
+@keyframes k-pulse{from{transform:scale(.92);}to{transform:scale(1.07);}}
+@keyframes k-halo{from{opacity:.55;transform:scale(.94);}to{opacity:1;transform:scale(1.06);}}
+@keyframes k-core{from{transform:scale(.96);}to{transform:scale(1.05);}}
+/* the mist the sun rises out of, which is also where the night hands
+   over to the page's own colour */
+.hs-mist{
+  position:absolute;left:0;right:0;bottom:-1px;height:20%;z-index:2;pointer-events:none;
+  background:linear-gradient(180deg,transparent 0%,color-mix(in srgb,var(--paper) 40%,transparent) 50%,var(--paper) 100%);
+}
+.hs-cue{
+  position:absolute;left:max(1.3rem,calc((100% - 60rem) / 2 + 1.3rem));bottom:1.4rem;z-index:3;
+  width:1.9rem;height:2.9rem;border-radius:1rem;border:2px solid color-mix(in srgb,var(--ink) 45%,transparent);
+  display:block;
+}
+.hs-cue::before{
+  content:"";position:absolute;left:calc(50% - 2px);top:.5rem;width:4px;height:.55rem;border-radius:2px;
+  background:var(--ink);opacity:.7;animation:hs-cue 1.8s var(--e-out2) infinite;
+}
+@keyframes hs-cue{0%{opacity:0;transform:translateY(-2px);}30%{opacity:.8;}100%{opacity:0;transform:translateY(12px);}}
+
+/* scroll-linked: the sun rises and opens, the stars go out, the words
+   drift up and dim, all tied to the sky leaving the screen. Native
+   scroll timelines where the browser has them (off the main thread);
+   a JS fallback writes --rise on the hero where it doesn't. */
+@supports (animation-timeline: view()){
+  .hero-sky{view-timeline-name:--sky;}
+  .hs-sun{animation:hs-rise linear both;animation-timeline:--sky;animation-range:exit 0% exit 100%;}
+  .hs-stars{animation:hs-fade linear both;animation-timeline:--sky;animation-range:exit 0% exit 70%;}
+  .hs-cue{animation:hs-fade linear both;animation-timeline:--sky;animation-range:exit 0% exit 20%;}
+  .hs-copy{animation:hs-lift linear both;animation-timeline:--sky;animation-range:exit 0% exit 100%;}
+}
+@supports not (animation-timeline: view()){
+  .hs-sun{transform:translate(-50%,calc(44% - var(--rise) * 56%)) scale(calc(1 + var(--rise) * .16));}
+  .hs-cue{opacity:calc(1 - var(--rise) * 4);}
+  .hs-copy{opacity:calc(1 - var(--rise) * .9);transform:translateY(calc(var(--rise) * -40px));}
+}
+@keyframes hs-rise{
+  from{transform:translate(-50%,44%) scale(1);}
+  to{transform:translate(-50%,-12%) scale(1.16);}
+}
+@keyframes hs-fade{to{opacity:0;}}
+@keyframes hs-lift{to{opacity:.1;transform:translateY(-40px);}}
+:root[data-contrast="high"] .hero-sky{background:#000;}
+:root[data-contrast="high"] .hs-stars,:root[data-contrast="high"] .hs-shoot,:root[data-contrast="high"] .hs-sun,
+:root[data-contrast="high"] .hs-mist{display:none;}
+:root[data-contrast="high"] .hero-sky h1 .accent{background:none;-webkit-text-fill-color:#FFE27A;color:#FFE27A;}
+:root[data-contrast="high"] .hs-cue{border-color:#000;}
+:root[data-contrast="high"] .hs-copy{padding-bottom:3.5rem;}
+
+/* ══════════ the check-ins: each one its own place ══════════
+   Five scenes, stacked like cards in a hand. Each one sticks as it
+   reaches the top of the screen and the next slides up over it, so on
+   a phone every check-in gets the whole screen to itself for a moment
+   — its own colour, its own small piece of hope drawn in motion — and
+   the one it covered steps back and dims. It is ordinary scrolling:
+   sticky positioning, no hijack, nothing to fight. */
+.checkins{padding-top:.4rem;scroll-margin-top:calc(var(--strip-h,0px) + 1rem);}
+#chooseH2{margin:.2rem 0 .35rem;}
+.checkins-sub{color:var(--muted);font-size:.95rem;margin-bottom:1.1rem;}
+.cards{
+  display:block;position:relative;
+  --stick:calc(var(--strip-h,0px) + .9rem);
+  padding-bottom:.4rem;
+}
+.card{
+  position:sticky;top:calc(var(--stick) + var(--i,0) * .75rem);
+  display:grid;grid-template-rows:minmax(0,1fr) auto;
+  width:100%;min-height:min(70vh,35rem);min-height:min(70svh,35rem);
+  margin:0 0 1.25rem;padding:0;overflow:hidden;
+  border:0;border-radius:var(--r-xl);
+  text-align:left;font-family:inherit;color:#FFF6EE;text-transform:none;letter-spacing:0;font-weight:400;
+  background-color:var(--sc-a,#1B1147);
+  background-image:linear-gradient(165deg,var(--sc-a,#1B1147) 0%,var(--sc-b,#3B1E8C) 60%,var(--sc-c,#6D3BD8) 100%);
+  box-shadow:0 30px 60px -28px rgba(30,6,60,.7),0 0 0 1px rgba(255,255,255,.08) inset;
+  cursor:pointer;isolation:isolate;
+  /* the deck sets `scale` inline as the next card covers this one */
+  transform-origin:50% 0;
+}
+/* covered: the card underneath steps back into the dark. A real element
+   whose opacity the deck writes directly — it used to be a pseudo-element
+   reading an inherited custom property, and changing that property every
+   scroll frame restyled every node of the scene inside the card. */
+.sc-dim{
+  position:absolute;inset:0;z-index:4;pointer-events:none;border-radius:inherit;
+  background:#0B0616;opacity:0;
+}
+.card:hover{box-shadow:0 34px 70px -26px rgba(255,61,139,.55),0 0 0 1px rgba(255,255,255,.16) inset;}
+.card:active{scale:.985;}
+.card:focus-visible{outline:3px solid #FFD166;outline-offset:4px;}
+/* ── the scene's frame ──
+   A size container, so every layer inside can be placed in the drawing's
+   own units: --u is one unit of the 400x240 artwork, sized from the
+   frame's height. The static drawing and every moving layer share that
+   one scale, so they line up at any card size on any screen. */
+.sc-art{position:relative;display:block;min-height:10rem;overflow:hidden;container-type:size;--u:calc(100cqh / 240);}
+/* max-width:none — site.css caps every svg at 100% of its container,
+   which squeezed the drawing to the card's width and slid it left of
+   the layers drawn over it */
+.sc-base,.sc-top{
+  position:absolute;top:0;left:50%;display:block;max-width:none;
+  height:100%;width:calc(400 * var(--u));margin-left:calc(-200 * var(--u));
+}
+/* A moving layer, centred on (--x, --y) in drawing units, --w by --h. */
+.sl{
+  position:absolute;display:block;
+  left:calc(50% + (var(--x) - 200) * var(--u));top:calc(var(--y) * var(--u));
+  width:calc(var(--w) * var(--u));height:calc(var(--h) * var(--u));
+  margin:calc(var(--h) * var(--u) / -2) 0 0 calc(var(--w) * var(--u) / -2);
+}
+.sl > svg,.sl > span{display:block;width:100%;height:100%;max-width:none;overflow:visible;}
+.sc-body{
+  position:relative;z-index:2;display:flex;flex-direction:column;gap:.3rem;
+  padding:1.3rem 1.35rem 1.35rem;
+  /* A scrim under the words, so white text holds 4.5:1 over any part of
+     any scene, bright sun included. */
+  background:linear-gradient(180deg,rgba(11,6,22,0) 0%,rgba(11,6,22,.62) 38%,rgba(11,6,22,.84) 100%);
+  margin-top:-3.5rem;padding-top:3.2rem;
+}
+.sc-num{
+  font-family:var(--font-ui);font-size:.72rem;font-weight:800;letter-spacing:.16em;
+  color:var(--sc-hi,#FFD166);display:flex;align-items:center;gap:.55rem;
+}
+.sc-num::after{content:"";height:1px;width:2.4rem;background:currentColor;opacity:.6;}
+.sc-badge{
+  align-self:flex-start;font-family:var(--font-ui);font-size:.7rem;font-weight:800;letter-spacing:.06em;
+  color:#1B1030;background:#FFD166;border-radius:999px;padding:.18rem .65rem;margin:.15rem 0 .1rem;
+  box-shadow:0 0 18px rgba(255,209,102,.55);
+}
+.sc-title{
+  display:block;font-family:var(--font-display);font-weight:800;
+  font-size:clamp(1.65rem,6.4vw,2.5rem);line-height:1.08;color:#fff;text-wrap:balance;
+}
+:lang(hi) .sc-title,:lang(mr) .sc-title,:lang(bn) .sc-title,:lang(ta) .sc-title,:lang(te) .sc-title{line-height:1.3;font-size:clamp(1.45rem,5.6vw,2.2rem);}
+.card .about{display:block;font-size:.95rem;line-height:1.5;color:rgba(255,246,238,.88);max-width:44ch;}
+.sc-foot{display:flex;align-items:center;justify-content:space-between;gap:.8rem;flex-wrap:wrap;margin-top:.55rem;}
+.card .credit{font-size:.78rem;color:rgba(255,246,238,.78);font-variant-numeric:tabular-nums;font-family:var(--font-ui);}
+.card .go{
+  display:inline-flex;align-items:center;gap:.4rem;white-space:nowrap;
+  font-family:var(--font-ui);font-size:.9rem;font-weight:800;
+  color:#1B1030;background:#FFF6EE;border-radius:999px;padding:.6rem 1.1rem;min-height:44px;
+  box-shadow:0 8px 22px -8px var(--sc-glow,rgba(255,200,61,.8));
+  transition:translate .3s var(--e-spring),box-shadow .3s var(--e-out2);
+}
+.card:hover .go,.card:focus-visible .go{translate:4px 0;box-shadow:0 10px 28px -6px var(--sc-glow,rgba(255,200,61,.9));}
+
+/* each scene's own light */
+.sc-phq4{--sc-a:#150D3A;--sc-b:#2E1A78;--sc-c:#5B34C9;--sc-hi:#FFD166;--sc-glow:rgba(255,209,102,.9);}
+.sc-phq9{--sc-a:#120830;--sc-b:#461260;--sc-c:#A02C68;--sc-hi:#FFB36B;--sc-glow:rgba(255,160,90,.9);}
+.sc-gad7{--sc-a:#1E0A36;--sc-b:#661C6C;--sc-c:#D23C7C;--sc-hi:#FF9CCB;--sc-glow:rgba(255,120,180,.9);}
+.sc-who5{--sc-a:#2A0C2C;--sc-b:#A31F62;--sc-c:#F09A2E;--sc-hi:#FFE27A;--sc-glow:rgba(255,215,90,.9);}
+.sc-auditc{--sc-a:#0B1633;--sc-b:#1D3C78;--sc-c:#138D8C;--sc-hi:#7EE7DC;--sc-glow:rgba(126,231,220,.9);}
+
+/* ── scene motion ──
+   Two kinds. The TURN runs once, when the card first comes into view
+   (.in): the spark lights, the sun clears the hills, the tangle smooths
+   into a wave, the bud opens. Then a slow idle LOOP — and every loop is
+   a whole HTML layer turned, moved or faded with transform and opacity,
+   so it runs on the compositor. Loops only run on the card in front
+   (.live, set by the deck): the ones stacked underneath are covered, so
+   they hold still. */
+.card:not(.live) .sc-art *{animation-play-state:paused!important;}
+
+@keyframes k-twinkle{from{opacity:.2;transform:scale(.6);}to{opacity:1;transform:scale(1.1);}}
+@keyframes k-flow{to{transform:translateX(calc(-200 * var(--u)));}}
+@keyframes k-rise{0%{opacity:0;transform:translateY(calc(30 * var(--u)));}20%{opacity:.9;}100%{opacity:0;transform:translateY(calc(-150 * var(--u)));}}
+@keyframes k-sway{from{transform:rotate(-4deg);}to{transform:rotate(4deg);}}
+@keyframes k-bird{from{transform:translate(calc(-60 * var(--u)),0);}to{transform:translate(calc(470 * var(--u)),calc(-30 * var(--u)));}}
+@keyframes k-drop{0%{opacity:0;transform:translateY(calc(-30 * var(--u)));}10%{opacity:1;}46%{opacity:1;transform:translateY(calc(96 * var(--u)));}50%,100%{opacity:0;transform:translateY(calc(100 * var(--u)));}}
+@keyframes k-ring{0%,46%{opacity:0;transform:scale(.15);}50%{opacity:.95;}100%{opacity:0;transform:scale(2.6);}}
+@keyframes k-shimmer{from{opacity:.2;transform:translateX(calc(-6 * var(--u)));}to{opacity:.8;transform:translateX(calc(6 * var(--u)));}}
+
+/* 01 — the first spark */
+.s4-glow{opacity:.2;transition:opacity 1.6s ease .3s;}
+.card.in .s4-glow{opacity:1;}
+.s4-orbit{animation:k-spin 26s linear infinite;}
+.s4-dot{opacity:0;transform:scale(.2);transition:opacity .6s ease,transform 1s var(--e-spring);}
+.card.in .s4-dot{opacity:1;transform:none;}
+.card.in .s4-dot.d2{transition-delay:.15s;} .card.in .s4-dot.d3{transition-delay:.3s;} .card.in .s4-dot.d4{transition-delay:.45s;}
+.s4-star{transform:scale(0) rotate(-90deg);transition:transform 1.4s var(--e-spring) .15s;}
+.card.in .s4-star{transform:none;}
+.s4-starpulse{animation:k-pulse var(--breath) ease-in-out infinite alternate;}
+.s4-twinkle{animation:k-twinkle 3.2s ease-in-out infinite alternate;}
+.s4-twinkle.t2{animation-delay:-1.1s;} .s4-twinkle.t3{animation-delay:-2.2s;}
+
+/* 02 — sunrise over the hills */
+.s9-dawn{opacity:0;transition:opacity 2.4s ease .2s;}
+.card.in .s9-dawn{opacity:1;}
+.s9-stars{transition:opacity 2s ease .4s;}
+.card.in .s9-stars{opacity:.15;}
+.s9-sun{transform:translateY(calc(70 * var(--u)));transition:transform 2.4s var(--e-spring) .1s;}
+.card.in .s9-sun{transform:none;}
+.s9-sun > *{position:absolute;inset:0;}
+.s9-halo{
+  border-radius:50%;
+  background:radial-gradient(closest-side,rgba(255,209,102,.75) 0%,rgba(255,111,127,.25) 50%,rgba(255,61,139,0) 100%);
+  animation:k-pulse var(--breath) ease-in-out infinite alternate;
+}
+.s9-rays{animation:k-spin 60s linear infinite;}
+.s9-ray{stroke-dasharray:40;stroke-dashoffset:40;transition:stroke-dashoffset 1.2s var(--e-out2) 1.1s;}
+.card.in .s9-ray{stroke-dashoffset:0;}
+.s9-bird{animation:k-bird 14s linear infinite;}
+
+/* 03 — the tangle loosens into a wave */
+.s7-tangle{stroke-dasharray:1400;stroke-dashoffset:0;transition:stroke-dashoffset 2.2s var(--e-out2) .3s,opacity 1.6s ease 1s;}
+.card.in .s7-tangle{stroke-dashoffset:1400;opacity:0;}
+.s7-wave{
+  position:absolute;top:0;left:50%;display:block;height:100%;
+  width:calc(800 * var(--u));margin-left:calc(-400 * var(--u));
+  opacity:0;transition:opacity 1.4s ease 1.1s;
+}
+.card.in .s7-wave{opacity:1;}
+.s7-wave > svg{display:block;width:100%;height:100%;max-width:none;animation:k-flow 7s linear infinite;}
+.s7-wave.f2 > svg{animation-duration:11s;}
+.s7-bub{border:1.5px solid #FFD6EA;border-radius:50%;opacity:0;animation:k-rise 7s ease-in infinite;}
+
+/* 04 — the bud opens */
+.s5-petal{transform:scale(.18,.3);transition:transform 1.5s var(--e-spring);}
+.card.in .s5-petal{transform:none;}
+.card.in .s5-petal.p2{transition-delay:.12s;} .card.in .s5-petal.p3{transition-delay:.24s;}
+.card.in .s5-petal.p4{transition-delay:.36s;} .card.in .s5-petal.p5{transition-delay:.48s;}
+.s5-head{animation:k-sway 6s ease-in-out infinite alternate;}
+.s5-head > svg{animation:k-spin 50s linear infinite;}
+.s5-pollen{border-radius:50%;background:#FFE27A;opacity:0;animation:k-rise 6s ease-out infinite;}
+
+/* 05 — still water */
+.s3-moon{opacity:.4;transition:opacity 2s ease .4s;}
+.card.in .s3-moon{opacity:1;}
+.s3-drop{animation:k-drop 4.4s cubic-bezier(.55,0,1,.45) infinite;}
+.s3-ring{border-radius:50%;border:2px solid #BFF5EF;opacity:0;animation:k-ring 4.4s var(--e-out2) infinite;}
+.s3-ring.r2{border-color:#7EE7DC;animation-delay:.35s;} .s3-ring.r3{border-color:#C3A6FF;animation-delay:.7s;}
+.s3-shimmer{border-radius:999px;background:#BFF5EF;animation:k-shimmer 3.6s ease-in-out infinite alternate;}
+.s3-shimmer.m2{animation-delay:-1.4s;}
+
+@media (prefers-reduced-motion: reduce){
+  .s4-star,.s4-dot,.s5-petal,.s9-sun{transform:none!important;opacity:1!important;}
+  .s9-dawn,.s7-wave{opacity:1!important;} .s9-ray{stroke-dashoffset:0!important;}
+  .s7-tangle{opacity:0!important;}
+  .s3-drop,.s7-bub,.s5-pollen,.s3-ring{display:none;}
+}
+:root[data-contrast="high"] .card{background:#000;color:#fff;box-shadow:none;border:2px solid #000;}
+:root[data-contrast="high"] .sc-art{display:none;}
+:root[data-contrast="high"] .sc-body{background:#000;margin-top:0;padding-top:1.3rem;}
+:root[data-contrast="high"] .card .go{background:#FFE27A;color:#000;}
+
+/* On a wide screen the sun rises beside the headline, not under it. */
+@media(min-width:960px){
+  .hs-sun{left:74%;width:min(44vw,38rem);}
+  .hs-copy{padding-bottom:5.5rem;}
+}
+@media(min-width:860px){
+  .card{grid-template-rows:none;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);min-height:min(66vh,29rem);}
+  /* the picture dissolves into the words rather than meeting them at a
+     hard vertical seam */
+  .sc-art{min-height:0;-webkit-mask-image:linear-gradient(90deg,#000 62%,transparent 100%);mask-image:linear-gradient(90deg,#000 62%,transparent 100%);}
+  .sc-body{margin:0;padding:2.2rem 2.2rem 2rem;justify-content:flex-end;
+    background:linear-gradient(90deg,rgba(11,6,22,0),rgba(11,6,22,.45) 35%,rgba(11,6,22,.7));}
+  .sc-title{font-size:clamp(2rem,3.4vw,2.9rem);}
+}
+
+/* ══════════ HOME: after the check-ins ══════════ */
+.homesec{margin-top:2.6rem;}
+.homesec > h2{margin-bottom:.5rem;}
+/* collapsed-by-default notice */
+details.notice{
+  background:var(--card);border:1px solid var(--line);
+  border-radius:var(--r-lg);box-shadow:var(--shadow-card);
+  padding:.8rem 1.15rem;font-size:.92rem;max-width:64ch;margin:1rem 0 1.2rem;position:relative;overflow:hidden;
+}
+details.notice::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--grad-bloom);}
+details.notice summary{
+  cursor:pointer;font-weight:700;font-size:.9rem;letter-spacing:.01em;
+  list-style:none;display:flex;align-items:center;gap:.55rem;padding:.2rem 0;min-height:2.2rem;
+}
+details.notice summary::-webkit-details-marker{display:none;}
+details.notice summary::before{
+  content:"";width:.5rem;height:.5rem;flex:none;border-right:2px solid var(--pink);border-bottom:2px solid var(--pink);
+  rotate:-45deg;transition:rotate .3s var(--e-spring);
+}
+details.notice[open] summary::before{rotate:45deg;}
+details.notice .inner{padding-top:.7rem;animation:slidedown .35s var(--e-out2);}
+@keyframes slidedown{from{opacity:0;transform:translateY(-6px);}to{opacity:1;transform:none;}}
+.notice .sub{display:block;margin-top:.5rem;font-size:.8rem;color:var(--heal);font-family:var(--font-ui);font-weight:600;}
+
+/* the figures: a row you swipe on a phone, a band on anything wider */
+.statband{
+  display:grid;grid-auto-flow:column;grid-auto-columns:min(78%,17rem);gap:.8rem;
+  overflow-x:auto;scroll-snap-type:x mandatory;overscroll-behavior-x:contain;
+  margin:1.4rem -1.3rem 1.2rem;padding:.4rem 1.3rem 1rem;scrollbar-width:none;
+}
+.statband::-webkit-scrollbar{display:none;}
+@media(min-width:860px){
+  .statband{grid-auto-flow:row;grid-template-columns:repeat(4,1fr);grid-auto-columns:auto;overflow:visible;margin:1.4rem 0 1.2rem;padding:0;}
+}
+.stat{
+  scroll-snap-align:start;
+  background:var(--deep);color:var(--on-deep);border-radius:var(--r-lg);padding:1.2rem 1.15rem 1.1rem;
+  display:flex;flex-direction:column;gap:.45rem;position:relative;overflow:hidden;
+  box-shadow:0 18px 36px -22px rgba(30,6,60,.8);
+}
+.stat::before{
+  content:"";position:absolute;right:-30%;top:-40%;width:80%;aspect-ratio:1;border-radius:50%;
+  background:radial-gradient(closest-side,rgba(255,61,139,.35),transparent);
+}
+.stat:nth-child(2)::before{background:radial-gradient(closest-side,rgba(124,58,237,.45),transparent);}
+.stat:nth-child(3)::before{background:radial-gradient(closest-side,rgba(255,200,61,.3),transparent);}
+.stat:nth-child(4)::before{background:radial-gradient(closest-side,rgba(34,211,197,.3),transparent);}
+.stat .n{
+  position:relative;font-family:var(--font-display);font-weight:800;font-size:2.4rem;line-height:1;
+  font-variant-numeric:tabular-nums;color:#FFD166;
+  background:linear-gradient(100deg,#FF8CC6,#FFD166);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
+}
+.stat .l{position:relative;font-size:.86rem;line-height:1.45;}
+.stat .s{position:relative;font-family:var(--font-ui);font-size:.66rem;opacity:.72;margin-top:auto;}
+:root[data-contrast="high"] .stat .n{background:none;-webkit-text-fill-color:#FFE27A;}
+:root[data-contrast="high"] .stat .s{opacity:1;}
+:root[data-contrast="high"] .stat::before{display:none;}
+
+/* ── daily mood: five faces, violet to gold ── */
+.mood{
+  background:var(--card);border:1px solid var(--line);border-radius:var(--r-xl);
+  box-shadow:var(--shadow-card);padding:1.1rem 1.2rem 1rem;max-width:40rem;margin:1.6rem 0;
+  display:grid;grid-template-columns:minmax(0,1fr);gap:.75rem;position:relative;overflow:hidden;
+}
+.mood::before{
+  content:"";position:absolute;right:-4rem;top:-4rem;width:12rem;height:12rem;border-radius:50%;
+  background:radial-gradient(closest-side,color-mix(in srgb,var(--pink) 18%,transparent),transparent);pointer-events:none;
+}
+.mood .moodhead{font-family:var(--font-display);font-size:1.12rem;font-weight:800;display:block;line-height:1.25;}
+.moodbtns{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:.45rem;min-width:0;position:relative;}
+.moodbtns button{
+  --mc:#8B5CF6;
+  aspect-ratio:1;max-width:4.2rem;width:100%;justify-self:center;
+  background:color-mix(in srgb,var(--mc) 10%,var(--card));background-image:none;
+  color:color-mix(in srgb,var(--mc) 78%,var(--ink));
+  border:1.5px solid color-mix(in srgb,var(--mc) 32%,var(--line));border-radius:50%;
+  padding:0;display:grid;place-items:center;min-height:2.85rem;min-width:2.85rem;
+  transition:scale .35s var(--e-spring),background-color .2s ease,border-color .2s ease,box-shadow .3s ease;
+}
+.moodbtns button:nth-child(1){--mc:#7C3AED;} .moodbtns button:nth-child(2){--mc:#B24BD6;}
+.moodbtns button:nth-child(3){--mc:#E0437F;} .moodbtns button:nth-child(4){--mc:#F2762E;}
+.moodbtns button:nth-child(5){--mc:#E0A100;}
+.moodbtns button svg{width:62%;height:62%;display:block;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;}
+.moodbtns button svg .eye{fill:currentColor;stroke:none;}
+.moodbtns button:hover{box-shadow:0 8px 20px -8px var(--mc);border-color:var(--mc);}
+.moodbtns button:active{scale:.92;}
+.moodbtns button[aria-pressed="true"]{
+  background:var(--mc);color:#fff;border-color:var(--mc);scale:1.08;
+  box-shadow:0 0 0 4px color-mix(in srgb,var(--mc) 25%,transparent),0 10px 24px -8px var(--mc);
+  animation:mood-bloom .6s var(--e-spring);
+}
+@keyframes mood-bloom{0%{scale:.8;}60%{scale:1.14;}100%{scale:1.08;}}
+:root[data-contrast="high"] .moodbtns button{background:#fff;color:#000;border-color:#000;}
+:root[data-contrast="high"] .moodbtns button[aria-pressed="true"]{background:#000;color:#fff;}
+.moodpriv{display:block;font-size:.72rem;color:var(--muted);margin-top:.15rem;}
+.moodmsg{font-size:.78rem;color:var(--muted);line-height:1.5;}
+.moodstrip{display:flex;gap:.25rem;align-items:flex-end;height:1.9rem;min-width:0;overflow:hidden;}
+.moodcell{flex:1;max-width:1.1rem;border-radius:4px 4px 2px 2px;background:var(--line);transition:height .5s var(--e-spring);}
+.moodcell.v1{background:#7C3AED;}
+.moodcell.v2{background:#B24BD6;}
+.moodcell.v3{background:#E0437F;}
+.moodcell.v4{background:#F2762E;}
+.moodcell.v5{background:#F2B000;}
+
+.rescreen{
+  font-size:.93rem;line-height:1.6;max-width:64ch;margin:1.2rem 0;padding:1rem 1.15rem;
+  border-radius:var(--r-lg);background:color-mix(in srgb,var(--heal) 7%,var(--card));
+  border:1px solid color-mix(in srgb,var(--heal) 20%,var(--line));
+}
+.rescreen b{color:var(--heal);}
+
+/* ── what's behind this: present, but quiet ──
+   The working papers are for the reader who wants to check the claims,
+   not the reader who came to check in. They sit at the foot, small, in
+   one quiet list: a label, a title, an arrow. */
+.behindsec{margin-top:3rem;padding-top:1.4rem;border-top:1px solid var(--line);}
+.behindsec h2{font-size:1.05rem;font-family:var(--font-ui);font-weight:700;letter-spacing:.02em;color:var(--muted);margin-bottom:.3rem;}
+.behindsec .sec-sub{font-size:.84rem;margin-bottom:.3rem;}
+.behind{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(15rem,100%),1fr));gap:.45rem;margin-top:.8rem;}
+.bcard{
+  display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:.1rem .8rem;
+  background:transparent;border:1px solid var(--line);border-radius:var(--r-md);
+  padding:.62rem .9rem;text-decoration:none;color:inherit;min-height:44px;
+  transition:border-color .2s ease,background-color .2s ease;
+}
+.bcard:hover,.bcard:focus-visible{border-color:color-mix(in srgb,var(--heal) 50%,var(--line));background:color-mix(in srgb,var(--heal) 5%,transparent);}
+.bcard .k{grid-column:1;font-family:var(--font-ui);font-size:.64rem;font-weight:700;letter-spacing:.08em;color:var(--muted);}
+.bcard h3{grid-column:1;font-family:var(--font-ui);font-size:.9rem;font-weight:700;margin:0;line-height:1.3;}
+.bcard p{display:none;}
+.bcard .go{
+  grid-column:2;grid-row:1 / span 2;font-family:var(--font-ui);font-size:0;color:var(--heal);
+  width:1.6rem;height:1.6rem;border-radius:50%;display:grid;place-items:center;
+  background:color-mix(in srgb,var(--heal) 10%,transparent);transition:translate .3s var(--e-spring);
+}
+.bcard .go::before{content:"→";font-size:.85rem;font-weight:700;}
+.bcard:hover .go{translate:3px 0;}
+
+/* ══════════ TEST ══════════ */
+.tokenbar{
+  position:sticky;top:var(--strip-h,0px);z-index:20;background:var(--deep);color:var(--on-deep);
+  padding:.6rem 0 .7rem;margin:0 0 1.3rem;box-shadow:0 10px 24px -16px rgba(20,4,40,.7);
+}
+.tokenbar[hidden]{display:none;}
+.tokenbar .wrap{display:flex;align-items:center;gap:.9rem;flex-wrap:wrap;}
+.tokenbar .tk{
+  font-family:var(--font-ui);font-size:.74rem;font-weight:800;letter-spacing:.1em;
+  color:#1B1030;background:#FFD166;padding:.2rem .6rem;border-radius:999px;white-space:nowrap;
+}
+.tokenbar .tkname{font-family:var(--font-ui);font-size:.84rem;font-weight:700;opacity:.92;margin-right:auto;}
+.tokenbar .tkclock{font-family:var(--font-ui);font-size:.75rem;opacity:.7;font-variant-numeric:tabular-nums;}
+.pbar{height:.4rem;background:rgba(255,246,238,.14);border-radius:999px;width:100%;margin-top:.55rem;overflow:hidden;}
+.pfill{height:100%;background:linear-gradient(90deg,#8B5CF6,#FF3D8B,#FFD166);border-radius:999px;width:0%;transition:width .5s var(--e-spring);
+  box-shadow:0 0 12px rgba(255,61,139,.6);}
+
+#view-test{overflow-x:clip;}
+.testhead{margin-bottom:1rem;}
+.testhead .lede{font-size:1rem;color:var(--muted);margin-top:.2rem;}
+.period{
+  display:inline-block;margin-top:.8rem;font-size:.8rem;font-weight:700;color:var(--heal);
+  padding:.25rem .7rem;border-radius:999px;background:color-mix(in srgb,var(--heal) 9%,transparent);
+}
+.progress{font-family:var(--font-ui);font-size:.8rem;color:var(--muted);margin:.2rem 0 .6rem;font-variant-numeric:tabular-nums;}
+.safenow{
+  background:var(--stamp-bg);color:var(--on-stamp);
+  border-radius:var(--r-xl);padding:1.4rem 1.3rem;margin:.2rem 0 1.2rem;
+  box-shadow:0 24px 50px -24px rgba(194,24,91,.7);position:relative;overflow:hidden;
+}
+.safenow::before{
+  content:"";position:absolute;right:-5rem;top:-5rem;width:14rem;height:14rem;border-radius:50%;
+  background:radial-gradient(closest-side,rgba(255,209,102,.3),transparent);pointer-events:none;
+}
+.safenow[hidden]{display:none;}
+.safenow h2{font-size:1.3rem;font-weight:800;line-height:1.3;margin-bottom:.55rem;position:relative;}
+.safenow p{font-size:.95rem;line-height:1.6;margin-bottom:.9rem;position:relative;}
+.safenow-lines{display:flex;flex-direction:column;gap:.5rem;margin-bottom:1.1rem;position:relative;}
+.safenow-lines a{
+  display:flex;align-items:center;min-height:48px;padding:.5rem 1rem;
+  background:rgba(255,255,255,.14);border:1.5px solid rgba(255,255,255,.55);
+  border-radius:var(--r-md);color:#fff;font-weight:700;text-decoration:none;
+}
+.safenow-lines a::before{content:"";width:.5rem;height:.5rem;border-radius:50%;background:#FFD166;margin-right:.7rem;flex:none;}
+.safenow-lines a:hover,.safenow-lines a:focus-visible{background:rgba(255,255,255,.26);}
+.safenow-go{display:flex;gap:.6rem;flex-wrap:wrap;position:relative;}
+.safenow-go button{flex:1 1 11rem;min-height:3rem;}
+.safenow-go #safeNowHelp{background:#fff;color:#8E0B45;border-color:#fff;font-weight:800;}
+.safenow-go #safeNowGo{background:transparent;color:#fff;border-color:rgba(255,255,255,.7);}
+.safenow-note{font-size:.84rem;opacity:.9;margin:.85rem 0 0;position:relative;}
+.primer{
+  background:var(--card);border:1px solid var(--line);border-radius:var(--r-xl);box-shadow:var(--shadow-soft);
+  padding:1.6rem 1.4rem;max-width:35rem;margin:.5rem 0 1.2rem;position:relative;overflow:hidden;
+}
+.primer::before{content:"";position:absolute;left:0;right:0;top:0;height:4px;background:var(--grad-bloom);}
+.primer[hidden]{display:none;}
+.primer h2{font-size:1.4rem;font-weight:800;line-height:1.3;margin-bottom:.9rem;}
+.primer ul{list-style:none;display:flex;flex-direction:column;gap:.7rem;margin-bottom:1.3rem;}
+.primer li{font-size:.95rem;color:var(--muted);line-height:1.5;padding-left:1.5rem;position:relative;}
+.primer li::before{content:"";position:absolute;left:0;top:.45em;width:.7rem;height:.7rem;border-radius:50%;background:var(--grad-bloom);}
+.primer-go{display:flex;gap:.7rem;flex-wrap:wrap;}
+.primer-go #primerStart{flex:1 1 10rem;min-height:3.2rem;font-size:1rem;}
+.primer-go #primerBack{flex:0 1 auto;min-height:3.2rem;}
+
+.qbox{
+  background:var(--card);border:1px solid var(--line);border-radius:var(--r-xl);box-shadow:var(--shadow-soft);
+  padding:1.5rem 1.45rem;max-width:48rem;animation:qin .5s var(--e-spring);
+}
+@keyframes qin{from{opacity:0;transform:translateX(22px) scale(0.985);}to{opacity:1;transform:translateX(0) scale(1);}}
+.qbox.back{animation:qinback .5s var(--e-spring);}
+@keyframes qinback{from{opacity:0;transform:translateX(-22px) scale(0.985);}to{opacity:1;transform:translateX(0) scale(1);}}
+.qtext{font-family:var(--font-display);font-size:1.32rem;font-weight:700;margin-bottom:1.1rem;text-wrap:balance;color:var(--ink);line-height:1.35;}
+:lang(hi) .qtext,:lang(mr) .qtext,:lang(bn) .qtext,:lang(ta) .qtext,:lang(te) .qtext{line-height:1.5;font-size:1.2rem;}
+.qtext .qnum{
+  font-family:var(--font-ui);color:#fff;font-size:.78rem;margin-right:.6rem;font-weight:800;
+  display:inline-grid;place-items:center;min-width:2.2rem;height:1.6rem;padding:0 .45rem;border-radius:999px;
+  background:#6D28D9;background-image:var(--grad-cta);vertical-align:.2em;
+}
+/* the label is what makes it read as a control; the target is 44px even
+   though the icon inside it is 18 */
+.qspeak-btn{display:inline-flex;align-items:center;gap:.45rem;
+  min-height:44px;padding:0 .8rem;margin:-.55rem 0 .55rem -.8rem;
+  background:none;background-image:none;border:none;border-radius:999px;box-shadow:none;
+  color:var(--muted);font:inherit;font-size:.86rem;font-weight:600;cursor:pointer;}
+.qspeak-btn svg{width:18px;height:18px;flex:none;fill:none;stroke:currentColor;
+  stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;}
+.qspeak-btn:hover{color:var(--heal);background:color-mix(in srgb, var(--heal) 10%, transparent);box-shadow:none;}
+.qspeak-btn:focus-visible{outline:3px solid var(--heal);outline-offset:2px;}
+.qspeak-btn.speaking{color:var(--heal);}
+.qspeak-btn.speaking svg{animation:k-pulse .8s ease-in-out infinite alternate;}
+
+/* The results screen ended with eight buttons stacked one per line, ragged
+   and unsorted. Three named jobs, laid out as rows, and the way out on its
+   own underneath. */
+.actionrow{display:flex;flex-wrap:wrap;gap:.55rem;}
+.actionrow button{flex:1 1 11rem;}
+#view-test .actionrow{margin-top:1rem;}
+.resgroup{margin-top:1.3rem;}
+.resgroup-h{
+  font-family:var(--font-ui);font-size:.74rem;font-weight:800;
+  letter-spacing:.11em;color:var(--muted);margin-bottom:.55rem;
+}
+.resexit{margin-top:1.6rem;padding-top:1.1rem;border-top:1px solid var(--line);}
+.resexit button{width:100%;}
+
+.bigopts{display:flex;flex-direction:column;gap:.6rem;}
+.bigopts button{
+  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI Variable Text','Segoe UI',system-ui,sans-serif;
+  font-weight:600;text-transform:none;letter-spacing:0;
+  font-size:1.02rem;background:var(--paper);background-image:none;color:var(--ink);
+  border:1.5px solid var(--line);border-radius:var(--r-lg);padding:.85rem 1.15rem;text-align:left;
+  display:flex;align-items:center;gap:.85rem;cursor:pointer;min-height:3.5rem;position:relative;overflow:hidden;
+  transition:border-color .2s ease,background-color .2s ease,translate .3s var(--e-spring),scale .2s var(--e-spring),box-shadow .3s ease;
+}
+:lang(hi) .bigopts button,:lang(mr) .bigopts button,:lang(bn) .bigopts button,:lang(ta) .bigopts button,:lang(te) .bigopts button{font-family:inherit;}
+.bigopts button:hover{border-color:color-mix(in srgb,var(--heal) 60%,var(--line));box-shadow:0 8px 20px -14px rgba(109,40,217,.6);translate:3px 0;}
+.bigopts button:active{scale:.985;}
+.bigopts button.picked{animation:pick .5s var(--e-spring);}
+.bigopts button.picked::after{
+  content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;
+  background:radial-gradient(circle at 12% 50%,rgba(255,61,139,.28),transparent 60%);
+  animation:pickglow .7s var(--e-out2) forwards;
+}
+@keyframes pick{0%{scale:1;}40%{scale:1.02;}100%{scale:1;}}
+@keyframes pickglow{from{opacity:1;}to{opacity:0;}}
+@media (prefers-reduced-motion: reduce){ .bigopts button.picked{animation:none;} }
+.bigopts button[aria-checked="true"]{
+  border-color:var(--heal);border-width:2px;background:color-mix(in srgb, var(--heal) 11%, var(--card));
+  font-weight:700;box-shadow:0 0 0 3px color-mix(in srgb, var(--heal) 20%, transparent);
+}
+@media (pointer: coarse){ .bigopts .kbd{display:none;} }
+.bigopts .kbd{
+  font-family:var(--font-ui);font-size:.76rem;font-weight:700;border:1.5px solid var(--line);border-radius:999px;
+  min-width:1.7rem;height:1.7rem;display:grid;place-items:center;color:var(--muted);flex:none;
+}
+.bigopts button[aria-checked="true"] .kbd{border-color:transparent;color:#fff;background:#6D28D9;}
+
+/* ══════════ RESULTS ══════════ */
+.scoreboard{
+  display:grid;grid-template-columns:11rem 1fr;gap:0;border:1px solid var(--line);border-radius:var(--r-xl);
+  background:var(--card);margin-bottom:1.1rem;max-width:48rem;box-shadow:var(--shadow-soft);overflow:hidden;
+}
+@media(max-width:600px){.scoreboard{grid-template-columns:1fr;}}
+.scorebox{
+  background:var(--deep);color:var(--on-deep);padding:1.5rem 1.1rem;text-align:center;
+  display:flex;flex-direction:column;justify-content:center;align-items:center;position:relative;overflow:hidden;isolation:isolate;
+}
+.scorebox::before{
+  content:"";position:absolute;inset:-30%;z-index:-1;
+  background:conic-gradient(from 0deg,rgba(124,58,237,.5),rgba(255,61,139,.45),rgba(255,200,61,.45),rgba(124,58,237,.5));
+  filter:blur(28px);opacity:.7;animation:k-spin 16s linear infinite;
+}
+.scorebox .num{
+  font-family:var(--font-display);font-weight:800;font-size:3.4rem;line-height:1;font-variant-numeric:tabular-nums;color:#FFD166;
+  text-shadow:0 0 30px rgba(255,209,102,.45);
+}
+.scorebox .of{font-family:var(--font-ui);font-size:.8rem;opacity:.88;margin-top:.4rem;}
+.verdict{padding:1.3rem 1.35rem;}
+:root[data-contrast="high"] .scorebox::before{display:none;}
+
+.timecard{
+  max-width:48rem;margin:0 0 1.3rem;border:1px solid var(--line);
+  border-radius:var(--r-lg);background:var(--card);padding:1rem 1.2rem;box-shadow:var(--shadow-subtle);position:relative;overflow:hidden;
+}
+.timecard::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:linear-gradient(180deg,var(--sun),var(--pink));}
+.timecard .t{font-family:var(--font-ui);font-size:.88rem;color:var(--ink);font-weight:800;font-variant-numeric:tabular-nums;}
+.timecard .c{font-size:.88rem;color:var(--muted);margin-top:.35rem;line-height:1.5;}
+
+details.acc{border:1px solid var(--line);background:var(--card);border-radius:var(--r-lg);box-shadow:var(--shadow-subtle);margin-bottom:.75rem;max-width:64ch;overflow:hidden;}
+details.acc > summary{
+  cursor:pointer;padding:.85rem 1.15rem;font-weight:700;font-size:.97rem;min-height:3rem;
+  list-style:none;display:flex;align-items:center;gap:.65rem;
+}
+details.acc > summary::-webkit-details-marker{display:none;}
+details.acc > summary::before{
+  content:"";width:.5rem;height:.5rem;flex:none;border-right:2px solid var(--heal);border-bottom:2px solid var(--heal);
+  rotate:-45deg;transition:rotate .3s var(--e-spring);
+}
+details.acc[open] > summary{border-bottom:1px solid var(--line);background:color-mix(in srgb, var(--heal) 5%, var(--card));}
+details.acc[open] > summary::before{rotate:45deg;}
+details.acc .accbody{padding:.95rem 1.15rem 1.15rem;animation:slidedown .35s var(--e-out2);}
+details.acc ul{margin:0 0 0 1.2rem;}
+details.acc li{margin-bottom:.55rem;font-size:.93rem;line-height:1.55;}
+details.acc li::marker{color:var(--pink);}
+
+.band{
+  display:inline-block;font-weight:800;letter-spacing:.02em;
+  font-size:1.02rem;padding:.3rem 1rem;border:1.5px solid;border-radius:999px;margin-bottom:.7rem;
+}
+.band.b0{color:var(--heal);border-color:var(--heal);background:color-mix(in srgb, var(--heal) 10%, transparent);}
+.band.b1{color:#8A5A00;border-color:#C98A00;background:rgba(242,163,0,.12);}
+.band.b2{color:#A8430E;border-color:#D4631F;background:rgba(242,118,46,.12);}
+.band.b3{color:var(--stamp);border-color:var(--stamp);background:color-mix(in srgb, var(--stamp) 10%, transparent);}
+:root[data-theme="dark"]:not([data-contrast="high"]) .band.b1{color:#FFD166;border-color:#FFD166;}
+:root[data-theme="dark"]:not([data-contrast="high"]) .band.b2{color:#FFA566;border-color:#FFA566;}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]):not([data-contrast="high"]) .band.b1{color:#FFD166;border-color:#FFD166;}
+  :root:not([data-theme="light"]):not([data-contrast="high"]) .band.b2{color:#FFA566;border-color:#FFA566;}
+}
+.verdict p{font-size:.98rem;line-height:1.55;}
+
+.sevscale{max-width:48rem;margin:-.1rem 0 1.7rem;position:relative;padding-top:1.8rem;}
+.sevmarker{
+  position:absolute;top:0;transform:translateX(-50%);text-align:center;
+  font-family:var(--font-ui);font-size:.8rem;font-weight:800;
+  font-variant-numeric:tabular-nums;transition:left .8s var(--e-spring);
+}
+.sevmarker span{display:inline-block;background:var(--ink);color:var(--paper);border-radius:999px;padding:0 .45rem;line-height:1.4;}
+.sevtri{width:0;height:0;border-left:.35rem solid transparent;border-right:.35rem solid transparent;border-top:.45rem solid var(--ink);margin:0 auto;}
+.sevtrack{display:flex;height:.8rem;border-radius:999px;background:var(--card);overflow:hidden;gap:2px;}
+.sevseg{border-radius:2px;}
+.sevseg:first-child{border-radius:999px 2px 2px 999px;}
+.sevseg:last-child{border-radius:2px 999px 999px 2px;}
+.sevseg.s0{background:#A78BFA;} .sevseg.s1{background:#F6C453;}
+.sevseg.s2{background:#F59E6B;} .sevseg.s3{background:#EC6A96;}
+.sevlabels{display:flex;font-family:var(--font-ui);font-size:.7rem;color:var(--muted);margin-top:.35rem;font-variant-numeric:tabular-nums;}
+.sevlabels div{text-align:center;}
+
+.safety{
+  background:var(--stamp-bg);color:var(--on-stamp);padding:1.5rem 1.5rem;margin-bottom:1.5rem;
+  border-radius:var(--r-xl);box-shadow:0 24px 50px -24px rgba(194,24,91,.7);max-width:48rem;
+}
+.safety h3{font-weight:800;font-size:1.3rem;margin-bottom:.65rem;letter-spacing:.01em;}
+.safety p{font-size:.98rem;margin-bottom:.55rem;line-height:1.55;}
+.safety a{color:#fff;font-weight:700;text-decoration:underline;text-underline-offset:2px;}
+.safety .lines{font-family:var(--font-ui);font-size:.9rem;margin-top:.7rem;line-height:2.1;}
+.sheetnudge{max-width:64ch;font-size:.9rem;color:var(--heal);font-weight:600;margin:.4rem 0 .2rem;}
+
+/* ══════════ GUIDE ══════════ */
+/* ── paced breathing: the orb is the bloom-sun, breathing ── */
+.breathe{
+  background:var(--card);border:1px solid var(--line);
+  border-radius:var(--r-xl);box-shadow:var(--shadow-card);
+  padding:1.4rem 1.4rem;margin:1.1rem 0;max-width:44rem;position:relative;overflow:hidden;
+}
+.breathe::before{content:"";position:absolute;left:0;right:0;top:0;height:4px;background:var(--grad-bloom);}
+.breathe h3{font-size:1.2rem;font-weight:800;margin-bottom:.45rem;color:var(--ink);}
+.breathe p{font-size:.9rem;color:var(--muted);margin-bottom:.9rem;line-height:1.5;}
+.breathe-proto{border-radius:999px!important;background-image:none!important;}
+.breathestage{display:flex;align-items:center;gap:1.4rem;flex-wrap:wrap;}
+.orb{
+  width:8.2rem;height:8.2rem;border-radius:50%;flex:none;position:relative;
+  background:radial-gradient(circle at 50% 50%,#FFE9A8 0%,#FFC83D 22%,#FF6FA8 52%,#8B5CF6 78%,rgba(124,58,237,0) 100%);
+  box-shadow:0 0 30px rgba(255,61,139,.35);
+  display:grid;place-items:center;text-align:center;
+  transform:scale(.65);transition:transform 4s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 3s ease;
+}
+.orb::before{
+  content:"";position:absolute;inset:-14%;border-radius:50%;
+  border:1.5px dashed color-mix(in srgb,var(--pink) 45%,transparent);opacity:.7;
+  animation:k-spin 40s linear infinite;
+}
+.orb.in{transform:scale(1.08);transition-duration:4s;box-shadow:0 0 60px 12px rgba(255,61,139,.35);}
+.orb.hold{transform:scale(1.08);transition-duration:4s;box-shadow:0 0 70px 18px rgba(255,200,61,.4);}
+.orb.out{transform:scale(.65);transition-duration:6s;box-shadow:0 0 20px rgba(124,58,237,.25);}
+@media (prefers-reduced-motion: reduce){ .orb{transition:none!important;transform:scale(.85)!important;} }
+.orb span{
+  position:relative;font-family:var(--font-ui);
+  font-size:.84rem;color:#1B1030;font-weight:800;padding:.1rem .5rem;line-height:1.3;
+  background:rgba(255,246,238,.82);border-radius:999px;
+}
+.breathemeta{font-family:var(--font-ui);font-size:.8rem;color:var(--muted);}
+.breathebtns{display:flex;gap:.6rem;flex-wrap:wrap;margin-top:.5rem;}
+
+/* ── guided conversation bubbles ── */
+.guidewrap{max-width:44rem;}
+.guidenote{
+  background:color-mix(in srgb,var(--heal) 6%,var(--card));border:1px dashed color-mix(in srgb,var(--heal) 35%,var(--line));
+  border-radius:var(--r-lg);padding:.9rem 1.15rem;
+  font-size:.86rem;color:var(--muted);margin-bottom:1rem;
+}
+.transcript{display:flex;flex-direction:column;gap:.7rem;margin-bottom:1.1rem;}
+.bub{
+  padding:.9rem 1.15rem;max-width:88%;border:1px solid var(--line);border-radius:1.4rem;
+  font-size:.98rem;line-height:1.55;animation:bubin .5s var(--e-spring);box-shadow:var(--shadow-subtle);
+}
+@media (prefers-reduced-motion: reduce){ .bub{animation:none;} }
+@keyframes bubin{from{opacity:0;transform:translateY(12px) scale(.97);}to{opacity:1;transform:none;}}
+.bub.g{background:var(--card);align-self:flex-start;border-bottom-left-radius:.35rem;position:relative;}
+.bub.g::before{content:"";position:absolute;left:-.3rem;top:.9rem;width:.6rem;height:.6rem;border-radius:50%;background:var(--grad-bloom);}
+.bub.u{background-color:#6D28D9;background-image:var(--grad-cta);color:#fff;border-color:transparent;align-self:flex-end;text-align:right;border-bottom-right-radius:.35rem;}
+.bub.crisis{background:var(--stamp-bg);color:var(--on-stamp);border-color:var(--stamp);align-self:stretch;max-width:100%;}
+.bub.crisis a{color:#fff;font-weight:700;}
+.bub .lines{font-family:var(--font-ui);font-size:.88rem;line-height:2.1;margin-top:.6rem;}
+.typing{display:inline-flex;gap:.3rem;align-items:center;padding:.2rem 0;}
+.typing i{width:.42rem;height:.42rem;border-radius:50%;background:var(--pink);animation:blink 1.1s infinite;}
+.typing i:nth-child(2){animation-delay:.18s;background:var(--violet);} .typing i:nth-child(3){animation-delay:.36s;background:var(--sun);}
+@keyframes blink{0%,60%,100%{opacity:.25;transform:none;}30%{opacity:1;transform:translateY(-3px);}}
+@media (prefers-reduced-motion: reduce){ .typing i{animation:none;opacity:.6;} }
+
+.choices{display:flex;flex-direction:column;gap:.55rem;}
+.choices button{
+  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI Variable Text','Segoe UI',system-ui,sans-serif;
+  font-weight:600;text-transform:none;letter-spacing:0;
+  background:var(--card);background-image:none;color:var(--ink);border:1.5px solid var(--line);border-radius:var(--r-lg);
+  padding:.8rem 1.05rem;text-align:left;font-size:.96rem;min-height:3rem;box-shadow:var(--shadow-subtle);
+  transition:border-color .2s ease,translate .3s var(--e-spring),box-shadow .3s ease;
+}
+:lang(hi) .choices button,:lang(mr) .choices button,:lang(bn) .choices button,:lang(ta) .choices button,:lang(te) .choices button{font-family:inherit;}
+.choices button:hover{border-color:var(--heal);translate:3px 0;box-shadow:0 8px 20px -14px rgba(109,40,217,.6);}
+.choices button:active{scale:.985;}
+.choices button.now{border-color:var(--stamp);color:var(--stamp);font-weight:800;}
+.choices button.go{background-color:#6D28D9;background-image:var(--grad-cta);color:#fff;border-color:transparent;font-weight:800;}
+.guidebar{display:flex;gap:.6rem;flex-wrap:wrap;margin-bottom:1rem;}
+
+/* ══════════ HISTORY ══════════ */
+.histempty{
+  max-width:40rem;padding:1.4rem 1.3rem;border-radius:var(--r-xl);border:1.5px dashed color-mix(in srgb,var(--heal) 35%,var(--line));
+  color:var(--muted);background:color-mix(in srgb,var(--heal) 4%,var(--card));margin:1.2rem 0;
+}
+.histblock{
+  background:var(--card);border:1px solid var(--line);border-radius:var(--r-xl);box-shadow:var(--shadow-card);
+  padding:1.2rem 1.25rem;margin:1.1rem 0;max-width:48rem;position:relative;overflow:hidden;
+}
+.histblock::before{content:"";position:absolute;left:0;right:0;top:0;height:3px;background:var(--grad-bloom);}
+.histblock h3{font-size:1.1rem;font-weight:800;margin-bottom:.2rem;}
+.histblock .sub{font-size:.84rem;color:var(--muted);margin-bottom:.8rem;}
+.chartwrap{position:relative;overflow-x:auto;margin:.3rem 0 .9rem;padding-bottom:.2rem;}
+.ctip{
+  position:absolute;display:none;transform:translate(-50%,calc(-100% - 10px));pointer-events:none;white-space:nowrap;
+  background:var(--deep);color:var(--on-deep);font-family:var(--font-ui);font-size:.74rem;font-weight:600;
+  padding:.3rem .6rem;border-radius:999px;box-shadow:var(--shadow-card);
+}
+table.histtable{border-collapse:separate;border-spacing:0;width:100%;font-size:.88rem;margin:.4rem 0 .9rem;
+  border:1px solid var(--line);border-radius:var(--r-md);overflow:hidden;}
+table.histtable caption{text-align:left;font-family:var(--font-ui);font-size:.72rem;font-weight:800;letter-spacing:.08em;color:var(--muted);padding:.2rem 0 .45rem;}
+table.histtable th,table.histtable td{padding:.55rem .75rem;text-align:left;border-bottom:1px solid var(--line);vertical-align:top;}
+table.histtable tr:last-child td{border-bottom:0;}
+table.histtable th{font-family:var(--font-ui);font-size:.7rem;letter-spacing:.06em;background:color-mix(in srgb,var(--heal) 6%,var(--card));}
+table.histtable td:nth-child(2){font-variant-numeric:tabular-nums;font-weight:700;white-space:nowrap;}
+.histctl{display:flex;flex-wrap:wrap;gap:.55rem;margin-top:1.3rem;}
+
+/* ══════════ HELP ══════════ */
+.dirlist{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(15rem,100%),1fr));gap:.7rem;margin:1.2rem 0 1rem;}
+.dir{
+  background:var(--card);border:1px solid var(--line);border-radius:var(--r-lg);padding:1rem 1.1rem;box-shadow:var(--shadow-card);
+  position:relative;overflow:hidden;
+}
+.dir::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--grad-bloom);}
+.dir a{font-family:var(--font-display);font-size:1.1rem;font-weight:800;text-decoration:none;color:var(--heal);}
+.dir a:hover{text-decoration:underline;}
+.dir p{font-size:.86rem;color:var(--muted);margin-top:.25rem;}
+.res{
+  background:var(--card);border:1px solid var(--line);border-radius:var(--r-lg);padding:1rem 1.15rem;margin:.7rem 0;
+  box-shadow:var(--shadow-subtle);max-width:48rem;
+}
+.res h3{font-size:1.02rem;font-weight:800;margin-bottom:.3rem;}
+.res p{font-size:.92rem;line-height:1.6;}
+.res a{font-weight:700;}
+.regiontabs{display:flex;gap:.4rem;flex-wrap:wrap;margin:1.3rem 0 .8rem;}
+.regiontabs button{
+  background:var(--card);background-image:none;color:var(--ink);border:1.5px solid var(--line);
+  font-size:.84rem;font-weight:700;padding:.4rem .95rem;min-height:2.4rem;
+}
+.regiontabs button:hover{border-color:var(--heal);box-shadow:none;}
+.regiontabs button[aria-pressed="true"]{background-color:#6D28D9;background-image:var(--grad-cta);color:#fff;border-color:transparent;}
+table.lines{border-collapse:separate;border-spacing:0;width:100%;font-size:.9rem;background:var(--card);
+  border:1px solid var(--line);border-radius:var(--r-lg);overflow:hidden;min-width:20rem;}
+table.lines th,table.lines td{padding:.6rem .8rem;text-align:left;border-bottom:1px solid var(--line);vertical-align:top;}
+table.lines tr:last-child td{border-bottom:0;}
+table.lines th{font-family:var(--font-ui);font-size:.7rem;letter-spacing:.06em;background:color-mix(in srgb,var(--heal) 6%,var(--card));}
+table.lines td a{font-weight:800;white-space:nowrap;display:inline-flex;align-items:center;min-height:44px;}
+.reviewed{font-size:.8rem;color:var(--muted);margin:.7rem 0 0;max-width:64ch;}
+
+/* ═══════════════════════════════════════════════════════════════
+   THE OVERTURE — a wordless opening
+   ───────────────────────────────────────────────────────────────
+   Chaplin's principle: expression crosses every language border.
+   Not one word appears in the story, so it reads identically to a
+   Tamil speaker, a Bengali speaker, or someone who cannot read at
+   all — which matters, because low literacy and mental illness
+   overlap most in exactly the populations this serves.
+
+   The story is the same one: a person alone on the floor of a
+   room, the world passing the window, someone coming through the
+   door to sit beside them, the head lifting. What is new is where
+   it ends. The warmth does not stop at the room — it opens into the
+   bloom-sun over the two of them, and that is the logo. The brand
+   is not a badge stuck on the end of the film; it is the last beat
+   of the story.
+
+   Hard safety rule: it must never stand between a person in crisis
+   and a phone number. The helpline strip stays live above it, Skip
+   is the first focusable element, it self-dismisses, and it plays
+   once per device, never on a deep link, never for reduced motion.
+   ═══════════════════════════════════════════════════════════════ */
+#overture{
+  position:fixed;inset:0;z-index:60;color:#FFF6EE;
+  background:
+    radial-gradient(70% 50% at 50% 40%, rgba(124,58,237,.30), transparent 70%),
+    radial-gradient(60% 40% at 50% 105%, rgba(255,61,139,.22), transparent 70%),
+    #0B0616;
+  display:grid;grid-template-rows:auto 1fr auto;
+}
+#overture[hidden]{display:none;}
+#overture.closing{animation:otOut .6s var(--e-out2) forwards;}
+@keyframes otOut{to{opacity:0;visibility:hidden;}}
+.ot-top{padding:.55rem 0;background:rgba(255,255,255,.04);border-bottom:1px solid rgba(255,255,255,.08);
+  color:rgba(255,246,238,.88);font-family:var(--font-ui);font-size:.72rem;}
+.ot-top .wrap{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap;align-items:center;}
+.ot-top a{color:#FFD166;font-weight:700;}
+.ot-stage{display:grid;place-items:center;padding:1rem;min-height:0;}
+.ot-stage svg{width:min(100%,52rem);height:auto;max-height:100%;display:block;}
+/* frame, caption and progress as one centred block */
+.ot-scene{display:flex;flex-direction:column;align-items:center;gap:.9rem;
+          width:min(100%,52rem);max-height:100%;min-height:0;}
+.ot-frame{
+  width:100%;display:grid;place-items:center;min-height:0;
+  border-radius:var(--r-xl);overflow:hidden;
+  box-shadow:0 40px 90px -40px rgba(124,58,237,.8),0 0 0 1px rgba(255,255,255,.07);
+}
+.ot-cap{
+  font-family:var(--font-ui);
+  font-size:.82rem;color:rgba(255,246,238,.72);text-align:center;margin:0;max-width:34ch;
+}
+/* Six names, wrapping to as many rows as they need. Each is a real
+   44px target — this is the control most likely to be pressed by
+   someone who can read nothing else on the screen. */
+.ot-langs{display:flex;flex-wrap:wrap;gap:.4rem;justify-content:center;max-width:32rem;}
+.ot-langs button{
+  font-family:system-ui,'Noto Sans',sans-serif;
+  text-transform:none;letter-spacing:0;font-size:.86rem;font-weight:600;
+  min-height:44px;padding:.4rem .9rem;border-radius:999px;
+  background:rgba(255,255,255,.07);background-image:none;color:#FFF6EE;border:1.5px solid rgba(255,246,238,.22);
+}
+.ot-langs button:hover{transform:none;box-shadow:none;border-color:#FFD166;}
+.ot-langs button[aria-pressed="true"]{background-color:#6D28D9;background-image:var(--grad-cta);color:#fff;border-color:transparent;}
+.ot-bottom{padding:.9rem 0 1.4rem;}
+.ot-bottom .wrap{display:flex;justify-content:center;align-items:center;gap:1rem;flex-wrap:wrap;}
+#skipIntro{
+  font-family:var(--font-ui);
+  text-transform:none;letter-spacing:.03em;font-size:.86rem;
+  background:transparent;background-image:none;color:#FFF6EE;border:1.5px solid rgba(255,246,238,.55);padding:.5rem 1.3rem;
+}
+#skipIntro:hover{transform:none;box-shadow:none;background:#FFF6EE;color:#1B1030;}
+.ot-progress{
+  height:4px;flex:none;width:min(100%,14rem);border-radius:999px;overflow:hidden;
+  background:rgba(255,246,238,.14);
+}
+.ot-progress i{display:block;height:100%;width:0;background:linear-gradient(90deg,#8B5CF6,#FF3D8B,#FFD166);}
+.ot-progress i.run{width:100%;transition:width 9.6s linear;}
+
+/* ── the opening, on a phone ──
+   The scene is a landscape drawing, so on a portrait screen it can only
+   be so tall. The answer is composition, not geometry: the slack goes to
+   the stage and the whole block — picture, caption, languages, progress
+   — sits centred where the eye already is. Edge to edge and squared off,
+   the way a film letterboxes, rather than a rounded widget adrift. */
+@media(max-width:640px){
+  .ot-top{font-size:.6rem;padding:.4rem 0;line-height:1.4;letter-spacing:.02em;}
+  .ot-top .wrap{gap:.05rem .7rem;}
+  #overture{grid-template-rows:auto 1fr auto;}
+  .ot-stage{padding:0;align-self:center;}
+  .ot-scene{gap:.85rem;}
+  .ot-bottom{padding:.7rem 0 1.1rem;align-self:end;}
+  #skipIntro{font-size:.8rem;padding:.6rem 1.3rem;}
+  .ot-frame{
+    aspect-ratio:16/9;width:100%;border-radius:0;
+    border-top:1px solid rgba(255,255,255,.08);border-bottom:1px solid rgba(255,255,255,.08);
+    display:grid;place-items:center;
+  }
+  .ot-cap{font-size:.78rem;padding:0 1.1rem;}
+  .ot-stage svg{width:100%;height:100%;}
+  /* an even three-by-two: none of these six is an afterthought */
+  .ot-langs{
+    display:grid;grid-template-columns:repeat(3,minmax(0,1fr));
+    gap:.45rem;width:100%;padding:0 1.1rem;
+  }
+  .ot-langs button{padding:.4rem .3rem;font-size:.82rem;}
+}
+/* a phone turned sideways, and anything else short: height is the
+   constraint, so the drawing is clamped by it and scales as one */
+@media (max-height:560px){
+  .ot-frame{aspect-ratio:auto;border-radius:0;}
+  .ot-stage svg{width:auto;max-width:100%;height:auto;max-height:44vh;}
+  .ot-scene{gap:.5rem;}
+  .ot-cap{font-size:.72rem;}
+  .ot-bottom{padding:.4rem 0 .6rem;}
+}
+
+/* ── scene ──
+   Line figures carry posture, and posture is what makes sadness legible
+   without words. Everything moves by class changes on a clock — see
+   otPlay — so each beat can be restarted cleanly when the language
+   changes mid-scene. */
+#otCam{transition:transform 9.4s cubic-bezier(.3,.1,.3,1);transform-origin:284px 170px;}
+#otCam.push{transform:scale(1.07);}
+.ot-room .rl{fill:none;stroke:#46326F;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;transition:stroke 1.6s ease;}
+.ot-room .rl.dot{fill:#46326F;stroke:none;}
+.ot-room .win{fill:#170D38;}
+.ot-room .wstar{fill:#fff;opacity:.8;}
+.ot-room .moon{fill:#FFE9A8;}
+.ot-room{opacity:0;transition:opacity 1s linear;}
+.ot-room.on{opacity:1;}
+.ot-room.warm .rl{stroke:#8A4A86;}
+.ot-room.warm .rl.dot{fill:#8A4A86;}
+.ot-room.dim{opacity:.22;transition:opacity 1.4s ease;}
+#otDoorLight{opacity:0;transition:opacity 1.3s ease;}
+#otDoorLight.on{opacity:1;}
+#otDoorGlow{opacity:0;transition:opacity 1s ease;}
+#otDoorGlow.on{opacity:1;}
+
+.fig{opacity:0;transition:opacity .7s linear;}
+.fig.on{opacity:1;}
+.fig .hd{fill:#8E86A8;transition:fill 1.4s var(--e-out2);}
+.fig .lb{fill:none;stroke:#8E86A8;stroke-width:6;stroke-linecap:round;stroke-linejoin:round;
+         transition:stroke 1.4s var(--e-out2);}
+.fig.heal .hd{fill:#FF6FA8;}
+.fig.heal .lb{stroke:#FF6FA8;}
+.fig.warmed .hd{fill:#FFD166;}
+.fig.warmed .lb{stroke:#FFB36B;}
+.fig .aura{opacity:.9;}
+
+/* curled in on themselves, breathing shallowly, then slowly sitting up.
+   The pivot is the hip, so the angle has to be steep: at 52deg the head
+   comes to rest just above the knees. translate carries the breath so
+   it composes with the rotation instead of replacing it. */
+#otCurl{transform-origin:233px 238px;transform:rotate(52deg);
+        transition:transform 1.9s var(--e-spring);}
+#otCurl.lift{transform:rotate(2deg);}
+#otFigA.on #otCurl{animation:ot-breathe 3.4s ease-in-out infinite alternate;}
+#otFigA.warmed #otCurl{animation-duration:5.5s;}
+@keyframes ot-breathe{from{translate:0 0;}to{translate:0 -1.6px;}}
+
+/* the world outside, not stopping */
+#otPass .passer{opacity:0;}
+#otPass .passer circle{fill:#6F6693;}
+#otPass .passer path{stroke:#6F6693;stroke-width:5;stroke-linecap:round;fill:none;}
+#otPass .passer.go{animation:otCross 2.1s linear forwards;}
+@keyframes otCross{
+  0%{opacity:0;transform:translateX(96px);}
+  12%{opacity:.85;}
+  88%{opacity:.85;}
+  100%{opacity:0;transform:translateX(212px);}
+}
+
+/* crossing the room, with a step in it */
+#otWalk{transform:translateX(470px);transition:transform 1.4s cubic-bezier(.45,.05,.4,1), opacity .5s linear;}
+#otWalk.cross{transform:translateX(335px);}
+#otLegs{transform-origin:0 215px;}
+#otWalk.cross #otLegs{animation:otStep .36s steps(2,end) infinite;}
+#otWalk.cross .bob{animation:ot-bob .36s ease-in-out infinite alternate;}
+@keyframes otStep{0%{transform:skewX(-13deg);}100%{transform:skewX(13deg);}}
+@keyframes ot-bob{from{translate:0 0;}to{translate:0 -3px;}}
+
+#otWarm{opacity:0;transition:opacity 1.6s linear;}
+#otWarm.on{opacity:1;}
+
+/* the bloom over the two of them */
+#otBloom .ob{scale:0;rotate:-140deg;opacity:0;
+  transition:scale 2s var(--e-spring),rotate 2.6s var(--e-spring),opacity .7s ease;}
+#otBloom.on .ob{scale:1;rotate:0deg;opacity:1;}
+#otBloom .ob-rays{scale:.4;transition:scale 2.2s var(--e-spring) .35s;}
+#otBloom.on .ob-rays{scale:1;animation:k-spin 40s linear 2.4s infinite;}
+#otBloom .ob-halo{opacity:0;transition:opacity 2.2s ease .2s;}
+#otBloom.on .ob-halo{opacity:1;}
+#otSparks circle{opacity:0;}
+#otSparks.on circle{animation:ot-spark 2.8s var(--e-out2) forwards;animation-delay:var(--d,0s);}
+@keyframes ot-spark{0%{opacity:0;translate:0 0;scale:.4;}18%{opacity:1;}100%{opacity:0;translate:var(--dx,0px) -96px;scale:1;}}
+#otMark{opacity:0;translate:0 10px;transition:opacity 1.2s ease,translate 1.4s var(--e-spring);}
+#otMark.on{opacity:1;translate:0 0;}
+
+@media (prefers-reduced-motion: reduce){
+  #overture{display:none!important;}
+}
+
+/* Shown only when the strings never arrived — see boot(). Styled from
+   raw values rather than tokens on purpose: this is the one panel that
+   has to render correctly when part of the page has already failed. */
+.loadfail{
+  background:#B3124F;color:#fff;padding:1rem 1.2rem;margin:1rem 0 1.2rem;
+  border-radius:18px;
+}
+.loadfail p{margin-bottom:.7rem;font-size:.95rem;}
+.loadfail button{
+  background:#fff;color:#8E0B45;border:0;font-weight:700;
+  padding:.6rem 1.2rem;min-height:44px;
+}
+
+/* ── opening questions ──
+   Night, like the film they follow: the three statements are a quiet
+   conversation after it, not a form that pops up over the page. */
+.intro{
+  position:fixed;inset:0;z-index:950;color:#FFF6EE;
+  background:
+    radial-gradient(60% 40% at 20% 10%, rgba(124,58,237,.32), transparent 70%),
+    radial-gradient(60% 40% at 90% 95%, rgba(255,61,139,.24), transparent 70%),
+    #0B0616;
+  display:flex;justify-content:center;padding:1.2rem;
+  /* Scrollable, and centred by the child's auto margins rather than
+     align-items: a centred flex item taller than its container overflows
+     both ways and the top half becomes unreachable. */
+  overflow-y:auto;overscroll-behavior:contain;
+  animation:introIn .5s var(--e-out2);
+}
+.intro[hidden]{display:none;}
+@keyframes introIn{from{opacity:0;}to{opacity:1;}}
+.intro-inner{width:min(38rem,100%);text-align:center;margin:auto;}
+.intro-crisis{
+  font-size:.72rem;color:rgba(255,246,238,.72);margin-bottom:1.6rem;letter-spacing:.02em;
+}
+.intro-crisis a{color:#FFD166;font-weight:700;}
+.intro h2{font-size:clamp(1.6rem,5.8vw,2.7rem);margin-bottom:1.6rem;color:#FFF6EE;}
+.intro-card{
+  position:relative;background-color:rgba(255,255,255,.06);color:#FFF6EE;
+  border:1px solid rgba(255,255,255,.14);border-radius:var(--r-xl);
+  padding:2.6rem 1.8rem;margin-bottom:1.8rem;
+  display:flex;align-items:center;justify-content:center;min-height:11rem;overflow:hidden;
+  box-shadow:0 30px 70px -40px rgba(255,61,139,.7);
+}
+.intro-card::before{
+  content:"";position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(80% 60% at 50% 0%,rgba(255,209,102,.14),transparent 70%);
+}
+.intro-card p{
+  position:relative;font-family:var(--font-display);
+  font-size:clamp(1.15rem,3.8vw,1.5rem);font-weight:700;line-height:1.45;
+  max-width:26ch;margin:0;color:#FFF6EE;
+}
+.intro-btns{display:flex;gap:.8rem;justify-content:center;margin-bottom:1.5rem;}
+.intro-btns button{
+  padding:.9rem 2.4rem;font-size:1rem;min-height:3.2rem;
+  flex:1;max-width:14rem;
+}
+/* The No button once rendered black on black under high contrast, 1:1,
+   for the one reader who had asked for MORE contrast. Every theme is
+   measured by the suite now; these are night surfaces with a light label
+   (15:1), and high contrast gets its own pairing below. */
+.intro-no{background:rgba(255,255,255,.08);background-image:none;color:#FFF6EE;border:1.5px solid rgba(255,246,238,.5);}
+.intro-no:hover{border-color:#FFD166;box-shadow:none;}
+.intro-yes{background-color:#6D28D9;background-image:var(--grad-cta);color:#fff;}
+.intro-foot{display:flex;align-items:center;justify-content:center;gap:1.1rem;}
+.intro-dots{font-size:.75rem;color:#FFD166;letter-spacing:.25em;}
+.intro-skip{
+  background:transparent;background-image:none;color:rgba(255,246,238,.78);border:0;
+  font-family:var(--font-ui);
+  text-transform:none;letter-spacing:0;font-size:.82rem;
+  min-height:2.75rem;padding:.4rem .7rem;text-decoration:underline;
+}
+.intro-skip:hover{transform:none;box-shadow:none;color:#fff;}
+:root[data-contrast="high"] .intro{background:#fff;color:#000;}
+:root[data-contrast="high"] .intro h2,:root[data-contrast="high"] .intro-crisis{color:#000;}
+:root[data-contrast="high"] .intro-crisis a{color:#8E0B45;}
+:root[data-contrast="high"] .intro-card{background:#000;border-color:#000;box-shadow:none;}
+:root[data-contrast="high"] .intro-card p{color:#fff;}
+:root[data-contrast="high"] .intro-no{background:#fff;color:#000;border:2px solid #000;}
+:root[data-contrast="high"] .intro-dots{color:#000;}
+:root[data-contrast="high"] .intro-skip{color:#000;}
+@media(max-width:640px){
+  .intro-card{padding:2.1rem 1.1rem;min-height:9rem;}
+  .intro-btns button{padding:.85rem 1rem;}
+}
+/* A landscape phone is about 360px tall: the card's padding is the first
+   thing that should go, not the buttons. */
+@media(max-height:560px){
+  .intro{padding:.7rem;}
+  .intro-crisis{margin-bottom:.5rem;}
+  .intro h2{font-size:clamp(1.1rem,4vw,1.5rem);margin-bottom:.6rem;}
+  .intro-card{min-height:auto;padding:.9rem 1rem;margin-bottom:.7rem;}
+  .intro-card p{font-size:1rem;}
+  .intro-btns{margin-bottom:.5rem;}
+  .intro-btns button{min-height:2.9rem;padding:.6rem 1rem;}
+}
+@media (prefers-reduced-motion: reduce){
+  .intro{animation:none;}
+}
+
+/* ── guided tour: a spotlight, not another video ──
+   The ring is the whole trick: a transparent box whose border sits on
+   the target and whose box-shadow — spread far past the viewport —
+   darkens everything else. A #tourBlock still sits underneath purely to
+   catch clicks, since a box-shadow has no hit-testing of its own. */
+.tour{position:fixed;inset:0;z-index:900;}
+/* A step that points inside the settings popover has to lift it above the
+   ring's dimming shadow. position:relative matters as much as the
+   z-index — z-index on a static element does nothing at all. */
+body.tour-in-panel nav.site{position:relative;z-index:901;}
+body.tour-in-panel .setpanel{z-index:902;}
+/* With the popover lifted above the tour, the ring is behind it, so for
+   these steps the target wears the highlight itself. */
+.tour-target{
+  position:relative;z-index:1;
+  outline:2.5px solid #FFD166;outline-offset:3px;
+  box-shadow:0 0 0 6px rgba(255,255,255,.9);border-radius:var(--r-sm);
+}
+.tour-block{position:fixed;inset:0;background:transparent;cursor:default;}
+.tour-ring{
+  position:fixed;border-radius:1rem;pointer-events:none;
+  box-shadow:0 0 0 9999px rgba(11,6,22,.74), 0 0 0 4px rgba(255,255,255,.85), 0 0 34px 6px rgba(255,61,139,.45);
+  border:2.5px solid #FFD166;
+  transition:top .5s var(--e-spring),left .5s var(--e-spring),
+             width .5s var(--e-spring),height .5s var(--e-spring);
+}
+.tour-card{
+  position:fixed;z-index:2;max-width:22rem;background:var(--card);color:var(--ink);
+  border:1px solid color-mix(in srgb,var(--heal) 30%,var(--line));padding:1.1rem 1.2rem;
+  /* three round corners and one squared off: the shorthand for "someone
+     is saying this", without a tail that would have to be re-aimed */
+  border-radius:1.4rem 1.4rem 1.4rem .3rem;
+  box-shadow:0 20px 50px rgba(11,6,22,.45);
+  transition:top .5s var(--e-spring),left .5s var(--e-spring),
+             right .5s var(--e-spring),bottom .5s var(--e-spring);
+}
+.tour-head{display:flex;align-items:center;gap:.6rem;margin-bottom:.35rem;}
+/* the same figure from the opening, now doing the explaining */
+.tour-guide{width:1.9rem;height:2.4rem;flex:none;}
+.tour-guide circle{fill:#FF3D8B;}
+.tour-guide path{
+  fill:none;stroke:#FF3D8B;stroke-width:3.4;
+  stroke-linecap:round;stroke-linejoin:round;
+}
+.tour-guide .wave{transform-origin:20px 22px;animation:tourWave 1.6s ease-in-out infinite;}
+@keyframes tourWave{0%,100%{transform:rotate(0deg);}50%{transform:rotate(-22deg);}}
+
+.tour-arrow{
+  position:fixed;z-index:3;width:4rem;height:4rem;
+  margin:-2rem 0 0 -2rem;pointer-events:none;
+  filter:drop-shadow(0 2px 6px rgba(0,0,0,.55));
+  transition:transform .5s var(--e-spring);
+}
+.tour-arrow svg{width:100%;height:100%;display:block;}
+.tour-arrow path{
+  fill:none;stroke:#FFD166;stroke-width:7;
+  stroke-linecap:round;stroke-linejoin:round;
+}
+.tour-arrow .ab{animation:tourBob 1.05s ease-in-out infinite alternate;}
+@keyframes tourBob{from{transform:translateX(-5px);}to{transform:translateX(5px);}}
+/* one segment per step, story-style: solid = done, filling = current,
+   empty = ahead. Doubles as the "time is passing" cue. */
+.tour-progress{display:flex;gap:.3rem;margin-bottom:.8rem;}
+.tour-progress i{
+  flex:1;height:3px;background:var(--line);border-radius:2px;
+  overflow:hidden;position:relative;font-style:normal;
+}
+.tour-progress i::after{
+  content:"";position:absolute;inset:0;background:linear-gradient(90deg,#8B5CF6,#FF3D8B);
+  transform:scaleX(0);transform-origin:left;
+}
+.tour-progress i.done::after{transform:scaleX(1);}
+.tour-progress i.run::after{
+  transform:scaleX(0);animation:tourFill linear forwards;
+  /* set on #tour by JS: a custom property inherits into ::after where an
+     inline style on the host would not */
+  animation-duration:var(--tour-dur,2800ms);
+  animation-play-state:var(--tour-play,running);
+}
+@keyframes tourFill{to{transform:scaleX(1);}}
+@media (prefers-reduced-motion: reduce){
+  .tour-progress{display:none;}
+}
+.tour-card h3{font-size:1.1rem;margin-bottom:.4rem;}
+.tour-card p{font-size:.92rem;color:var(--muted);margin-bottom:.9rem;}
+.tour-count{font-size:.72rem;color:var(--heal);font-weight:700;letter-spacing:.08em;margin-bottom:.5rem;}
+.tour-nav{display:flex;align-items:center;gap:.5rem;}
+.tour-nav #tourPrev,.tour-nav #tourNext{min-width:2.75rem;padding:.5rem .9rem;font-size:1rem;}
+.tour-nav #tourNext{background-color:#6D28D9;background-image:var(--grad-cta);color:#fff;border-color:transparent;}
+.tour-nav #tourSkip{
+  margin-left:auto;background:transparent;background-image:none;color:var(--muted);
+  font-family:var(--font-ui);
+  text-transform:none;letter-spacing:0;font-size:.82rem;min-height:auto;padding:.4rem .3rem;
+}
+.tour-nav #tourSkip:hover{box-shadow:none;color:var(--ink);}
+.tour-nav #tourPrev:disabled{opacity:.3;cursor:default;}
+.tour-nav #tourPrev:disabled:hover{transform:none;box-shadow:none;}
+@media(max-width:640px){
+  /* The card cannot float near a target on a small screen without
+     covering it, so it settles as a sheet at the bottom — one fixed ratio
+     on every step, so Next, Back and Skip never move between steps.
+     min-height rather than a hard aspect-ratio, so a long translation at
+     135% grows the card instead of hiding its own buttons. */
+  .tour-card{
+    left:.9rem!important;right:.9rem!important;
+    bottom:calc(.9rem + var(--tabbar-h,0px))!important;
+    top:auto!important;max-width:none;
+    aspect-ratio:16/9;
+    display:flex;flex-direction:column;
+    border-radius:1.1rem;padding:.65rem .9rem;
+  }
+  .tour-card .tour-guide{width:1.3rem;height:1.6rem;}
+  .tour-card .tour-progress{margin-bottom:.4rem;}
+  .tour-card .tour-head{margin-bottom:.15rem;}
+  .tour-card .tour-count{font-size:.64rem;margin-bottom:0;}
+  .tour-card h3{font-size:.98rem;line-height:1.25;margin-bottom:.2rem;}
+  .tour-card p{font-size:.8rem;line-height:1.36;margin-bottom:.25rem;}
+  .tour-card .tour-nav #tourPrev,
+  .tour-card .tour-nav #tourNext{min-height:44px;padding:.3rem .8rem;}
+  /* Skip was once the smallest target on the card. Someone who wants the
+     walkthrough gone is often someone who needs something else urgently;
+     it should be the easiest button to hit, not the hardest. */
+  .tour-card .tour-nav #tourSkip{min-height:44px;padding:.4rem .7rem;}
+  .tour-card .tour-nav{margin-top:auto;}
+}
+/* On a short screen the bubble can outgrow the viewport; let it scroll
+   rather than lose its own Next button. */
+.tour-card{max-height:calc(100vh - 2rem);overflow-y:auto;overscroll-behavior:contain;}
+@media(max-height:560px){
+  .tour-card{padding:.8rem .9rem;}
+  .tour-card h3{font-size:.98rem;margin-bottom:.25rem;}
+  .tour-card p{font-size:.86rem;margin-bottom:.6rem;}
+  .tour-progress{margin-bottom:.5rem;}
+}
+@media (prefers-reduced-motion: reduce){
+  /* the arrow still points — it carries meaning; only the idle motion
+     that carries none is dropped */
+  .tour-ring,.tour-card,.tour-arrow{transition:none;}
+  .tour-arrow .ab,.tour-guide .wave{animation:none;}
+  .tabbar{transition:none;}
+}
+
+/* ── the phone tab bar: a floating pill of night glass ── */
+.tabbar{display:none;}
+@media(max-width:640px){
+  /* A starting value only — trackTabbar replaces it with the measured
+     height as soon as the script runs. */
+  :root{--tabbar-h:4.5rem;}
+  .tabbar{
+    /* minmax(0,1fr): four columns that are actually allowed to be equal,
+       so a long translation at 135% cannot push the bar off screen */
+    display:grid;grid-template-columns:repeat(4,minmax(0,1fr));
+    position:fixed;left:0;right:0;bottom:0;z-index:80;
+    padding:0 .75rem calc(.6rem + env(safe-area-inset-bottom,0px));
+    background:transparent;pointer-events:none;
+  }
+  .tabbar::before{
+    content:"";position:absolute;left:.75rem;right:.75rem;top:0;
+    bottom:calc(.6rem + env(safe-area-inset-bottom,0px));
+    border-radius:1.6rem;background:rgba(17,10,33,.94);
+    border:1px solid rgba(195,166,255,.2);
+    box-shadow:0 16px 36px -14px rgba(11,6,22,.8),0 0 0 1px rgba(0,0,0,.2);
+  }
+  @supports ((-webkit-backdrop-filter:blur(1px)) or (backdrop-filter:blur(1px))){
+    :root:not(.lite) .tabbar::before{background:rgba(17,10,33,.82);-webkit-backdrop-filter:blur(16px) saturate(1.4);backdrop-filter:blur(16px) saturate(1.4);}
+  }
+  .tabbar a{
+    pointer-events:auto;position:relative;z-index:1;
+    min-width:0;overflow-wrap:anywhere;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    /* Horizontal padding in px, not rem, so it does not grow with the
+       text it is making room for. */
+    gap:.2rem;min-height:3.9rem;padding:.4rem 2px;
+    color:rgba(255,246,238,.66);text-decoration:none;
+    font-family:var(--font-ui);font-weight:600;
+    font-size:.6rem;letter-spacing:.02em;text-align:center;line-height:1.15;
+  }
+  .tabbar a::before{
+    content:"";position:absolute;inset:.45rem .35rem;border-radius:1.1rem;z-index:-1;
+    background:linear-gradient(135deg,rgba(124,58,237,.5),rgba(255,61,139,.38));
+    opacity:0;scale:.7;transition:opacity .3s ease,scale .4s var(--e-spring);
+  }
+  .tabbar svg{
+    width:1.4rem;height:1.4rem;fill:none;stroke:currentColor;
+    stroke-width:2;stroke-linecap:round;stroke-linejoin:round;
+    transition:scale .4s var(--e-spring),translate .4s var(--e-spring);
+  }
+  .tabbar a:active svg{scale:.85;}
+  /* Marked, not merely coloured: the active tab carries a lit pill as
+     well as a colour change, so it is legible to anyone who cannot
+     separate the two hues. */
+  .tabbar a[aria-current="page"]{color:#fff;}
+  .tabbar a[aria-current="page"]::before{opacity:1;scale:1;}
+  .tabbar a[aria-current="page"] svg{color:#FFD166;translate:0 -1px;}
+  /* ── the bar gets out of the way of reading ──
+     It slides out while you scroll down and comes back the instant you
+     scroll up or reach the end. The crisis strip does not move. */
+  .tabbar{transition:transform .35s var(--e-spring);will-change:transform;}
+  :root.navdown .tabbar{transform:translateY(115%);}
+  /* the bar covers the foot of the page unless the page knows about it */
+  body{padding-bottom:calc(var(--tabbar-h) + env(safe-area-inset-bottom,0px));}
+  #overture,.intro{padding-bottom:0;}
+}
+:root[data-contrast="high"] .tabbar::before{background:#000;border-color:#fff;}
+/* Neither layer should sit under the bar, and neither should the bar
+   sit over them — they own the screen while they're up. */
+#overture:not([hidden]) ~ .tabbar,
+.intro:not([hidden]) ~ .tabbar{display:none;}
+
+.byline{
+  margin-top:1.1rem;padding-top:1rem;border-top:1px solid var(--line);
+  display:flex;gap:.8rem;flex-wrap:wrap;align-items:baseline;
+  font-family:var(--font-ui);font-size:.78rem;
+}
+.byline strong{color:var(--ink);font-size:.85rem;}
+.byline a{color:var(--heal);}
+
+/* Was a long inline style attribute; moved here so it can be themed and
+   so the touch-target rule below can reach it. JS still toggles display,
+   which is why it starts hidden. */
+.ledemore{
+  display:none;
+  font-family:var(--font-ui);
+  text-transform:none;letter-spacing:0;font-size:.78rem;
+  padding:.25rem .8rem;min-height:0;border-width:1.5px;margin-bottom:.8rem;
+}
+/* A fingertip is about 44px across and lands where it lands. Raised only
+   where the pointer is coarse, so desktop density is left alone. Placed
+   after .ledemore deliberately: that rule sets min-height:0 at the same
+   specificity, so source order is what decides. */
+@media (pointer: coarse){
+  .setbtn,.setpanel button,.regiontabs button,.tourcta,
+  .ledemore,nav.site .navtoggle{min-height:44px;}
+  .setbtn{min-width:44px;}
+}
+
+.tourcta{
+  font-family:var(--font-ui);
+  text-transform:none;letter-spacing:0;min-height:2.6rem;font-size:.88rem;
+}
+@media(max-width:640px){
+  .view{padding:1rem 0 2.4rem;}
+  #view-home{padding-top:0;}
+  .hero-sky{padding-top:1.6rem;}
+  .hs-cue{display:none;}
+  .hs-copy{padding-bottom:6.8rem;}
+  .hero-sky .eyebrow{margin-bottom:.8rem;}
+  .hero-sky .lede{font-size:1rem;margin:.9rem 0 1.2rem;}
+  .lede{font-size:.95rem;}
+  /* clamp the argument to 3 lines; full text one tap away */
+  #homeLede.clamped{
+    display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;
+    overflow:hidden;margin-bottom:.2rem;
+  }
+  #ledeMore{display:inline-block;}
+  details.notice{padding:.6rem .9rem;}
+  .card{min-height:min(74svh,34rem);border-radius:1.6rem;}
+  .sc-body{padding:1.1rem 1.1rem 1.15rem;padding-top:3rem;}
+  .scorebox .num{font-size:2.8rem;}
+  .qbox{padding:1.2rem 1.05rem;}
+  .qtext{font-size:1.18rem;}
+}
+
+/* ── clinical summary sheet ── */
+.sheet{background:var(--card);border:1px solid var(--line);border-radius:var(--r-lg);padding:1.5rem 1.6rem;box-shadow:var(--shadow-card);}
+/* A bare URL has no natural break point, so on a narrow phone it can
+   blow the sheet wider than the viewport rather than wrap. */
+.sheet, .sheet *{overflow-wrap:anywhere;}
+.sheet .sh-top{border-bottom:2px solid var(--ink);padding-bottom:.8rem;margin-bottom:1rem;}
+.sheet .sh-kicker{
+  font-family:var(--font-ui);font-weight:700;
+  font-size:.68rem;letter-spacing:.13em;color:var(--stamp);
+}
+.sheet h2{font-size:1.4rem;margin:.2rem 0 .1rem;}
+.sheet .sh-meta{
+  font-family:var(--font-ui);
+  font-size:.74rem;color:var(--muted);
+}
+.sheet h3{
+  font-family:var(--font-ui);font-weight:800;
+  font-size:.7rem;letter-spacing:.12em;
+  color:var(--stamp);margin:1.4rem 0 .5rem;
+}
+.sheet .sh-score{display:flex;align-items:baseline;gap:.9rem;flex-wrap:wrap;margin-bottom:.4rem;}
+.sheet .sh-score .n{
+  font-family:var(--font-display);font-weight:800;font-size:2.7rem;line-height:1;
+  font-variant-numeric:tabular-nums;
+}
+.sheet .sh-verdict{font-weight:700;}
+.sheet table{border-collapse:collapse;width:100%;font-size:.84rem;}
+.sheet th,.sheet td{border:1px solid var(--line);padding:.4rem .55rem;text-align:left;vertical-align:top;}
+.sheet th{
+  font-family:var(--font-ui);
+  font-size:.64rem;letter-spacing:.06em;background:var(--paper);
+}
+.sheet td.v{text-align:center;font-variant-numeric:tabular-nums;width:3.2rem;font-weight:700;}
+.sheet tr.hit td{background:color-mix(in srgb,var(--marigold) 15%,transparent);}
+.sheet tr.flag td{background:color-mix(in srgb,var(--stamp) 15%,transparent);font-weight:700;}
+.sheet .alt{display:block;font-size:.78rem;color:var(--muted);margin-top:.15rem;}
+.sheet .sh-note{
+  border-left:.35rem solid var(--stamp);padding:.6rem .8rem;margin-top:.7rem;
+  font-size:.85rem;background:color-mix(in srgb,var(--stamp) 8%,transparent);border-radius:0 .6rem .6rem 0;
+}
+.sheet .sh-prov{font-size:.78rem;color:var(--muted);margin-top:.35rem;}
+.sheet .sh-prov strong{color:var(--ink);}
+.sheet .sh-foot{
+  border-top:2px solid var(--ink);margin-top:1.4rem;padding-top:.7rem;
+  font-size:.74rem;color:var(--muted);
+}
+.sheet .scroll{overflow-x:auto;}
+.sheet .scroll table{min-width:29rem;}
+
+/* On a phone a four-column table crushes the item text into a column two
+   words wide. Each item becomes its own block instead — the question, then
+   the answer and its score on one line. The printed sheet keeps the table. */
+@media screen and (max-width:640px){
+  .sheet{padding:1rem .95rem;}
+  .sheet table.items,.sheet table.items tbody,
+  .sheet table.items tr,.sheet table.items td{display:block;width:auto;}
+  .sheet table.items thead{display:none;}
+  .sheet table.items tr{
+    border:1px solid var(--line);border-left:.32rem solid var(--line);border-radius:.5rem;
+    padding:.55rem .7rem;margin-bottom:.4rem;overflow:hidden;
+  }
+  .sheet table.items tr.hit{border-left-color:var(--marigold);}
+  .sheet table.items tr.flag{border-left-color:var(--stamp);}
+  .sheet table.items td{border:0;padding:0;}
+  .sheet table.items td.n{float:left;margin-right:.45rem;color:var(--muted);font-weight:700;}
+  .sheet table.items td.q{font-weight:600;margin-bottom:.35rem;}
+  .sheet table.items td.r,.sheet table.items td.v{
+    display:inline-block;width:auto;text-align:left;font-size:.83rem;
+  }
+  .sheet table.items td.r{color:var(--muted);}
+  .sheet table.items td.v::before{content:" · ";color:var(--muted);font-weight:400;}
+}
+
+@media print{
+  .topstrip,nav,.a11ybar,footer,.actionrow,.noprint,.skip,.sky{display:none!important;}
+  body{background:#fff;font-size:12px;}
+  .printonly{display:block!important;font-family:monospace;font-size:11px;margin-bottom:1rem;}
+  .view{padding:0;}
+  .scoreboard,.safety,.notice{max-width:none;border-width:1px;box-shadow:none;}
+  .scorebox{background:#fff!important;color:#000!important;}
+  .scorebox::before{display:none;}
+  .scorebox .num{color:#000;text-shadow:none;}
+  /* the sheet is a document, not a web page: no fills, no rounding */
+  .wrap{max-width:none;padding:0;}
+  .sheet{border:none;padding:0;background:#fff;color:#000;box-shadow:none;border-radius:0;}
+  .sheet th{background:#fff;}
+  .sheet tr.hit td,.sheet tr.flag td{background:#fff;}
+  .sheet tr.hit td.v::after{content:" ◂";}
+  .sheet tr.flag td.v::after{content:" ◂◂";}
+  .sheet h3{color:#000;}
+  .sheet .sh-note{background:#fff;border-left:3px solid #000;}
+  .sheet table{page-break-inside:auto;}
+  .sheet tr{page-break-inside:avoid;}
+}
+.printonly{display:none;}

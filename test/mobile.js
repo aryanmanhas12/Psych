@@ -335,7 +335,8 @@ const OVERFLOW = `(()=>{
     const ctx = await b.newContext(phone()); const p = await ctx.newPage();
     const errs=[]; p.on('pageerror',e=>errs.push(e.message));
     let n=0;
-    await p.route('**/i18n.*.js', r=>(++n===1)?r.abort():r.continue());
+    /* `*` after .js: the language files are requested as i18n.xx.js?v=N */
+    await p.route('**/i18n.*.js*', r=>(++n===1)?r.abort():r.continue());
     await p.goto(URL,{waitUntil:'domcontentloaded'}); await p.waitForTimeout(2500);
     let s=await p.evaluate(()=>({cards:document.querySelectorAll('#cardGrid .card').length,
                                  panel:!!document.querySelector('.loadfail')}));
@@ -345,7 +346,7 @@ const OVERFLOW = `(()=>{
 
     const ctx2 = await b.newContext(phone()); const p2 = await ctx2.newPage();
     const errs2=[]; p2.on('pageerror',e=>errs2.push(e.message));
-    await p2.route('**/i18n.*.js', r=>r.abort());
+    await p2.route('**/i18n.*.js*', r=>r.abort());
     await p2.goto(URL,{waitUntil:'domcontentloaded'}); await p2.waitForTimeout(2500);
     s=await p2.evaluate(()=>({panel:!!document.querySelector('.loadfail'),
                               tels:document.querySelectorAll('.topstrip a[href^="tel:"]').length}));

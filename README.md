@@ -33,7 +33,7 @@ earlier**, and **giving them the follow-up record the system doesn't**.
 
 | File | What it is |
 |---|---|
-| `index.html` | **The screener app** — instruments, guided conversation, guidance, history, reminders |
+| `index.html` + `app.js` + `app.css` | **The app** — instruments, guided conversation, guidance, history, reminders. The page, its script and its styles are separate files so a repeat visit only re-fetches the ~15KB page |
 | `site.css` | **Shared design system** — one source of truth for tokens, dark mode, nav and components |
 | `i18n.js` | **Translation layer** — every UI string and instrument item in 6 languages |
 | `helplines.js` | **Crisis lines worldwide** — directory-first, region tables, review-dated |
@@ -166,7 +166,8 @@ commit) or clone and edit locally. Changes to `main` go live on GitHub Pages in 
 |---|---|
 | Wording, questions, guidance, resources | `i18n.js` — find the language block, edit the string |
 | Add a language | Copy any language block in `i18n.js`, translate the values, keep the keys |
-| Add an instrument | Add scoring to `META` in `index.html`, then add its text to every language in `i18n.js` |
+| Add an instrument | Add scoring to `META` in `app.js`, then add its text to every language in `i18n.*.js` |
+| Ship a release | Bump `REL` in `sw.js` **and** the `?v=` on every page's `site.css`, `nav.js`, `app.css`, `app.js` links |
 | Colours, spacing, layout | `site.css` — change a token, every page follows |
 | The logo | `brand/` — then re-render `icon-*.png` and `og-image.jpg` from it |
 | Citations | `evidence.html` |

@@ -159,6 +159,18 @@
   --shadow-soft:none; --shadow-card:none; --shadow-glow:none;
 }
 
+/* ── lite: the same site, lighter, for the phones that need it ──
+   The head script sets html.lite on a device reporting 2GB of memory or
+   less, or on a connection with Data Saver on. Nothing is removed that
+   carries meaning — every word, control, colour and one-time reveal is
+   the same — but the idle loops stop (the sky's breathing, the sun's slow
+   turn, the scenes' drift), and the tab bar's frosted glass becomes a
+   plain solid pill, because a live blur under a scrolling page is the
+   single most expensive thing a budget GPU can be asked to draw. */
+.lite .sky::before{animation:none;opacity:.85;}
+.lite .topstrip .wrap > span:first-child::before,
+.lite .topstrip .wrap-wide > span:first-child::before{animation:none;}
+
 /* ── reset & base ── */
 *{margin:0;padding:0;box-sizing:border-box;}
 html{
@@ -313,14 +325,19 @@ img,svg{max-width:100%;}
 .topstrip .wrap-wide > span:first-child::before{
   content:"";display:inline-block;width:.5rem;height:.5rem;border-radius:50%;
   margin-right:.5rem;vertical-align:.05em;
-  background:var(--pink);box-shadow:0 0 0 0 rgba(255,61,139,.6);
+  background:var(--pink);box-shadow:0 0 8px 1px rgba(255,61,139,.55);
   animation:rk-heart 2.2s ease-in-out infinite;
 }
+/* A heartbeat in transform alone. It used to grow a box-shadow ring as
+   well, and a box-shadow cannot be animated without repainting: measured on
+   a throttled phone, this one dot cost a quarter of the main thread while
+   the page sat idle, on every page, forever. As a pure scale it costs
+   nothing — the compositor runs it. */
 @keyframes rk-heart{
-  0%,100%{transform:scale(1);box-shadow:0 0 0 0 rgba(255,61,139,.55);}
-  12%{transform:scale(1.25);}
+  0%,100%{transform:scale(1);}
+  12%{transform:scale(1.3);}
   24%{transform:scale(1);}
-  36%{transform:scale(1.18);box-shadow:0 0 0 6px rgba(255,61,139,0);}
+  36%{transform:scale(1.2);}
 }
 .topstrip a{color:#FFD166;font-weight:700;}
 /* A number you can call should look like one. Underlined and padded so it
