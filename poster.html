@@ -6,7 +6,7 @@
 <title>Printable Poster — Ronak for Clinics and Campuses</title>
 <meta name="description" content="A printable A4 sheet with the screening link and India's crisis helplines, for a clinic wall, campus noticeboard or waiting room.">
 <meta name="author" content="Aryan Manhas">
-<script src="nav.js" defer></script>
+<script src="nav.js?v=27" defer></script>
 <!-- The 192px PNG was fetched as the favicon on every page: 11.4KB gzip
      on the critical path, for something drawn at 16px. The SVG is 1.6KB
      and sharp at every size. No PNG fallback link: Chromium fetches every
@@ -17,74 +17,98 @@
      no theme script, so the two variants do the same job declaratively.
      Without it iOS and Android tint the browser chrome white against a
      dark page. -->
-<meta name="theme-color" media="(prefers-color-scheme: light)" content="#151C2E">
-<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0A0D14">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#140A26">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#110A21">
 <link rel="canonical" href="https://aryanmanhas12.github.io/Psych/poster.html">
 <meta property="og:type" content="article">
 <meta property="og:site_name" content="Ronak">
 <meta property="og:title" content="Printable Poster — Ronak for Clinics and Campuses">
 <meta property="og:description" content="A printable A4 sheet with the screening link and India's crisis helplines, for a clinic wall, campus noticeboard or waiting room.">
 <meta property="og:url" content="https://aryanmanhas12.github.io/Psych/poster.html">
-<meta property="og:image" content="https://aryanmanhas12.github.io/Psych/icon-512.png">
-<meta property="og:image:alt" content="The Ronak mark: a figure with arms raised, inside radiating arcs.">
-<meta name="twitter:card" content="summary">
+<meta property="og:image" content="https://aryanmanhas12.github.io/Psych/og-image.jpg">
+<meta property="og:image:alt" content="The Ronak logo: the word RONAK, its O drawn as a blooming sun in pink, violet and gold on a night sky.">
+<meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Printable Poster — Ronak for Clinics and Campuses">
 <meta name="twitter:description" content="A printable A4 sheet with the screening link and India's crisis helplines, for a clinic wall, campus noticeboard or waiting room.">
-<meta name="twitter:image" content="https://aryanmanhas12.github.io/Psych/icon-512.png">
+<meta name="twitter:image" content="https://aryanmanhas12.github.io/Psych/og-image.jpg">
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebPage","name":"Printable Poster — Ronak for Clinics and Campuses","url":"https://aryanmanhas12.github.io/Psych/poster.html","description":"A printable A4 sheet with the screening link and India's crisis helplines, for a clinic wall, campus noticeboard or waiting room.","inLanguage":"en","isPartOf":{"@type":"WebSite","name":"Ronak","url":"https://aryanmanhas12.github.io/Psych/"},"breadcrumb":{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Ronak","item":"https://aryanmanhas12.github.io/Psych/"},{"@type":"ListItem","position":2,"name":"Printable poster","item":"https://aryanmanhas12.github.io/Psych/poster.html"}]}}</script>
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="icon-192.png">
 <script src="prefs.js"></script>
-<link rel="stylesheet" href="site.css">
+<link rel="stylesheet" href="site.css?v=27">
 <style>
-@font-face{font-family:'Anton';font-style:normal;font-weight:400;font-display:swap;src:url('anton.woff2') format('woff2');}
-:root{--ink:#151C2E;--paper:#F6F4EE;--marigold:#E6A11C;--stamp:#B23A2E;--heal:#2F6E5E;--line:#D8D3C6;--muted:#54596A;}
+/* A printed sheet is not a crisis screen: nothing on it is urgent, and it
+   is printed once and pinned up for months. So unlike the app, which never
+   waits on a font, the poster does — font-display:block, so the sheet that
+   reaches the printer is always set in the brand face. Same files as
+   site.css, so a browser that has visited the app already holds them. */
+@font-face{font-family:"Ronak Poster";font-weight:600 800;font-display:block;
+  src:url(fonts/baloo2-latin.woff2) format("woff2");
+  unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+2000-206F,U+20AC,U+2122,U+2212;}
+@font-face{font-family:"Ronak Poster";font-weight:600 800;font-display:block;
+  src:url(fonts/baloo2-devanagari.woff2) format("woff2");unicode-range:U+0900-097F,U+1CD0-1CF9,U+200C-200D,U+20B9,U+25CC,U+A8E0-A8FF;}
+@font-face{font-family:"Ronak Poster";font-weight:600 800;font-display:block;
+  src:url(fonts/balooda2-bengali.woff2) format("woff2");unicode-range:U+0980-09FE;}
+@font-face{font-family:"Ronak Poster";font-weight:600 800;font-display:block;
+  src:url(fonts/baloothambi2-tamil.woff2) format("woff2");unicode-range:U+0B82-0BFA;}
+@font-face{font-family:"Ronak Poster";font-weight:600 800;font-display:block;
+  src:url(fonts/balootammudu2-telugu.woff2) format("woff2");unicode-range:U+0C00-0C7F;}
+.sheet{--font-display:"Ronak Poster",system-ui,'Noto Sans',sans-serif;}
+/* The sheet carries its own palette, scoped to it rather than to :root, so
+   it cannot repaint the site's nav above it. It is the brand on paper:
+   plum ink, violet and magenta accents, a gold that stays dark enough to
+   read off a cheap office printer, and the logo at the head. */
+.sheet{--ink:#1B1030;--paper:#FFFBF7;--marigold:#C98200;--stamp:#C8105A;--heal:#6D28D9;--line:#E6DAE4;--muted:#5F5476;}
 *{margin:0;padding:0;box-sizing:border-box;}
-body{background:var(--paper);color:var(--ink);font-family:system-ui,-apple-system,'Segoe UI','Noto Sans',Roboto,Arial,sans-serif;line-height:1.5;}
-.bar{background:var(--ink);color:var(--paper);padding:14px 0;}
+body{font-family:system-ui,-apple-system,'Segoe UI','Noto Sans',Roboto,Arial,sans-serif;line-height:1.5;}
+.bar{background:var(--night-0);color:#FFF6EE;padding:14px 0;border-bottom:1px solid rgba(255,255,255,.08);}
 .bar .in{max-width:1000px;margin:0 auto;padding:0 20px;display:flex;gap:14px;align-items:center;flex-wrap:wrap;}
-.bar h1{font-family:'Anton',sans-serif;font-size:19px;text-transform:uppercase;letter-spacing:.04em;margin-right:auto;}
-.bar .accent{color:var(--marigold);}
+.bar h1{font-family:var(--font-display);font-weight:800;font-size:19px;letter-spacing:.02em;margin-right:auto;}
+.bar .accent{color:#FFD166;}
 .bar label{font-size:13px;font-family:ui-monospace,Menlo,Consolas,monospace;}
-select,button.act{font-family:system-ui,sans-serif;font-size:14px;padding:7px 12px;background:var(--paper);color:var(--ink);border:2px solid var(--paper);cursor:pointer;}
-button.act{background:var(--marigold);border-color:var(--marigold);font-weight:700;}
+select,button.act{font-family:system-ui,sans-serif;font-size:14px;padding:7px 14px;background:#FFF6EE;color:#1B1030;border:2px solid #FFF6EE;border-radius:999px;cursor:pointer;}
+button.act{background:#FFD166;background-image:none;color:#1B1030;border-color:#FFD166;font-weight:800;}
 .hint{max-width:1000px;margin:16px auto 0;padding:0 20px;font-size:14px;color:var(--muted);}
 
 /* ── the sheet: exact A4 ── */
 .sheetwrap{overflow-x:auto;padding:0 0 8px;}
 .sheet{
   /* the sheet itself stays paper-white — it is a print preview */
-  width:210mm;min-height:297mm;margin:18px auto;background:#F6F4EE;color:#151C2E;
+  width:210mm;min-height:297mm;margin:18px auto;background:#FFFBF7;color:#1B1030;position:relative;
   padding:14mm 15mm;display:flex;flex-direction:column;
-  box-shadow:0 3px 18px rgba(0,0,0,.18);
+  box-shadow:0 18px 50px -18px rgba(40,10,70,.35);
 }
-.eyebrow{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:10pt;letter-spacing:.16em;
-  text-transform:uppercase;color:var(--stamp);border-bottom:2px solid var(--stamp);padding-bottom:5px;margin-bottom:7mm;}
-.head{font-family:'Anton',sans-serif;font-size:30pt;line-height:1.06;text-transform:uppercase;text-wrap:balance;}
+.sheet .logo{position:absolute;top:13mm;right:15mm;width:44mm;height:auto;}
+.sheet::before{content:"";position:absolute;left:0;right:0;top:0;height:3mm;
+  background:linear-gradient(90deg,#7C3AED,#FF3D8B 55%,#FFC83D);}
+.sheet .eyebrow{display:block;font-family:system-ui,sans-serif;font-weight:800;font-size:10pt;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--stamp);background:none;border:0;border-bottom:2px solid var(--stamp);border-radius:0;padding:0 0 5px;margin:0 50mm 7mm 0;}
+.sheet .eyebrow::before{display:none;}
+.head{font-family:var(--font-display);font-weight:800;font-size:32pt;line-height:1.08;text-wrap:balance;max-width:150mm;}
 .head .g{color:var(--heal);}
 [lang=hi] .head,[lang=mr] .head,[lang=bn] .head,[lang=ta] .head,[lang=te] .head{
-  font-family:system-ui,'Noto Sans',sans-serif;font-weight:800;text-transform:none;font-size:24pt;line-height:1.3;}
+  font-weight:800;text-transform:none;font-size:25pt;line-height:1.3;}
 .sub{font-size:12pt;margin-top:4mm;max-width:150mm;}
 
 .mid{display:flex;gap:10mm;margin:7mm 0 6mm;align-items:center;}
-.qr{width:66mm;flex:none;border:2.5px solid var(--ink);padding:3.5mm;background:#fff;}
+.qr{width:66mm;flex:none;border:2.5px solid var(--ink);border-radius:4mm;padding:3.5mm;background:#fff;}
 .qr svg{width:100%;height:auto;display:block;}
 .qrcap{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:8.5pt;text-align:center;margin-top:2.5mm;letter-spacing:.03em;word-break:break-all;}
 .pts{flex:1;}
 .pt{display:flex;gap:4mm;align-items:flex-start;margin-bottom:4.5mm;}
-.pt .n{font-family:'Anton',sans-serif;font-size:15pt;color:var(--marigold);line-height:1.1;flex:none;width:9mm;}
+.pt .n{font-family:var(--font-display);font-weight:800;font-size:16pt;color:var(--stamp);line-height:1.1;flex:none;width:9mm;}
 .pt .t{font-size:11.5pt;}
 .checks{border-top:2px solid var(--ink);border-bottom:2px solid var(--ink);padding:4mm 0;margin-bottom:6mm;}
 .checks .ct{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:8.5pt;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:3mm;}
 .checks .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:5mm;}
-.checks .c .nm{font-family:'Anton',sans-serif;font-size:13pt;color:var(--heal);}
+.checks .c .nm{font-family:var(--font-display);font-weight:800;font-size:14pt;color:var(--heal);}
 [lang=hi] .checks .c .nm,[lang=mr] .checks .c .nm,[lang=bn] .checks .c .nm,[lang=ta] .checks .c .nm,[lang=te] .checks .c .nm{font-family:ui-monospace,Menlo,Consolas,monospace;font-weight:700;font-size:12pt;}
 .checks .c .lb{font-size:9.5pt;line-height:1.35;margin-top:1mm;}
 
-.lines{border:2.5px solid var(--ink);background:#fff;padding:5mm 6mm;margin-top:auto;}
-.lines h2{font-family:'Anton',sans-serif;font-size:13pt;text-transform:uppercase;letter-spacing:.03em;margin-bottom:3mm;}
+.lines{border:2.5px solid var(--ink);border-radius:5mm;background:#fff;padding:5mm 6mm;margin-top:auto;}
+.lines h2{font-family:var(--font-display);font-weight:800;font-size:14pt;letter-spacing:.01em;margin-bottom:3mm;color:var(--ink);}
 [lang=hi] .lines h2,[lang=mr] .lines h2,[lang=bn] .lines h2,[lang=ta] .lines h2,[lang=te] .lines h2{
-  font-family:system-ui,'Noto Sans',sans-serif;font-weight:800;text-transform:none;}
+  font-weight:800;text-transform:none;}
 .lines table{width:100%;border-collapse:collapse;font-size:10.5pt;}
 .lines td{padding:1.5mm 0;border-bottom:1px solid var(--line);}
 .lines tr:last-child td{border-bottom:none;}
@@ -113,15 +137,15 @@ button.act{background:var(--marigold);border-color:var(--marigold);font-weight:7
 
 <nav class="site noprint" aria-label="Main">
   <div class="wrap-wide">
-    <a class="brand" href="index.html"><span class="name">Ronak</span><span class="stop" aria-hidden="true">.</span></a>
-    <a class="navlink" href="index.html">Screener</a>
+    <a class="brand" href="index.html"><svg class="brand-mark" viewBox="-116 -116 232 232" aria-hidden="true" focusable="false"><defs><linearGradient id="nbPk" x1="0" y1="-16" x2="0" y2="-102" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#FF1470"/><stop offset=".55" stop-color="#FF4F9A"/><stop offset="1" stop-color="#FFB0D6"/></linearGradient><linearGradient id="nbVi" x1="0" y1="-16" x2="0" y2="-102" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#5B16D6"/><stop offset=".55" stop-color="#8D5CFF"/><stop offset="1" stop-color="#D4C0FF"/></linearGradient><linearGradient id="nbGo" x1="0" y1="-32" x2="0" y2="-114" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#FF8A00"/><stop offset="1" stop-color="#FFE45C"/></linearGradient><radialGradient id="nbCore" cx="0" cy="0" r="30" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#FFFBE3"/><stop offset=".45" stop-color="#FFD83F"/><stop offset="1" stop-color="#FF9F1C"/></radialGradient><path id="nbPetal" d="M0 -16 C42 -38 48 -84 16 -102 C-12 -90 -38 -50 0 -16Z"/><path id="nbRay" d="M0 -32 C10 -56 10 -86 0 -114 C-10 -86 -10 -56 0 -32Z"/></defs><g fill="url(#nbGo)"><use href="#nbRay" transform="rotate(30)"/><use href="#nbRay" transform="rotate(90)"/><use href="#nbRay" transform="rotate(150)"/><use href="#nbRay" transform="rotate(210)"/><use href="#nbRay" transform="rotate(270)"/><use href="#nbRay" transform="rotate(330)"/></g><g style="mix-blend-mode:screen"><use href="#nbPetal" fill="url(#nbPk)" transform="rotate(0)"/><use href="#nbPetal" fill="url(#nbVi)" transform="rotate(60)"/><use href="#nbPetal" fill="url(#nbPk)" transform="rotate(120)"/><use href="#nbPetal" fill="url(#nbVi)" transform="rotate(180)"/><use href="#nbPetal" fill="url(#nbPk)" transform="rotate(240)"/><use href="#nbPetal" fill="url(#nbVi)" transform="rotate(300)"/></g><circle r="30" fill="url(#nbCore)"/></svg><span class="name">Ronak</span></a>
+    <a class="navlink" href="index.html">Check-ins</a>
     <a class="navlink" href="index.html#guide">Talk it through</a>
     <a class="navlink" href="index.html#resources">Get Help</a>
-    <a class="navlink" href="evidence.html">Evidence</a>
-    <a class="navlink" href="global.html">Global</a>
-    <a class="navlink" href="ethics.html">Ethics</a>
-    <a class="navlink" href="manifesto.html">Manifesto</a>
-    <a class="navlink" href="poster.html" aria-current="page">Poster</a>
+    <a class="navlink sub" href="evidence.html">Evidence</a>
+    <a class="navlink sub" href="global.html">Global</a>
+    <a class="navlink sub" href="ethics.html">Ethics</a>
+    <a class="navlink sub" href="manifesto.html">Manifesto</a>
+    <a class="navlink sub" href="poster.html" aria-current="page">Poster</a>
   </div>
 </nav>
 
@@ -137,7 +161,7 @@ button.act{background:var(--marigold);border-color:var(--marigold);font-weight:7
 </style>
 <div class="bar noprint">
   <div class="in">
-    <h1>Psych <span class="accent">Screener</span> — Poster</h1>
+    <h1>Ronak <span class="accent">·</span> Poster</h1>
     <label for="lang">Language</label>
     <select id="lang"></select>
     <button class="act" onclick="window.print()">Print / Save as PDF</button>
@@ -146,6 +170,28 @@ button.act{background:var(--marigold);border-color:var(--marigold);font-weight:7
 <p class="hint">Pick a language, then print at <strong>A4, 100% scale, no margins</strong>. The QR code has been decode-tested down to 18&nbsp;mm, so it scans reliably at this size. Put it where people wait.</p>
 
 <div class="sheetwrap"><div class="sheet" id="sheet" lang="en">
+  <!-- the logo, in ink, for paper -->
+  <svg class="logo" viewBox="-30 -30 520 170" aria-label="Ronak" role="img">
+    <defs>
+      <linearGradient id="plPk" x1="0" y1="-16" x2="0" y2="-102" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#FF1470"/><stop offset=".55" stop-color="#FF4F9A"/><stop offset="1" stop-color="#FFB0D6"/></linearGradient>
+      <linearGradient id="plVi" x1="0" y1="-16" x2="0" y2="-102" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#5B16D6"/><stop offset=".55" stop-color="#8D5CFF"/><stop offset="1" stop-color="#D4C0FF"/></linearGradient>
+      <linearGradient id="plGo" x1="0" y1="-32" x2="0" y2="-114" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#FF8A00"/><stop offset="1" stop-color="#FFE45C"/></linearGradient>
+      <radialGradient id="plCore" cx="0" cy="0" r="30" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#FFFBE3"/><stop offset=".45" stop-color="#FFD83F"/><stop offset="1" stop-color="#FF9F1C"/></radialGradient>
+      <path id="plPetal" d="M0 -16 C42 -38 48 -84 16 -102 C-12 -90 -38 -50 0 -16Z"/>
+      <path id="plRay" d="M0 -32 C10 -56 10 -86 0 -114 C-10 -86 -10 -56 0 -32Z"/>
+    </defs>
+    <g fill="none" stroke="#1B1030" stroke-width="17" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M10 100 V10 H40 A25 25 0 0 1 40 60 H10 M36 60 L64 100"/>
+      <path d="M210 100 V10 L268 100 V10"/>
+      <path d="M294 100 L328 10 L362 100 M306 70 H350"/>
+      <path d="M390 10 V100 M442 10 L392 62 M411 42 L446 100"/>
+    </g>
+    <g transform="translate(136 55) scale(.56)">
+      <g fill="url(#plGo)"><use href="#plRay" transform="rotate(30)"/><use href="#plRay" transform="rotate(90)"/><use href="#plRay" transform="rotate(150)"/><use href="#plRay" transform="rotate(210)"/><use href="#plRay" transform="rotate(270)"/><use href="#plRay" transform="rotate(330)"/></g>
+      <use href="#plPetal" fill="url(#plPk)" transform="rotate(0)"/><use href="#plPetal" fill="url(#plVi)" transform="rotate(60)"/><use href="#plPetal" fill="url(#plPk)" transform="rotate(120)"/><use href="#plPetal" fill="url(#plVi)" transform="rotate(180)"/><use href="#plPetal" fill="url(#plPk)" transform="rotate(240)"/><use href="#plPetal" fill="url(#plVi)" transform="rotate(300)"/>
+      <circle r="30" fill="url(#plCore)"/>
+    </g>
+  </svg>
   <p class="eyebrow" id="pEyebrow"></p>
   <h2 class="head" id="pHead"></h2>
   <p class="sub" id="pSub"></p>

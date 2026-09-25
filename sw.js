@@ -63,15 +63,38 @@
 
    v11: index.html and both English and Hindi string files changed — the
    "what's behind this" section is translated now. */
-const CACHE = "ronak-v26";
+/* v27: the redesign — night-to-dawn palette, the bloom-sun logo and icons,
+   the check-in scenes, the rebuilt opening, and Baloo as the display face.
+   site.css, nav.js, index.html, every page and all six string files
+   changed. The Latin face is precached with the rest so the brand type
+   survives going offline; the four Indic faces are cached the first time
+   a reader in that script loads them, by the fetch handler below, rather
+   than making every install download all five. anton.woff2 is gone. */
+/* ── the release number, in one place ──
+   The page's own CSS and JS moved out of index.html into app.css and
+   app.js, and every page now asks for its shared files by versioned URL
+   (site.css?v=27, nav.js?v=27, app.js?v=27). The version in the URL is
+   what makes that safe: a page is fetched fresh, and if it asked for a
+   plain "app.js" a returning phone could pair the new page with the old
+   script still in this cache for one load. A new version is a new URL,
+   which this cache has never seen, so it is always fetched. When a release
+   changes any of those files: bump REL here AND the ?v= in every page. */
+const REL = "27";
+const CACHE = "ronak-v" + REL;
 const ASSETS = [
-  "./", "./index.html", "./helplines.js", "./nav.js",
-  "./i18n.en.js", "./i18n.hi.js", "./i18n.mr.js",
-  "./i18n.bn.js", "./i18n.ta.js", "./i18n.te.js",
+  "./", "./index.html", "./helplines.js", "./nav.js?v=" + REL,
+  "./app.js?v=" + REL, "./app.css?v=" + REL, "./site.css?v=" + REL,
+  "./i18n.en.js?v=" + REL, "./i18n.hi.js?v=" + REL, "./i18n.mr.js?v=" + REL,
+  "./i18n.bn.js?v=" + REL, "./i18n.ta.js?v=" + REL, "./i18n.te.js?v=" + REL,
   "./ethics.html", "./evidence.html", "./manifesto.html", "./404.html",
   "./global.html", "./poster.html", "./qr-site.svg",
-  "./site.css", "./manifest.webmanifest",
-  "./icon.svg", "./icon-192.png", "./icon-512.png", "./icon-maskable.png"
+  "./manifest.webmanifest",
+  /* icon.svg is the favicon every page draws; the large PNGs are only ever
+     asked for by the browser itself when someone installs the app, so they
+     are not precached — that was ~110KB of a first visit on a data pack,
+     spent on a picture most visitors never see */
+  "./icon.svg", "./icon-192.png",
+  "./fonts/baloo2-latin.woff2"
 ];
 
 self.addEventListener("install", e=>{
@@ -115,6 +138,25 @@ self.addEventListener("fetch", e=>{
         }
         return res;
       }).catch(()=> caches.match(req).then(hit=> hit || caches.match("./index.html")))
+    );
+    return;
+  }
+
+  /* A versioned file (?v=) never changes — a new release is a new URL —
+     and neither does a font. So those are cache-first with no background
+     refresh at all. The refresh below used to run for them too, on every
+     visit: every script, stylesheet, font and all six language files
+     re-downloaded behind the page each time it opened, ~200KB of somebody's
+     prepaid data per visit to replace files with identical copies. */
+  if(url.searchParams.has("v") || url.pathname.indexOf("/fonts/") !== -1){
+    e.respondWith(
+      caches.match(req).then(hit=> hit || fetch(req).then(res=>{
+        if(res.ok){
+          const copy = res.clone();
+          caches.open(CACHE).then(c=> c.put(req, copy));
+        }
+        return res;
+      }))
     );
     return;
   }

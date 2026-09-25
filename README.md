@@ -1,6 +1,8 @@
-# Ronak — Screen Early. Act Early.
+# Ronak — Check in early. Act early.
 
-**A free, private, multilingual mental-health screening tool — built for India, usable
+![Ronak](brand/ronak-logo-on-light.svg)
+
+**A free, private, multilingual mental-wellbeing check-in — built for India, usable
 worldwide** — plus the manifesto, evidence register and ethics charter behind it.
 
 **Live site:** https://aryanmanhas12.github.io/Psych/
@@ -31,7 +33,7 @@ earlier**, and **giving them the follow-up record the system doesn't**.
 
 | File | What it is |
 |---|---|
-| `index.html` | **The screener app** — instruments, guided conversation, guidance, history, reminders |
+| `index.html` + `app.js` + `app.css` | **The app** — instruments, guided conversation, guidance, history, reminders. The page, its script and its styles are separate files so a repeat visit only re-fetches the ~15KB page |
 | `site.css` | **Shared design system** — one source of truth for tokens, dark mode, nav and components |
 | `i18n.js` | **Translation layer** — every UI string and instrument item in 6 languages |
 | `helplines.js` | **Crisis lines worldwide** — directory-first, region tables, review-dated |
@@ -40,19 +42,48 @@ earlier**, and **giving them the follow-up record the system doesn't**.
 | `manifesto.html` | **The Waiting Room is Full** — a citizen's manifesto on the treatment gap |
 | `poster.html` + `qr-site.svg` | **Printable A4 clinic poster** in six languages, with a decode-tested QR code |
 | `sw.js` + `manifest.webmanifest` | **Offline support** — installable app, works with no connection |
-| `anton.woff2`, `icon-*.png` | Self-hosted assets, so the site makes zero third-party requests |
+| `fonts/` | **Baloo 2** family (Ek Type, OFL) — self-hosted, one file per script, so the site makes zero third-party requests |
+| `brand/` | **The logo** — the bloom-sun mark, the RONAK lockup for light and dark grounds, a 1024px icon master |
+| `icon.svg`, `icon-*.png`, `og-image.jpg` | App icons, favicon and the social card, all drawn from the same mark |
 | `LICENSE` | MIT, plus a not-a-medical-device notice |
 
 Plain HTML/CSS/JS. **No build step, no framework, no backend, no tracking.** Open any
 file in a browser or host the folder anywhere static.
 
+## The look: night, then dawn
+
+**Ronak** means radiance — the glow a place takes on when it comes alive. The whole design
+is built on that one word.
+
+- **The logo is a bloom-sun.** Six petals, pink and violet, turn around one gold light,
+  with gold rays reaching past them. Read it as a sunrise or as a flower opening; both are
+  the same idea, something growing towards light. The O of the RONAK wordmark *is* the
+  mark. Files in [`brand/`](brand/).
+- **The page opens at night and warms as you scroll.** The first screen is a sky before
+  dawn with the bloom-sun under the horizon; scrolling lifts it and opens it, and three
+  soft glows behind every page breathe at about six breaths a minute. The brights are used
+  as *light*, glowing out of the dark, never as flat paint on a white page — research on
+  people in distress is consistent that loud, cheerful flat colour feels jarring when your
+  own mood is grey. Meet them in the dark, then show them the light.
+- **Every check-in has its own place.** The five questionnaires are full-screen scenes
+  stacked like a deck, each in its own colour with a small wordless picture of the turn it
+  hopes for: a spark lighting, the sun clearing the hills, a tangle loosening into a wave,
+  a bud opening, a drop landing in still water. None of them illustrates the problem.
+- **Nothing is hijacked.** The scroll moves at your speed (sticky positioning and CSS
+  scroll timelines, not scroll-jacking); every animation stops for
+  `prefers-reduced-motion`; high contrast turns every glow off; scenes only animate while
+  they are on screen, to spare older phones' batteries.
+- **The working papers stay quiet.** Evidence, Global, Ethics, Manifesto and Poster are one
+  tap away on every page, but smaller and dimmer, after the four things a person came to do.
+
 ## Features
 
 **A wordless opening** — Chaplin's principle, that expression crosses every language
-border, applied literally: a five-beat silent animation carries the whole argument with
-**no words at all**. A person under a weight; others passing without stopping; the view
-pulling back to reveal them as one of 133 with a single distant point of gold help;
-someone reaching them; the weight lifting. It reads identically to a Tamil speaker, a
+border, applied literally: a ten-second silent film carries the whole argument with
+**no words at all**. A person curled on the floor of a room at night; the world passing
+the window without stopping; a door opening onto light; someone coming in to sit beside
+them — beside, not over; the head lifting, the room warming, and the warmth opening into
+the bloom-sun, the logo, over the two of them. It reads identically to a Tamil speaker, a
 Bengali speaker, or someone who cannot read at all — which matters, because low literacy
 and untreated mental illness overlap in exactly the populations this serves. It plays once
 per device, never for `prefers-reduced-motion` users, never on a deep link (someone
@@ -135,8 +166,10 @@ commit) or clone and edit locally. Changes to `main` go live on GitHub Pages in 
 |---|---|
 | Wording, questions, guidance, resources | `i18n.js` — find the language block, edit the string |
 | Add a language | Copy any language block in `i18n.js`, translate the values, keep the keys |
-| Add an instrument | Add scoring to `META` in `index.html`, then add its text to every language in `i18n.js` |
+| Add an instrument | Add scoring to `META` in `app.js`, then add its text to every language in `i18n.*.js` |
+| Ship a release | Bump `REL` in `sw.js` **and** the `?v=` on every page's `site.css`, `nav.js`, `app.css`, `app.js` links |
 | Colours, spacing, layout | `site.css` — change a token, every page follows |
+| The logo | `brand/` — then re-render `icon-*.png` and `og-image.jpg` from it |
 | Citations | `evidence.html` |
 | Helpline numbers | `helplines.js` — read the safety note at the top first |
 | Ethics or privacy claims | `ethics.html` — only claim what the code actually does |

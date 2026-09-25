@@ -1,13 +1,13 @@
 {
-  "name": "Ronak — Mental Health Screening",
+  "name": "Ronak — Mental Wellbeing Check-ins",
   "short_name": "Ronak",
-  "description": "Free, private mental health screening (PHQ-9, GAD-7, PHQ-4, AUDIT-C) in six languages, with crisis helplines worldwide. Works offline. Nothing leaves your device.",
+  "description": "Free, private mental wellbeing check-ins (PHQ-9, GAD-7, PHQ-4, WHO-5, AUDIT-C) in six languages, with crisis helplines worldwide. Works offline. Nothing leaves your device.",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#F6F4EE",
-  "theme_color": "#151C2E",
+  "background_color": "#0B0616",
+  "theme_color": "#140A26",
   "categories": [
     "health",
     "medical",
@@ -40,6 +40,10 @@
     }
   ],
   "shortcuts": [
+    {
+      "name": "Start a check-in",
+      "url": "./index.html#home"
+    },
     {
       "name": "Talk it through",
       "url": "./index.html#guide"

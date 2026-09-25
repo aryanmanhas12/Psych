@@ -11,72 +11,165 @@
      tokens, never raw hex, so light and dark stay in step.
    · Anything used by two or more pages belongs in this file.
    · Page-specific styling stays in that page's own <style> block.
+
+   ── the look: night, then dawn ──
+   "Ronak" means radiance — the glow a place takes on when it comes
+   alive. The site is built around that one idea. It opens in a deep
+   plum night lit by three soft glows (violet, pink, gold) that breathe
+   at about six breaths a minute, and as you scroll the sky warms
+   towards a sunrise. The brights are LIGHT, not paint: they glow out of
+   the dark rather than being spread flat across a white page, because
+   research on people in distress is consistent that loud, cheerful
+   flat colour reads as jarring when your own mood is grey. Meet them
+   in the dark, then show them the light.
    ══════════════════════════════════════════════════════════════ */
 
-/* No @font-face at all now. Every face on this site is the reader's own
-   system type, which is the strongest possible version of the promise that
-   nothing here phones home — there is nothing left to fetch. */
+/* ── type: Baloo 2, from Ek Type in Mumbai ──
+   One display face, and the rest stays the reader's own system type.
+   Baloo is rounded, warm and heavy without shouting — the same
+   letterforms the logo is drawn in — and it is one of very few display
+   families designed in India for Indian scripts: Baloo 2 for Latin and
+   Devanagari, Baloo Da 2 for Bengali, Baloo Thambi 2 for Tamil and
+   Baloo Tammudu 2 for Telugu. So a Tamil reader's headline is in the
+   same voice as an English one, not a system fallback wearing it.
 
-/* ── tokens ── */
+   Self-hosted, so the promise that nothing here phones a third party
+   still holds. unicode-range means a reader only ever downloads the
+   script they are actually reading. font-display:optional, never swap:
+   if the face is not in hand within the first ~100ms the page keeps the
+   system font for that visit and uses Baloo from cache on the next —
+   so a slow connection costs nothing, the headline never waits on a
+   font, and nothing jumps when one lands. Licence: fonts/OFL.txt. */
+@font-face{
+  font-family:"Ronak Display";font-style:normal;font-weight:600 800;font-display:optional;
+  src:url(fonts/baloo2-latin.woff2) format("woff2");
+  unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;
+}
+@font-face{
+  font-family:"Ronak Display";font-style:normal;font-weight:600 800;font-display:optional;
+  src:url(fonts/baloo2-devanagari.woff2) format("woff2");
+  unicode-range:U+0900-097F,U+1CD0-1CF9,U+200C-200D,U+20A8,U+20B9,U+20F0,U+25CC,U+A830-A839,U+A8E0-A8FF;
+}
+@font-face{
+  font-family:"Ronak Display";font-style:normal;font-weight:600 800;font-display:optional;
+  src:url(fonts/balooda2-bengali.woff2) format("woff2");
+  unicode-range:U+0980-09FE,U+1CD0,U+1CD2,U+1CD5-1CD6,U+1CD8,U+1CE1,U+1CEA,U+1CED,U+1CF2,U+1CF5-1CF7,U+A8F1;
+}
+@font-face{
+  font-family:"Ronak Display";font-style:normal;font-weight:600 800;font-display:optional;
+  src:url(fonts/baloothambi2-tamil.woff2) format("woff2");
+  unicode-range:U+0B82-0BFA;
+}
+@font-face{
+  font-family:"Ronak Display";font-style:normal;font-weight:600 800;font-display:optional;
+  src:url(fonts/balootammudu2-telugu.woff2) format("woff2");
+  unicode-range:U+0C00-0C7F,U+1CDA;
+}
+
+/* ── tokens ──
+   The token NAMES predate this palette and are kept so no component
+   had to be rewritten to change colour: --heal is now the brand violet
+   (links, primary accents), --stamp the brand magenta (labels, alerts),
+   --marigold the sun gold, --deep the always-night surface. Every text
+   pairing below was measured, not eyeballed — the lowest is 5.4:1. */
 :root{
-  --ink:#161B26;
-  --paper:#FAF8F5;
+  --ink:#1B1030;           /* plum ink, 17:1 on paper */
+  --paper:#FFF7F1;         /* dawn cream */
   --card:#FFFFFF;
-  --marigold:#DF9916;
-  --stamp:#B8382A;
-  --heal:#246554;
-  --line:#E4DED4;
-  --muted:#585E70;
-  --deep:#161B26;          /* the always-dark surface: nav, stat bands */
-  --on-deep:#FAF8F5;
-  --stamp-bg:#B8382A;
+  --marigold:#F2A300;
+  --stamp:#C8105A;         /* 5.4:1 on paper */
+  --heal:#6D28D9;          /* 6.7:1 on paper */
+  --line:#EBDDE8;
+  --muted:#5F5476;         /* 6.6:1 on paper */
+  --deep:#140A26;          /* the always-night surface: nav, strip, stat bands */
+  --on-deep:#FFF6EE;
+  --stamp-bg:#C2185B;
   --on-stamp:#FFFFFF;
-  --on-marigold:#161B26;
-  --bar:#B87D0E;
+  --on-marigold:#1B1030;
+  --bar:#FFC83D;
+
+  /* brand light, used as light — glows, gradients, accents */
+  --pink:#FF3D8B;
+  --violet:#7C3AED;
+  --sun:#FFC83D;
+  --coral:#FF7A59;
+  --aqua:#22D3C5;
+  --night-0:#0B0616;
+  --night-1:#140A26;
+  --night-2:#241046;
+  --grad-bloom:linear-gradient(115deg,#7C3AED 0%,#FF3D8B 55%,#FFC83D 100%);
+  /* the button gradient stays dark enough for white text end to end:
+     7.1:1 at the violet end, 5.7:1 at the magenta end */
+  --grad-cta:linear-gradient(115deg,#6D28D9 0%,#A21CAF 55%,#C8105A 100%);
+  --grad-text:linear-gradient(100deg,#7C3AED 0%,#E11D74 60%,#F08A00 100%);
+  --glow-a:rgba(124,58,237,.16);
+  --glow-b:rgba(255,61,139,.13);
+  --glow-c:rgba(255,200,61,.16);
+  --dawn-a:rgba(255,122,89,.22);
+  --dawn-b:rgba(255,200,61,.20);
+
   --font-ui:-apple-system,BlinkMacSystemFont,'Segoe UI Variable Display','Segoe UI','Noto Sans',Roboto,system-ui,sans-serif;
+  --font-display:"Ronak Display",-apple-system,BlinkMacSystemFont,'Segoe UI Variable Display','Segoe UI','Noto Sans',Roboto,system-ui,sans-serif;
   --font-serif:'Charter','Bitstream Charter','Sitka Text','Cambria',Georgia,serif;
-  --r-sm:.45rem; --r-md:.75rem; --r-lg:1.1rem;
-  --shadow-soft:0 2px 4px rgba(22,27,38,.03), 0 8px 22px rgba(22,27,38,.05);
-  --shadow-card:0 1px 3px rgba(22,27,38,.04), 0 6px 18px rgba(22,27,38,.05);
-  --shadow-subtle:0 1px 2px rgba(22,27,38,.04);
+  --r-sm:.6rem; --r-md:.9rem; --r-lg:1.35rem; --r-xl:1.9rem;
+  --shadow-soft:0 2px 6px rgba(40,10,70,.05), 0 14px 34px -8px rgba(60,14,110,.16);
+  --shadow-card:0 1px 3px rgba(40,10,70,.05), 0 10px 26px -10px rgba(60,14,110,.18);
+  --shadow-subtle:0 1px 2px rgba(40,10,70,.06);
+  --shadow-glow:0 10px 30px -8px rgba(162,28,175,.45);
   --e-out1:cubic-bezier(.25,.46,.45,.94);
   --e-out2:cubic-bezier(.215,.61,.355,1);
+  --e-spring:cubic-bezier(.16,1,.3,1);
+  --breath:11s;            /* one slow breath in and out: ~5.5 breaths a minute */
   --scale:1;
 }
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]){
-    --ink:#F0EDE6;
-    --paper:#0E131D;
-    --card:#151B27;
-    --line:#273042;
-    --muted:#9BA4B6;
-    --marigold:#F0B53C;
-    --stamp:#E4796B;
-    --heal:#56B89E;
-    --deep:#090C12;
-    --on-deep:#F0EDE6;
-    --stamp-bg:#B8382A;
-    --on-stamp:#FFFFFF;
-    --bar:#F0B53C;
-    --on-marigold:#090C12;
-    --shadow-soft:0 2px 6px rgba(0,0,0,.25), 0 8px 24px rgba(0,0,0,.3);
-    --shadow-card:0 1px 4px rgba(0,0,0,.2), 0 6px 18px rgba(0,0,0,.25);
+    --ink:#F7F0FF; --paper:#0C0717; --card:#170E29; --line:#2F2247;
+    --muted:#B9ACD0; --marigold:#FFC83D; --stamp:#FF6FA8; --heal:#C3A6FF;
+    --deep:#110A21; --on-deep:#FFF6EE;
+    --stamp-bg:#B3124F; --on-stamp:#FFFFFF; --bar:#FFC83D; --on-marigold:#0C0717;
+    --grad-text:linear-gradient(100deg,#C3A6FF 0%,#FF7EB3 55%,#FFD166 100%);
+    --glow-a:rgba(124,58,237,.30); --glow-b:rgba(255,61,139,.20); --glow-c:rgba(255,200,61,.14);
+    --dawn-a:rgba(255,122,89,.20); --dawn-b:rgba(255,61,139,.16);
+    --shadow-soft:0 2px 6px rgba(0,0,0,.3), 0 14px 34px -8px rgba(0,0,0,.5);
+    --shadow-card:0 1px 4px rgba(0,0,0,.25), 0 12px 30px -12px rgba(0,0,0,.6);
+    --shadow-glow:0 10px 34px -8px rgba(255,61,139,.45);
   }
 }
 :root[data-theme="dark"]{
-  --ink:#F0EDE6; --paper:#0E131D; --card:#151B27; --line:#273042;
-  --muted:#9BA4B6; --marigold:#F0B53C; --stamp:#E4796B; --heal:#56B89E;
-  --deep:#090C12; --on-deep:#F0EDE6;
-  --stamp-bg:#B8382A; --on-stamp:#FFFFFF; --bar:#F0B53C; --on-marigold:#090C12;
-  --shadow-soft:0 2px 6px rgba(0,0,0,.25), 0 8px 24px rgba(0,0,0,.3);
-  --shadow-card:0 1px 4px rgba(0,0,0,.2), 0 6px 18px rgba(0,0,0,.25);
+  --ink:#F7F0FF; --paper:#0C0717; --card:#170E29; --line:#2F2247;
+  --muted:#B9ACD0; --marigold:#FFC83D; --stamp:#FF6FA8; --heal:#C3A6FF;
+  --deep:#110A21; --on-deep:#FFF6EE;
+  --stamp-bg:#B3124F; --on-stamp:#FFFFFF; --bar:#FFC83D; --on-marigold:#0C0717;
+  --grad-text:linear-gradient(100deg,#C3A6FF 0%,#FF7EB3 55%,#FFD166 100%);
+  --glow-a:rgba(124,58,237,.30); --glow-b:rgba(255,61,139,.20); --glow-c:rgba(255,200,61,.14);
+  --dawn-a:rgba(255,122,89,.20); --dawn-b:rgba(255,61,139,.16);
+  --shadow-soft:0 2px 6px rgba(0,0,0,.3), 0 14px 34px -8px rgba(0,0,0,.5);
+  --shadow-card:0 1px 4px rgba(0,0,0,.25), 0 12px 30px -12px rgba(0,0,0,.6);
+  --shadow-glow:0 10px 34px -8px rgba(255,61,139,.45);
 }
+/* High contrast is a request for nothing to glow, blend or fade. The
+   brand survives as three solid, dark accents and nothing else. */
 :root[data-contrast="high"]{
   --ink:#000; --paper:#FFF; --card:#FFF; --line:#000; --muted:#1A1A1A;
-  --marigold:#8A5D00; --stamp:#8E1B10; --heal:#0F4A3C; --deep:#000; --on-deep:#FFF;
-  --stamp-bg:#8E1B10; --on-stamp:#FFF; --bar:#8A5D00; --on-marigold:#FFF;
-  --shadow-soft:none; --shadow-card:none;
+  --marigold:#8A5D00; --stamp:#8E0B45; --heal:#4B0FA8; --deep:#000; --on-deep:#FFF;
+  --stamp-bg:#8E0B45; --on-stamp:#FFF; --bar:#8A5D00; --on-marigold:#FFF;
+  --grad-text:linear-gradient(#4B0FA8,#4B0FA8);
+  --grad-cta:linear-gradient(#4B0FA8,#4B0FA8);
+  --shadow-soft:none; --shadow-card:none; --shadow-glow:none;
 }
+
+/* ── lite: the same site, lighter, for the phones that need it ──
+   The head script sets html.lite on a device reporting 2GB of memory or
+   less, or on a connection with Data Saver on. Nothing is removed that
+   carries meaning — every word, control, colour and one-time reveal is
+   the same — but the idle loops stop (the sky's breathing, the sun's slow
+   turn, the scenes' drift), and the tab bar's frosted glass becomes a
+   plain solid pill, because a live blur under a scrolling page is the
+   single most expensive thing a budget GPU can be asked to draw. */
+.lite .sky::before{animation:none;opacity:.85;}
+.lite .topstrip .wrap > span:first-child::before,
+.lite .topstrip .wrap-wide > span:first-child::before{animation:none;}
 
 /* ── reset & base ── */
 *{margin:0;padding:0;box-sizing:border-box;}
@@ -93,7 +186,7 @@ body{
   font-family:-apple-system,BlinkMacSystemFont,'Segoe UI Variable Text','Segoe UI','Noto Sans',Roboto,system-ui,sans-serif;
   line-height:1.68;font-size:1rem;
   touch-action:manipulation;
-  -webkit-tap-highlight-color:rgba(36,101,84,.14);
+  -webkit-tap-highlight-color:rgba(124,58,237,.14);
   text-rendering:optimizeLegibility;
   font-feature-settings:"cv02","cv03","cv04","cv11","kern","liga";
 }
@@ -112,11 +205,12 @@ p,li{text-wrap:pretty;}
   *,*::before,*::after{animation:none!important;transition:none!important;}
   html{scroll-behavior:auto;}
 }
-a{color:var(--heal);}
+a{color:var(--heal);text-underline-offset:.18em;}
 a:hover{text-decoration-thickness:2px;}
 :where(a,button,select,input,[tabindex]):focus-visible{
-  outline:3px solid var(--stamp);outline-offset:3px;
+  outline:3px solid var(--pink);outline-offset:3px;
 }
+:root[data-contrast="high"] :where(a,button,select,input,[tabindex]):focus-visible{outline-color:#000;}
 img,svg{max-width:100%;}
 /* The `hidden` attribute is only a user-agent `display:none`, which ANY
    class-level display wins against. Adding .actionrow{display:flex} silently
@@ -124,26 +218,66 @@ img,svg{max-width:100%;}
    `el.hidden = true` was set, honoured by the attribute and ignored by the
    layout. This is the guard that makes `hidden` mean hidden everywhere. */
 [hidden]{display:none!important;}
+::selection{background:color-mix(in srgb,var(--pink) 30%,transparent);}
+
+/* ── the sky: a slow pulse of light behind every page ──
+   nav.js puts one fixed, aria-hidden layer at the back of the page. Two
+   pseudo-elements do all the work, so the whole effect is three
+   compositor layers and no scripted animation at all:
+
+   · ::before — three glows, violet, pink and gold, that brighten and
+     settle over one slow breath (11s: in for 5.5, out for 5.5 — the
+     resonance pace the breathing exercise in the app uses). Only
+     opacity and transform move, so it never repaints.
+   · ::after — the dawn. A warm horizon at the foot of the screen whose
+     brightness follows how far down the page you are: night at the
+     top, sunrise by the end. Driven by a CSS scroll timeline where the
+     browser has one; nav.js drives the same variable where it doesn't.
+
+   Behind everything (z-index -1, never above a word), transparent to
+   taps, and gone entirely for reduced motion's animation, for high
+   contrast, and for print. */
+.sky{
+  position:fixed;inset:0;z-index:-1;pointer-events:none;overflow:hidden;
+  contain:strict;
+}
+.sky::before,.sky::after{content:"";position:absolute;inset:-10%;}
+.sky::before{
+  background:
+    radial-gradient(42% 34% at 12% 8%, var(--glow-a), transparent 70%),
+    radial-gradient(40% 32% at 92% 18%, var(--glow-b), transparent 72%),
+    radial-gradient(46% 30% at 60% 62%, var(--glow-c), transparent 72%);
+  animation:rk-breathe var(--breath) ease-in-out infinite alternate;
+  will-change:opacity,transform;
+}
+.sky::after{
+  background:
+    radial-gradient(90% 46% at 50% 108%, var(--dawn-a), transparent 70%),
+    radial-gradient(60% 34% at 72% 104%, var(--dawn-b), transparent 70%);
+  opacity:var(--dawn,0);
+}
+@keyframes rk-breathe{
+  from{opacity:.55;transform:scale(1);}
+  to{opacity:1;transform:scale(1.06);}
+}
+@keyframes rk-dawn{from{opacity:.05;}to{opacity:1;}}
+@supports (animation-timeline: scroll()){
+  .sky::after{animation:rk-dawn linear both;animation-timeline:scroll(root block);}
+}
+:root[data-contrast="high"] .sky{display:none;}
+@media (prefers-reduced-motion: reduce){ .sky::after{opacity:.5;} }
 
 .display{
-  /* Anton is gone. It is a condensed poster face — the kind of type used on
-     a flyer to be read across a room — and on a page asking whether you
-     have thought about harming yourself it was doing the emotional
-     equivalent of shouting. Together with the monospace interface and the
-     hard borders it was the largest part of why this read as generated
-     rather than made.
-
-     The body face at a heavy weight carries a headline perfectly well and
-     is the reader's own system type, so it needs no download at all. That
-     also removes 18KB, one request, and a render dependency the headline
-     was waiting on: the font was only discovered after the CSS parsed, and
-     the headline is very likely the largest-contentful-paint element. */
-  font-weight:700;letter-spacing:-.015em;line-height:1.16;
+  /* Anton is gone, and so is the idea behind it: a condensed poster face
+     shouting across a room. Baloo carries a headline by warmth rather
+     than volume — heavy, rounded, open. */
+  font-family:var(--font-display);
+  font-weight:800;letter-spacing:-.012em;line-height:1.1;
   text-wrap:balance;
 }
 /* Devanagari and the southern scripts set taller; give them the room. */
 :lang(hi) .display,:lang(mr) .display,:lang(bn) .display,:lang(ta) .display,:lang(te) .display{
-  line-height:1.3;letter-spacing:0;
+  line-height:1.32;letter-spacing:0;
 }
  /* Kept as a hook so markup does not have to change, but it no longer
     means "monospace" — it means "figures that line up". */
@@ -154,15 +288,58 @@ img,svg{max-width:100%;}
   position:absolute;width:1px;height:1px;padding:0;margin:-1px;
   overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0;
 }
+/* Gradient lettering, for accents only — never a whole paragraph. The
+   solid colour underneath is what a browser without background-clip, a
+   forced-colours mode, or high contrast will show instead. */
+.glowtext,h1 .accent{
+  color:var(--heal);
+  background:var(--grad-text);-webkit-background-clip:text;background-clip:text;
+  -webkit-text-fill-color:transparent;
+}
+:root[data-contrast="high"] .glowtext,:root[data-contrast="high"] h1 .accent{
+  background:none;-webkit-text-fill-color:currentColor;
+}
+@media (forced-colors: active){
+  .glowtext,h1 .accent{background:none;-webkit-text-fill-color:currentColor;}
+}
 
-/* ── crisis strip: identical on every page, by design ── */
+/* ── crisis strip: identical on every page, by design ──
+   It used to be a red band — the first and loudest thing on every screen,
+   which made a wellbeing site open like an emergency ward. It is night now,
+   the same sky as the nav beneath it, and it is found by a small pink heart
+   that beats slowly at its start rather than by alarm. Nothing about what
+   it holds has changed: every number is still there, still dialable, still
+   44px under a finger, and still pinned on a phone. */
 .topstrip{
-  background:var(--stamp-bg);color:var(--on-stamp);
+  background:var(--night-0);color:var(--on-deep);
   font-family:var(--font-ui);
   font-size:.76rem;padding:.5rem 0;letter-spacing:.03em;
+  position:relative;
 }
-.topstrip .wrap,.topstrip .wrap-wide{display:flex;justify-content:space-between;gap:.8rem;flex-wrap:wrap;}
-.topstrip a{color:#fff;font-weight:700;}
+.topstrip::after{
+  content:"";position:absolute;left:0;right:0;bottom:0;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(255,61,139,.7),rgba(255,200,61,.7),rgba(124,58,237,.7),transparent);
+}
+.topstrip .wrap,.topstrip .wrap-wide{display:flex;justify-content:space-between;gap:.8rem;flex-wrap:wrap;align-items:center;}
+.topstrip .wrap > span:first-child::before,
+.topstrip .wrap-wide > span:first-child::before{
+  content:"";display:inline-block;width:.5rem;height:.5rem;border-radius:50%;
+  margin-right:.5rem;vertical-align:.05em;
+  background:var(--pink);box-shadow:0 0 8px 1px rgba(255,61,139,.55);
+  animation:rk-heart 2.2s ease-in-out infinite;
+}
+/* A heartbeat in transform alone. It used to grow a box-shadow ring as
+   well, and a box-shadow cannot be animated without repainting: measured on
+   a throttled phone, this one dot cost a quarter of the main thread while
+   the page sat idle, on every page, forever. As a pure scale it costs
+   nothing — the compositor runs it. */
+@keyframes rk-heart{
+  0%,100%{transform:scale(1);}
+  12%{transform:scale(1.3);}
+  24%{transform:scale(1);}
+  36%{transform:scale(1.2);}
+}
+.topstrip a{color:#FFD166;font-weight:700;}
 /* A number you can call should look like one. Underlined and padded so it
    reads as a control rather than as punctuation in a sentence, with the
    padding kept off the block axis so widening the target does not make
@@ -171,58 +348,58 @@ img,svg{max-width:100%;}
    at runtime (see dialable) and tags them .dial; the other five pages
    carry hand-written tel: anchors in the markup and never got the class,
    so on every page except the home page the helpline numbers were plain
-   13px text — the site's own tour promises these are "pinned to the top
-   of every page", and on five of six they were the least pressable thing
-   on the screen. Keying off the protocol means a number cannot be added
+   13px text. Keying off the protocol means a number cannot be added
    anywhere on this site and quietly miss the treatment.
 
    The vertical padding is cancelled by an equal negative margin. That is
    what lets the target grow to ~28px — past the 24px WCAG 2.5.8 floor —
-   without the strip itself getting one pixel taller, which was the whole
-   reason the original padding was kept to the inline axis. */
+   without the strip itself getting one pixel taller. */
 .topstrip a.dial,
 .topstrip a{
   display:inline-block;
   text-decoration:underline;text-underline-offset:2px;text-decoration-thickness:1.5px;
   padding:.34rem .3rem;margin:-.34rem 0;
-  border-radius:3px;white-space:nowrap;
+  border-radius:6px;white-space:nowrap;
 }
-.topstrip a:hover,.topstrip a:focus-visible{background:rgba(255,255,255,.18);}
+.topstrip a:hover,.topstrip a:focus-visible{background:rgba(255,209,102,.14);}
+:root[data-contrast="high"] .topstrip{background:#000;}
+:root[data-contrast="high"] .topstrip a{color:#FFE27A;}
+:root[data-contrast="high"] .topstrip::after{display:none;}
 
 /* Current language, worn on the settings button. Two characters, so it
    costs no room even at 320px, and it is the one label on the page that
    does not need to be read to be understood. */
 nav.site .setlang{
   font-family:var(--font-ui);
-  font-size:.72rem;font-weight:700;letter-spacing:.06em;
-  margin-right:.32rem;color:var(--marigold);
+  font-size:.72rem;font-weight:800;letter-spacing:.06em;
+  margin-right:.32rem;color:#FFD166;
 }
 
 /* ── navigation: one order, everywhere ── */
-nav.site{background:var(--deep);padding:.8rem 0;}
+nav.site{background:var(--deep);padding:.7rem 0;}
+nav.site::after{
+  content:"";position:absolute;left:0;right:0;bottom:0;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(195,166,255,.28),transparent);
+}
 /* The bar is chrome, not prose, so it is not held to the 60rem measure the
    reading column is. It was: brand 191px + nine links 691px + settings 146px
    + ten gaps came to 1,226px inside a 1,033px container, so the row wrapped
-   and Settings dropped to a second line — at EVERY width above 720px, on
-   desktop as well as tablet, not only on the iPad where it was reported. */
+   and Settings dropped to a second line — at EVERY width above 720px. */
 nav.site .wrap,nav.site .wrap-wide{
   display:flex;align-items:center;gap:1.1rem;flex-wrap:wrap;
   max-width:min(78rem,100%);
 }
-/* The wordmark is the one place on this site set in the serif. Everything
-   else is the reader's system sans, so a serif in caps with generous
-   tracking reads as a name rather than as another label — and it still
-   costs nothing: Charter ships with macOS and iOS, Sitka and Cambria with
-   Windows, and Georgia is on all of them, so there is no font to fetch and
-   the promise that nothing here phones home is untouched.
+/* The mark and the name, as one link. The name is set in the display face
+   in spaced capitals — the same rounded letters the logo is drawn in — and
+   the bloom beside it turns once, slowly, when you point at it.
    text-transform rather than capitals in the markup, so the accessible
    name stays "Ronak" and a screen reader does not spell it out. */
 nav.site .brand{
-  font-family:var(--font-serif);
-  font-weight:700;color:var(--on-deep);font-size:1.16rem;
-  letter-spacing:.14em;
+  font-family:var(--font-display);
+  font-weight:800;color:var(--on-deep);font-size:1.12rem;
+  letter-spacing:.14em;text-transform:uppercase;
   margin-right:auto;text-decoration:none;
-  display:inline-flex;align-items:baseline;
+  display:inline-flex;align-items:center;gap:.5rem;
   /* Allowed to give way. On the narrowest phones at a large text size the
      brand, Menu and Settings could not share the one line they are pinned
      to, and Settings — which holds the language switch — was pushed off
@@ -230,51 +407,65 @@ nav.site .brand{
      shortened without losing a control. */
   min-width:0;
 }
+nav.site .brand-mark{
+  width:1.7rem;height:1.7rem;flex:none;
+  filter:drop-shadow(0 0 8px rgba(255,200,61,.35));
+  transition:transform .9s var(--e-spring);
+}
+nav.site .brand:hover .brand-mark,nav.site .brand:focus-visible .brand-mark{transform:rotate(60deg);}
 /* The ellipsis lives on the inner span, not on the anchor, and that is the
    whole fix. Under a coarse pointer the anchor becomes inline-flex to earn
    a 44px target — and a flex container does not apply text-overflow to its
-   items, so the property was set on every width where it was not needed
-   and inert on exactly the phones where it was. The name did not shorten,
-   it was sliced: measured at 390px/135% text, 72px of a 247px wordmark,
-   cut mid-letter. Ten of twelve width-and-size combinations were clipping.
-   One element deeper and it ellipsises whether the parent is flex or not. */
+   items. One element deeper and it ellipsises whether the parent is flex
+   or not. */
 nav.site .brand > .name{
   min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+  padding-top:.08em;
 }
 /* A bare URL has no break opportunities, so it sets a floor on how narrow
    the page can be. Footer credits should never do that. */
 footer a,.byline a{overflow-wrap:anywhere;}
-nav.site .brand .accent{color:var(--marigold);}
-/* The full stop is the whole of the brand colour in this bar now that the
-   name is one word. Tracking puts .2em of air after the K, so the stop is
-   pulled back against it; it is decorative, so it stays out of the
-   accessible name. */
-nav.site .brand .stop{
-  color:var(--marigold);margin-left:-.14em;letter-spacing:0;flex:none;
-}
+nav.site .brand .accent{color:#FFD166;}
+nav.site .brand .stop{display:none;}
 nav.site a.navlink{
   color:var(--on-deep);text-decoration:none;
-  font-family:var(--font-ui);
-  font-size:.79rem;letter-spacing:.06em;
-  padding:.5rem .15rem;border-bottom:2px solid transparent;cursor:pointer;display:inline-block;
+  font-family:var(--font-ui);font-weight:600;
+  font-size:.8rem;letter-spacing:.02em;
+  padding:.5rem .15rem;cursor:pointer;display:inline-block;position:relative;
 }
-nav.site a.navlink:hover,nav.site a.navlink:focus-visible{border-bottom-color:var(--marigold);}
-nav.site a.navlink[aria-current="page"]{border-bottom-color:var(--marigold);font-weight:500;}
+/* The underline is light: pink into gold, drawn in from the left. */
+nav.site a.navlink::after{
+  content:"";position:absolute;left:.15rem;right:.15rem;bottom:.2rem;height:2px;border-radius:2px;
+  background:linear-gradient(90deg,var(--pink),var(--sun));
+  transform:scaleX(0);transform-origin:left;transition:transform .3s var(--e-spring);
+}
+nav.site a.navlink:hover::after,nav.site a.navlink:focus-visible::after,
+nav.site a.navlink[aria-current="page"]::after{transform:scaleX(1);}
+nav.site a.navlink[aria-current="page"]{font-weight:700;}
+/* ── the reading pages, kept quiet ──
+   Evidence, Global, Ethics, Manifesto and Poster are the working papers
+   behind the app, not the app. They stay one tap away on every page, but
+   set smaller and dimmer, after a hairline, so the eye lands on the four
+   things a person came to do. */
+nav.site a.navlink.sub{font-weight:500;font-size:.72rem;opacity:.72;}
+nav.site a.navlink.sub:hover,nav.site a.navlink.sub:focus-visible,
+nav.site a.navlink.sub[aria-current="page"]{opacity:1;}
 nav.site .navlinks{display:contents;}
 
 /* ── the menu button: only ever seen on small screens ── */
 nav.site .navtoggle{
-  display:none;background:transparent;border:1.5px solid var(--on-deep);color:var(--on-deep);
-  font-family:var(--font-ui);
-  font-size:.74rem;letter-spacing:.06em;
-  padding:.4rem .7rem;min-height:2.4rem;align-items:center;gap:.5rem;
+  display:none;background:rgba(255,255,255,.06);
+  border:1.5px solid rgba(255,246,238,.34);color:var(--on-deep);
+  font-family:var(--font-ui);font-weight:700;
+  font-size:.74rem;letter-spacing:.04em;border-radius:999px;
+  padding:.4rem .8rem;min-height:2.4rem;align-items:center;gap:.5rem;
 }
-nav.site .navtoggle:hover{transform:none;box-shadow:none;border-color:var(--marigold);}
+nav.site .navtoggle:hover{transform:none;box-shadow:none;border-color:#FFD166;}
 nav.site .navtoggle .bars{
-  width:1rem;height:2px;background:currentColor;position:relative;display:inline-block;
+  width:1rem;height:2px;background:currentColor;position:relative;display:inline-block;border-radius:2px;
 }
 nav.site .navtoggle .bars::before,nav.site .navtoggle .bars::after{
-  content:"";position:absolute;left:0;width:1rem;height:2px;background:currentColor;
+  content:"";position:absolute;left:0;width:1rem;height:2px;background:currentColor;border-radius:2px;
   transition:transform .18s var(--e-out1);
 }
 nav.site .navtoggle .bars::before{top:-5px;}
@@ -284,53 +475,65 @@ nav.site .navtoggle[aria-expanded="true"] .bars::before{transform:translateY(5px
 nav.site .navtoggle[aria-expanded="true"] .bars::after{transform:translateY(-5px) rotate(-45deg);}
 
 /* ── page furniture ── */
-header.hero{padding:3.2rem 0 2.4rem;border-bottom:3px solid var(--ink);}
-.eyebrow{
-  display:inline-block;font-family:var(--font-ui);
-  font-size:.79rem;letter-spacing:.13em;
-  border:1.5px solid var(--heal);color:var(--heal);padding:.25rem .6rem;margin-bottom:1.1rem;
+header.hero{padding:3.4rem 0 2.6rem;position:relative;}
+header.hero::after{
+  content:"";position:absolute;left:0;right:0;bottom:0;height:2px;
+  background:linear-gradient(90deg,transparent,var(--violet),var(--pink),var(--sun),transparent);
+  opacity:.7;
 }
-h1{font-size:clamp(1.9rem,5.5vw,3.4rem);}
-h1 .accent{color:var(--heal);}
-h2{font-size:clamp(1.4rem,3.6vw,2.2rem);margin-bottom:.6rem;}
+.eyebrow{
+  display:inline-flex;align-items:center;gap:.45rem;font-family:var(--font-ui);
+  font-size:.76rem;font-weight:700;letter-spacing:.08em;
+  color:var(--heal);padding:.3rem .8rem;margin-bottom:1.1rem;border-radius:999px;
+  background:color-mix(in srgb,var(--heal) 10%,transparent);
+  border:1px solid color-mix(in srgb,var(--heal) 28%,transparent);
+}
+.eyebrow::before{
+  content:"";width:.42rem;height:.42rem;border-radius:50%;flex:none;
+  background:var(--grad-bloom);
+}
+h1{font-size:clamp(2rem,5.8vw,3.6rem);font-family:var(--font-display);font-weight:800;line-height:1.08;}
+h2{font-size:clamp(1.45rem,3.8vw,2.3rem);margin-bottom:.6rem;font-family:var(--font-display);font-weight:800;line-height:1.14;}
+h3{font-family:var(--font-display);font-weight:700;}
+:lang(hi) h1,:lang(mr) h1,:lang(bn) h1,:lang(ta) h1,:lang(te) h1,
+:lang(hi) h2,:lang(mr) h2,:lang(bn) h2,:lang(ta) h2,:lang(te) h2{line-height:1.32;}
 .lede{max-width:66ch;font-size:1.1rem;line-height:1.65;margin-top:1.1rem;}
 
 section{padding:2.8rem 0 .3rem;}
 .sec-label{
-  font-family:var(--font-ui);
-  font-size:.79rem;letter-spacing:.14em;
+  font-family:var(--font-ui);font-weight:700;
+  font-size:.76rem;letter-spacing:.14em;
   color:var(--stamp);margin-bottom:.6rem;
 }
 .sec-sub{max-width:66ch;color:var(--muted);font-size:.95rem;margin-bottom:1.4rem;}
 
 /* ── the panel: the site's single repeating content block ── */
 .panel{
-  /* No accent stripe down the left edge. It ran on every panel equally,
-     so it distinguished nothing — decoration applied by default rather
-     than a mark that means something. The border does the separating. */
-  background:var(--card);border:1.5px solid var(--line);
-  padding:1.15rem 1.4rem;margin-bottom:.9rem;
+  background:var(--card);border:1px solid var(--line);border-radius:var(--r-lg);
+  padding:1.2rem 1.4rem;margin-bottom:.9rem;box-shadow:var(--shadow-card);
 }
-.panel h3{font-size:1.1rem;font-weight:700;margin-bottom:.4rem;}
+.panel h3{font-size:1.14rem;font-weight:700;margin-bottom:.4rem;}
 .panel p{font-size:.94rem;margin-bottom:.5rem;}
 .panel p:last-child{margin-bottom:0;}
-.panel.warn{border-left-color:var(--marigold);}
-.panel.hard{border-left-color:var(--stamp);}
+.panel.warn{border-left:4px solid var(--marigold);}
+.panel.hard{border-left:4px solid var(--stamp);}
 .panel .tag{
-  font-family:var(--font-ui);
+  font-family:var(--font-ui);font-weight:700;
   font-size:.7rem;letter-spacing:.09em;
-  color:var(--heal);margin-bottom:.35rem;
+  color:var(--heal);margin-bottom:.35rem;display:inline-block;
 }
 
-/* ── figure band: dark, for headline numbers ── */
+/* ── figure band: night, for headline numbers ── */
 .figs{
   display:grid;grid-template-columns:repeat(auto-fit,minmax(min(12rem,100%),1fr));
-  gap:2px;background:var(--ink);border:2px solid var(--ink);margin-bottom:1.3rem;
+  gap:2px;background:linear-gradient(120deg,rgba(124,58,237,.6),rgba(255,61,139,.5),rgba(255,200,61,.5));
+  border-radius:var(--r-lg);overflow:hidden;margin-bottom:1.3rem;padding:2px;
 }
-.fig{background:var(--deep);color:var(--on-deep);padding:1.1rem 1rem;}
+.fig{background:var(--deep);color:var(--on-deep);padding:1.15rem 1.05rem;}
+.figs .fig:first-child{border-radius:calc(var(--r-lg) - 2px) 0 0 calc(var(--r-lg) - 2px);}
 .fig .n{
-  font-weight:700;font-size:2.1rem;line-height:1;
-  color:var(--marigold);display:block;font-variant-numeric:tabular-nums;
+  font-family:var(--font-display);font-weight:800;font-size:2.2rem;line-height:1;
+  color:#FFD166;display:block;font-variant-numeric:tabular-nums;
 }
 :lang(hi) .fig .n,:lang(mr) .fig .n,:lang(bn) .fig .n,:lang(ta) .fig .n,:lang(te) .fig .n{
   font-family:system-ui,'Noto Sans',sans-serif;font-weight:700;
@@ -340,56 +543,72 @@ section{padding:2.8rem 0 .3rem;}
    not to dim anything, least of all the source line under a figure */
 :root[data-contrast="high"] .fig .l,
 :root[data-contrast="high"] .fig .s{opacity:1;}
-/* and the same accent problem — .fig sits on --deep, which high contrast
-   sets to black, where the darkened marigold falls to 3.65:1 */
 :root[data-contrast="high"] .fig .n{color:#FFC64D;}
 .fig .s{
   font-family:var(--font-ui);
-  font-size:.64rem;opacity:.6;margin-top:.45rem;display:block;
+  font-size:.64rem;opacity:.66;margin-top:.45rem;display:block;
 }
 
 /* ── tables ── */
 .scroll{overflow-x:auto;}
-table.data{border-collapse:collapse;width:100%;font-size:.88rem;background:var(--card);margin-bottom:.9rem;}
-table.data th,table.data td{border:1px solid var(--line);padding:.6rem .75rem;text-align:left;vertical-align:top;}
+table.data{border-collapse:separate;border-spacing:0;width:100%;font-size:.88rem;background:var(--card);margin-bottom:.9rem;
+  border:1px solid var(--line);border-radius:var(--r-md);overflow:hidden;}
+table.data th,table.data td{border-bottom:1px solid var(--line);padding:.65rem .8rem;text-align:left;vertical-align:top;}
+table.data tr:last-child td{border-bottom:0;}
 table.data th{
-  font-family:var(--font-ui);
-  font-size:.7rem;letter-spacing:.06em;background:var(--paper);
+  font-family:var(--font-ui);font-weight:700;
+  font-size:.7rem;letter-spacing:.06em;background:color-mix(in srgb,var(--heal) 7%,var(--card));
 }
 table.data td.ok{color:var(--heal);font-weight:700;}
 
-/* ── buttons ── */
-button,.btn{border-radius:var(--r-sm);
-  font-weight:700;letter-spacing:.05em;
-  font-size:.95rem;background:var(--ink);color:var(--paper);border:none;
-  padding:.75rem 1.3rem;cursor:pointer;transition:transform .12s var(--e-out1);
+/* ── buttons ──
+   Primary is a pill of light: violet into magenta, dark enough end to end
+   for white text (7.1:1 to 5.7:1). background-color carries the violet as
+   well as the image carrying the gradient, so anything that cannot paint
+   the gradient still gets a readable button — and so does the contrast
+   check, which reads the colour, not the image. */
+button,.btn{border-radius:999px;
+  font-weight:700;letter-spacing:.02em;font-family:inherit;
+  font-size:.95rem;background-color:#6D28D9;background-image:var(--grad-cta);color:#fff;border:none;
+  padding:.78rem 1.4rem;cursor:pointer;
   text-decoration:none;display:inline-block;min-height:2.75rem;
+  transition:transform .18s var(--e-spring),box-shadow .25s var(--e-out2),background-color .15s ease,border-color .15s ease,color .15s ease;
 }
 :lang(hi) button,:lang(mr) button,:lang(bn) button,:lang(ta) button,:lang(te) button{
   font-family:system-ui,'Noto Sans',sans-serif;font-weight:700;
   text-transform:none;letter-spacing:0;
 }
-/* Was a 4px hard offset and a 2px lurch — a poster effect, on every button
-   on a page about how often you have felt hopeless. Lift and settle. */
-/* No lift on hover. A button that rises when the pointer passes over it is
-   telling the reader something about the pointer, not about the button.
-   Colour and border carry the state; they work under a finger too, where a
-   hover transform does nothing at all. */
-button:hover,.btn:hover{border-color:var(--heal);}
-button.secondary{background:transparent;color:var(--ink);border:2px solid var(--ink);}
+/* A glow, not a lift. The pointer is not what should move; the light
+   under the button brightens instead, and it works the same under a
+   finger — :active presses it in by 3%, no overshoot, no bounce. */
+button:hover,.btn:hover{box-shadow:var(--shadow-glow);}
+button:active,.btn:active{transform:scale(.97);}
+button.secondary,.btn.secondary{
+  background:transparent;color:var(--ink);
+  border:1.5px solid color-mix(in srgb,var(--ink) 26%,transparent);
+}
+button.secondary:hover,.btn.secondary:hover{border-color:var(--heal);box-shadow:none;background:color-mix(in srgb,var(--heal) 8%,transparent);}
 button.danger{background:var(--stamp-bg);color:var(--on-stamp);}
 button:disabled{opacity:.45;cursor:not-allowed;transform:none;box-shadow:none;}
+:root[data-contrast="high"] button.secondary{border-color:#000;}
 
 /* ── reference lists ── */
 .reflist ol{margin-left:1.4rem;}
 .reflist li{font-size:.87rem;margin-bottom:.6rem;color:var(--muted);}
 .reflist li a{color:var(--ink);font-weight:600;}
-.reflist li .mono{font-size:.72rem;color:var(--heal);}
+/* A DOI is one unbroken string; at 320px and the largest text size three
+   of them ran 47px past the screen edge and dragged the whole page sideways. */
+.reflist li .mono{font-size:.72rem;color:var(--heal);overflow-wrap:anywhere;}
 
-/* ── footer ── */
+/* ── footer: where the page reaches its sunrise ── */
 footer{
-  padding:2.5rem 0 3.5rem;font-size:.87rem;color:var(--muted);
-  border-top:3px solid var(--ink);margin-top:2.6rem;
+  padding:2.8rem 0 3.5rem;font-size:.87rem;color:var(--muted);
+  margin-top:2.6rem;position:relative;
+}
+footer::before{
+  content:"";position:absolute;left:0;right:0;top:0;height:2px;
+  background:linear-gradient(90deg,transparent,var(--violet),var(--pink),var(--sun),transparent);
+  opacity:.75;
 }
 footer p{max-width:72ch;}
 footer .byline{
@@ -404,71 +623,66 @@ footer .byline strong{color:var(--ink);font-size:.85rem;}
    985px of row. Measured per language, because the links are translated
    and the widths differ a lot: Bengali needs a 761px viewport, English
    1,033, and Telugu — the widest — 1,061. The breakpoint is set above the
-   worst of those, not the one the developer happens to be reading in,
-   and with room to spare because the wordmark is now a SERIF: Charter on
-   Apple, Sitka or Cambria on Windows, Noto Serif on Android, and they do
-   not set to the same width. 1,100 carries ~40px of slack for that.
-   (It was 1,200 when the wordmark was "Psych Screener", 191px wide.) Below that they wrapped,
-   and the wrapped line had no auto margin to push it right, so Settings —
-   which holds the language switch — landed at the FAR LEFT of a second
-   row, and its right-anchored popover opened 44px off the left edge of an
-   iPad. Collapsing the links here is what the phone layout already does;
-   this only moves the width at which it starts. */
+   worst of those, not the one the developer happens to be reading in.
+   Below that they wrapped, and the wrapped line had no auto margin to push
+   it right, so Settings — which holds the language switch — landed at the
+   FAR LEFT of a second row, and its right-anchored popover opened 44px off
+   the left edge of an iPad. Collapsing the links here is what the phone
+   layout already does; this only moves the width at which it starts. */
 @media(max-width:1100px){
   nav.site.menu-open .wrap,nav.site.menu-open .wrap-wide{flex-wrap:wrap;}
   nav.site .navtoggle{display:inline-flex;}
   nav.site .navlinks{
     display:none;flex-basis:100%;width:100%;
     flex-direction:column;align-items:stretch;
-    border-top:1px solid rgba(255,255,255,.18);margin-top:.5rem;padding-top:.3rem;
+    border-top:1px solid rgba(255,255,255,.14);margin-top:.5rem;padding-top:.3rem;
   }
-  nav.site .navlinks.open{display:flex;}
+  nav.site .navlinks.open{display:flex;animation:rk-drop .35s var(--e-spring);}
+  /* The open list takes a line of its own; order keeps Settings — the
+     language switch — up on the top row beside Menu instead of letting it
+     wrap to the foot of the list. Tab order is untouched: it still comes
+     after the links it follows in the markup. */
+  nav.site .navlinks{order:5;}
   nav.site .navlinks a.navlink{
-    padding:.7rem .2rem;border-bottom:1px solid rgba(255,255,255,.10);
-    font-size:.84rem;letter-spacing:.05em;
+    padding:.72rem .2rem;border-bottom:1px solid rgba(255,255,255,.08);
+    font-size:.9rem;letter-spacing:.01em;
   }
+  nav.site .navlinks a.navlink::after{left:.2rem;right:auto;width:1.6rem;bottom:.35rem;}
+  /* the reading pages sit under a hairline of their own, smaller, in a
+     two-column grid — present, but plainly the back of the book */
+  nav.site .navlinks a.navlink.sub{font-size:.8rem;padding:.55rem .2rem;border-bottom:0;}
+  nav.site .navlinks a.navlink:not(.sub) + a.navlink.sub{margin-top:.35rem;border-top:1px solid rgba(255,255,255,.14);padding-top:.8rem;}
   nav.site .navlinks a.navlink:last-child{border-bottom:0;}
   /* Collapsed from the first paint, not from whenever nav.js runs.
      Scoped to links that are still DIRECT children of the nav wrapper —
-     i.e. ones nav.js has not yet moved into .navlinks. The moment it
-     does move them they stop matching this rule and the .navlinks rules
-     above take over, so the open/closed behaviour is untouched and there
-     is no state to keep in sync. Under html.js only: with scripting off
-     the class is never set, nothing here applies, and the nav stays the
-     plain row of links it ships as. */
+     i.e. ones nav.js has not yet moved into .navlinks. Under html.js only:
+     with scripting off the class is never set, nothing here applies, and
+     the nav stays the plain row of links it ships as. */
   html.js nav.site > .wrap > a.navlink,
   html.js nav.site > .wrap-wide > a.navlink{display:none;}
-  nav.site a.navlink[aria-current="page"]{border-bottom-color:var(--marigold);}
 }
+@keyframes rk-drop{from{opacity:0;transform:translateY(-6px);}to{opacity:1;transform:none;}}
 
 /* Above that the nine links do fit, but only just — so they are set a
    little tighter than they were, which buys ~185px of row. */
 @media(min-width:1101px){
   nav.site .wrap,nav.site .wrap-wide{gap:.75rem;}
-  nav.site a.navlink{font-size:.76rem;letter-spacing:.015em;padding-inline:.1rem;}
+  nav.site a.navlink{font-size:.78rem;letter-spacing:.01em;padding-inline:.1rem;}
+  nav.site a.navlink.sub{font-size:.7rem;}
+  nav.site a.navlink:not(.sub) + a.navlink.sub{margin-left:.55rem;padding-left:.9rem;border-left:1px solid rgba(255,255,255,.18);}
+  nav.site a.navlink:not(.sub) + a.navlink.sub::after{left:.9rem;}
 }
 
 /* ── small screens ── */
 @media(max-width:720px){
   /* One row: brand, menu, settings. The links live behind the button. */
-  nav.site{padding:.55rem 0;}
-  /* nowrap on the closed row, at every phone width — not just under 380px.
-     Anton was a CONDENSED face; the system bold that replaced it is much
-     wider, so "PsychScreener" + Menu + Settings stopped fitting one line
-     and the row wrapped to two. That grew the nav from 64px to 119px the
-     moment nav.js inserted the toggle, shoving the whole page down 55px
-     while it was being read — 0.282 of layout shift, all of the page's
-     CLS, and a regression of the fix that got it to zero.
-
-     The brand already carries min-width:0 and an ellipsis, so with nowrap
-     it gives way instead of wrapping. It is the only thing in the row that
-     can shorten without costing a control. The menu, when open, still
-     needs a line of its own — hence the override below. */
+  nav.site{padding:.5rem 0;}
+  /* nowrap on the closed row, at every phone width. The brand carries
+     min-width:0 and an ellipsis, so with nowrap it gives way instead of
+     wrapping — it is the only thing in the row that can shorten without
+     costing a control. The menu, when open, still needs a line of its own
+     — hence the menu-open override. */
   nav.site .wrap,nav.site .wrap-wide{gap:.6rem;flex-wrap:nowrap;}
-  /* The collapse itself — the toggle, the stacked links, and hiding the
-     inline ones — now lives in the max-width:1100px block above, so that
-     a tablet gets the same one clean row a phone does. Only the things
-     that are genuinely about a PHONE are left here. */
   /* Settings stays on the top row — it holds the language switch, which is
      the one control a reader may need before they can read anything. The
      word is hidden from sight but not from the accessibility tree. */
@@ -478,28 +692,17 @@ footer .byline strong{color:var(--ink);font-size:.85rem;}
   }
 }
 
-/* ── the narrowest phones still in use ──
-   At 320px the header's brand, Menu and Settings could not share a line,
-   so Settings dropped to a second row and the bar took twice the height
-   before a word of the page had been read. The word "Menu" is what does
-   not fit; the bars beside it already say the same thing, so it goes the
-   same way the Settings label did — out of sight, still in the
-   accessibility tree, so nothing is lost to a screen reader. */
 /* The wordmark steps down for every phone held upright, not only the
-   narrowest ones. It used to step down at 380px, which left 390, 412, 414
-   and 430 — between them most phones sold — carrying the full 1.15rem into
-   a row that could not hold it, and clipping at default text size before
-   anyone had touched the text-size control. Shortening the name is the
-   graceful part; the ellipsis above is the floor beneath it. */
+   narrowest ones. Shortening the name is the graceful part; the ellipsis
+   above is the floor beneath it. */
 @media(max-width:480px){
-  nav.site .brand{font-size:1rem;letter-spacing:.12em;}
+  nav.site .brand{font-size:1rem;letter-spacing:.12em;gap:.42rem;}
+  nav.site .brand-mark{width:1.55rem;height:1.55rem;}
 }
 @media(max-width:380px){
   nav.site .wrap,nav.site .wrap-wide{flex-wrap:nowrap;gap:.45rem;}
   /* nowrap is for the CLOSED top row only. With the menu open the links
-     need a line of their own; held in the row they were crushed against
-     the right edge, labels clipped, and the whole document scrolled
-     sideways. nav.js sets .menu-open for the duration. */
+     need a line of their own; nav.js sets .menu-open for the duration. */
   nav.site.menu-open .wrap,
   nav.site.menu-open .wrap-wide{flex-wrap:wrap;}
   nav.site .navtoggle{padding-inline:.7rem;}
@@ -507,34 +710,20 @@ footer .byline strong{color:var(--ink);font-size:.85rem;}
     position:absolute;width:1px;height:1px;padding:0;margin:-1px;
     overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0;
   }
-  /* The links keep wrapping normally once the menu is open — nowrap is
-     for the top row only. */
   nav.site .navlinks{flex-wrap:wrap;}
+  nav.site .brand{letter-spacing:.1em;}
 }
 @media(max-width:640px){
-  header.hero{padding:2rem 0 1.6rem;}
+  header.hero{padding:2.1rem 0 1.7rem;}
   section{padding:2rem 0 .3rem;}
-  h1{font-size:clamp(1.55rem,7vw,2rem);}
-  .lede{font-size:.95rem;}
-  /* The crisis strip stays — every number on it, on every page, is the one
-     thing here that must never be a tap away. What changes on a phone is
-     how much room it takes to say them: at three loose lines of red it was
-     the first and loudest thing on the screen, ahead of what the site is
-     for. Tighter leading and a smaller face keep all of it visible in about
-     half the height. The country count is the only thing that goes, and
-     it's the only part that isn't a way to reach somebody. */
+  h1{font-size:clamp(1.75rem,8vw,2.3rem);}
+  .lede{font-size:.97rem;}
   /* ── the numbers stay on the screen ──
-     This strip was described as being on every page by design, and it was
-     — at the top of the document, which is not the same thing as on the
-     screen. Scroll two thumb-flicks into the screener list and it was
-     gone, and the person most likely to be scrolling a mental-health site
-     on a phone at 3am is exactly the person who should not have to find
-     their way back up to a phone number.
-
      Sticky, and above the tour's dimming layer rather than behind it: the
      walkthrough is allowed to dim the page and swallow taps, but not
      these. A guided tour of the features is never more urgent than a
-     helpline, and until now it outranked one. */
+     helpline. Tighter leading and a smaller face keep all of it visible in
+     about half the height it once took. */
   .topstrip{
     position:sticky;top:0;z-index:950;
     font-size:.62rem;padding:.35rem 0;line-height:1.38;letter-spacing:.02em;
@@ -544,47 +733,30 @@ footer .byline strong{color:var(--ink);font-size:.85rem;}
      it run as ordinary text lets the numbers and the link share a line. */
   .topstrip .wrap,.topstrip .wrap-wide{display:block;}
   .topstrip .wrap > span + span::before{content:" · ";}
+  .topstrip .wrap > span:first-child::before{width:.42rem;height:.42rem;margin-right:.35rem;}
+  /* Every pixel of a pinned strip is a pixel of every screen. Tighter side
+     padding and number padding is what lets the directory link share the
+     second line on a 390px phone instead of taking a third — the 44px
+     number targets below are untouched. */
+  .topstrip .wrap,.topstrip .wrap-wide{padding-inline:.85rem;}
+  .topstrip a,.topstrip a.dial{padding-inline:.16rem;}
   .strip-tail{display:none;}
-  .panel{padding:.95rem 1.1rem;}
+  .panel{padding:1rem 1.1rem;}
 }
 
 @media print{
-  .topstrip,nav.site,.noprint{display:none!important;}
+  .topstrip,nav.site,.noprint,.sky{display:none!important;}
   body{background:#fff;color:#000;}
 }
 
-/* ── coarse-pointer targets, for every page ──
-   This lived in index.html's own <style> block, so the shared navigation
-   was only finger-sized on the one page that happened to define it: the
-   Menu toggle measured 43px on the other five, and the language select
-   36px. Anything in the shared nav belongs in the shared stylesheet.
-
-   Placed at the end of the file deliberately. These selectors have the
-   same specificity as the nav.site rules above that set the toggle's
-   padding, so source order is what decides — exactly the trap the
-   .ledemore rule in index.html already carries a note about. Sitting
-   earlier in the file, this block lost silently and measured 43px.
-   A fingertip is about 44px across and lands where it lands. */
 /* ── touch targets, on touch devices only ──
    Measured at 320px: the three crisis numbers and the worldwide directory
-   were 28px tall, and the footer links 24px. They cleared WCAG 2.5.8's 24px
-   minimum and nothing else. A phone number somebody is trying to dial
-   during a panic attack is the last control on this site that should be a
-   careful aim, so on a coarse pointer they get the full 44px.
-
-   The strip is allowed to grow for it. The old note here said padding was
-   kept off the block axis so widening the target would not make the strip
-   taller — that was the right trade when the alternative was a desktop
-   layout, but on a phone the strip already wraps to two or three lines and
-   an extra few pixels per line is a cheaper price than a missed number. */
+   were 28px tall. A phone number somebody is trying to dial during a
+   panic attack is the last control on this site that should be a careful
+   aim, so on a coarse pointer they get the full 44px. Scoped to tel:
+   links only — the directory is a web page, not a number you stab at, and
+   growing it too pushed the first check-in below the fold. */
 @media (pointer: coarse){
-  /* Scoped to tel: links only. Applying 44px to every link in the strip —
-     including the worldwide directory, which is a web page rather than a
-     number you stab at during a panic attack — grew the strip from 100px to
-     137px at 320px and pushed the first screener below the fold. A quarter
-     of a small screen spent before the product begins is not an
-     accessibility win, it is a different usability loss. The three numbers
-     get the full target; the directory keeps the text size it reads at. */
   .topstrip{padding:.3rem 0;}
   .topstrip a[href^="tel:"]{
     display:inline-flex;align-items:center;min-height:44px;
@@ -593,6 +765,10 @@ footer .byline strong{color:var(--ink);font-size:.85rem;}
   footer .byline a{display:inline-flex;align-items:center;min-height:44px;}
 }
 
+/* Placed at the end deliberately: these selectors have the same
+   specificity as the nav.site rules above that set the toggle's padding,
+   so source order is what decides. Sitting earlier, this block lost
+   silently and measured 43px. */
 @media (pointer: coarse){
   nav.site .navtoggle,
   nav.site select,
@@ -600,7 +776,7 @@ footer .byline strong{color:var(--ink);font-size:.85rem;}
   nav.site .brand{display:inline-flex;align-items:center;min-height:44px;}
 }
 
-/* ════════ HIGH-PERFORMANCE RENDERING, SPRING PHYSICS & UI POLISH ════════ */
+/* ════════ RENDERING & POLISH ════════ */
 html {
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
@@ -608,19 +784,15 @@ html {
   /* scroll-behavior is NOT re-declared here. It is set on html at the top of
      this file and turned off again by the prefers-reduced-motion block that
      follows it. Repeating it here, at equal specificity but later in the
-     cascade, made that override inert — vestibular readers who had asked
-     their OS for no motion kept getting smooth scrolling. */
+     cascade, made that override inert. */
   -webkit-overflow-scrolling: touch;
 }
 body {
   overscroll-behavior-y: contain;
 }
 
-/* ── Ultra-Refined Slim Translucent Scrollbars ── */
+/* ── slim scrollbars, tinted with the brand ── */
 ::-webkit-scrollbar {
-  /* 7px with an 18% thumb was close to invisible and awkward to drag. Once
-     the user agent's own scrollbar is replaced, its usability becomes ours:
-     11px is still slim, and the thumb is dark enough to find. */
   width: 11px;
   height: 11px;
 }
@@ -628,82 +800,40 @@ body {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: color-mix(in srgb, var(--ink) 38%, transparent);
+  background: color-mix(in srgb, var(--heal) 42%, transparent);
   border-radius: 999px;
-  border: 1.5px solid transparent;
+  border: 2px solid transparent;
   background-clip: padding-box;
-  transition: background-color 0.2s ease;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: color-mix(in srgb, var(--ink) 58%, transparent);
+  background: color-mix(in srgb, var(--heal) 65%, transparent);
   background-clip: padding-box;
 }
 
-/* ── Tactile Spring Physics & Button Micro-Interactions ── */
 button, a, input, select, summary, .btn, .card, .choice, .screener-card {
   touch-action: manipulation;
   -webkit-tap-highlight-color: transparent;
-  /* Colour only. The spring curve here overshot (1.56) so every control
-     bounced past its resting size on release — a physical metaphor with
-     nothing physical behind it. Transform and box-shadow are no longer
-     transitioned at all, so there is nothing to bounce. */
-  transition: background-color 0.15s ease,
-              border-color 0.15s ease,
-              color 0.15s ease;
-}
-button:active, .btn:active, .choice:active {
-  /* pressed state is a colour change, not a size change */
-}
-/* The screener cards are the primary choice on the page and are already
-   bordered surfaces. Lifting them on hover and stacking two shadow layers
-   underneath was decoration; the border carrying the accent colour says
-   "this one" just as clearly, and says it on a touch screen as well. */
-.screener-card:hover, .card:hover {
-  border-color: var(--heal);
 }
 
-/* ── Ambient Glassmorphism & Diffuse Depth ── */
 nav.site {
-  /* backdrop-filter CREATES A STACKING CONTEXT, even here where the element
-     is position:static. That trapped the settings popover's z-index:40
-     inside the nav — and the nav, being unpositioned, painted at in-flow
-     level, below every .view (which carries transform:translateZ(0) and so
-     sits at level 0 of the root). Net effect: the whole page rendered ON
-     TOP of the open popover, and the settings panel looked transparent.
-     Neither declaration is wrong alone; together they invert the layering.
-     Giving the nav a position and a z-index is what makes its children's
-     z-indexes mean anything. 50 is deliberately below the overture (60),
-     which is a full-screen opaque intro that must still cover the bar. */
+  /* backdrop-filter CREATES A STACKING CONTEXT, even on a static element.
+     That once trapped the settings popover's z-index:40 inside a nav that
+     painted below every .view (each carries transform:translateZ(0)), so
+     the page rendered on top of the open popover. Giving the nav a
+     position and a z-index is what makes its children's z-indexes mean
+     anything. 50 is deliberately below the overture (60), which is a
+     full-screen opaque intro that must still cover the bar. No
+     backdrop-filter: the nav is not sticky, so there is nothing under it
+     to blur. */
   position: relative;
   z-index: 50;
-  /* No backdrop-filter. The nav is not sticky, so nothing ever scrolled
-     beneath it for the blur to act on: it bought a compositing layer, a
-     stacking context and a whole class of layering bug in exchange for an
-     effect nobody could see. A bar this important should read as a solid
-     surface, not as frosted glass over nothing. */
-  /* --deep, not --paper. This rule comes after nav.site{background:var(--deep)}
-     and so replaced it, and every piece of text in the bar is --on-deep — so
-     in LIGHT mode the whole navigation was #FAF8F5 on #FAF8F5: the wordmark,
-     all nine links, Menu and Settings, at 1:1, on every page. It only looked
-     right in dark mode, where --paper is already dark, which is why it went
-     unseen. The glass effect is unchanged; only which surface it frosts. */
   background-color: var(--deep);
 }
-/* Removed: backdrop-filter on .topstrip. --stamp-bg is fully opaque in all
-   three themes, so there was never anything showing through to blur — it
-   cost a compositing layer and a stacking context to change nothing. */
-/* Removed: a .popover/.dialog/.modal rule that matched no element on any
-   page. It carried a backdrop-filter, and backdrop-filter creates a stacking
-   context — so the first person to add class="modal" would have inherited
-   the exact defect that put the settings panel behind the page. The real
-   popover is .setpanel and carries its own shadow. */
 
 .view, .qcard, .orb, .panel, .popover, .dialog, .breathe {
   transform: translateZ(0);
   backface-visibility: hidden;
 }
-.card, .choice, .screener-card, .evidence-item {
+.choice, .screener-card, .evidence-item {
   contain: layout style paint;
 }
-
-
