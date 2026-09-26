@@ -50,7 +50,7 @@ window.HELP = {
   regions: [
     { id: "sa", label: "South Asia", lines: [
       { country:"India",       org:"Tele-MANAS (Govt. of India)", num:"14416",          tel:"14416",        note:"24×7, free, 20+ languages" },
-      { country:"India",       org:"KIRAN",                       num:"1800-599-0019",  tel:"18005990019",  note:"24×7, free, 13 languages" },
+      { country:"India",       org:"Vandrevala Foundation",       num:"+91 9999-666-555",tel:"+919999666555",note:"24×7, free, call or WhatsApp" },
       { country:"India",       org:"AASRA",                       num:"+91 98204 66726",tel:"+919820466726",note:"24×7 volunteer-run" },
       { country:"Bangladesh",  org:"Kaan Pete Roi",               num:"09612-119911",   tel:"09612119911",  note:"Emotional support" },
       { country:"Pakistan",    org:"Umang",                       num:"0311-7786264",   tel:"03117786264",  note:"Trained volunteers" },

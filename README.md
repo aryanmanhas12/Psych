@@ -10,7 +10,7 @@ worldwide** — plus the manifesto, evidence register and ethics charter behind 
 
 > If you or someone you know is struggling right now:
 > **Anywhere:** [findahelpline.com](https://findahelpline.com) — verified helplines in 130+ countries
-> **India:** Tele-MANAS **14416** · KIRAN **1800-599-0019** · Emergency **112** (all free, 24×7)
+> **India:** Tele-MANAS **14416** · Vandrevala Foundation **9999-666-555** (call or WhatsApp) · Emergency **112** (all free, 24×7)
 
 ---
 

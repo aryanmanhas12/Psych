@@ -13,7 +13,7 @@
   label: "English", htmlLang: "en",
   ui: {
     skip: "Skip to main content",
-    crisis: "IN DISTRESS? TELE-MANAS 14416 · KIRAN 1800-599-0019 · EMERGENCY 112",
+    crisis: "IN DISTRESS? TELE-MANAS 14416 · VANDREVALA 9999-666-555 · EMERGENCY 112",
     callLabel: "Call",
     crisisMeta: "FREE · 24×7 · CONFIDENTIAL",
     settings: "Settings",
@@ -222,7 +222,7 @@
     safety2: "Talk to someone today:",
     safety3: "Tell one person you trust, today. If you can, don't be alone tonight.",
     lineTelemanas: "TELE-MANAS: 14416 (24×7, free, many Indian languages)",
-    lineKiran: "KIRAN: 1800-599-0019 (24×7, free)",
+    lineVandrevala: "VANDREVALA FOUNDATION: 9999-666-555 (24×7, free, call or WhatsApp)",
     lineEmergency: "Emergency: 112 — if you are in immediate danger",
 
     meanings: [
@@ -255,7 +255,7 @@
     resTitle: "Where to turn", resEyebrow: "Get Help · India",
     resources: [
       ["Tele-MANAS — 14416 or 1-800-891-4416", "The Government of India's national tele-mental-health service. Free, 24×7, confidential, available in 20+ languages. Trained counsellors handle the call and can escalate to mental-health specialists and link you to services in your district. This is the single best first call for most people."],
-      ["KIRAN — 1800-599-0019", "National toll-free mental-health rehabilitation helpline, 24×7, 13 languages. Support for anxiety, depression, substance use, and crisis."],
+      ["Vandrevala Foundation — 9999-666-555", "Free, confidential counselling by phone or WhatsApp, 24×7, in 11 languages including Hindi, Urdu and Punjabi. Support for stress, anxiety, depression, loneliness, abuse, and thoughts of suicide."],
       ["Emergency — 112", "If you or someone else is in immediate danger of harm, call 112 or go to the nearest hospital emergency department. Say the words \"psychiatric emergency.\""],
       ["District Mental Health Programme (DMHP)", "Most districts run a DMHP clinic at the district hospital with a psychiatrist or trained medical officer, free or near-free medicines, and counselling. Ask at your district hospital for the mental health clinic. Under the Mental Healthcare Act 2017, affordable mental healthcare is your legal right."],
       ["Your nearest PHC or family doctor", "You don't need a psychiatrist to start. General physicians can diagnose and begin first-line treatment for depression and anxiety, and refer when needed. Bring your printed score summary from this app — it gives a rushed consultation a head start."],
