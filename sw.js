@@ -73,13 +73,13 @@
 /* ── the release number, in one place ──
    The page's own CSS and JS moved out of index.html into app.css and
    app.js, and every page now asks for its shared files by versioned URL
-   (site.css?v=27, nav.js?v=27, app.js?v=27). The version in the URL is
+   (site.css?v=28, nav.js?v=28, app.js?v=28). The version in the URL is
    what makes that safe: a page is fetched fresh, and if it asked for a
    plain "app.js" a returning phone could pair the new page with the old
    script still in this cache for one load. A new version is a new URL,
    which this cache has never seen, so it is always fetched. When a release
    changes any of those files: bump REL here AND the ?v= in every page. */
-const REL = "27";
+const REL = "28";
 const CACHE = "ronak-v" + REL;
 const ASSETS = [
   "./", "./index.html", "./helplines.js", "./nav.js?v=" + REL,

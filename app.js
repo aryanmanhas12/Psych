@@ -33,7 +33,7 @@ window.HELP = {
   regions: [
     { id: "sa", label: "South Asia", lines: [
       { country:"India",       org:"Tele-MANAS (Govt. of India)", num:"14416",          tel:"14416",        note:"24×7, free, 20+ languages" },
-      { country:"India",       org:"KIRAN",                       num:"1800-599-0019",  tel:"18005990019",  note:"24×7, free, 13 languages" },
+      { country:"India",       org:"Vandrevala Foundation",       num:"+91 9999-666-555",tel:"+919999666555",note:"24×7, free, call or WhatsApp" },
       { country:"India",       org:"AASRA",                       num:"+91 98204 66726",tel:"+919820466726",note:"24×7 volunteer-run" },
       { country:"Bangladesh",  org:"Kaan Pete Roi",               num:"09612-119911",   tel:"09612119911",  note:"Emotional support" },
       { country:"Pakistan",    org:"Umang",                       num:"0311-7786264",   tel:"03117786264",  note:"Trained volunteers" },
@@ -875,7 +875,7 @@ document.addEventListener("keydown", e=>{
    is a 48px thing to hit rather than a line of text to aim at. */
 function dialLines(){
   return [["tel:14416", T.ui.lineTelemanas],
-          ["tel:18005990019", T.ui.lineKiran],
+          ["tel:+919999666555", T.ui.lineVandrevala],
           ["tel:112", T.ui.lineEmergency]]
     .map(([href,label])=> '<a href="'+href+'">'+esc(label||href.replace("tel:",""))+'</a>')
     .join("");
@@ -1487,7 +1487,7 @@ function renderMood(){
 let activeRegion = null;
 function crisisLinesHTML(){
   return '<a href="tel:14416">'+esc(T.ui.lineTelemanas)+'</a><br>' +
-         '<a href="tel:18005990019">'+esc(T.ui.lineKiran)+'</a><br>' +
+         '<a href="tel:+919999666555">'+esc(T.ui.lineVandrevala)+'</a><br>' +
          '<a href="tel:112">'+esc(T.ui.lineEmergency)+'</a>';
 }
 function renderResources(){
@@ -2455,7 +2455,7 @@ function dialable(){
     const frag = document.createDocumentFragment();
     let last = 0;
     /* 3+ characters, digits and separators, starting and ending on a
-       digit — matches 112, 14416 and 1800-599-0019, and leaves years and
+       digit — matches 112, 14416 and 9999-666-555, and leaves years and
        ordinary words alone. */
     const re = /\d[\d‑-]{1,}\d/g;
     let m;
@@ -2466,7 +2466,7 @@ function dialable(){
       a.className = "dial";
       a.textContent = m[0];
       /* The visible text is a bare number; on its own that reads as
-         "1800-599-0019, link" and nothing more. */
+         "9999-666-555, link" and nothing more. */
       a.setAttribute("aria-label", (T.ui.callLabel || "Call") + " " + m[0]);
       frag.appendChild(a);
       last = m.index + m[0].length;
