@@ -210,7 +210,7 @@ function setLang(code, after){
   if(current) renderQ();
   if(lastResult && document.getElementById("view-results").classList.contains("active")) renderResults(false);
   hideMissing();
-  if(window.Deepu) Deepu.lang();
+  if(window.Ooh) Ooh.lang();
   if(after) after();
 }
 
@@ -290,7 +290,11 @@ function showView(name){
   window.scrollTo(0,0);
   v.focus();
   observeReveals();
-  if(window.Deepu) Deepu.view(name);
+  /* Music is a known mood-induction method, so it fades out for the
+     questions themselves and comes back after: it must not colour
+     anyone's answers. */
+  if(window.RonakMusic){ if(name === "test") RonakMusic.hold("questions"); else RonakMusic.release("questions"); }
+  if(window.Ooh) Ooh.view(name);
 }
 
 /* ════════ home cards ════════ */
@@ -895,10 +899,13 @@ function showSafeNow(){
   document.querySelector(".tokenbar").hidden = true;
   document.querySelector("#view-test .actionrow").hidden = true;
   box.hidden = false;
+  /* the safety step gets silence: no music under it */
+  if(window.RonakMusic) RonakMusic.hold("crisis");
   setTimeout(()=> document.getElementById("safeNowHelp").focus(), 80);
 }
 function hideSafeNow(){
   document.getElementById("safeNow").hidden = true;
+  if(window.RonakMusic) RonakMusic.release("crisis");
   document.querySelector(".tokenbar").hidden = false;
   document.querySelector("#view-test .actionrow").hidden = false;
 }
@@ -1451,8 +1458,6 @@ function setMood(v){
   const m = loadMood(); m[dkey(new Date())] = v;
   try{ localStorage.setItem(MOOD_KEY, JSON.stringify(m)); }catch(e){}
   renderMood();
-  /* Deepu's face answers the mood — gently for a low day, never cheering it */
-  if(window.Deepu) Deepu.react(v <= 2 ? "caring" : v === 3 ? "calm" : "cheer");
 }
 function renderMood(){
   const m = loadMood(), today = dkey(new Date());
@@ -1730,12 +1735,15 @@ function breatheStep(){
 
 function breatheStart(){
   breathePhase = 0; breatheRounds = 0;
+  /* the breathing tones and haptics lead; the music steps back */
+  if(window.RonakMusic) RonakMusic.hold("breathe");
   document.getElementById("breatheBtn").textContent = T.ui.breatheStop;
   breatheStep();
 }
 
 function breatheStop(finished){
   if(breatheTimer){ clearTimeout(breatheTimer); breatheTimer = null; }
+  if(window.RonakMusic) RonakMusic.release("breathe");
   const orb = document.getElementById("orb"), btn = document.getElementById("breatheBtn");
   if(!orb || !btn) return;
   orb.className = "orb";
@@ -2274,6 +2282,9 @@ let otThenTour = false;
 
 function otEnd(skipped){
   otClear();
+  markVisit();
+  document.getElementById("otGate").hidden = true;
+  ot.classList.remove("gated");
   ot.classList.add("closing");
   setTimeout(()=>{
     ot.hidden = true; ot.classList.remove("closing");
@@ -2413,6 +2424,8 @@ document.getElementById("skipIntro").addEventListener("click", ()=> otEnd(true))
 function playOpening(){
   toggleSettings(false);
   otThenTour = true;
+  /* a click, so the music can start with the sunrise straight away */
+  if(window.RonakMusic) RonakMusic.begin();
   otPlay();
   setTimeout(()=> document.getElementById("skipIntro").focus(), 60);
 }
@@ -2431,12 +2444,46 @@ ot.addEventListener("keydown", e=>{ if(e.key === "Escape") otEnd(true); });
    opening from here threw "Cannot read properties of null (reading
    'ui')" and took the rest of the script down with it. The opening is
    the one thing that must not run before the words it is made of. */
-function startOpening(){
-const otSkip = window.matchMedia("(prefers-reduced-motion: reduce)").matches ||
-               location.hash || onboardSeen(OT_KEY);
-if(!otSkip){
+/* Every visit now opens on the sunrise, with its music. A visit is a tab
+   session: reloading inside one does not replay it, closing the app and
+   coming back does. Still never for reduced-motion readers and never on
+   a deep link — someone heading for #resources wants a number, not a
+   film — and the crisis strip stays on top of it the whole time.
+
+   Browsers refuse sound before a tap, so the opening waits on the night
+   scene with Begin. That one tap starts the music and the scene in the
+   same instant, which is what keeps the two in step: the chord changes
+   in music.js are scheduled against the same clock the scene's beats
+   start from. With the music switched off there is nothing to wait for,
+   and the scene simply plays. */
+const OT_VISIT = "ronak-visit-opened";
+function visitOpened(){ try{ return sessionStorage.getItem(OT_VISIT) === "1"; }catch(e){ return false; } }
+function markVisit(){ try{ sessionStorage.setItem(OT_VISIT, "1"); }catch(e){} }
+function otGateBegin(quiet){
+  markVisit();
+  document.getElementById("otGate").hidden = true;
+  ot.classList.remove("gated");
+  if(window.RonakMusic){ if(quiet) RonakMusic.quietForVisit(); else RonakMusic.begin(); }
   otPlay();
   setTimeout(()=> document.getElementById("skipIntro").focus(), 60);
+}
+document.getElementById("otBegin").addEventListener("click", ()=> otGateBegin(false));
+document.getElementById("otQuiet").addEventListener("click", ()=> otGateBegin(true));
+function startOpening(){
+const otSkip = window.matchMedia("(prefers-reduced-motion: reduce)").matches ||
+               location.hash || visitOpened();
+if(!otSkip){
+  if(window.RonakMusic && RonakMusic.wanted()){
+    ot.hidden = false;
+    otBuildLangs();
+    document.getElementById("otGate").hidden = false;
+    ot.classList.add("gated");
+    setTimeout(()=> document.getElementById("otBegin").focus(), 60);
+  } else {
+    markVisit();
+    otPlay();
+    setTimeout(()=> document.getElementById("skipIntro").focus(), 60);
+  }
 } else if(!location.hash){
   /* The walkthrough used to hang off the end of the room scene and nowhere
      else, so anyone who never saw the scene — reduced-motion readers, and

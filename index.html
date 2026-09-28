@@ -21,7 +21,7 @@
 <meta name="author" content="Aryan Manhas">
 <meta name="theme-color" content="#140A26">
 <link rel="manifest" href="manifest.webmanifest">
-<script src="nav.js?v=29" defer></script>
+<script src="nav.js?v=30" defer></script>
 <!-- The 192px PNG was fetched as the favicon on every page: 11.4KB gzip
      on the critical path, for something drawn at 16px. The SVG is 1.6KB
      and sharp at every size. No PNG fallback link: Chromium fetches every
@@ -41,6 +41,8 @@
     var nv = navigator, cn = nv.connection || {};
     if((nv.deviceMemory && nv.deviceMemory <= 2) || cn.saveData) root.className += " lite";
   }catch(e){}
+  /* Ooh switched off: his space on the home screen is not reserved */
+  try{ if((JSON.parse(localStorage.getItem("ronak-ooh")) || {}).on === false) root.className += " ooh-off"; }catch(e){}
   var p;
   try{ p = JSON.parse(localStorage.getItem("psych-prefs")) || {}; }
   catch(e){ return; }
@@ -86,7 +88,7 @@
     (function go(){
       var s = document.createElement("script");
       /* versioned like every other file this page loads — see REL in sw.js */
-      s.src = "i18n." + code + ".js?v=29";
+      s.src = "i18n." + code + ".js?v=30";
       s.async = false;
       s.onload  = function(){ settle(window.I18N && window.I18N[code] ? code : null); };
       s.onerror = function(){ if(++tries < 2) go(); else settle(null); };
@@ -108,8 +110,8 @@
 })();
 </script>
 <link rel="apple-touch-icon" href="icon-192.png">
-<link rel="stylesheet" href="site.css?v=29">
-<link rel="stylesheet" href="app.css?v=29">
+<link rel="stylesheet" href="site.css?v=30">
+<link rel="stylesheet" href="app.css?v=30">
 </head>
 <body>
 
@@ -287,6 +289,20 @@
    </div>
   </div>
 
+  <!-- ── Begin ──
+       Every visit opens here, on the night scene. Browsers will not play
+       sound before a tap, so this tap is what lets the music and the
+       sunrise start together, in the same instant (music.js). "Begin in
+       silence" is the same opening with no music, for this visit only. -->
+  <div class="ot-gate" id="otGate" hidden>
+    <div class="ot-gate-in">
+      <p class="ot-gate-line" data-i18n="gateLine">Take a breath. The sun is on its way.</p>
+      <button type="button" id="otBegin" class="ot-begin"><span class="ot-begin-sun" aria-hidden="true"></span><span data-i18n="gateBegin">Begin</span></button>
+      <button type="button" id="otQuiet" class="ot-quiet" data-i18n="gateQuiet">Begin in silence</button>
+      <p class="ot-gate-note" data-i18n="gateNote">Soft music rises with the sunrise. You can turn it off any time.</p>
+    </div>
+  </div>
+
   <div class="ot-bottom">
     <div class="wrap">
       <button type="button" id="skipIntro" data-i18n="skipIntro">Skip</button>
@@ -449,15 +465,12 @@
           </div>
         </div>
         <div class="setrow">
-          <span class="lbl" data-i18n="sfxLabel">Sound effects</span>
-          <div class="btns">
-            <button type="button" id="sfxBtn" aria-pressed="true" data-i18n-label="sfxLabel" aria-label="Sound effects"><svg class="ctricon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 9.5h3.5L12 6v12l-4.5-3.5H4z"/><path d="M15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11"/></svg><span class="st"></span></button>
-          </div>
-        </div>
-        <div class="setrow">
-          <span class="lbl" data-i18n="deepuLabel">Deepu, your guide</span>
-          <div class="btns">
-            <button type="button" id="deepuBtn" aria-pressed="true" data-i18n-label="deepuLabel" aria-label="Deepu, your guide"><svg class="ctricon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M3.5 13.5c0 4 3.8 6.5 8.5 6.5s8.5-2.5 8.5-6.5z"/><path d="M12 3.5c2 2.3 2.8 3.8 2.3 5.6-.4 1.4-1.3 2-2.3 2s-1.9-.6-2.3-2C9.2 7.3 10 5.8 12 3.5z"/></svg><span class="st"></span></button>
+          <span class="lbl" data-i18n="feelLabel">Sound and feel</span>
+          <div class="btns feelchips">
+            <button type="button" id="musicBtn" class="feelchip" aria-pressed="true"><svg class="ctricon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M9 17.5V6l10-2v11.5"/><circle cx="6.5" cy="17.5" r="2.5"/><circle cx="16.5" cy="15.5" r="2.5"/></svg><span data-i18n="musicLabel">Music</span></button>
+            <button type="button" id="sfxBtn" class="feelchip" aria-pressed="true"><svg class="ctricon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 9.5h3.5L12 6v12l-4.5-3.5H4z"/><path d="M15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11"/></svg><span data-i18n="sfxLabel">Sounds</span></button>
+            <button type="button" id="hapticsBtn" class="feelchip" aria-pressed="true"><svg class="ctricon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="8" y="3.5" width="8" height="17" rx="2"/><path d="M4.5 9v6M19.5 9v6M2 11v2M22 11v2"/></svg><span data-i18n="hapticsLabel">Haptics</span></button>
+            <button type="button" id="oohBtn" class="feelchip" aria-pressed="true"><svg class="ctricon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="14" r="7"/><path d="M12 7V4.5"/><ellipse cx="9.2" cy="3.6" rx="2.4" ry="1.3" transform="rotate(-26 9.2 3.6)"/><ellipse cx="14.8" cy="3.6" rx="2.4" ry="1.3" transform="rotate(26 14.8 3.6)"/><circle cx="9.8" cy="13" r=".9"/><circle cx="14.2" cy="13" r=".9"/></svg><span data-i18n="oohLabel">Ooh, your guide</span></button>
           </div>
         </div>
         <div class="setrow">
@@ -503,6 +516,9 @@
         <span class="tag" data-i18n="wbBackTag"></span>
         <p data-i18n="wbBackBody"></p>
       </div>
+      <!-- Ooh speaks here, at the top of the page as in Arun (companion.js);
+           the space is held before the script arrives so nothing moves -->
+      <div class="ooh-slot" data-ooh="home"></div>
       <span class="eyebrow" data-i18n="homeEyebrow">Check in early · Act early</span>
       <h1 class="display" id="homeH1"><span data-i18n="homeTitle1"></span> <span class="accent" data-i18n="homeTitle2"></span></h1>
       <p class="lede" id="homeSubtitle" data-i18n="homeSubtitle" data-i18n-optional></p>
@@ -622,6 +638,9 @@
       <p class="lede" id="testIntro" style="margin-bottom:0;"></p>
       <div class="period mono" id="testPeriod"></div>
     </div>
+    <!-- Ooh's one line before a first check-in: under the instructions,
+         above the questions, never beside them -->
+    <div class="ooh-slot" data-ooh="test"></div>
     <!-- Shown once per instrument, before the first question. Four facts,
          one button: how long, where the answers go, what you get, and that
          it is not a diagnosis. Those are the things people are actually
@@ -924,7 +943,10 @@
   </div>
 </footer>
 
-<script src="app.js?v=29"></script>
-<script src="companion.js?v=29" defer></script>
+<!-- before app.js: the opening asks it whether to wait for Begin -->
+<script src="music.js?v=30"></script>
+<script src="app.js?v=30"></script>
+<!-- not deferred: Ooh's first line has to be in the page before the first paint -->
+<script src="companion.js?v=30"></script>
 </body>
 </html>
