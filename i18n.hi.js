@@ -20,7 +20,7 @@
     callLabel: "कॉल करें",
     crisisMeta: "निःशुल्क · 24×7 · गोपनीय",
     settings: "सेटिंग्स",
-    sfxLabel: "आवाज़ें", feelLabel: "आवाज़ और एहसास", musicLabel: "संगीत", hapticsLabel: "हैप्टिक्स", oohLabel: "Ooh, आपका गाइड", gateLine: "एक गहरी साँस लें। सूरज आने वाला है।", gateBegin: "शुरू करें", gateQuiet: "बिना आवाज़ शुरू करें", gateNote: "सूर्योदय के साथ हल्का संगीत बजता है। इसे कभी भी बंद कर सकते हैं।",
+    sfxLabel: "आवाज़ें", feelLabel: "आवाज़ और एहसास", musicLabel: "संगीत", hapticsLabel: "हैप्टिक्स", stillLabel: "कम हलचल", oohLabel: "Ooh, आपका गाइड", gateLine: "एक गहरी साँस लें। सूरज आने वाला है।", gateBegin: "शुरू करें", gateQuiet: "बिना आवाज़ शुरू करें", gateNote: "सूर्योदय के साथ हल्का संगीत बजता है। इसे कभी भी बंद कर सकते हैं।",
     readMore: "और पढ़ें",
     navGuide: "बात करें",
     theme: "थीम",

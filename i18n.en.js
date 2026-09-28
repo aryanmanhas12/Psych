@@ -20,7 +20,7 @@
     callLabel: "Call",
     crisisMeta: "FREE · 24×7 · CONFIDENTIAL",
     settings: "Settings",
-    sfxLabel: "Sounds", feelLabel: "Sound and feel", musicLabel: "Music", hapticsLabel: "Haptics", oohLabel: "Ooh, your guide", gateLine: "Take a breath. The sun is on its way.", gateBegin: "Begin", gateQuiet: "Begin in silence", gateNote: "Soft music rises with the sunrise. You can turn it off any time.",
+    sfxLabel: "Sounds", feelLabel: "Sound and feel", musicLabel: "Music", hapticsLabel: "Haptics", stillLabel: "Less motion", oohLabel: "Ooh, your guide", gateLine: "Take a breath. The sun is on its way.", gateBegin: "Begin", gateQuiet: "Begin in silence", gateNote: "Soft music rises with the sunrise. You can turn it off any time.",
     readMore: "Read more",
     navGuide: "Talk it through",
     theme: "Theme",

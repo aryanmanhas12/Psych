@@ -1145,6 +1145,23 @@ const OVERFLOW = `(()=>{
           playing: !document.getElementById('overture').hidden && !!document.querySelector('#otCam.push, #otRoom.on') }));
         m.music && m.playing ? ok('Begin starts the music and the sunrise in the same tap')
                              : fail(`Begin: music ${m.music}, scene ${m.playing}`);
+        /* the opening on an upright phone is composed in 9:16, and its art
+           (the name and Ooh) always ends above the language buttons */
+        await p.waitForTimeout(7300);
+        const o = await p.evaluate(()=>{
+          const ov = document.getElementById('overture'), sc = ov.querySelector('.ot-scene').getBoundingClientRect();
+          const mark = document.getElementById('otMark').getBoundingClientRect();
+          const cap = ov.querySelector('.ot-cap').getBoundingClientRect();
+          return { portrait: ov.classList.contains('ot-portrait'), ratio: sc.width / sc.height,
+                   clear: mark.bottom <= cap.top, ooh: document.getElementById('otOohSvg').childElementCount > 0 &&
+                   document.getElementById('otOoh').classList.contains('on'),
+                   gateOoh: !!document.querySelector('.ot-gate-ooh svg, .ot-gate-ooh [data-mood]') };
+        });
+        o.portrait && o.ratio <= 0.5625 + 0.02 ? ok(`the opening is a 9:16 frame on an upright phone (${o.ratio.toFixed(3)})`)
+                                               : fail(`opening frame not 9:16 (portrait ${o.portrait}, ratio ${o.ratio.toFixed(3)})`);
+        o.clear ? ok('the name ends above the caption and language buttons') : fail('the name sits under the language buttons');
+        o.ooh ? ok('Ooh arrives with the name at the end of the opening') : fail('Ooh did not arrive in the opening');
+        o.gateOoh ? ok('Ooh greets on the Begin screen') : fail('no Ooh on the Begin screen');
       }
       await ctx.close();
     }
