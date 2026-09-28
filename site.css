@@ -837,3 +837,170 @@ nav.site {
 .choice, .screener-card, .evidence-item {
   contain: layout style paint;
 }
+
+/* ══════════════════════════════════════════════════════════════
+   Deepu — the guide in the corner (companion.js)
+   ──────────────────────────────────────────────────────────────
+   Drawn like a comic: flat colour, one ink line, a hard offset shadow
+   on the speech bubble. The bubble is always cream paper and plum ink,
+   in the day and the night theme alike, the way a comic panel is.
+   Everything that moves while he idles is a transform or opacity on an
+   HTML layer (.dp-bob, .dp-flick, .dp-glow), never an SVG child, so it
+   costs the main thread nothing. */
+.dp-dock{
+  --dp-ink:#22113D; --dp-paper:#FFF8EC; --dp-w:3.6rem;
+  position:fixed;right:max(.75rem,env(safe-area-inset-right,0px));
+  bottom:calc(var(--tabbar-h,0px) + env(safe-area-inset-bottom,0px) + .7rem);
+  z-index:85;display:flex;flex-direction:column;align-items:flex-end;
+  pointer-events:none;
+  transition:transform .45s cubic-bezier(.34,1.4,.64,1),opacity .3s ease;
+}
+@media(min-width:641px){ .dp-dock{--dp-w:4.5rem;bottom:1.1rem;right:1.1rem;} }
+.dp-dock[hidden]{display:none;}
+.dp-dock > *{pointer-events:auto;}
+/* he rides the tab bar down when it slides away, and back */
+:root.navdown .dp-dock{transform:translateY(calc(var(--tabbar-h,0px) * .85));}
+/* the questions are the reader's alone */
+.dp-dock.dp-away{transform:translateY(calc(100% + var(--tabbar-h,0px) + 2rem));opacity:0;}
+.dp-dock.dp-away > *{pointer-events:none;}
+.dp-dock.dp-hide{visibility:hidden;opacity:0;}
+
+.dp-me{
+  position:relative;display:block;width:var(--dp-w);min-height:44px;
+  padding:0;margin:0;border:0;background:none;cursor:pointer;color:inherit;
+  filter:drop-shadow(0 .35rem .5rem rgba(20,10,38,.35));
+  -webkit-tap-highlight-color:transparent;
+}
+.dp-me:focus-visible{outline:3px solid var(--marigold);outline-offset:4px;border-radius:1rem;}
+.dp-bob{position:relative;display:block;animation:dp-bob 3.4s ease-in-out infinite;}
+.dp-fig{display:block;width:100%;height:auto;overflow:visible;position:relative;}
+.dp-me:active .dp-bob{animation:none;transform:scale(.92);}
+.dp-me.hop .dp-bob{animation:dp-hop .6s cubic-bezier(.3,1.6,.6,1);}
+
+/* the flame sits in the oil and flickers; its size is his mood */
+.dp-flame{
+  position:absolute;left:50%;bottom:47.5%;width:34%;aspect-ratio:40/60;
+  transform:translateX(-50%) scale(1);transform-origin:50% 92%;
+  transition:transform .5s cubic-bezier(.34,1.5,.64,1);
+}
+.dp-dock[data-f="big"] .dp-flame{transform:translateX(-50%) scale(1.28);}
+.dp-dock[data-f="small"] .dp-flame{transform:translateX(-50%) scale(.78);}
+.dp-flick{display:block;width:100%;height:100%;transform-origin:50% 92%;animation:dp-flick 1.6s ease-in-out infinite;}
+.dp-flick svg{display:block;width:100%;height:100%;max-width:none;}
+.dp-glow{
+  position:absolute;left:50%;top:0;width:90%;aspect-ratio:1;border-radius:50%;
+  transform:translate(-50%,-22%);pointer-events:none;
+  background:radial-gradient(closest-side,rgba(255,200,61,.55),rgba(255,79,154,.22) 55%,transparent);
+  animation:dp-glow 3.4s ease-in-out infinite;
+}
+/* the quest marker: a page he hasn't finished explaining */
+.dp-quest{
+  position:absolute;left:-.3rem;top:18%;width:1.35rem;height:1.35rem;border-radius:50%;
+  display:grid;place-items:center;font:800 .85rem/1 var(--font-display);
+  color:var(--dp-ink);background:#FFD34D;border:2.5px solid var(--dp-ink);
+  animation:dp-quest 1.4s ease-in-out infinite;
+}
+.dp-quest[hidden]{display:none;}
+
+/* the drawing: one ink, flat fills */
+.dp-fig .v{display:none;}
+.dp-fig[data-e="open"] .e-open,.dp-fig[data-e="side"] .e-side,.dp-fig[data-e="arc"] .e-arc,
+.dp-fig[data-e="closed"] .e-closed,.dp-fig[data-e="shut"] .e-shut,.dp-fig[data-e="wink"] .e-wink,.dp-fig[data-e="big"] .e-big,
+.dp-fig[data-b="raise"] .b-raise,.dp-fig[data-b="worry"] .b-worry,
+.dp-fig[data-m="smile"] .m-smile,.dp-fig[data-m="soft"] .m-soft,.dp-fig[data-m="open"] .m-open,
+.dp-fig[data-m="big"] .m-big,.dp-fig[data-m="o"] .m-o,.dp-fig[data-m="flat"] .m-flat,.dp-fig[data-m="wavy"] .m-wavy,
+.dp-fig[data-a="down"] .a-down,.dp-fig[data-a="wave"] .a-wave,.dp-fig[data-a="up"] .a-up,
+.dp-fig[data-a="chin"] .a-chin,.dp-fig[data-a="heart"] .a-heart,
+.dp-fig[data-x="spark"] .x-spark,.dp-fig[data-x="zzz"] .x-zzz{display:inline;}
+.dp-body{fill:url(#dpClay);stroke:#22113D;stroke-width:3.5;stroke-linejoin:round;}
+.dp-oil{fill:#3B1D62;stroke:#22113D;stroke-width:3;}
+.dp-oil-in{fill:#5E2E90;}
+.dp-shine{fill:none;stroke:#FFE3B0;stroke-width:3.5;stroke-linecap:round;opacity:.7;}
+.dp-band{fill:none;stroke:#FFD34D;stroke-width:3;stroke-linecap:round;stroke-dasharray:.1 7;}
+.dp-foot{fill:#C73C78;stroke:#22113D;stroke-width:3;}
+.dp-limb{fill:none;stroke:#22113D;stroke-width:10;stroke-linecap:round;}
+.dp-limb-in{fill:none;stroke:#FF9A63;stroke-width:4.6;stroke-linecap:round;}
+.dp-hand{fill:#FF9A63;stroke:#22113D;stroke-width:2.6;}
+.dp-fig .ink{fill:#22113D;}
+.dp-glint{fill:#fff;}
+.dp-white{fill:#fff;stroke:#22113D;stroke-width:3;}
+.dp-line{fill:none;stroke:#22113D;stroke-width:3.4;stroke-linecap:round;stroke-linejoin:round;}
+.dp-mouth{fill:#6B1740;stroke:#22113D;stroke-width:3;stroke-linejoin:round;}
+.dp-tongue{fill:#FF7FAE;}
+.dp-blush{fill:#FF5FA2;opacity:.42;transition:opacity .3s;}
+.dp-fig[data-x="blush"] .dp-blush{opacity:.78;}
+.dp-heart{fill:#FF4F9A;stroke:#22113D;stroke-width:2.6;stroke-linejoin:round;}
+.dp-spark{fill:#FFD34D;stroke:#22113D;stroke-width:2;stroke-linejoin:round;}
+
+/* ── the speech bubble ── */
+.dp-bubble{
+  /* out of flow, above him: opening it must not resize the dock, or the
+     browser counts him as having moved (a 0.1 layout shift on load) */
+  position:absolute;right:0;bottom:calc(100% + .9rem);
+  width:min(21rem,calc(100vw - 1.5rem));margin:0;
+  padding:1.35rem 1rem .85rem;color:var(--dp-ink);background:var(--dp-paper);
+  border:3px solid var(--dp-ink);border-radius:1.15rem;
+  box-shadow:5px 5px 0 var(--dp-ink);
+  transform-origin:88% 100%;rotate:-.6deg;
+  animation:dp-pop .42s cubic-bezier(.34,1.56,.64,1);
+}
+.dp-bubble[hidden]{display:none;}
+/* the tail, pointing down at him: an ink triangle with a paper one inside */
+.dp-bubble::before,.dp-bubble::after{
+  content:"";position:absolute;right:calc(var(--dp-w) / 2 - .9rem);width:0;height:0;
+  border-style:solid;border-color:transparent;
+}
+.dp-bubble::before{bottom:-1.25rem;border-width:1.25rem 1.1rem 0 .15rem;border-top-color:var(--dp-ink);}
+.dp-bubble::after{bottom:-.8rem;right:calc(var(--dp-w) / 2 - .6rem);border-width:.85rem .75rem 0 .1rem;border-top-color:var(--dp-paper);}
+.dp-head{position:absolute;left:0;right:0;top:0;display:flex;align-items:flex-start;gap:.3rem;padding:0 .35rem 0 0;}
+/* the caption box, stuck on the panel edge at a tilt */
+.dp-cap{
+  margin:-.95rem auto 0 .8rem;padding:.12rem .7rem .08rem;rotate:-2.5deg;
+  background:#FFD34D radial-gradient(rgba(34,17,61,.16) 1px,transparent 1.2px) 0 0/5px 5px;
+  border:2.5px solid var(--dp-ink);border-radius:.35rem;box-shadow:2px 2px 0 var(--dp-ink);
+  font:800 .95rem/1.25 var(--font-display);letter-spacing:.06em;text-transform:uppercase;
+}
+.dp-cap b{font-weight:800;}
+.dp-step{margin-top:.35rem;font:700 .72rem/1 var(--font-ui);color:#5F5476;white-space:nowrap;}
+.dp-ico{
+  flex:none;display:grid;place-items:center;width:44px;height:44px;margin:-.2rem 0 0;padding:0;
+  border:0;background:none;color:var(--dp-ink);cursor:pointer;border-radius:.6rem;
+}
+.dp-ico svg{width:1.25rem;height:1.25rem;fill:currentColor;}
+.dp-ico svg .w{fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;}
+.dp-ico:focus-visible,.dp-btn:focus-visible{outline:3px solid #6D28D9;outline-offset:2px;}
+.dp-text{
+  margin:.85rem 0 .7rem;min-height:2.96em;
+  font:600 .98rem/1.48 var(--font-display);color:var(--dp-ink);cursor:default;
+}
+.dp-bubble.dp-typing .dp-text{cursor:pointer;}
+.dp-text{position:relative;}
+.dp-ghost{visibility:hidden;}
+.dp-typed{position:absolute;left:0;top:0;right:0;}
+.dp-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;}
+.dp-acts{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:.5rem;}
+.dp-btn{
+  min-height:44px;padding:.45rem 1rem;cursor:pointer;
+  font:800 .95rem/1.1 var(--font-display);color:var(--dp-ink);
+  background:#FFD34D;border:2.5px solid var(--dp-ink);border-radius:.8rem;
+  box-shadow:3px 3px 0 var(--dp-ink);transition:transform .08s,box-shadow .08s;
+}
+.dp-btn:active{transform:translate(3px,3px);box-shadow:0 0 0 var(--dp-ink);}
+.dp-btn.dp-alt{background:#fff;}
+:root[data-contrast="high"] .dp-bubble{box-shadow:none;}
+
+@keyframes dp-bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+@keyframes dp-hop{0%{transform:translateY(0) scale(1)}35%{transform:translateY(-12px) scale(1.06,.95)}70%{transform:translateY(0) scale(.96,1.04)}100%{transform:none}}
+@keyframes dp-flick{0%,100%{transform:scale(1,1) rotate(0)}30%{transform:scale(.94,1.06) rotate(-3deg)}60%{transform:scale(1.04,.96) rotate(2deg)}}
+@keyframes dp-glow{0%,100%{opacity:.6}50%{opacity:1}}
+@keyframes dp-quest{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+@keyframes dp-pop{from{opacity:0;transform:scale(.55) rotate(-5deg)}to{opacity:1;transform:none}}
+
+/* Still for anyone who asked for less motion, and on lite phones */
+@media (prefers-reduced-motion: reduce){
+  .dp-bob,.dp-flick,.dp-glow,.dp-quest,.dp-bubble,.dp-me.hop .dp-bob{animation:none;}
+  .dp-dock,.dp-flame{transition:none;}
+}
+html.lite .dp-bob,html.lite .dp-flick,html.lite .dp-glow,html.lite .dp-quest{animation:none;}
+html.lite .dp-me{filter:none;}
+@media print{ .dp-dock{display:none!important;} }

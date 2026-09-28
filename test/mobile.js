@@ -1119,6 +1119,43 @@ const OVERFLOW = `(()=>{
     }
   }
 
+  /* 18 ── Deepu, the guide, is a cartoon — so where the app is serious he
+           has to get out of the way. He must not sit beside the questions
+           (that leans on the answers) and must be gone entirely at the
+           self-harm safety step, which gets the whole screen. */
+  head('18. DEEPU STEPS ASIDE WHERE IT MATTERS');
+  {
+    const ctx = await b.newContext(phone()); const p = await ctx.newPage();
+    p.on('pageerror', e=>PAGE_ERRORS.push(e.message));
+    await p.goto(URL); await p.evaluate(seen);
+    await p.goto(URL,{waitUntil:'networkidle'}); await p.waitForTimeout(2600);
+    const home = await p.evaluate(()=>({
+      dock: !!document.querySelector('.dp-dock:not([hidden])'),
+      talking: !!document.getElementById('dpBubble') && !document.getElementById('dpBubble').hidden }));
+    home.dock && home.talking ? ok('he greets a first visit to the home page')
+                              : fail(`Deepu did not greet the home page (dock ${home.dock}, talking ${home.talking})`);
+    await p.evaluate(()=>startTest('phq9')); await p.waitForTimeout(300);
+    await pastPrimer(p, 'deepu');
+    await p.waitForTimeout(400);
+    for(let i=0;i<8;i++){ await p.click('#qcard .bigopts button >> nth=0'); await p.waitForTimeout(350); }
+    const mid = await p.evaluate(()=>({
+      away: document.querySelector('.dp-dock').classList.contains('dp-away'),
+      talking: !document.getElementById('dpBubble').hidden }));
+    mid.away && !mid.talking ? ok('he is out of sight while the questions are answered')
+                             : fail('Deepu is on screen during the questions');
+    await p.click('#qcard .bigopts button >> nth=1'); await p.waitForTimeout(600);
+    const safe = await p.evaluate(()=>{
+      const d = document.querySelector('.dp-dock'), r = d.getBoundingClientRect();
+      return { safe: !document.getElementById('safeNow').hidden,
+               gone: d.hidden || d.classList.contains('dp-hide') ||
+                     getComputedStyle(d).visibility === 'hidden' || r.top >= innerHeight };
+    });
+    !safe.safe ? fail('the safety step did not appear for Deepu\'s check')
+      : safe.gone ? ok('he is gone at the self-harm safety step')
+                  : fail('Deepu is visible at the self-harm safety step');
+    await ctx.close();
+  }
+
   /* 12 ── every uncaught exception, from every page this suite opened.
            Anything the sections above did not deliberately provoke lands
            here, and fails the run. */

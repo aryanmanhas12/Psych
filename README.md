@@ -42,6 +42,7 @@ earlier**, and **giving them the follow-up record the system doesn't**.
 | `manifesto.html` | **The Waiting Room is Full** — a citizen's manifesto on the treatment gap |
 | `poster.html` + `qr-site.svg` | **Printable A4 clinic poster** in six languages, with a decode-tested QR code |
 | `sw.js` + `manifest.webmanifest` | **Offline support** — installable app, works with no connection |
+| `companion.js` + `sounds/` | **Deepu, the guide, and the interface sounds** — see below; the sounds are CC0 |
 | `fonts/` | **Baloo 2** family (Ek Type, OFL) — self-hosted, one file per script, so the site makes zero third-party requests |
 | `brand/` | **The logo** — the bloom-sun mark, the RONAK lockup for light and dark grounds, a 1024px icon master |
 | `icon.svg`, `icon-*.png`, `og-image.jpg` | App icons, favicon and the social card, all drawn from the same mark |
@@ -75,6 +76,28 @@ is built on that one word.
   they are on screen, to spare older phones' batteries.
 - **The working papers stay quiet.** Evidence, Global, Ethics, Manifesto and Poster are one
   tap away on every page, but smaller and dimmer, after the four things a person came to do.
+
+## Deepu, the guide, and the sounds
+
+- **Deepu** (short for Deepak, "lamp") is a small clay diya who lives in the corner of every
+  page. The first time you reach a page he pops up with a comic-book speech bubble and walks
+  you through it a line at a time, typing like a story-game character, with a soft blip and
+  a moving mouth. After that he waits, and explains the page again whenever you tap him. A
+  "!" over his head means a page he hasn't finished explaining. He has eleven expressions
+  (waving, curious, thinking, cheering, caring, calm, concerned, surprised, winking, sleepy)
+  and his flame grows and shrinks with his mood. His lines are in all six languages.
+- **Where he steps back, on purpose.** During the questions he says one line and ducks out
+  of sight, so nothing leans on the answers; picking an answer closes his bubble. At the
+  self-harm safety step he is gone and there is no sound. He never reacts to a score: on a
+  results page he is gentle whatever the number says, and never celebrates.
+- **Sounds** come from the CC0 "soft" pack of [uisfx](https://uisfx.com) (see
+  `sounds/LICENSE.txt`): a tap, a pick, open and close, forward and back, toggles, save,
+  delete. Nothing is downloaded until your first tap, so a first visit costs no extra data.
+  On iPhone they follow the silent switch and never pause your music; Android also gets a
+  tiny vibration when an answer registers. Calling a helpline never makes a sound.
+- **Both can be switched off** in Settings (Sound effects, Deepu), and the speaker in his
+  bubble mutes sound in one tap. Reduced-motion readers get a still Deepu whose words
+  appear at once.
 
 ## Features
 
@@ -194,3 +217,6 @@ derives from the WHO AUDIT. Statistics cited come from the National Mental Healt
 of India 2015–16 and the published literature indexed in `evidence.html`. Indian-language
 instrument items here are working translations for accessibility, not the officially
 validated language versions.
+
+Interface sounds: the "soft" pack of uisfx 0.4.0 by Yuki Capital, dedicated to the public
+domain under CC0 1.0 (`sounds/LICENSE.txt`). Deepu is original artwork for Ronak.

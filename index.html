@@ -21,7 +21,7 @@
 <meta name="author" content="Aryan Manhas">
 <meta name="theme-color" content="#140A26">
 <link rel="manifest" href="manifest.webmanifest">
-<script src="nav.js?v=28" defer></script>
+<script src="nav.js?v=29" defer></script>
 <!-- The 192px PNG was fetched as the favicon on every page: 11.4KB gzip
      on the critical path, for something drawn at 16px. The SVG is 1.6KB
      and sharp at every size. No PNG fallback link: Chromium fetches every
@@ -86,7 +86,7 @@
     (function go(){
       var s = document.createElement("script");
       /* versioned like every other file this page loads — see REL in sw.js */
-      s.src = "i18n." + code + ".js?v=28";
+      s.src = "i18n." + code + ".js?v=29";
       s.async = false;
       s.onload  = function(){ settle(window.I18N && window.I18N[code] ? code : null); };
       s.onerror = function(){ if(++tries < 2) go(); else settle(null); };
@@ -108,8 +108,8 @@
 })();
 </script>
 <link rel="apple-touch-icon" href="icon-192.png">
-<link rel="stylesheet" href="site.css?v=28">
-<link rel="stylesheet" href="app.css?v=28">
+<link rel="stylesheet" href="site.css?v=29">
+<link rel="stylesheet" href="app.css?v=29">
 </head>
 <body>
 
@@ -446,6 +446,18 @@
           <span class="lbl" data-i18n="contrast">High contrast</span>
           <div class="btns">
             <button type="button" id="contrastBtn" aria-pressed="false" data-i18n-label="contrast" aria-label="High contrast">A<svg class="ctricon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.6"/><path d="M12 3.4a8.6 8.6 0 0 1 0 17.2z" class="half"/></svg></button>
+          </div>
+        </div>
+        <div class="setrow">
+          <span class="lbl" data-i18n="sfxLabel">Sound effects</span>
+          <div class="btns">
+            <button type="button" id="sfxBtn" aria-pressed="true" data-i18n-label="sfxLabel" aria-label="Sound effects"><svg class="ctricon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 9.5h3.5L12 6v12l-4.5-3.5H4z"/><path d="M15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11"/></svg><span class="st"></span></button>
+          </div>
+        </div>
+        <div class="setrow">
+          <span class="lbl" data-i18n="deepuLabel">Deepu, your guide</span>
+          <div class="btns">
+            <button type="button" id="deepuBtn" aria-pressed="true" data-i18n-label="deepuLabel" aria-label="Deepu, your guide"><svg class="ctricon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M3.5 13.5c0 4 3.8 6.5 8.5 6.5s8.5-2.5 8.5-6.5z"/><path d="M12 3.5c2 2.3 2.8 3.8 2.3 5.6-.4 1.4-1.3 2-2.3 2s-1.9-.6-2.3-2C9.2 7.3 10 5.8 12 3.5z"/></svg><span class="st"></span></button>
           </div>
         </div>
         <div class="setrow">
@@ -912,6 +924,7 @@
   </div>
 </footer>
 
-<script src="app.js?v=28"></script>
+<script src="app.js?v=29"></script>
+<script src="companion.js?v=29" defer></script>
 </body>
 </html>

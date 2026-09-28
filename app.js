@@ -210,6 +210,7 @@ function setLang(code, after){
   if(current) renderQ();
   if(lastResult && document.getElementById("view-results").classList.contains("active")) renderResults(false);
   hideMissing();
+  if(window.Deepu) Deepu.lang();
   if(after) after();
 }
 
@@ -289,6 +290,7 @@ function showView(name){
   window.scrollTo(0,0);
   v.focus();
   observeReveals();
+  if(window.Deepu) Deepu.view(name);
 }
 
 /* ════════ home cards ════════ */
@@ -1449,6 +1451,8 @@ function setMood(v){
   const m = loadMood(); m[dkey(new Date())] = v;
   try{ localStorage.setItem(MOOD_KEY, JSON.stringify(m)); }catch(e){}
   renderMood();
+  /* Deepu's face answers the mood — gently for a low day, never cheering it */
+  if(window.Deepu) Deepu.react(v <= 2 ? "caring" : v === 3 ? "calm" : "cheer");
 }
 function renderMood(){
   const m = loadMood(), today = dkey(new Date());
@@ -2068,8 +2072,13 @@ function keepPanelOnScreen(){
     /* The tab bar is fixed to the bottom at z-index 80 and so paints over
        this panel. Stopping above it is the difference between a last row
        you can reach and one you can see but not tap. */
-    const tabH = parseFloat(getComputedStyle(document.documentElement)
-                   .getPropertyValue("--tabbar-h")) || 0;
+    /* Measured from the bar itself. It used to parseFloat --tabbar-h,
+       which is "4.5rem" until the bar has been measured — 4.5, read as
+       pixels, so the floor sat 4.5px above the bottom of the screen.
+       offsetHeight rather than the rect: the bar slides away on scroll
+       with a transform, and it comes back. */
+    const tabEl = document.querySelector(".tabbar");
+    const tabH = tabEl && getComputedStyle(tabEl).display !== "none" ? tabEl.offsetHeight : 0;
     let floor = window.innerHeight - tabH;
     const tourEl = document.getElementById("tour");
     const cardEl = document.getElementById("tourCard");
@@ -2077,7 +2086,15 @@ function keepPanelOnScreen(){
       const cr = cardEl.getBoundingClientRect();
       if(cr.height && cr.top > r.top + 80) floor = Math.min(floor, cr.top - 8);
     }
-    setPanel.style.maxHeight = Math.max(120, floor - r.top - 12) + "px";
+    /* The panel is measured mid-way through its opening animation, which
+       starts it 8px higher and slightly scaled — so r.top is not where it
+       comes to rest, and a height worked out from it ran the last row
+       under the tab bar once the panel had enough rows to reach it. The
+       layout position (offsetTop inside its positioned wrapper) ignores
+       transforms, so it is where the panel will actually settle. */
+    const wrapEl = setPanel.offsetParent;
+    const top = wrapEl ? wrapEl.getBoundingClientRect().top + setPanel.offsetTop : r.top;
+    setPanel.style.maxHeight = Math.max(120, floor - top - 12) + "px";
   });
 }
 setBtn.addEventListener("click", e=>{
