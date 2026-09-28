@@ -66,6 +66,19 @@
   unicode-range:U+0C00-0C7F,U+1CDA;
 }
 
+/* The wordmark. Ronak and Arun, its sister app, set their names the same
+   way at the owner's request: lowercase, Karla at 700, drawn slightly
+   tight (-0.03em), beside the mark. Lowercase won over the spaced
+   capitals this used to be; it reads as a word someone says, not a sign.
+   Only the letters the name needs (r o n a k, the capitals for the
+   accessible text, and the ellipsis the brand falls back to) are cut
+   from Karla 700: 1.4KB, inlined, so it arrives with this file, never
+   flashes, works offline and phones nobody. Licence: fonts/OFL-Karla.txt. */
+@font-face{
+  font-family:"Ronak Wordmark";font-style:normal;font-weight:700;font-display:block;
+  src:url(data:font/woff2;base64,d09GMgABAAAAAAWsAA8AAAAACnAAAAVUAAIBBgAAAAAAAAAAAAAAAAAAAAAAAAAAGhYbgVIcKgZgP1NUQVREAHwRCAqHdIY0ATYCJAM4Cx4ABCAFhEoHIBuJCFGUUc4QFF8k2Kbad6gimDW0oJNkB8ejl1iOFH38tsVrPPy33//2mZl7/Yt4VbRqaIQk2qlkVn/xZSyTfoiERqdE3v3P6aWs+iorvyyDAqYQX4qzenpODVG37jDjH4/yGICnXes1YwYSD7t7AGlfUP5/A/zPsdS75qOwbNADO7N/kY2HWRRGBxhR2/N7s+LRaCDD2cB0KrqNopoJrsfDqwiMgCRkoxDonUqxPfXrz8H7KRMV8CrwaVR9zDUU8CAiKxJ3aCUvv3le+eHUSF5IqGS1RmsQsk4GSQGEElnRi1pY0rLkzwXw/ibaXMqDtF9FtVq2YgJc6c71+H9tUHKVs/yFoIe9+KMW/NnV4xj959LOpyMgIP8pCRyyi40KsZpHnFZ8zueQAj92pCiuUCzeh6jTHbKQogNSqkKsVlACweFdaJ1vq649VNEzMnUhUhmr9x+gxA4xyg/3/6FTDtqPb7l55pj1czmMdMxAAh85D3aBHRAd8QvrwAgKQpKl1JyFA2aYzGEYV/eZieRKJTnPXGwZZfm4OBKl+2mzVKNkU6N0c4PwFhseJ3h682bD9du3n8dTN9ji+M7rxLAAHRRvSCgVx+gUQpw6DFGV0iQJwCxxC2miYCzOVvGjQ+CAfw6N6KAooploTMsXq8ktii+UYrVBpMDrI8khYtml3SgHc1JxpNJULaY4BDupSnqXbszqk6pBRLNYIy9JNCFZLA2LGhjxtaJFRYRYSQYOXNlEsHmlQ49u0TpvPyaGH95Ex40HccMdKw0or15WFY8uVkQUNhEVinhYXfoZ7IIc1+oqsFs4Cjw8qWGrwZ7QU1mP8rs3Dj1mnP6x6VOD/daZ9TMc8IELEpBCCSgFJaH0ApgP+iQnBwSkJ/t4pyfAh0tOhI7q6768qMxsx2jNi6b0ssKhkx7DbdMR+Wu6iwjl1tVx0aPRKRkt29waw0fkfaWHMjulHWOKXYPs4kMzAnPdbdItHApDt84tBB+slDe5d6CeuKTc43729dxthfdtPy5BjENJfmmMf0mo68LasAOpvzY01zQsLYo40unQd/ai6iEe7JV7hZWtjzZsbn0sLO/tpsrhoM0bWh9RlUMX/Ep83Ppz5zcsKPQvtf+Xg/lzm+aBf/HNRcd1h2J/TjQkKqzyZbyetUchrCDIZrIYJsqrSAOlXvJHovyjZPk5Z8p2mcKpl/Sx7S7x+izV/9Pid7rhtndgke9A5JJ0nceLycVvwCI/6HsL9YRvsE55E3fOLNMHT2YZcac2bRaZPcv4/uNZpiIzNwmW8N8/usX/uGTh9KfbD6ffgQ8W+eDlj5s7t/248fLLr6vx6X/G0y2y5t7p6q1Lz2ysq/sCph7ogAvQaScBDeiMBkABXP5/d7/E6NAP0ACJxu6RS+hKl3D5ymVwLgP83ZN6CuDfA59UYPakkux6QA06gAC+FVI1H4Aq7R/oc+eZHCB+QWyGBXMKZcwl4DPvgc9ELMHxSAHlsVeVIZ3vd2NxLEewTk8ChXnXHE6pJVELg6MJ1pQOU2xm6E2ZybxvzOzSL7PY9s+sPA6Yte04MebdT4xQMMZXZq2NiaFVYqefq9PHD0+oNG8GHouDiJSEpCJijkMjei4MkgtizKAS0G4QUWFBHJXBRARwENKYSuLiWHy1cZarmBuVHACAzc2S0BiDUtFgKm3igJ3BwTOnaCyLigwpMQkpd0ZZy8jQwqYmPaJ2s1oWISzRIRM/jW7S/e/IYiCVSmLaSYgpiklLOwzZfhMATLdNNmnLNMWGhABAuW3zWXEjTX0r9EGYqgP/SXcd6ELCu5lSyS4UdmC2sGsJ) format("woff2");
+}
+
 /* ── tokens ──
    The token NAMES predate this palette and are kept so no component
    had to be rewritten to change colour: --heal is now the brand violet
@@ -389,15 +402,15 @@ nav.site .wrap,nav.site .wrap-wide{
   display:flex;align-items:center;gap:1.1rem;flex-wrap:wrap;
   max-width:min(78rem,100%);
 }
-/* The mark and the name, as one link. The name is set in the display face
-   in spaced capitals — the same rounded letters the logo is drawn in — and
-   the bloom beside it turns once, slowly, when you point at it.
-   text-transform rather than capitals in the markup, so the accessible
-   name stays "Ronak" and a screen reader does not spell it out. */
+/* The mark and the name, as one link. The name is the lowercase
+   wordmark shared with Arun (see "Ronak Wordmark" above), and the bloom
+   beside it turns once, slowly, when you point at it. text-transform
+   rather than lowercase in the markup, so the accessible name stays
+   "Ronak", a name with a capital. */
 nav.site .brand{
-  font-family:var(--font-display);
-  font-weight:800;color:var(--on-deep);font-size:1.12rem;
-  letter-spacing:.14em;text-transform:uppercase;
+  font-family:"Ronak Wordmark","Karla",var(--font-ui);
+  font-weight:700;color:var(--on-deep);font-size:1.5rem;
+  letter-spacing:-.03em;text-transform:lowercase;line-height:1;
   margin-right:auto;text-decoration:none;
   display:inline-flex;align-items:center;gap:.5rem;
   /* Allowed to give way. On the narrowest phones at a large text size the
@@ -420,7 +433,9 @@ nav.site .brand:hover .brand-mark,nav.site .brand:focus-visible .brand-mark{tran
    or not. */
 nav.site .brand > .name{
   min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
-  padding-top:.08em;
+  /* Room for the descender-free word to sit on the mark's centre line
+     without the overflow clip shaving the top of the k. */
+  padding:.06em 0 .1em;
 }
 /* A bare URL has no break opportunities, so it sets a floor on how narrow
    the page can be. Footer credits should never do that. */
@@ -696,7 +711,7 @@ footer .byline strong{color:var(--ink);font-size:.85rem;}
    narrowest ones. Shortening the name is the graceful part; the ellipsis
    above is the floor beneath it. */
 @media(max-width:480px){
-  nav.site .brand{font-size:1rem;letter-spacing:.12em;gap:.42rem;}
+  nav.site .brand{font-size:1.36rem;gap:.42rem;}
   nav.site .brand-mark{width:1.55rem;height:1.55rem;}
 }
 @media(max-width:380px){
@@ -711,7 +726,6 @@ footer .byline strong{color:var(--ink);font-size:.85rem;}
     overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0;
   }
   nav.site .navlinks{flex-wrap:wrap;}
-  nav.site .brand{letter-spacing:.1em;}
 }
 @media(max-width:640px){
   header.hero{padding:2.1rem 0 1.7rem;}

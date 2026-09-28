@@ -77,6 +77,7 @@
 /* v30: Ooh, the guide shared with Arun (ooh.mjs, byte for byte Arun's
    lib/ooh.mjs), replaces Deepu; the music (music.js, generated, no
    files) starts with the sunrise on every visit; visual haptics. */
+/* v31: the wordmark is lowercase Karla 700, the same as Arun's. */
 /* ── the release number, in one place ──
    The page's own CSS and JS moved out of index.html into app.css and
    app.js, and every page now asks for its shared files by versioned URL
@@ -86,7 +87,7 @@
    script still in this cache for one load. A new version is a new URL,
    which this cache has never seen, so it is always fetched. When a release
    changes any of those files: bump REL here AND the ?v= in every page. */
-const REL = "30";
+const REL = "31";
 const CACHE = "ronak-v" + REL;
 const ASSETS = [
   "./", "./index.html", "./helplines.js", "./nav.js?v=" + REL,
