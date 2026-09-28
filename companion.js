@@ -47,13 +47,14 @@ const BASE = ME ? new URL(".", ME).href : "";
 const VM = ME && /[?&]v=(\w+)/.exec(ME);
 const V = VM ? VM[1] : "1";
 const STILL = !!(window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches);
-const LITE = document.documentElement.classList.contains("lite");
+/* lite: a 2GB phone, Data Saver, or the reader's own "Less motion" switch */
+const isLite = ()=> document.documentElement.classList.contains("lite");
 
 function readJSON(k, d){ try{ return JSON.parse(localStorage.getItem(k)) || d; }catch(e){ return d; } }
 function writeJSON(k, v){ try{ localStorage.setItem(k, JSON.stringify(v)); }catch(e){} }
 const OOH_KEY = "ronak-ooh", FEEL_KEY = "ronak-feel";
 const oohPref = Object.assign({ on:true, seen:{} }, readJSON(OOH_KEY, {}));
-const feel = Object.assign({ sfx:true, haptics:true }, readJSON(FEEL_KEY, {}));
+const feel = Object.assign({ sfx:true, haptics:true, still:false }, readJSON(FEEL_KEY, {}));
 function saveOoh(){ writeJSON(OOH_KEY, oohPref); }
 function saveFeel(){ writeJSON(FEEL_KEY, feel); }
 /* dismissed this visit, per page: coming back to a page in the same visit
@@ -164,7 +165,7 @@ function sweep(){
 const ARRIVE = ".card,.panel,.bcard,.rescreen,.reflist li,.sheet,.homesec h2";
 let arriveIO = null, lastScroll = 0;
 function arrivals(){
-  if(!fxOn() || STILL || LITE || !("IntersectionObserver" in window)) return;
+  if(!fxOn() || STILL || isLite() || !("IntersectionObserver" in window)) return;
   if(!arriveIO){
     arriveIO = new IntersectionObserver(es=>{
       es.forEach(e=>{
@@ -217,6 +218,68 @@ function progressBar(){
 }
 function syncFeelClass(){ document.documentElement.classList.toggle("fx-off", !feel.haptics); }
 
+/* ══════════════ library effects, ported to Ronak's rules ══════════════
+   From the animated-ui-libraries skill: the effect, not the React code.
+   · Card Spotlight (Aceternity UI) / direction-aware hover (Cult UI): a
+     soft light follows the pointer across a card. Desktop pointers only;
+     one CSS custom property pair on the hovered card, written once per
+     frame at most.
+   · 3D Card / Tilt (Aceternity UI, Componentry): the working-paper cards
+     lean a few degrees toward the pointer. A transform on the card
+     itself, so the compositor does it.
+   · Text Generate Effect (Aceternity UI): a page's heading arrives word
+     by word when the page opens. Opacity and translate only.
+   All three stop under reduced motion and "Less motion" (html.lite). */
+const FINE = !!(window.matchMedia && matchMedia("(hover: hover) and (pointer: fine)").matches);
+function effectsOk(){ return !STILL && !isLite(); }
+if(FINE){
+  let spotEl = null, spotX = 0, spotY = 0, spotQueued = false;
+  const paintSpot = ()=>{
+    spotQueued = false;
+    if(!spotEl) return;
+    const r = spotEl.getBoundingClientRect();
+    const px = spotX - r.left, py = spotY - r.top;
+    spotEl.style.setProperty("--mx", px.toFixed(0) + "px");
+    spotEl.style.setProperty("--my", py.toFixed(0) + "px");
+    if(spotEl.classList.contains("bcard")){
+      const rx = ((py / r.height) - 0.5) * -6, ry = ((px / r.width) - 0.5) * 6;
+      spotEl.style.transform = "perspective(700px) rotateX(" + rx.toFixed(2) + "deg) rotateY(" + ry.toFixed(2) + "deg)";
+    }
+  };
+  document.addEventListener("pointermove", e=>{
+    if(!effectsOk() || e.pointerType !== "mouse") return;
+    const card = e.target.closest && e.target.closest(".card,.bcard");
+    if(card !== spotEl){
+      if(spotEl && spotEl.classList.contains("bcard")) spotEl.style.transform = "";
+      spotEl = card;
+      if(card && !card.querySelector(":scope > .fx-spot")){
+        const sp = document.createElement("span");
+        sp.className = "fx-spot"; sp.setAttribute("aria-hidden", "true");
+        card.appendChild(sp);
+      }
+    }
+    if(!card) return;
+    spotX = e.clientX; spotY = e.clientY;
+    if(!spotQueued){ spotQueued = true; requestAnimationFrame(paintSpot); }
+  }, { passive:true });
+}
+/* the heading of a page, word by word, as the page opens */
+function revealHeading(name){
+  if(!effectsOk() || !name || name === "home" || name === "test") return;
+  const h = document.querySelector("#view-" + name + " h1");
+  if(!h || h.querySelector(".fx-word")) return;
+  const text = h.textContent;
+  if(!text || text.length > 90) return;
+  h.textContent = "";
+  text.split(/(\s+)/).forEach((w, i)=>{
+    if(/^\s+$/.test(w)){ h.appendChild(document.createTextNode(w)); return; }
+    const sp = document.createElement("span");
+    sp.className = "fx-word"; sp.textContent = w;
+    sp.style.animationDelay = (i / 2 * 55) + "ms";
+    h.appendChild(sp);
+  });
+}
+
 /* ══════════════ taps: sound, haptic, ring ══════════════ */
 const SUCCESS = "#spSaveBtn,#sbarBtn,#icsBtn,#exportBtn";
 const BACK    = "#backBtn,#cancelBtn,#primerBack,#sheetBackBtn,#tourPrev";
@@ -260,7 +323,7 @@ document.addEventListener("click", e=>{
 }, true);
 
 /* ══════════════ Ooh ══════════════ */
-let oohSvg = null;
+let oohSvg = null, oohBody = null;
 const UI_EN = { name:"Ooh", hear:"Ooh, your guide. Hear what Ooh says", hide:"Ooh, your guide. Hide what Ooh says",
   next:"Next", done:"Got it", close:"Close what Ooh is saying", says:"Ooh says:",
   musicOn:"Music on", musicOff:"Music off", on:"On", off:"Off" };
@@ -354,7 +417,7 @@ function makeBubble(){
   const b = document.createElement("div");
   b.className = "ooh-bubble";
   b.innerHTML =
-    '<button type="button" class="ooh-say"><span class="ooh-name" aria-hidden="true"></span>'
+    '<button type="button" class="ooh-say"><span class="ooh-name" aria-hidden="true" translate="no"></span>'
   + '<span class="ooh-text"><span class="ooh-typed"></span><span class="ooh-rest" aria-hidden="true"></span></span>'
   + '<span class="ooh-next"></span></button>'
   + '<button type="button" class="ooh-x"><span aria-hidden="true">×</span></button>'
@@ -377,7 +440,7 @@ function talk(run){
   run.bubble.querySelector(".ooh-sr").textContent = ui("says") + " " + text;
   const next = run.bubble.querySelector(".ooh-next");
   const typed = run.bubble.querySelector(".ooh-typed"), rest = run.bubble.querySelector(".ooh-rest");
-  if(STILL || LITE){ typed.textContent = text; rest.textContent = ""; next.dataset.ready = "true"; finish(run); return; }
+  if(STILL || isLite()){ typed.textContent = text; rest.textContent = ""; next.dataset.ready = "true"; finish(run); return; }
   const parts = graphemes(text);
   let n = 0;
   typed.textContent = ""; rest.textContent = text; next.dataset.ready = "false";
@@ -584,13 +647,24 @@ function watchBusy(){
 function settingsSync(){
   const set = (id, on)=>{ const b = document.getElementById(id); if(b) b.setAttribute("aria-pressed", String(on)); };
   set("musicBtn", !!(window.RonakMusic && RonakMusic.wanted()));
-  set("sfxBtn", feel.sfx); set("hapticsBtn", feel.haptics); set("oohBtn", oohPref.on);
+  set("sfxBtn", feel.sfx); set("hapticsBtn", feel.haptics); set("oohBtn", oohPref.on); set("stillBtn", feel.still);
 }
 function wireSettings(){
   const on = (id, fn)=>{ const b = document.getElementById(id); if(b) b.addEventListener("click", fn); };
   on("musicBtn", ()=>{ if(window.RonakMusic) RonakMusic.setWanted(!RonakMusic.wanted()); settingsSync(); labels(); });
   on("sfxBtn", ()=>{ feel.sfx = !feel.sfx; saveFeel(); if(feel.sfx){ unlockSfx(); setTimeout(()=> play("toggle-on"), 120); } settingsSync(); });
   on("hapticsBtn", ()=>{ feel.haptics = !feel.haptics; saveFeel(); syncFeelClass(); if(feel.haptics) buzz("pick"); settingsSync(); });
+  /* "Less motion": every looping animation on the site stops (the lite
+     rules), for anyone who wants the page still without changing the
+     whole phone's reduced-motion setting. The head script applies it
+     before the first paint on the next load. */
+  on("stillBtn", ()=>{
+    feel.still = !feel.still; saveFeel();
+    const root = document.documentElement;
+    if(feel.still) root.classList.add("lite", "still");
+    else if(root.classList.contains("still")){ root.classList.remove("still"); if(!liteByDevice) root.classList.remove("lite"); }
+    settingsSync();
+  });
   on("oohBtn", ()=>{
     oohPref.on = !oohPref.on; saveOoh();
     if(!oohPref.on){ clearStrip(); closeFloat(); } else onView(pageKey());
@@ -599,6 +673,8 @@ function wireSettings(){
   settingsSync();
 }
 
+/* whether the device itself asked for lite, before any switch of ours */
+const liteByDevice = isLite() && !document.documentElement.classList.contains("still");
 let started = false;
 function init(){
   if(started) return; started = true;
@@ -608,11 +684,14 @@ function init(){
   watchBusy();
   wireSettings();
   blinkLoop();
+  /* the Begin screen: Ooh greets whoever opens the app */
+  const gateOoh = document.querySelector(".ot-gate-ooh");
+  if(gateOoh) gateOoh.innerHTML = figure("hello", 104);
   onView(pageKey());
 }
 
 window.Ooh = {
-  view(name){ onView(name); sweep(); buzz("nav"); if(window.RonakMusic) RonakMusic.view(name); },
+  view(name){ onView(name); sweep(); buzz("nav"); revealHeading(name); if(window.RonakMusic) RonakMusic.view(name); },
   /* results decide calm or risk only once they have rendered */
   results(){ if(pageKey() === "results") onView("results"); },
   lang(){
@@ -623,7 +702,9 @@ window.Ooh = {
     if(strip && !busy()){ const k = strip.key, sc = scriptFor(k); if(sc){ const i = strip.run.i; showStrip(k, sc); if(strip){ strip.run.i = Math.min(i, strip.run.lines.length - 1); finish(strip.run); dress(strip.run); } } }
   },
   sound: play,
-  buzz
+  buzz,
+  /* Ooh's drawing as SVG elements for a 120-unit box (the opening scene) */
+  body(mood){ return oohBody ? oohBody(mood) : ""; }
 };
 
 /* In the app this script runs at the end of the body, before the first
@@ -632,6 +713,6 @@ window.Ooh = {
    box already its size. On the working papers it is deferred. */
 const ready = fn=>{ if(document.readyState === "loading" && !document.getElementById("main")) document.addEventListener("DOMContentLoaded", fn); else fn(); };
 ready(init);
-import(BASE + "ooh.mjs?v=" + V).then(m=>{ oohSvg = m.oohSvg; drawIn(); dockState(); })
+import(BASE + "ooh.mjs?v=" + V).then(m=>{ oohSvg = m.oohSvg; oohBody = m.oohBody; drawIn(); dockState(); })
   .catch(()=>{ /* no drawing (a very old browser): the words, sounds and feel still work */ });
 })();

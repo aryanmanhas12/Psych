@@ -2303,6 +2303,10 @@ function otPlay(){
   ot.hidden = false;
   ot.classList.remove("closing");
   otBuildLangs();
+  otFit();
+  /* Ooh, from ooh.mjs (via companion.js), waving: drawn in once */
+  const oohSvg = document.getElementById("otOohSvg");
+  if(oohSvg && !oohSvg.childElementCount && window.Ooh && Ooh.body) oohSvg.innerHTML = Ooh.body("hello");
   const $ = id => document.getElementById(id);
   const set = (id, cls) => $(id).setAttribute("class", cls);
 
@@ -2312,7 +2316,7 @@ function otPlay(){
   set("otSit","fig heal"); set("otCurl",""); set("otWarm","");
   set("otPa","passer"); set("otPb","passer");
   set("otDoorGlow",""); set("otDoorLight",""); set("otCam","");
-  set("otBloom",""); set("otSparks",""); set("otMark","");
+  set("otBloom",""); set("otSparks",""); set("otMark",""); set("otOoh","");
   $("otBar").classList.remove("run");
   $("otBar").style.width = "";
   requestAnimationFrame(()=> $("otBar").classList.add("run"));
@@ -2343,7 +2347,12 @@ function otPlay(){
   otAt(6500, ()=>{ set("otWarm","on"); $("otFigA").classList.add("warmed"); set("otRoom","ot-room on warm"); });
 
   otAt(6900, ()=>{ set("otBloom","on"); set("otSparks","on"); });
-  otAt(8100, ()=>{ set("otRoom","ot-room on warm dim"); set("otMark","on"); });
+  otAt(8100, ()=>{
+    set("otRoom","ot-room on warm dim"); set("otMark","on");
+    const oohSvg = document.getElementById("otOohSvg");
+    if(oohSvg && !oohSvg.childElementCount && window.Ooh && Ooh.body) oohSvg.innerHTML = Ooh.body("hello");
+    set("otOoh","on");
+  });
 
   otAt(9600, ()=> otEnd(false));
 }
@@ -2413,12 +2422,64 @@ function otReplay(){
 }
 
 const OT_SVG = ot.querySelector(".ot-stage svg");
+/* A phone held upright gets the 9:16 composition (see app.css). The
+   drawing's window is worked out from the frame it actually has:
+   the art (room, name, Ooh) ends at y=402 in scene units, and that line
+   is put just above the caption and language buttons laid over the foot
+   of the frame; whatever height is left above the room becomes sky, and
+   the sun is placed and sized in that sky. So a tall phone gets a big
+   sky and a big sunrise, a short one a smaller sun, and nothing is ever
+   under the buttons. */
 function otFit(){
   if(!OT_SVG) return;
-  OT_SVG.setAttribute("viewBox", innerWidth <= 640 ? "52 22.5 496 279" : "0 0 600 320");
+  const portrait = innerWidth <= 640 && innerHeight > innerWidth * 1.25;
+  ot.classList.toggle("ot-portrait", portrait);
+  if(!portrait){
+    OT_SVG.setAttribute("viewBox", innerWidth <= 640 ? "52 22.5 496 279" : "0 0 600 320");
+    return;
+  }
+  if(ot.hidden) return;
+  /* The page's own crisis strip is pinned above everything, the opening
+     included, so the frame starts where that strip ends; the opening's
+     copy of the strip would only sit hidden underneath it. */
+  const pageStrip = document.querySelector(".topstrip");
+  ot.style.setProperty("--ot-strip", (pageStrip ? Math.ceil(pageStrip.getBoundingClientRect().bottom) : 0) + "px");
+  const scene = ot.querySelector(".ot-scene"), cap = ot.querySelector(".ot-cap");
+  const stage = ot.querySelector(".ot-stage").getBoundingClientRect();
+  ot.classList.toggle("ot-fill", stage.height * 9 / 16 < Math.min(stage.width, 330));
+  const f = scene.getBoundingClientRect();
+  if(!f.width || !f.height) return;
+  const foot = Math.max(0, f.bottom - cap.getBoundingClientRect().top) + 14;
+  const avail = Math.max(120, f.height - foot);
+  const ART_BOTTOM = 402, SKY_MIN = -60;
+  /* the room is cropped to x 90..520 (430 wide), centred on x 305 */
+  const unit = Math.min(f.width / 430, avail / (ART_BOTTOM - SKY_MIN));
+  const W = f.width / unit, H = f.height / unit;
+  const x0 = 305 - W / 2, y0 = ART_BOTTOM - avail / unit;
+  OT_SVG.setAttribute("viewBox", [x0, y0, W, H].map(n=> n.toFixed(1)).join(" "));
+  const sky = 70 - y0;                               /* room top is y=70 */
+  /* the open bloom is about 52 units in radius at scale 1: keep all of it
+     in the sky, clear of the frame top and of the room */
+  const sun = Math.min(1.55, Math.max(0.5, sky / 250));
+  const sunY = Math.min(70 - 52 * sun - 6, Math.max(y0 + 52 * sun + 8, y0 + sky * 0.47));
+  ot.style.setProperty("--ot-sun-y", sunY.toFixed(1) + "px");
+  ot.style.setProperty("--ot-sun-s", sun.toFixed(3));
+  ot.style.setProperty("--ot-foot", Math.round(foot + 40) + "px");
 }
 otFit();
 addEventListener("resize", otFit);
+/* the helpline strip above the scene can re-wrap once fonts settle, which
+   changes the stage without any window resize: refit on the stage itself */
+if(window.ResizeObserver){
+  let otFitQueued = false;
+  const otRO = new ResizeObserver(()=>{
+    if(otFitQueued) return; otFitQueued = true;
+    requestAnimationFrame(()=>{ otFitQueued = false; otFit(); });
+  });
+  otRO.observe(ot.querySelector(".ot-stage"));
+  const pageStrip = document.querySelector(".topstrip");
+  if(pageStrip) otRO.observe(pageStrip);
+}
 
 document.getElementById("skipIntro").addEventListener("click", ()=> otEnd(true));
 function playOpening(){
@@ -2476,6 +2537,7 @@ if(!otSkip){
   if(window.RonakMusic && RonakMusic.wanted()){
     ot.hidden = false;
     otBuildLangs();
+    otFit();
     document.getElementById("otGate").hidden = false;
     ot.classList.add("gated");
     setTimeout(()=> document.getElementById("otBegin").focus(), 60);

@@ -20,7 +20,7 @@
     callLabel: "কল করুন",
     crisisMeta: "বিনামূল্যে · 24×7 · গোপনীয়",
     settings: "সেটিংস",
-    sfxLabel: "শব্দ", feelLabel: "শব্দ ও অনুভূতি", musicLabel: "সংগীত", hapticsLabel: "হ্যাপটিক্স", oohLabel: "Ooh, আপনার গাইড", gateLine: "একটা লম্বা শ্বাস নিন। সূর্য আসছে।", gateBegin: "শুরু করুন", gateQuiet: "শব্দ ছাড়া শুরু করুন", gateNote: "সূর্যোদয়ের সঙ্গে হালকা সংগীত বাজে। যে কোনো সময় বন্ধ করতে পারেন।",
+    sfxLabel: "শব্দ", feelLabel: "শব্দ ও অনুভূতি", musicLabel: "সংগীত", hapticsLabel: "হ্যাপটিক্স", stillLabel: "কম নড়াচড়া", oohLabel: "Ooh, আপনার গাইড", gateLine: "একটা লম্বা শ্বাস নিন। সূর্য আসছে।", gateBegin: "শুরু করুন", gateQuiet: "শব্দ ছাড়া শুরু করুন", gateNote: "সূর্যোদয়ের সঙ্গে হালকা সংগীত বাজে। যে কোনো সময় বন্ধ করতে পারেন।",
     readMore: "আরও পড়ুন",
     navGuide: "কথা বলুন",
     theme: "থিম",

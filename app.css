@@ -75,6 +75,8 @@ nav.site .seticon{width:1.05em;height:1.05em;vertical-align:-.15em;
   padding:.45rem .5rem!important;font-size:.86rem!important;line-height:1.15;text-align:left;}
 .feelchip .ctricon{margin-left:0;flex:none;width:1.15em;height:1.15em;stroke-linecap:round;stroke-linejoin:round;}
 .feelchip[aria-pressed="false"]{opacity:.72;}
+/* five switches: the last one spans the row */
+.feelchips .feelchip:last-child:nth-child(odd){grid-column:1 / -1;}
 .feelchip[aria-pressed="false"] .ctricon{opacity:.6;}
 .flagicon{width:1.05em;height:1.05em;vertical-align:-.15em;margin-left:.3em;
   fill:none;stroke:var(--stamp);stroke-width:1.8;stroke-linejoin:round;}
@@ -678,7 +680,8 @@ details.notice .inner{padding-top:.7rem;animation:slidedown .35s var(--e-out2);}
   width:1.6rem;height:1.6rem;border-radius:50%;display:grid;place-items:center;
   background:color-mix(in srgb,var(--heal) 10%,transparent);transition:translate .3s var(--e-spring);
 }
-.bcard .go::before{content:"→";font-size:.85rem;font-weight:700;}
+/* decorative: the empty alt text keeps screen readers from reading "→" five times */
+.bcard .go::before{content:"→";content:"→" / "";font-size:.85rem;font-weight:700;}
 .bcard:hover .go{translate:3px 0;}
 
 /* ══════════ TEST ══════════ */
@@ -1108,7 +1111,7 @@ table.lines td a{font-weight:800;white-space:nowrap;display:inline-flex;align-it
 }
 .ot-langs button:hover{transform:none;box-shadow:none;border-color:#FFD166;}
 .ot-langs button[aria-pressed="true"]{background-color:#6D28D9;background-image:var(--grad-cta);color:#fff;border-color:transparent;}
-.ot-bottom{padding:.9rem 0 1.4rem;}
+.ot-bottom{padding:.9rem 0 calc(1.4rem + env(safe-area-inset-bottom,0px));}
 /* explicit rows, so the Begin screen can lie over the stage and the
    bottom bar without pushing either out of place */
 #overture > .ot-top{grid-row:1;grid-column:1;position:relative;z-index:3;}
@@ -1123,6 +1126,8 @@ table.lines td a{font-weight:800;white-space:nowrap;display:inline-flex;align-it
 /* until Begin, the scene waits unseen: only the night, the line and the two buttons */
 #overture.gated > .ot-stage,#overture.gated > .ot-bottom{visibility:hidden;}
 .ot-gate-in{display:flex;flex-direction:column;align-items:center;gap:1.05rem;max-width:24rem;text-align:center;}
+.ot-gate-ooh{display:block;line-height:0;min-height:104px;margin-bottom:-.4rem;filter:drop-shadow(0 0 1.4px #FFF4E8) drop-shadow(0 10px 22px rgba(255,111,168,.35));}
+.ot-gate-ooh svg{max-width:none;overflow:visible;}
 .ot-gate-line{font:600 clamp(1.25rem,4.6vw,1.7rem)/1.3 var(--font-display);color:#FFF6EE;margin:0;}
 .ot-begin{
   position:relative;display:inline-flex;align-items:center;gap:.7rem;min-height:3.6rem;padding:.8rem 2.1rem .8rem 1.3rem;
@@ -1167,7 +1172,7 @@ table.lines td a{font-weight:800;white-space:nowrap;display:inline-flex;align-it
   #overture{grid-template-rows:auto 1fr auto;}
   .ot-stage{padding:0;align-self:center;}
   .ot-scene{gap:.85rem;}
-  .ot-bottom{padding:.7rem 0 1.1rem;align-self:end;}
+  .ot-bottom{padding:.7rem 0 calc(1.1rem + env(safe-area-inset-bottom,0px));align-self:end;}
   #skipIntro{font-size:.8rem;padding:.6rem 1.3rem;}
   .ot-frame{
     aspect-ratio:16/9;width:100%;border-radius:0;
@@ -1183,6 +1188,51 @@ table.lines td a{font-weight:800;white-space:nowrap;display:inline-flex;align-it
   }
   .ot-langs button{padding:.4rem .3rem;font-size:.82rem;}
 }
+/* ── the opening in 9:16, on a phone held upright ──
+   The scene is composed for a portrait frame, the shape a phone story
+   is: the room in the middle, the night sky above it where the sun will
+   rise, the name and Ooh below, and the caption and the six languages
+   laid over the foot of the frame on a dark fade, the way a story's
+   controls sit on the picture. The frame is 9:16 at most; on a taller
+   phone it is 9:16 and centred, on a shorter one it fills what there is.
+   otFit (app.js) sets the drawing's viewBox from the frame's real size
+   so the art always ends just above the controls, whatever the phone. */
+#overture.ot-portrait{grid-template-rows:auto minmax(0,1fr) auto;padding-top:var(--ot-strip,0px);}
+#overture.ot-portrait > .ot-top{display:none;}
+#overture.ot-portrait .ot-stage{padding:0;align-self:stretch;display:grid;place-items:center;min-height:0;
+  grid-template-rows:minmax(0,1fr);grid-template-columns:minmax(0,1fr);}
+#overture.ot-portrait .ot-scene{
+  position:relative;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:.65rem;
+  height:min(100%, calc(100vw * 16 / 9));width:auto;aspect-ratio:9 / 16;max-width:100%;max-height:100%;
+  padding:0 0 .9rem;overflow:hidden;
+}
+#overture.ot-portrait .ot-frame{
+  position:absolute;inset:0;width:auto;aspect-ratio:auto;border:0;border-radius:0;box-shadow:none;
+  background:linear-gradient(180deg,#07040F 0%,#140B2E 40%,#1E0E3A 70%,#0B0616 100%);
+}
+#overture.ot-portrait .ot-frame > svg{width:100%;height:100%;max-height:none;}
+/* a short phone: a strict 9:16 frame would be a narrow strip, so the frame
+   takes the whole stage and the art adapts through the viewBox instead */
+#overture.ot-portrait.ot-fill .ot-scene{width:100%;height:100%;aspect-ratio:auto;}
+/* Ooh's own box inside the scene: 120 units, never the frame rule above */
+#otOohSvg{width:120px;height:120px;max-width:none;max-height:none;overflow:visible;}
+#overture.ot-portrait #otTall,#overture.ot-portrait #otStars{display:inline;}
+#overture.ot-portrait #otBand{display:none;}
+/* the fade the controls sit on */
+#overture.ot-portrait .ot-scene::after{
+  content:"";position:absolute;left:0;right:0;bottom:0;height:var(--ot-foot,32%);pointer-events:none;z-index:0;
+  background:linear-gradient(180deg,rgba(11,6,22,0) 0%,rgba(11,6,22,.78) 38%,#0B0616 100%);
+}
+#overture.ot-portrait .ot-cap,#overture.ot-portrait .ot-langs,#overture.ot-portrait .ot-progress{position:relative;z-index:1;}
+#overture.ot-portrait .ot-cap{font-size:.8rem;}
+/* in portrait the sun rises out of the room into the sky above it, and
+   opens larger there; --ot-sun-y and --ot-sun-s come from otFit */
+#overture.ot-portrait #otBloom{transform:translate(305px,110px) scale(.8);transition:transform 2.6s cubic-bezier(.2,.8,.2,1);}
+#overture.ot-portrait #otBloom.on{transform:translate(305px,var(--ot-sun-y,-40px)) scale(var(--ot-sun-s,1.25));}
+#overture.ot-portrait #otMark{transform:translate(262px,346px) scale(.3);}
+#overture.ot-portrait #otOoh{transform:translate(172px,314px) scale(.74);}
+@media (prefers-reduced-motion: reduce){ #overture.ot-portrait #otBloom{transition:none;} }
+
 /* a phone turned sideways, and anything else short: height is the
    constraint, so the drawing is clamped by it and scales as one */
 @media (max-height:560px){
@@ -1273,6 +1323,11 @@ table.lines td a{font-weight:800;white-space:nowrap;display:inline-flex;align-it
 #otSparks.on circle{animation:ot-spark 2.8s var(--e-out2) forwards;animation-delay:var(--d,0s);}
 @keyframes ot-spark{0%{opacity:0;translate:0 0;scale:.4;}18%{opacity:1;}100%{opacity:0;translate:var(--dx,0px) -96px;scale:1;}}
 #otMark{opacity:0;translate:0 10px;transition:opacity 1.2s ease,translate 1.4s var(--e-spring);}
+/* Ooh arrives with the name, rising a little, waving */
+#otOoh{opacity:0;translate:0 14px;transition:opacity 1s ease,translate 1.3s var(--e-spring);}
+#otOoh.on{opacity:1;translate:0 0;}
+/* the tall sky exists only in the 9:16 phone frame */
+#otTall,#otStars{display:none;}
 #otMark.on{opacity:1;translate:0 0;}
 
 @media (prefers-reduced-motion: reduce){
@@ -1713,7 +1768,7 @@ body.tour-in-panel .setpanel{z-index:902;}
     display:inline-block;width:auto;text-align:left;font-size:.83rem;
   }
   .sheet table.items td.r{color:var(--muted);}
-  .sheet table.items td.v::before{content:" · ";color:var(--muted);font-weight:400;}
+  .sheet table.items td.v::before{content:" · ";content:" · " / "";color:var(--muted);font-weight:400;}
 }
 
 @media print{

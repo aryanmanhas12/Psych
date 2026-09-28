@@ -21,7 +21,7 @@
 <meta name="author" content="Aryan Manhas">
 <meta name="theme-color" content="#140A26">
 <link rel="manifest" href="manifest.webmanifest">
-<script src="nav.js?v=31" defer></script>
+<script src="nav.js?v=32" defer></script>
 <!-- The 192px PNG was fetched as the favicon on every page: 11.4KB gzip
      on the critical path, for something drawn at 16px. The SVG is 1.6KB
      and sharp at every size. No PNG fallback link: Chromium fetches every
@@ -41,6 +41,8 @@
     var nv = navigator, cn = nv.connection || {};
     if((nv.deviceMemory && nv.deviceMemory <= 2) || cn.saveData) root.className += " lite";
   }catch(e){}
+  /* "Less motion" chosen in Settings: the same still page as lite */
+  try{ if((JSON.parse(localStorage.getItem("ronak-feel")) || {}).still) root.className += " lite still"; }catch(e){}
   /* Ooh switched off: his space on the home screen is not reserved */
   try{ if((JSON.parse(localStorage.getItem("ronak-ooh")) || {}).on === false) root.className += " ooh-off"; }catch(e){}
   var p;
@@ -88,7 +90,7 @@
     (function go(){
       var s = document.createElement("script");
       /* versioned like every other file this page loads — see REL in sw.js */
-      s.src = "i18n." + code + ".js?v=31";
+      s.src = "i18n." + code + ".js?v=32";
       s.async = false;
       s.onload  = function(){ settle(window.I18N && window.I18N[code] ? code : null); };
       s.onerror = function(){ if(++tries < 2) go(); else settle(null); };
@@ -110,8 +112,8 @@
 })();
 </script>
 <link rel="apple-touch-icon" href="icon-192.png">
-<link rel="stylesheet" href="site.css?v=31">
-<link rel="stylesheet" href="app.css?v=31">
+<link rel="stylesheet" href="site.css?v=32">
+<link rel="stylesheet" href="app.css?v=32">
 </head>
 <body>
 
@@ -176,8 +178,24 @@
           <stop offset="1" stop-color="#FF6FA8" stop-opacity="0"/>
         </radialGradient>
         <clipPath id="otWin"><rect x="110" y="106" width="92" height="68"/></clipPath>
+        <!-- the tall night for the 9:16 phone frame: darker above the room,
+             meeting the room's own sky exactly at its top and bottom edges -->
+        <linearGradient id="otTallG" gradientUnits="userSpaceOnUse" x1="0" y1="-400" x2="0" y2="640">
+          <stop offset="0" stop-color="#07040F"/><stop offset=".385" stop-color="#140B2E"/>
+          <stop offset=".692" stop-color="#1E0E3A"/><stop offset="1" stop-color="#0B0616"/>
+        </linearGradient>
       </defs>
-      <rect width="600" height="320" fill="url(#otSkyG)"/>
+      <!-- portrait only: the sky above the room, where the sun will rise -->
+      <rect id="otTall" x="-300" y="-900" width="1200" height="2000" fill="url(#otTallG)"/>
+      <g id="otStars" fill="#FFF6EE">
+        <circle cx="132" cy="-238" r="1.3" opacity=".7"/><circle cx="214" cy="-306" r="1" opacity=".5"/>
+        <circle cx="296" cy="-196" r="1.5" opacity=".8"/><circle cx="398" cy="-268" r="1.1" opacity=".6"/>
+        <circle cx="476" cy="-170" r="1.4" opacity=".7"/><circle cx="160" cy="-92" r="1" opacity=".5"/>
+        <circle cx="452" cy="-54" r="1.2" opacity=".6"/><circle cx="352" cy="-120" r=".9" opacity=".45"/>
+        <circle cx="236" cy="-150" r="1.1" opacity=".55"/><circle cx="500" cy="10" r="1" opacity=".5"/>
+        <circle cx="114" cy="22" r="1.2" opacity=".6"/><circle cx="330" cy="-360" r="1.2" opacity=".6"/>
+      </g>
+      <rect id="otBand" width="600" height="320" fill="url(#otSkyG)"/>
 
       <g id="otCam">
         <!-- ── the room ──
@@ -263,6 +281,11 @@
         </g>
       </g>
 
+      <!-- Ooh, the guide Ronak shares with Arun, arrives with the name: the
+           one who will walk you through the app, waving hello. Drawn in by
+           app.js from ooh.mjs; the scene stays wordless. -->
+      <g id="otOoh" transform="translate(194 258) scale(.33)"><svg id="otOohSvg" width="120" height="120" viewBox="0 0 120 120" overflow="visible"></svg></g>
+
       <!-- the name, last: a signature under the scene, not a caption over it -->
       <g id="otMark" transform="translate(237 270) scale(.28)">
         <g fill="none" stroke="#FFF6EE" stroke-width="17" stroke-linecap="round" stroke-linejoin="round">
@@ -296,6 +319,8 @@
        silence" is the same opening with no music, for this visit only. -->
   <div class="ot-gate" id="otGate" hidden>
     <div class="ot-gate-in">
+      <!-- Ooh greets you on the first screen (companion.js draws him in) -->
+      <span class="ot-gate-ooh" aria-hidden="true"></span>
       <p class="ot-gate-line" data-i18n="gateLine">Take a breath. The sun is on its way.</p>
       <button type="button" id="otBegin" class="ot-begin"><span class="ot-begin-sun" aria-hidden="true"></span><span data-i18n="gateBegin">Begin</span></button>
       <button type="button" id="otQuiet" class="ot-quiet" data-i18n="gateQuiet">Begin in silence</button>
@@ -415,7 +440,7 @@
 
 <nav class="site noprint" aria-label="Main">
   <div class="wrap">
-    <a class="brand" href="index.html"><svg class="brand-mark" viewBox="-116 -116 232 232" aria-hidden="true" focusable="false"><defs><linearGradient id="nbPk" x1="0" y1="-16" x2="0" y2="-102" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#FF1470"/><stop offset=".55" stop-color="#FF4F9A"/><stop offset="1" stop-color="#FFB0D6"/></linearGradient><linearGradient id="nbVi" x1="0" y1="-16" x2="0" y2="-102" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#5B16D6"/><stop offset=".55" stop-color="#8D5CFF"/><stop offset="1" stop-color="#D4C0FF"/></linearGradient><linearGradient id="nbGo" x1="0" y1="-32" x2="0" y2="-114" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#FF8A00"/><stop offset="1" stop-color="#FFE45C"/></linearGradient><radialGradient id="nbCore" cx="0" cy="0" r="30" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#FFFBE3"/><stop offset=".45" stop-color="#FFD83F"/><stop offset="1" stop-color="#FF9F1C"/></radialGradient><path id="nbPetal" d="M0 -16 C42 -38 48 -84 16 -102 C-12 -90 -38 -50 0 -16Z"/><path id="nbRay" d="M0 -32 C10 -56 10 -86 0 -114 C-10 -86 -10 -56 0 -32Z"/></defs><g fill="url(#nbGo)"><use href="#nbRay" transform="rotate(30)"/><use href="#nbRay" transform="rotate(90)"/><use href="#nbRay" transform="rotate(150)"/><use href="#nbRay" transform="rotate(210)"/><use href="#nbRay" transform="rotate(270)"/><use href="#nbRay" transform="rotate(330)"/></g><g style="mix-blend-mode:screen"><use href="#nbPetal" fill="url(#nbPk)" transform="rotate(0)"/><use href="#nbPetal" fill="url(#nbVi)" transform="rotate(60)"/><use href="#nbPetal" fill="url(#nbPk)" transform="rotate(120)"/><use href="#nbPetal" fill="url(#nbVi)" transform="rotate(180)"/><use href="#nbPetal" fill="url(#nbPk)" transform="rotate(240)"/><use href="#nbPetal" fill="url(#nbVi)" transform="rotate(300)"/></g><circle r="30" fill="url(#nbCore)"/></svg><span class="name">Ronak</span></a>
+    <a class="brand" href="index.html"><svg class="brand-mark" viewBox="-116 -116 232 232" aria-hidden="true" focusable="false"><defs><linearGradient id="nbPk" x1="0" y1="-16" x2="0" y2="-102" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#FF1470"/><stop offset=".55" stop-color="#FF4F9A"/><stop offset="1" stop-color="#FFB0D6"/></linearGradient><linearGradient id="nbVi" x1="0" y1="-16" x2="0" y2="-102" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#5B16D6"/><stop offset=".55" stop-color="#8D5CFF"/><stop offset="1" stop-color="#D4C0FF"/></linearGradient><linearGradient id="nbGo" x1="0" y1="-32" x2="0" y2="-114" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#FF8A00"/><stop offset="1" stop-color="#FFE45C"/></linearGradient><radialGradient id="nbCore" cx="0" cy="0" r="30" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#FFFBE3"/><stop offset=".45" stop-color="#FFD83F"/><stop offset="1" stop-color="#FF9F1C"/></radialGradient><path id="nbPetal" d="M0 -16 C42 -38 48 -84 16 -102 C-12 -90 -38 -50 0 -16Z"/><path id="nbRay" d="M0 -32 C10 -56 10 -86 0 -114 C-10 -86 -10 -56 0 -32Z"/></defs><g fill="url(#nbGo)"><use href="#nbRay" transform="rotate(30)"/><use href="#nbRay" transform="rotate(90)"/><use href="#nbRay" transform="rotate(150)"/><use href="#nbRay" transform="rotate(210)"/><use href="#nbRay" transform="rotate(270)"/><use href="#nbRay" transform="rotate(330)"/></g><g style="mix-blend-mode:screen"><use href="#nbPetal" fill="url(#nbPk)" transform="rotate(0)"/><use href="#nbPetal" fill="url(#nbVi)" transform="rotate(60)"/><use href="#nbPetal" fill="url(#nbPk)" transform="rotate(120)"/><use href="#nbPetal" fill="url(#nbVi)" transform="rotate(180)"/><use href="#nbPetal" fill="url(#nbPk)" transform="rotate(240)"/><use href="#nbPetal" fill="url(#nbVi)" transform="rotate(300)"/></g><circle r="30" fill="url(#nbCore)"/></svg><span class="name" translate="no">Ronak</span></a>
     <a class="navlink" href="#home" data-view="home" data-i18n="navScreeners">Check-ins</a>
     <a class="navlink" href="#guide" data-view="guide" data-i18n="navGuide">Talk it through</a>
     <a class="navlink" href="#resources" data-view="resources" data-i18n="navHelp">Get Help</a>
@@ -471,6 +496,7 @@
             <button type="button" id="sfxBtn" class="feelchip" aria-pressed="true"><svg class="ctricon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 9.5h3.5L12 6v12l-4.5-3.5H4z"/><path d="M15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11"/></svg><span data-i18n="sfxLabel">Sounds</span></button>
             <button type="button" id="hapticsBtn" class="feelchip" aria-pressed="true"><svg class="ctricon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="8" y="3.5" width="8" height="17" rx="2"/><path d="M4.5 9v6M19.5 9v6M2 11v2M22 11v2"/></svg><span data-i18n="hapticsLabel">Haptics</span></button>
             <button type="button" id="oohBtn" class="feelchip" aria-pressed="true"><svg class="ctricon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="14" r="7"/><path d="M12 7V4.5"/><ellipse cx="9.2" cy="3.6" rx="2.4" ry="1.3" transform="rotate(-26 9.2 3.6)"/><ellipse cx="14.8" cy="3.6" rx="2.4" ry="1.3" transform="rotate(26 14.8 3.6)"/><circle cx="9.8" cy="13" r=".9"/><circle cx="14.2" cy="13" r=".9"/></svg><span data-i18n="oohLabel">Ooh, your guide</span></button>
+            <button type="button" id="stillBtn" class="feelchip" aria-pressed="false"><svg class="ctricon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 12h3M10 12h4M17 12h3"/><path d="M7 7.5l-2-2M17 7.5l2-2"/></svg><span data-i18n="stillLabel">Less motion</span></button>
           </div>
         </div>
         <div class="setrow">
@@ -944,9 +970,9 @@
 </footer>
 
 <!-- before app.js: the opening asks it whether to wait for Begin -->
-<script src="music.js?v=31"></script>
-<script src="app.js?v=31"></script>
+<script src="music.js?v=32"></script>
+<script src="app.js?v=32"></script>
 <!-- not deferred: Ooh's first line has to be in the page before the first paint -->
-<script src="companion.js?v=31"></script>
+<script src="companion.js?v=32"></script>
 </body>
 </html>

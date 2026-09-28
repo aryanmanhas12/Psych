@@ -209,7 +209,7 @@ body{
 :lang(bn) body{font-family:'Noto Sans Bengali','Shonar Bangla','Vrinda','Nirmala UI',system-ui,sans-serif;line-height:1.8;}
 :lang(ta) body{font-family:'Noto Sans Tamil','Latha','Nirmala UI',system-ui,sans-serif;line-height:1.8;}
 :lang(te) body{font-family:'Noto Sans Telugu','Gautami','Nirmala UI',system-ui,sans-serif;line-height:1.8;}
-h1,h2,h3{scroll-margin-top:4.5rem;}
+h1,h2,h3{scroll-margin-top:4.5rem;text-wrap:balance;}
 /* Ragged last lines read better than a single orphaned word. */
 p,li{text-wrap:pretty;}
 /* Digits that are meant to be compared must not shift width between them. */
@@ -746,7 +746,7 @@ footer .byline strong{color:var(--ink);font-size:.85rem;}
      inside its own column — three lines to say what fits in two. Letting
      it run as ordinary text lets the numbers and the link share a line. */
   .topstrip .wrap,.topstrip .wrap-wide{display:block;}
-  .topstrip .wrap > span + span::before{content:" · ";}
+  .topstrip .wrap > span + span::before{content:" · ";content:" · " / "";}
   .topstrip .wrap > span:first-child::before{width:.42rem;height:.42rem;margin-right:.35rem;}
   /* Every pixel of a pinned strip is a pixel of every screen. Tighter side
      padding and number padding is what lets the directory link share the
@@ -940,6 +940,7 @@ html.ooh-off .ooh-slot{display:none!important;}
 }
 .ooh-me{filter:drop-shadow(0 0 1.4px #FFF4E8) drop-shadow(0 6px 10px rgba(6,2,16,.45));transition:transform .25s;}
 .ooh-me:active{transform:scale(.94);}
+@media (hover:hover){ .ooh-me:hover{transform:scale(1.05);} .ooh-music:hover{border-color:#FFC857;background:rgba(40,20,70,.85);} }
 .ooh-me[hidden],.ooh-music[hidden]{display:none;}
 .ooh-music{
   width:44px;height:44px;min-width:44px;min-height:44px;margin-bottom:6px;
@@ -992,6 +993,31 @@ html.lite .ooh-music{-webkit-backdrop-filter:none;backdrop-filter:none;backgroun
 /* a small press you can see on anything you can tap */
 :root:not(.fx-off) :is(button,.btn,.tabbar a,.navlink,.bcard):active{filter:brightness(1.12);}
 html.fx-off .fx-layer,html.fx-off .fx-progress,html.fx-off .fx-glow{display:none!important;}
+/* Card Spotlight (after Aceternity UI): light under the pointer, desktop only */
+.fx-spot{
+  position:absolute;inset:0;z-index:3;pointer-events:none;border-radius:inherit;opacity:0;
+  background:radial-gradient(420px circle at var(--mx,50%) var(--my,50%),rgba(255,236,190,.16),transparent 42%);
+  transition:opacity .35s ease;
+}
+.card:hover > .fx-spot,.bcard:hover > .fx-spot{opacity:1;}
+.bcard{position:relative;transition:transform .35s cubic-bezier(.2,.8,.2,1);transform-style:preserve-3d;}
+.bcard > .fx-spot{background:radial-gradient(260px circle at var(--mx,50%) var(--my,50%),color-mix(in srgb,var(--heal) 14%,transparent),transparent 55%);}
+/* Text Generate Effect (after Aceternity UI): a heading arrives word by word */
+.fx-word{display:inline-block;animation:fx-word .55s cubic-bezier(.2,.8,.2,1) both;}
+@keyframes fx-word{from{opacity:0;transform:translateY(.28em)}to{opacity:1;transform:none}}
+/* Moving Border (after Aceternity UI): a light runs round the Begin button */
+@property --ot-spin{syntax:"<angle>";initial-value:0deg;inherits:false;}
+.ot-begin::after{
+  content:"";position:absolute;inset:-3px;border-radius:inherit;padding:3px;pointer-events:none;
+  background:conic-gradient(from var(--ot-spin),transparent 0 62%,#FFF4D6 72%,#FF6FA8 80%,#8B5CF6 88%,transparent 96%);
+  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
+  -webkit-mask-composite:xor;mask:linear-gradient(#000 0 0) content-box exclude,linear-gradient(#000 0 0);
+  animation:ot-spin 3.2s linear infinite;
+}
+@keyframes ot-spin{to{--ot-spin:360deg}}
+@media (prefers-reduced-motion: reduce){ .fx-word{animation:none;} .ot-begin::after{animation:none;} .bcard{transition:none;} }
+html.lite .fx-word,html.lite .ot-begin::after{animation:none;}
+html.lite .fx-spot{display:none;}
 
 @media (prefers-reduced-motion: reduce){
   .ooh-bobw,.ooh-talkw.nod,.ooh-talking .ooh-sprout,.ooh-bubble,.ooh-next[data-ready="true"]{animation:none;}
@@ -1000,6 +1026,6 @@ html.fx-off .fx-layer,html.fx-off .fx-progress,html.fx-off .fx-glow{display:none
   .fx-sweep{display:none;}
   @keyframes fx-fade{from{opacity:.9}to{opacity:0}}
 }
-html.lite .ooh-bobw,html.lite .ooh-talking .ooh-sprout{animation:none;}
+html.lite .ooh-bobw,html.lite .ooh-talking .ooh-sprout,html.lite .ooh-next[data-ready="true"]{animation:none;}
 html.lite .ooh-me,html.lite .ooh-figure{filter:none;}
 @media print{ .ooh-guide,.ooh-slot,.fx-layer,.fx-progress,.fx-glow{display:none!important;} }

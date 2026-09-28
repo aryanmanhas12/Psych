@@ -20,7 +20,7 @@
     callLabel: "कॉल करा",
     crisisMeta: "मोफत · 24×7 · गोपनीय",
     settings: "सेटिंग्ज",
-    sfxLabel: "आवाज", feelLabel: "आवाज आणि अनुभव", musicLabel: "संगीत", hapticsLabel: "हॅप्टिक्स", oohLabel: "Ooh, तुमचा गाइड", gateLine: "एक दीर्घ श्वास घ्या. सूर्य येतोय.", gateBegin: "सुरू करा", gateQuiet: "आवाजाशिवाय सुरू करा", gateNote: "सूर्योदयासोबत हलकं संगीत वाजतं. ते कधीही बंद करता येतं.",
+    sfxLabel: "आवाज", feelLabel: "आवाज आणि अनुभव", musicLabel: "संगीत", hapticsLabel: "हॅप्टिक्स", stillLabel: "कमी हालचाल", oohLabel: "Ooh, तुमचा गाइड", gateLine: "एक दीर्घ श्वास घ्या. सूर्य येतोय.", gateBegin: "सुरू करा", gateQuiet: "आवाजाशिवाय सुरू करा", gateNote: "सूर्योदयासोबत हलकं संगीत वाजतं. ते कधीही बंद करता येतं.",
     readMore: "अधिक वाचा",
     navGuide: "बोलून पहा",
     theme: "थीम",
