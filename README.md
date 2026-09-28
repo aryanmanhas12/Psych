@@ -42,6 +42,7 @@ earlier**, and **giving them the follow-up record the system doesn't**.
 | `manifesto.html` | **The Waiting Room is Full** — a citizen's manifesto on the treatment gap |
 | `poster.html` + `qr-site.svg` | **Printable A4 clinic poster** in six languages, with a decode-tested QR code |
 | `sw.js` + `manifest.webmanifest` | **Offline support** — installable app, works with no connection |
+| `companion.js` + `ooh.mjs` + `music.js` + `sounds/` | **Ooh (shared with Arun), the music, the sounds and the haptics** — see below |
 | `fonts/` | **Baloo 2** family (Ek Type, OFL) — self-hosted, one file per script, so the site makes zero third-party requests |
 | `brand/` | **The logo** — the bloom-sun mark, the RONAK lockup for light and dark grounds, a 1024px icon master |
 | `icon.svg`, `icon-*.png`, `og-image.jpg` | App icons, favicon and the social card, all drawn from the same mark |
@@ -75,6 +76,43 @@ is built on that one word.
   they are on screen, to spare older phones' batteries.
 - **The working papers stay quiet.** Evidence, Global, Ethics, Manifesto and Poster are one
   tap away on every page, but smaller and dimmer, after the four things a person came to do.
+
+## Ooh, the music, and the feel
+
+- **Ooh is the guide in both apps.** Ronak and its sister app
+  [Arun](https://aryanmanhas12.github.io/Well-beings/) share one character: a round,
+  sunrise-gold creature with the bloom-sun's petals growing from its head. `ooh.mjs` here is
+  Arun's `lib/ooh.mjs` copied byte for byte, so the two can never drift apart; change it in
+  Arun and copy it across.
+- **Ooh speaks in the page, never over it** (a lesson Arun learned when a floating bubble
+  covered the button a struggling person most needed). A few lines the first time on a page,
+  one line on every visit after, typed out like a story game with soft blips; it stays until
+  tapped away, then tucks into the corner, where a tap brings a line back. Lines in all six
+  languages follow Arun's rules: phone-sized, no em dashes, nothing implying anyone is
+  watching or coming, and only gentle faces on a heavy result, where Ooh also starts tucked
+  away so the helplines stay first on screen. Ooh is gone at the self-harm safety step and
+  never sits beside the questions.
+- **The music** (`music.js`) is generated on the phone, no files. Where Arun's music is a
+  steady D major place to rest, Ronak's is about a turn: D minor to F major, the relative
+  pair that shares every note, moving in step with the opening scene (the door opens at
+  3.3s, the head lifts at 5.9s, the bloom-sun opens at 6.9s) and then settling into a slow
+  cycle whose little figures only ever climb. Each page has its own chord, so moving through
+  the app is heard as a progression. Rendered offline and measured: peak -13.9 dBFS, settled
+  around -28 dBFS RMS, no gaps, no clipping.
+- **Every visit opens on the sunrise.** Browsers refuse sound before a tap, so a new visit
+  opens on the night scene with *Begin* (or *Begin in silence*); that tap starts the music
+  and the scene in the same instant. Never on a deep link or for reduced-motion readers, and
+  the crisis strip stays on top throughout.
+- **The music steps back** for the questions (music is a known mood-induction method and
+  must not colour anyone's answers), the self-harm safety step, the breathing exercise and
+  a hidden tab, fading rather than cutting.
+- **Sounds** are the CC0 "soft" pack of [uisfx](https://uisfx.com) (`sounds/LICENSE.txt`),
+  fetched on the first tap. **Haptics**: a short vibration on Android, the system tick on
+  iPhone (Safari 18+), and visual feedback everywhere: a ring where your finger lands, a line
+  of light across the top showing how far down the page you are, a glow traced round each
+  card as it arrives, and a sweep of light between pages. Calling a helpline is silent.
+- **All of it is yours to switch off**: Settings → Sound and feel has Music, Sounds, Haptics
+  and Ooh, and the music button beside Ooh in the corner is one tap.
 
 ## Features
 
@@ -194,3 +232,6 @@ derives from the WHO AUDIT. Statistics cited come from the National Mental Healt
 of India 2015–16 and the published literature indexed in `evidence.html`. Indian-language
 instrument items here are working translations for accessibility, not the officially
 validated language versions.
+
+Interface sounds: the "soft" pack of uisfx 0.4.0 by Yuki Capital, dedicated to the public
+domain under CC0 1.0 (`sounds/LICENSE.txt`). Ooh is shared with Arun (`ooh.mjs`). The music is generated in code, with no recordings.

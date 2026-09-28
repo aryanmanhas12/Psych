@@ -837,3 +837,155 @@ nav.site {
 .choice, .screener-card, .evidence-item {
   contain: layout style paint;
 }
+
+/* ══════════════════════════════════════════════════════════════
+   Ooh — the guide shared with Arun (companion.js + ooh.mjs)
+   ──────────────────────────────────────────────────────────────
+   The bubble is Arun's: cream paper, plum ink, a hard offset shadow,
+   the name on a sun-gold plate, "Next ▸" nudging once the line is out.
+   Same drawing, same bubble, so it is one character in two apps.
+   Every idle movement is a transform on an HTML wrapper, never on a
+   group inside the SVG (see companion.js). */
+.ooh-slot{display:block;}
+.ooh-slot:empty{display:none;}
+html.ooh-off .ooh-slot{display:none!important;}
+.ooh-bobw[data-mood]{display:inline-block;}
+
+.ooh-strip{
+  display:flex;align-items:flex-end;gap:.5rem;width:100%;max-width:44rem;
+  margin:1.1rem 0 1.2rem;box-sizing:border-box;
+}
+.ooh-figure{flex:none;display:block;line-height:0;filter:drop-shadow(0 0 1.4px #FFF4E8);}
+.ooh-figure svg,.ooh-me svg{max-width:none;overflow:visible;}
+.ooh-strip .ooh-bubble{flex:1;min-width:0;max-width:30rem;margin:.6rem 0 1.2rem;}
+.ooh-strip .ooh-say{border-radius:20px 20px 20px 6px;}
+.ooh-strip .ooh-bubble::after{
+  right:auto;left:-9px;border-right:0;border-left:3px solid #2A1636;
+  transform:skewY(35deg) rotate(20deg);border-bottom-right-radius:0;border-bottom-left-radius:4px;
+}
+
+.ooh-bubble{position:relative;animation:ooh-pop .28s cubic-bezier(.2,.8,.2,1);}
+@keyframes ooh-pop{from{opacity:0;transform:translateY(6px) scale(.96);}}
+.ooh-say{
+  display:block;width:100%;margin:0;text-align:left;cursor:pointer;
+  padding:16px 42px 10px 15px;background:#FFF8EE;color:#2A1636;
+  border:3px solid #2A1636;border-radius:20px 20px 6px 20px;box-shadow:4px 4px 0 #2A1636;
+  font:500 1rem/1.45 var(--font-ui);
+}
+.ooh-bubble::after{
+  content:"";position:absolute;right:-9px;bottom:8px;width:18px;height:18px;
+  background:#FFF8EE;border-right:3px solid #2A1636;border-bottom:3px solid #2A1636;
+  transform:skewY(-35deg) rotate(-20deg);border-bottom-right-radius:4px;
+}
+.ooh-name{
+  position:absolute;top:-13px;left:12px;padding:2px 10px 1px;
+  border:2.5px solid #2A1636;border-radius:999px;background:#FFC857;color:#2A1636;
+  font:700 .82rem/1.2 var(--font-display);letter-spacing:.03em;
+}
+.ooh-text{display:block;}
+.ooh-rest{color:transparent;}
+.ooh-next{
+  display:block;margin-top:6px;text-align:right;font-size:.8rem;font-weight:700;color:#7A2748;
+  opacity:0;transition:opacity .2s;
+}
+.ooh-next[data-ready="true"]{opacity:1;animation:ooh-nudge 1.6s ease-in-out infinite;}
+@keyframes ooh-nudge{50%{transform:translateX(3px);}}
+.ooh-x{
+  position:absolute;top:0;right:0;width:44px;height:44px;display:grid;place-items:center;
+  border:0;border-radius:50%;background:transparent;color:#2A1636;font-size:22px;line-height:1;cursor:pointer;
+}
+.ooh-say:focus-visible,.ooh-x:focus-visible,.ooh-me:focus-visible,.ooh-music:focus-visible{outline:3px solid #FFC857;outline-offset:3px;}
+.ooh-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;margin:0;}
+
+/* his movement, all on HTML layers */
+.ooh-bobw{display:inline-block;animation:ooh-bob 3.6s ease-in-out infinite;transform-origin:50% 100%;}
+.ooh-talkw{display:inline-block;transform-origin:50% 100%;}
+.ooh-talkw.nod{animation:ooh-nod .22s ease-out;}
+@keyframes ooh-bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
+@keyframes ooh-nod{40%{transform:scale(1.035,.965)}}
+/* the blink is 130ms every few seconds; the sway only while talking */
+.ooh-svg.blink .ooh-blink{transform:scaleY(.08);transform-box:fill-box;transform-origin:50% 50%;}
+.ooh-talking .ooh-sprout{animation:ooh-sway 1.1s ease-in-out infinite;transform-box:fill-box;transform-origin:50% 100%;}
+@keyframes ooh-sway{0%,100%{transform:rotate(-6deg)}50%{transform:rotate(6deg)}}
+
+/* ── the corner ── */
+.ooh-guide{
+  position:fixed;right:max(10px,env(safe-area-inset-right,0px));
+  bottom:calc(var(--tabbar-h,0px) + env(safe-area-inset-bottom,0px) + 10px);
+  z-index:85;display:flex;align-items:flex-end;gap:4px;pointer-events:none;
+  transition:transform .4s cubic-bezier(.34,1.4,.64,1);
+}
+.ooh-guide[hidden]{display:none;}
+.ooh-guide > *{pointer-events:auto;}
+:root.navdown .ooh-guide{transform:translateY(calc(var(--tabbar-h,0px) * .85));}
+@media(min-width:641px){ .ooh-guide{right:max(18px,env(safe-area-inset-right,0px));bottom:18px;} }
+.ooh-guide .ooh-bubble{max-width:min(300px,calc(100vw - 150px));margin-bottom:30px;}
+.ooh-me,.ooh-music{
+  flex:none;display:grid;place-items:center;min-width:48px;min-height:48px;padding:0;
+  border:0;background:none;cursor:pointer;border-radius:50%;color:inherit;
+}
+.ooh-me{filter:drop-shadow(0 0 1.4px #FFF4E8) drop-shadow(0 6px 10px rgba(6,2,16,.45));transition:transform .25s;}
+.ooh-me:active{transform:scale(.94);}
+.ooh-me[hidden],.ooh-music[hidden]{display:none;}
+.ooh-music{
+  width:44px;height:44px;min-width:44px;min-height:44px;margin-bottom:6px;
+  background:rgba(20,10,38,.72);border:1.5px solid rgba(255,200,87,.55);color:#FFC857;
+  -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);
+}
+.ooh-music svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;}
+.ooh-music[aria-pressed="false"]{color:#B9ACD0;border-color:rgba(185,172,208,.45);}
+.ooh-music .x{stroke:#FF6FA8;}
+html.lite .ooh-music{-webkit-backdrop-filter:none;backdrop-filter:none;background:#140A26;}
+
+/* ══════════════════════════════════════════════════════════════
+   The feel: visual haptics (companion.js)
+   A ring where a finger lands, a line of light for how far down the
+   page you are, a glow traced round each card as it arrives, and a
+   sweep of light between pages. Transforms and opacity only; all of
+   it off with Settings → Haptics, and reduced to a fade for anyone who
+   asked for less motion. */
+.fx-layer{position:fixed;inset:0;z-index:960;pointer-events:none;overflow:hidden;}
+.fx-ring{
+  position:absolute;width:18px;height:18px;margin:-9px 0 0 -9px;border-radius:50%;
+  border:2px solid rgba(255,200,87,.9);box-shadow:0 0 12px rgba(255,111,168,.55);
+  animation:fx-ring .55s cubic-bezier(.2,.7,.3,1) forwards;
+}
+.fx-ring.strong{border-color:rgba(255,111,168,.95);box-shadow:0 0 16px rgba(255,200,87,.7);animation-duration:.7s;}
+@keyframes fx-ring{from{transform:scale(.6);opacity:1}to{transform:scale(4.2);opacity:0}}
+.fx-sweep{
+  position:absolute;left:0;right:0;top:-30%;height:30%;
+  background:linear-gradient(180deg,transparent,rgba(255,200,87,.16) 45%,rgba(255,111,168,.12) 60%,transparent);
+  animation:fx-sweep .75s cubic-bezier(.3,.6,.3,1) forwards;
+}
+@keyframes fx-sweep{from{transform:translateY(0);opacity:1}to{transform:translateY(480%);opacity:0}}
+.fx-glow{
+  position:absolute;z-index:40;pointer-events:none;
+  box-shadow:0 0 0 2px rgba(255,200,87,.75),0 0 22px 2px rgba(255,111,168,.45);
+  animation:fx-glow 1.1s ease-out forwards;
+}
+@keyframes fx-glow{0%{opacity:0;transform:scale(.985)}25%{opacity:1;transform:scale(1)}100%{opacity:0;transform:scale(1.012)}}
+.fx-progress{position:fixed;left:0;right:0;top:0;height:3px;z-index:970;pointer-events:none;}
+.fx-progress i{
+  display:block;height:100%;transform:scaleX(0);transform-origin:0 50%;
+  background:linear-gradient(90deg,#8B5CF6,#FF6FA8 55%,#FFC857);
+  box-shadow:0 0 8px rgba(255,111,168,.8),0 0 14px rgba(255,200,87,.55);
+}
+@supports (animation-timeline: scroll()){
+  .fx-progress.native i{animation:fx-fill linear both;animation-timeline:scroll(root);}
+  @keyframes fx-fill{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+}
+.fx-ios{position:fixed;left:-9999px;top:0;width:1px;height:1px;overflow:hidden;opacity:0;pointer-events:none;}
+/* a small press you can see on anything you can tap */
+:root:not(.fx-off) :is(button,.btn,.tabbar a,.navlink,.bcard):active{filter:brightness(1.12);}
+html.fx-off .fx-layer,html.fx-off .fx-progress,html.fx-off .fx-glow{display:none!important;}
+
+@media (prefers-reduced-motion: reduce){
+  .ooh-bobw,.ooh-talkw.nod,.ooh-talking .ooh-sprout,.ooh-bubble,.ooh-next[data-ready="true"]{animation:none;}
+  .ooh-guide{transition:none;}
+  .fx-ring{animation:fx-fade .4s ease-out forwards;transform:none;}
+  .fx-sweep{display:none;}
+  @keyframes fx-fade{from{opacity:.9}to{opacity:0}}
+}
+html.lite .ooh-bobw,html.lite .ooh-talking .ooh-sprout{animation:none;}
+html.lite .ooh-me,html.lite .ooh-figure{filter:none;}
+@media print{ .ooh-guide,.ooh-slot,.fx-layer,.fx-progress,.fx-glow{display:none!important;} }

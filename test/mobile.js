@@ -25,8 +25,11 @@ let FAILS = [];
 const fail = m => { FAILS.push(m); console.log('   \x1b[31m✗\x1b[0m ' + m); };
 const ok   = m => console.log('   \x1b[32m✓\x1b[0m ' + m);
 const head = m => console.log('\n\x1b[1m' + m + '\x1b[0m');
-const seen = ()=> ['psych-seen-overture','psych-seen-tour','psych-seen-intro']
-                   .forEach(k=>localStorage.setItem(k,'2'));
+/* the opening now plays once per visit (a tab session), so "seen" also
+   has to mark this visit as opened */
+const seen = ()=>{ ['psych-seen-overture','psych-seen-tour','psych-seen-intro']
+                     .forEach(k=>localStorage.setItem(k,'2'));
+                   sessionStorage.setItem('ronak-visit-opened','1'); };
 
 /* The primer sits between tapping a screener and question one, once per
    instrument. Tests that walk questions have to get past it — and must
@@ -1117,6 +1120,69 @@ const OVERFLOW = `(()=>{
         : fail(`${lang}: the crisis step fell back to English — "${t.title.slice(0,40)}"`);
       await c2.close();
     }
+  }
+
+  /* 18 ── Ooh, the guide shared with Arun, and the music. Where the app
+           is serious they have to get out of the way: no music under the
+           questions (music is a mood-induction method; it must not colour
+           a PHQ-9), no Ooh in the corner beside them, and neither Ooh nor
+           music at the self-harm safety step, which gets the whole screen. */
+  head('18. OOH AND THE MUSIC STEP ASIDE WHERE IT MATTERS');
+  {
+    /* a new visit opens on Begin, and Begin starts music and sunrise together */
+    {
+      const ctx = await b.newContext(phone()); const p = await ctx.newPage();
+      p.on('pageerror', e=>PAGE_ERRORS.push(e.message));
+      await p.goto(URL);
+      await p.evaluate(()=>['psych-seen-overture','psych-seen-tour','psych-seen-intro'].forEach(k=>localStorage.setItem(k,'2')));
+      await p.goto(URL,{waitUntil:'networkidle'}); await p.waitForTimeout(900);
+      const gate = await p.evaluate(()=>{ const g = document.getElementById('otGate'); return !!g && !g.hidden; });
+      gate ? ok('a new visit opens on the night scene with Begin')
+           : fail('a new visit did not open on Begin');
+      if(gate){
+        await p.click('#otBegin'); await p.waitForTimeout(1500);
+        const m = await p.evaluate(()=>({ music: !!(window.RonakMusic && RonakMusic.running),
+          playing: !document.getElementById('overture').hidden && !!document.querySelector('#otCam.push, #otRoom.on') }));
+        m.music && m.playing ? ok('Begin starts the music and the sunrise in the same tap')
+                             : fail(`Begin: music ${m.music}, scene ${m.playing}`);
+      }
+      await ctx.close();
+    }
+    const ctx = await b.newContext(phone()); const p = await ctx.newPage();
+    p.on('pageerror', e=>PAGE_ERRORS.push(e.message));
+    await p.goto(URL); await p.evaluate(seen);
+    await p.goto(URL,{waitUntil:'networkidle'}); await p.waitForTimeout(2600);
+    const home = await p.evaluate(()=>{
+      const st = document.querySelector('.ooh-slot[data-ooh="home"] .ooh-strip');
+      return { strip: !!st, fig: !!(st && st.querySelector('svg.ooh-svg')),
+               named: !!(st && /Ooh/.test(st.querySelector('.ooh-name').textContent)) };
+    });
+    home.strip && home.fig && home.named ? ok('Ooh greets the home page in the page, not over it')
+      : fail(`Ooh did not greet the home page (${JSON.stringify(home)})`);
+    /* a tap anywhere lets the music start */
+    await p.mouse.click(8, 400); await p.waitForTimeout(700);
+    await p.evaluate(()=>startTest('phq9')); await p.waitForTimeout(300);
+    await pastPrimer(p, 'ooh');
+    await p.waitForTimeout(3200);
+    const q = await p.evaluate(()=>({
+      corner: !!document.querySelector('.ooh-me:not([hidden])'),
+      music: !!(window.RonakMusic && RonakMusic.running) }));
+    !q.corner ? ok('no Ooh in the corner beside the questions') : fail('Ooh sits in the corner beside the questions');
+    !q.music ? ok('the music is silent while the questions are answered') : fail('music plays under the questions');
+    for(let i=0;i<8;i++){ await p.click('#qcard .bigopts button >> nth=0'); await p.waitForTimeout(350); }
+    await p.click('#qcard .bigopts button >> nth=1'); await p.waitForTimeout(600);
+    const safe = await p.evaluate(()=>{
+      const vis = el => !!el && !el.hidden && getComputedStyle(el).display !== 'none' && el.getBoundingClientRect().height > 0;
+      return { safe: !document.getElementById('safeNow').hidden,
+               ooh: vis(document.querySelector('.ooh-me')) || vis(document.querySelector('.ooh-guide .ooh-bubble')),
+               music: !!(window.RonakMusic && RonakMusic.running) };
+    });
+    if(!safe.safe) fail('the safety step did not appear for the Ooh check');
+    else {
+      !safe.ooh ? ok('Ooh is gone at the self-harm safety step') : fail('Ooh is visible at the self-harm safety step');
+      !safe.music ? ok('no music under the self-harm safety step') : fail('music plays under the safety step');
+    }
+    await ctx.close();
   }
 
   /* 12 ── every uncaught exception, from every page this suite opened.

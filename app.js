@@ -210,6 +210,7 @@ function setLang(code, after){
   if(current) renderQ();
   if(lastResult && document.getElementById("view-results").classList.contains("active")) renderResults(false);
   hideMissing();
+  if(window.Ooh) Ooh.lang();
   if(after) after();
 }
 
@@ -289,6 +290,11 @@ function showView(name){
   window.scrollTo(0,0);
   v.focus();
   observeReveals();
+  /* Music is a known mood-induction method, so it fades out for the
+     questions themselves and comes back after: it must not colour
+     anyone's answers. */
+  if(window.RonakMusic){ if(name === "test") RonakMusic.hold("questions"); else RonakMusic.release("questions"); }
+  if(window.Ooh) Ooh.view(name);
 }
 
 /* ════════ home cards ════════ */
@@ -893,10 +899,13 @@ function showSafeNow(){
   document.querySelector(".tokenbar").hidden = true;
   document.querySelector("#view-test .actionrow").hidden = true;
   box.hidden = false;
+  /* the safety step gets silence: no music under it */
+  if(window.RonakMusic) RonakMusic.hold("crisis");
   setTimeout(()=> document.getElementById("safeNowHelp").focus(), 80);
 }
 function hideSafeNow(){
   document.getElementById("safeNow").hidden = true;
+  if(window.RonakMusic) RonakMusic.release("crisis");
   document.querySelector(".tokenbar").hidden = false;
   document.querySelector("#view-test .actionrow").hidden = false;
 }
@@ -1726,12 +1735,15 @@ function breatheStep(){
 
 function breatheStart(){
   breathePhase = 0; breatheRounds = 0;
+  /* the breathing tones and haptics lead; the music steps back */
+  if(window.RonakMusic) RonakMusic.hold("breathe");
   document.getElementById("breatheBtn").textContent = T.ui.breatheStop;
   breatheStep();
 }
 
 function breatheStop(finished){
   if(breatheTimer){ clearTimeout(breatheTimer); breatheTimer = null; }
+  if(window.RonakMusic) RonakMusic.release("breathe");
   const orb = document.getElementById("orb"), btn = document.getElementById("breatheBtn");
   if(!orb || !btn) return;
   orb.className = "orb";
@@ -2068,8 +2080,13 @@ function keepPanelOnScreen(){
     /* The tab bar is fixed to the bottom at z-index 80 and so paints over
        this panel. Stopping above it is the difference between a last row
        you can reach and one you can see but not tap. */
-    const tabH = parseFloat(getComputedStyle(document.documentElement)
-                   .getPropertyValue("--tabbar-h")) || 0;
+    /* Measured from the bar itself. It used to parseFloat --tabbar-h,
+       which is "4.5rem" until the bar has been measured — 4.5, read as
+       pixels, so the floor sat 4.5px above the bottom of the screen.
+       offsetHeight rather than the rect: the bar slides away on scroll
+       with a transform, and it comes back. */
+    const tabEl = document.querySelector(".tabbar");
+    const tabH = tabEl && getComputedStyle(tabEl).display !== "none" ? tabEl.offsetHeight : 0;
     let floor = window.innerHeight - tabH;
     const tourEl = document.getElementById("tour");
     const cardEl = document.getElementById("tourCard");
@@ -2077,7 +2094,15 @@ function keepPanelOnScreen(){
       const cr = cardEl.getBoundingClientRect();
       if(cr.height && cr.top > r.top + 80) floor = Math.min(floor, cr.top - 8);
     }
-    setPanel.style.maxHeight = Math.max(120, floor - r.top - 12) + "px";
+    /* The panel is measured mid-way through its opening animation, which
+       starts it 8px higher and slightly scaled — so r.top is not where it
+       comes to rest, and a height worked out from it ran the last row
+       under the tab bar once the panel had enough rows to reach it. The
+       layout position (offsetTop inside its positioned wrapper) ignores
+       transforms, so it is where the panel will actually settle. */
+    const wrapEl = setPanel.offsetParent;
+    const top = wrapEl ? wrapEl.getBoundingClientRect().top + setPanel.offsetTop : r.top;
+    setPanel.style.maxHeight = Math.max(120, floor - top - 12) + "px";
   });
 }
 setBtn.addEventListener("click", e=>{
@@ -2257,6 +2282,9 @@ let otThenTour = false;
 
 function otEnd(skipped){
   otClear();
+  markVisit();
+  document.getElementById("otGate").hidden = true;
+  ot.classList.remove("gated");
   ot.classList.add("closing");
   setTimeout(()=>{
     ot.hidden = true; ot.classList.remove("closing");
@@ -2396,6 +2424,8 @@ document.getElementById("skipIntro").addEventListener("click", ()=> otEnd(true))
 function playOpening(){
   toggleSettings(false);
   otThenTour = true;
+  /* a click, so the music can start with the sunrise straight away */
+  if(window.RonakMusic) RonakMusic.begin();
   otPlay();
   setTimeout(()=> document.getElementById("skipIntro").focus(), 60);
 }
@@ -2414,12 +2444,46 @@ ot.addEventListener("keydown", e=>{ if(e.key === "Escape") otEnd(true); });
    opening from here threw "Cannot read properties of null (reading
    'ui')" and took the rest of the script down with it. The opening is
    the one thing that must not run before the words it is made of. */
-function startOpening(){
-const otSkip = window.matchMedia("(prefers-reduced-motion: reduce)").matches ||
-               location.hash || onboardSeen(OT_KEY);
-if(!otSkip){
+/* Every visit now opens on the sunrise, with its music. A visit is a tab
+   session: reloading inside one does not replay it, closing the app and
+   coming back does. Still never for reduced-motion readers and never on
+   a deep link — someone heading for #resources wants a number, not a
+   film — and the crisis strip stays on top of it the whole time.
+
+   Browsers refuse sound before a tap, so the opening waits on the night
+   scene with Begin. That one tap starts the music and the scene in the
+   same instant, which is what keeps the two in step: the chord changes
+   in music.js are scheduled against the same clock the scene's beats
+   start from. With the music switched off there is nothing to wait for,
+   and the scene simply plays. */
+const OT_VISIT = "ronak-visit-opened";
+function visitOpened(){ try{ return sessionStorage.getItem(OT_VISIT) === "1"; }catch(e){ return false; } }
+function markVisit(){ try{ sessionStorage.setItem(OT_VISIT, "1"); }catch(e){} }
+function otGateBegin(quiet){
+  markVisit();
+  document.getElementById("otGate").hidden = true;
+  ot.classList.remove("gated");
+  if(window.RonakMusic){ if(quiet) RonakMusic.quietForVisit(); else RonakMusic.begin(); }
   otPlay();
   setTimeout(()=> document.getElementById("skipIntro").focus(), 60);
+}
+document.getElementById("otBegin").addEventListener("click", ()=> otGateBegin(false));
+document.getElementById("otQuiet").addEventListener("click", ()=> otGateBegin(true));
+function startOpening(){
+const otSkip = window.matchMedia("(prefers-reduced-motion: reduce)").matches ||
+               location.hash || visitOpened();
+if(!otSkip){
+  if(window.RonakMusic && RonakMusic.wanted()){
+    ot.hidden = false;
+    otBuildLangs();
+    document.getElementById("otGate").hidden = false;
+    ot.classList.add("gated");
+    setTimeout(()=> document.getElementById("otBegin").focus(), 60);
+  } else {
+    markVisit();
+    otPlay();
+    setTimeout(()=> document.getElementById("skipIntro").focus(), 60);
+  }
 } else if(!location.hash){
   /* The walkthrough used to hang off the end of the room scene and nowhere
      else, so anyone who never saw the scene — reduced-motion readers, and

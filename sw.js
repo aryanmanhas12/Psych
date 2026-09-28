@@ -70,20 +70,28 @@
    survives going offline; the four Indic faces are cached the first time
    a reader in that script loads them, by the fetch handler below, rather
    than making every install download all five. anton.woff2 is gone. */
+/* v29: Deepu, the guide (companion.js), and interface sounds. The
+   sounds (sounds/*.mp3?v=1) are not precached: they are fetched on a
+   reader's first tap and kept by the versioned cache-first rule below,
+   so a first visit does not pay ~85KB for audio someone may switch off. */
+/* v30: Ooh, the guide shared with Arun (ooh.mjs, byte for byte Arun's
+   lib/ooh.mjs), replaces Deepu; the music (music.js, generated, no
+   files) starts with the sunrise on every visit; visual haptics. */
 /* ── the release number, in one place ──
    The page's own CSS and JS moved out of index.html into app.css and
    app.js, and every page now asks for its shared files by versioned URL
-   (site.css?v=28, nav.js?v=28, app.js?v=28). The version in the URL is
+   (site.css?v=30, nav.js?v=30, app.js?v=30). The version in the URL is
    what makes that safe: a page is fetched fresh, and if it asked for a
    plain "app.js" a returning phone could pair the new page with the old
    script still in this cache for one load. A new version is a new URL,
    which this cache has never seen, so it is always fetched. When a release
    changes any of those files: bump REL here AND the ?v= in every page. */
-const REL = "28";
+const REL = "30";
 const CACHE = "ronak-v" + REL;
 const ASSETS = [
   "./", "./index.html", "./helplines.js", "./nav.js?v=" + REL,
   "./app.js?v=" + REL, "./app.css?v=" + REL, "./site.css?v=" + REL,
+  "./companion.js?v=" + REL, "./ooh.mjs?v=" + REL, "./music.js?v=" + REL,
   "./i18n.en.js?v=" + REL, "./i18n.hi.js?v=" + REL, "./i18n.mr.js?v=" + REL,
   "./i18n.bn.js?v=" + REL, "./i18n.ta.js?v=" + REL, "./i18n.te.js?v=" + REL,
   "./ethics.html", "./evidence.html", "./manifesto.html", "./404.html",
