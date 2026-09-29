@@ -1,9 +1,12 @@
-# Agent tooling belongs on the developer's machine, not in a health repo.
-# Install skills globally instead (~/.claude/skills), so they apply to every
-# project without adding weight here:
-#   /plugin marketplace add nextlevelbuilder/ui-ux-pro-max-skill
-#   /plugin marketplace add freshtechbro/claudedesignskills
-.claude/
+# Agent tooling stays on the developer's machine, with one exception the
+# owner asked for in September 2026: the shared skill set in .claude/skills
+# is committed, so every session on this repo (and on Arun, which holds the
+# same set) has the same tools without installing anything. The rest of
+# .claude/ (local settings, caches) stays out. This line used to ignore all
+# of .claude/, which is why an earlier "add the skills" commit silently
+# committed none of them.
+.claude/*
+!.claude/skills/
 
 # OS / editor noise
 .DS_Store
