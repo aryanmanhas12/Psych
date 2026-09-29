@@ -38,7 +38,7 @@ jobs:
       # dependencies, which is the point. Playwright is a test-time tool only.
       - name: Install Playwright and its Chromium
         run: |
-          npm install --no-save playwright@1.47.2
+          npm install --no-save playwright@1.47.2 axe-core@4.13.0
           npx playwright install --with-deps chromium
 
       - name: Serve the site
@@ -57,3 +57,24 @@ jobs:
         env:
           PSYCH_URL: http://127.0.0.1:8099/index.html
         run: node test/mobile.js
+
+  # Ooh is one character in two apps. The drawing lives in Arun
+  # (aryanmanhas12/Well-beings, well-beings/lib/ooh.mjs) and is copied here
+  # byte for byte; a change made on one side only would give the two apps
+  # two different guides. This fails the moment they drift. Fix it by
+  # copying Arun's file over ooh.mjs, never by editing ooh.mjs here.
+  ooh-matches-arun:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Compare ooh.mjs with Arun's main branch
+        run: |
+          curl -sfL --retry 3 https://raw.githubusercontent.com/aryanmanhas12/Well-beings/main/well-beings/lib/ooh.mjs -o /tmp/arun-ooh.mjs
+          if cmp -s ooh.mjs /tmp/arun-ooh.mjs; then
+            echo "ooh.mjs matches Arun ($(sha256sum ooh.mjs | cut -c1-16))"
+          else
+            echo "::error file=ooh.mjs::ooh.mjs differs from Arun's well-beings/lib/ooh.mjs. Copy Arun's file over it."
+            diff <(sha256sum < ooh.mjs) <(sha256sum < /tmp/arun-ooh.mjs) || true
+            exit 1
+          fi

@@ -21,7 +21,7 @@
 <meta name="author" content="Aryan Manhas">
 <meta name="theme-color" content="#140A26">
 <link rel="manifest" href="manifest.webmanifest">
-<script src="nav.js?v=32" defer></script>
+<script src="nav.js?v=33" defer></script>
 <!-- The 192px PNG was fetched as the favicon on every page: 11.4KB gzip
      on the critical path, for something drawn at 16px. The SVG is 1.6KB
      and sharp at every size. No PNG fallback link: Chromium fetches every
@@ -90,7 +90,7 @@
     (function go(){
       var s = document.createElement("script");
       /* versioned like every other file this page loads — see REL in sw.js */
-      s.src = "i18n." + code + ".js?v=32";
+      s.src = "i18n." + code + ".js?v=33";
       s.async = false;
       s.onload  = function(){ settle(window.I18N && window.I18N[code] ? code : null); };
       s.onerror = function(){ if(++tries < 2) go(); else settle(null); };
@@ -112,8 +112,8 @@
 })();
 </script>
 <link rel="apple-touch-icon" href="icon-192.png">
-<link rel="stylesheet" href="site.css?v=32">
-<link rel="stylesheet" href="app.css?v=32">
+<link rel="stylesheet" href="site.css?v=33">
+<link rel="stylesheet" href="app.css?v=33">
 </head>
 <body>
 
@@ -414,9 +414,8 @@
   </div>
 </div>
 
-<a class="skip" href="#main" data-i18n="skip">Skip to main content</a>
-
-<div class="topstrip noprint">
+<div class="topstrip noprint" role="region" aria-label="Crisis helplines" data-i18n-label="crisisLabel">
+  <a class="skip" href="#main" data-i18n="skip">Skip to main content</a>
   <div class="wrap">
     <!-- The numbers are anchors in the markup, not only after dialable()
          has run. This text is the pre-JavaScript fallback: it paints with
@@ -434,7 +433,7 @@
          these and re-creates them with the right aria-label once the
          translations land — no double-wrapping. -->
     <span><span data-i18n="crisis">IN DISTRESS? TELE-MANAS <a class="dial" href="tel:14416">14416</a> · VANDREVALA <a class="dial" href="tel:9999666555">9999-666-555</a> · EMERGENCY <a class="dial" href="tel:112">112</a></span></span>
-    <span><a href="https://findahelpline.com" target="_blank" rel="noopener">findahelpline.com</a><span class="strip-tail"> — 130+ countries</span></span>
+    <span><a href="https://findahelpline.com" target="_blank" rel="noopener">findahelpline.com</a><span class="strip-tail"> · 130+ countries</span></span>
   </div>
 </div>
 
@@ -576,7 +575,7 @@
               aria-expanded="false" aria-controls="homeLede" data-i18n="readMore"></button>
 
       <details class="notice reveal">
-        <summary data-i18n="aboutToggle">What this is — and what it isn't</summary>
+        <summary data-i18n="aboutToggle">What this is, and what it isn't</summary>
         <div class="inner">
           <b data-i18n="noticeTitle"></b><br>
           <span data-i18n="noticeBody"></span>
@@ -586,7 +585,7 @@
       </details>
     </div>
 
-    <div class="statband" id="statBand" aria-label="Global mental health figures"></div>
+    <div class="statband" id="statBand" role="region" tabindex="0" aria-label="Global mental health figures"></div>
 
     <div class="mood reveal">
       <div>
@@ -615,13 +614,13 @@
         <a class="bcard" href="evidence.html">
           <span class="k" data-i18n="behindEvidenceK">Peer-reviewed</span>
           <h3 data-i18n="behindEvidenceT">The Evidence Register</h3>
-          <p data-i18n="behindEvidenceD">Every instrument and design decision, with the study behind it — sensitivity, sample size, and the figures that are weaker.</p>
+          <p data-i18n="behindEvidenceD">Every instrument and design decision, with the study behind it: sensitivity, sample size, and the figures that are weaker.</p>
           <span class="go" data-i18n="behindEvidenceG">Read the register →</span>
         </a>
         <a class="bcard" href="global.html">
           <span class="k" data-i18n="behindGlobalK">WHO &amp; UN</span>
           <h3 data-i18n="behindGlobalT">Global Frameworks</h3>
-          <p data-i18n="behindGlobalD">How this maps to SDG 3.4, WHO's Action Plan, mhGAP and QualityRights — including what it cannot do.</p>
+          <p data-i18n="behindGlobalD">How this maps to SDG 3.4, WHO's Action Plan, mhGAP and QualityRights, including what it cannot do.</p>
           <span class="go" data-i18n="behindGlobalG">See the alignment →</span>
         </a>
         <a class="bcard" href="ethics.html">
@@ -653,7 +652,7 @@
   <div class="tokenbar">
     <div class="wrap">
       <span class="tk" id="tokenNo"></span>
-      <span class="tkname" id="testTitle"></span>
+      <h1 class="tkname" id="testTitle"></h1>
       <span class="tkclock" id="tkClock" aria-hidden="true"></span>
     </div>
     <div class="wrap"><div class="pbar" aria-hidden="true"><div class="pfill" id="pfill"></div></div></div>
@@ -673,7 +672,7 @@
          holding when they hesitate, and none of them were answered
          anywhere before you were already inside the questionnaire. -->
     <div class="primer" id="primer" hidden>
-      <h2 id="primerHead"></h2>
+      <h1 id="primerHead"></h1>
       <ul>
         <li id="primerPrivate"></li>
         <li id="primerGet"></li>
@@ -691,7 +690,7 @@
          a real choice and the answer is already recorded. -->
     <div class="safenow" id="safeNow" role="alertdialog" aria-modal="false"
          aria-labelledby="safeNowTitle" aria-describedby="safeNowBody" hidden>
-      <h2 id="safeNowTitle" data-i18n="safeNowTitle">Thank you for telling us.</h2>
+      <h1 id="safeNowTitle" data-i18n="safeNowTitle">Thank you for telling us.</h1>
       <p id="safeNowBody" data-i18n="safeNowBody">You do not have to sit with this on your own. These lines are free, open now, and answered by people trained for exactly this conversation.</p>
       <div class="safenow-lines" id="safeNowLines"></div>
       <div class="safenow-go">
@@ -717,7 +716,7 @@
     <h1 class="display" id="resTitle" style="font-size:clamp(1.6rem,4.5vw,2.8rem);"></h1>
 
     <div class="safety" id="safetyBox" style="display:none;" role="alert">
-      <h3 data-i18n="safetyTitle"></h3>
+      <h2 data-i18n="safetyTitle"></h2>
       <p data-i18n="safety1"></p>
       <p><strong data-i18n="safety2"></strong></p>
       <div class="lines">
@@ -902,7 +901,7 @@
     <div class="histctl noprint">
       <button class="secondary" id="exportBtn" data-i18n="exportBtn"></button>
       <button class="secondary" id="importBtn" data-i18n="importBtn"></button>
-      <input type="file" id="importFile" accept="application/json,.json" class="visually-hidden">
+      <input type="file" id="importFile" data-i18n-label="importBtn" aria-label="Import data" tabindex="-1" accept="application/json,.json" class="visually-hidden">
       <button class="danger" id="clearBtn" data-i18n="deleteBtn"></button>
     </div>
   </div>
@@ -970,9 +969,9 @@
 </footer>
 
 <!-- before app.js: the opening asks it whether to wait for Begin -->
-<script src="music.js?v=32"></script>
-<script src="app.js?v=32"></script>
+<script src="music.js?v=33"></script>
+<script src="app.js?v=33"></script>
 <!-- not deferred: Ooh's first line has to be in the page before the first paint -->
-<script src="companion.js?v=32"></script>
+<script src="companion.js?v=33"></script>
 </body>
 </html>

@@ -1502,13 +1502,13 @@ function crisisLinesHTML(){
 function renderResources(){
   const el = document.getElementById("resList");
   if(!window.HELP){ el.innerHTML = T.ui.resources.map(([h,b])=>
-    '<div class="res"><h3>'+esc(h)+"</h3><p>"+esc(b)+"</p></div>").join(""); return; }
+    '<div class="res"><h2>'+esc(h)+"</h2><p>"+esc(b)+"</p></div>").join(""); return; }
 
   let h = '<div class="dirlist">' + HELP.directories.map(d=>
       '<div class="dir"><a href="'+esc(d.url)+'" target="_blank" rel="noopener">'+esc(d.name)+' ↗</a>'+
       '<p>'+esc(d.note)+'</p></div>').join("") + '</div>';
 
-  h += '<div class="res"><h3>'+esc(T.ui.lineEmergency.split("—")[0].trim())+'</h3><p>' +
+  h += '<div class="res"><h2>'+esc(T.ui.lineEmergency.split("—")[0].trim())+'</h2><p>' +
        HELP.emergency.map(e=>'<strong>'+esc(e.num)+'</strong> — '+esc(e.where)).join(' · ') +
        '</p></div>';
 

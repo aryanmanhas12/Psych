@@ -265,7 +265,7 @@ const OVERFLOW = `(()=>{
        settings button at 1.07:1 in dark mode survived. It holds the
        language switch — the control a reader who cannot read the page
        needs first — so it was invisible to exactly the person it is for. */
-    for (const [sel,name] of [['.topstrip','crisis strip'],['.topstrip a','helpline number'],
+    for (const [sel,name] of [['.topstrip','crisis strip'],['.topstrip a.dial','helpline number'],
                               ['nav.site .brand','brand'],['nav.site .navtoggle','menu button'],
                               ['#setBtn','settings button'],
                               ['.intro-no','No button'],['.intro-yes','Yes button'],['.intro-card p','statement']]) {
@@ -1200,6 +1200,81 @@ const OVERFLOW = `(()=>{
       !safe.music ? ok('no music under the self-harm safety step') : fail('music plays under the safety step');
     }
     await ctx.close();
+  }
+
+  /* 19 ── axe-core, the accessibility engine, on every screen that matters:
+         home, settings, the guide, history, resources, the primer, a
+         question, the self-harm safety step, a risk result, the doctor's
+         summary, the Begin gate, and every static page. English in both
+         themes plus two Indic scripts. Any WCAG 2.2 AA or best-practice
+         violation fails the run; the clean state was reached by fixing the
+         page, never by disabling a rule. */
+  head('19. ACCESSIBILITY ENGINE (axe-core, WCAG 2.2 AA)');
+  {
+    let AXE = null;
+    try { AXE = require('fs').readFileSync(require.resolve('axe-core/axe.min.js'), 'utf8'); }
+    catch(e){ fail('axe-core is not installed (npm install --no-save axe-core)'); }
+    if(AXE){
+      const TAGS = ['wcag2a','wcag2aa','wcag21a','wcag21aa','wcag22aa','best-practice'];
+      const BASE = URL.replace(/[^/]*$/, '');
+      const found = {};
+      const scan = async (p, where) => {
+        await p.addScriptTag({ content: AXE });
+        const r = await p.evaluate(async t => await axe.run(document,
+          { runOnly:{ type:'tag', values:t }, resultTypes:['violations'] }), TAGS);
+        for(const v of r.violations){
+          const k = v.impact + ' ' + v.id;
+          (found[k] = found[k] || []).push(where + ' ' + v.nodes[0].target.join(' '));
+        }
+      };
+      let screens = 0;
+      for(const [theme, lang] of [['light','en'],['dark','en'],['dark','hi'],['light','ta']]){
+        const ctx = await b.newContext(phone({ colorScheme:theme, reducedMotion:'reduce', serviceWorkers:'block' }));
+        const p = await ctx.newPage();
+        await p.addInitScript(l=>{
+          ['psych-seen-overture','psych-seen-tour','psych-seen-intro'].forEach(k=>localStorage.setItem(k,'2'));
+          sessionStorage.setItem('ronak-visit-opened','1');
+          localStorage.setItem('psych-prefs', JSON.stringify({ lang:l }));
+        }, lang);
+        await p.goto(URL,{waitUntil:'networkidle'}); await p.waitForTimeout(1200);
+        const at = theme + '/' + lang + '/';
+        await scan(p, at+'home');
+        await p.evaluate(()=>document.getElementById('setBtn').click()); await p.waitForTimeout(300);
+        await scan(p, at+'settings');
+        await p.evaluate(()=>document.getElementById('setBtn').click());
+        for(const v of ['guide','history','resources']){
+          await p.evaluate(v=>showView(v), v); await p.waitForTimeout(500); await scan(p, at+v);
+        }
+        await p.evaluate(()=>startTest('phq9')); await p.waitForTimeout(400);
+        const pr = await p.$('#primerStart');
+        if(pr && await pr.isVisible()){ await scan(p, at+'primer'); await pr.click(); await p.waitForTimeout(300); }
+        await scan(p, at+'question');
+        for(let i=0;i<8;i++){ await p.click('#qcard .bigopts button >> nth=0'); await p.waitForTimeout(150); }
+        await p.click('#qcard .bigopts button >> nth=1'); await p.waitForTimeout(500);
+        await scan(p, at+'safety-step');
+        await p.click('#safeNowGo'); await p.waitForTimeout(700);
+        await scan(p, at+'risk-result');
+        await p.evaluate(()=>{ const s = document.getElementById('sheetBtn'); if(s) s.click(); }); await p.waitForTimeout(500);
+        await scan(p, at+'summary');
+        await p.evaluate(()=>sessionStorage.removeItem('ronak-visit-opened'));
+        await p.reload(); await p.waitForTimeout(1000);
+        await scan(p, at+'gate');
+        screens += 12;
+        await ctx.close();
+      }
+      for(const theme of ['light','dark']){
+        const ctx = await b.newContext(phone({ colorScheme:theme, reducedMotion:'reduce', serviceWorkers:'block' }));
+        const p = await ctx.newPage();
+        for(const pg of ['evidence','global','ethics','manifesto','poster','404']){
+          await p.goto(BASE+pg+'.html',{waitUntil:'networkidle'}); await p.waitForTimeout(700);
+          await scan(p, theme+'/'+pg); screens++;
+        }
+        await ctx.close();
+      }
+      const keys = Object.keys(found);
+      keys.length ? keys.forEach(k=>fail(`axe ${k} x${found[k].length}: ${found[k].slice(0,3).join(' | ')}`))
+                  : ok(`no axe violations on ${screens} screens (4 language/theme runs + static pages)`);
+    }
   }
 
   /* 12 ── every uncaught exception, from every page this suite opened.
