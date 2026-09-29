@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Evidence Register — The Research Behind Each Questionnaire | Ronak</title>
 <meta name="description" content="Every screening instrument and design decision in Ronak, with the study behind it: sensitivity, specificity, sample size, and the figures that are weaker.">
-<script src="nav.js?v=32" defer></script>
-<script src="companion.js?v=32" defer></script>
+<script src="nav.js?v=33" defer></script>
+<script src="companion.js?v=33" defer></script>
 <!-- The 192px PNG was fetched as the favicon on every page: 11.4KB gzip
      on the critical path, for something drawn at 16px. The SVG is 1.6KB
      and sharp at every size. No PNG fallback link: Chromium fetches every
@@ -35,7 +35,7 @@
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="icon-192.png">
 <script src="prefs.js"></script>
-<link rel="stylesheet" href="site.css?v=32">
+<link rel="stylesheet" href="site.css?v=33">
 <style>
 .method{
     font-family:var(--font-ui);font-size:13px;color:var(--muted);
@@ -68,7 +68,7 @@
 </head>
 <body data-ooh="evidence">
 
-<div class="topstrip noprint">
+<div class="topstrip noprint" role="region" aria-label="Crisis helplines">
   <div class="wrap">
     <span>IN DISTRESS? FIND A HELPLINE IN YOUR COUNTRY: <a href="https://findahelpline.com" target="_blank" rel="noopener">findahelpline.com</a></span>
     <span>INDIA: TELE-MANAS <a href="tel:14416">14416</a> &middot; EMERGENCY <a href="tel:112">112</a></span>
@@ -87,6 +87,8 @@
     <a class="navlink sub" href="poster.html">Poster</a>
   </div>
 </nav>
+
+<main id="main">
 
 <header class="hero">
   <div class="wrap">
@@ -224,7 +226,7 @@
       <div class="stat"><span class="num">64 v 39</span><span class="cap">% REMISSION: LAY-COUNSELLOR THERAPY VS USUAL CARE (LANCET RCT, GOA)</span></div>
       <div class="body">
         <h3>The Healthy Activity Program</h3>
-        <p>Lay counsellors delivering brief behavioural-activation therapy in Goan primary health centres nearly doubled remission from moderately-severe depression (64% vs 39%), reduced suicidal thoughts, and was cost-effective. Entry to the trial was a PHQ-9 score — the same instrument, used the same way, as in this app.</p>
+        <p>Lay counsellors delivering brief behavioural-activation therapy in Goan primary health centres raised remission from moderately severe to severe depression by about 60% (64% vs 39% at three months), reduced suicidal thoughts, and was cost-effective. Entry to the trial was a PHQ-9 score — the same instrument, used the same way, as in this app.</p>
         <p class="refs">Patel et al., 2016/17 — The Lancet [21]</p>
       </div>
     </div>
@@ -246,37 +248,39 @@
     <h2 class="display">Full references</h2>
     <div class="reflist">
       <ol>
-        <li><a href="https://consensus.app/papers/details/d3e353bcc2645d8594e5f2fc249641c0/?utm_source=claude_desktop">The PHQ-9: validity of a brief depression severity measure</a> — Kroenke, Spitzer &amp; Williams, 2001, J Gen Intern Med. <span class="mono">via Consensus</span></li>
-        <li><a href="https://consensus.app/papers/details/41c86a797089561cb20840f667ca9221/?utm_source=claude_desktop">Accuracy of PHQ-9 for screening to detect major depression: individual participant data meta-analysis</a> — Levis et al., 2019, The BMJ. <span class="mono">via Consensus</span></li>
-        <li><a href="https://consensus.app/papers/details/00aa770758d357b3abbe43f5395be920/?utm_source=claude_desktop">Accuracy of the PHQ-9: updated systematic review and IPD meta-analysis</a> — Negeri et al., 2021, The BMJ. <span class="mono">via Consensus</span></li>
-        <li><a href="https://consensus.app/papers/details/487cffa920e451a097391ae0ad070134/?utm_source=claude_desktop">Screening for depression in primary care with PHQ-9: a systematic review</a> — Costantini et al., 2020, J Affective Disorders. <span class="mono">via Consensus</span></li>
-        <li><a href="https://consensus.app/papers/details/59920917692f55458f77a1bfe1ec5035/?utm_source=claude_desktop">Reliability and validity of PHQ-9 when administered by health workers for depression screening among women in primary care</a> — Indu et al., 2018, Asian J Psychiatry (Kerala, India). <span class="mono">via Consensus</span></li>
-        <li><a href="https://doi.org/10.25259/IJPC_96_2023">Cultural adaptation of PHQ-9 in Hindi for use with patients in community palliative care settings</a> — Bhardwaj et al., 2023, Indian J Palliative Care. <span class="mono">via PubMed · DOI 10.25259/IJPC_96_2023</span></li>
-        <li><a href="https://doi.org/10.1001/archinte.166.10.1092">A brief measure for assessing generalized anxiety disorder: the GAD-7</a> — Spitzer, Kroenke, Williams &amp; Löwe, 2006, Arch Intern Med. <span class="mono">via PubMed · DOI 10.1001/archinte.166.10.1092</span></li>
-        <li><a href="https://consensus.app/papers/details/7d7b8dc07550508e84476caf2042c541/?utm_source=claude_desktop">Screening for anxiety disorders with the GAD-7 and GAD-2: systematic review and diagnostic meta-analysis</a> — Plummer et al., 2016, Gen Hosp Psychiatry. <span class="mono">via Consensus</span></li>
-        <li><a href="https://consensus.app/papers/details/6070436168555086a1d80f7da3d7739e/?utm_source=claude_desktop">GAD-7 and GAD-2 scales for detecting anxiety disorders in adults</a> — Aktürk et al., 2025, Cochrane Database Syst Rev. <span class="mono">via Consensus</span></li>
-        <li><a href="https://consensus.app/papers/details/7d9b04ebef045156ae6201d4f5aa86b4/?utm_source=claude_desktop">Anxiety screening: evidence report for the US Preventive Services Task Force</a> — O'Connor et al., 2023, JAMA. <span class="mono">via Consensus</span></li>
-        <li><a href="https://consensus.app/papers/details/e951551e37995799ac387b838912a7e8/?utm_source=claude_desktop">A systematic review of validated screening tools for anxiety disorders and PTSD in low- to middle-income countries</a> — Mughal et al., 2020, BMC Psychiatry. <span class="mono">via Consensus</span></li>
-        <li><a href="https://doi.org/10.1176/appi.psy.50.6.613">An ultra-brief screening scale for anxiety and depression: the PHQ-4</a> — Kroenke et al., 2009, Psychosomatics. <span class="mono">via PubMed · DOI 10.1176/appi.psy.50.6.613</span></li>
-        <li><a href="https://consensus.app/papers/details/6ceb082f92f259f59c2fa9d8fa960712/?utm_source=claude_desktop">Accuracy of the PHQ-2 alone and in combination with the PHQ-9: systematic review and meta-analysis</a> — Levis et al., 2020, JAMA. <span class="mono">via Consensus</span></li>
-        <li><a href="https://consensus.app/papers/details/6852943a14a1589c97870ab0f861a680/?utm_source=claude_desktop">Validation of PHQ-2 and PHQ-9 to screen for major depression in the primary care population</a> — Arroll et al., 2010, Ann Fam Med. <span class="mono">via Consensus</span></li>
-        <li><a href="https://doi.org/10.1001/archinte.158.16.1789">The AUDIT alcohol consumption questions (AUDIT-C): an effective brief screening test for problem drinking</a> — Bush et al., 1998, Arch Intern Med. <span class="mono">via PubMed · DOI 10.1001/archinte.158.16.1789</span></li>
-        <li><a href="https://consensus.app/papers/details/e9ec41b7402558b992846482b80f62f8/?utm_source=claude_desktop">Measurement-based care versus standard care for major depression: a randomized controlled trial with blind raters</a> — Guo et al., 2015, Am J Psychiatry. <span class="mono">via Consensus</span></li>
-        <li><a href="https://consensus.app/papers/details/29132b061cdd50ca91cb526aeff7cd27/?utm_source=claude_desktop">The efficacy of measurement-based care for depressive disorders: systematic review and meta-analysis of RCTs</a> — Zhu et al., 2021, J Clin Psychiatry. <span class="mono">via Consensus</span></li>
-        <li><a href="https://consensus.app/papers/details/a1c9a0c859d9550798a1521751b660e4/?utm_source=claude_desktop">Measurement-based care to enhance antidepressant treatment outcomes in major depressive disorder</a> — Husain et al., 2025, JAMA Network Open (Pakistan, multicentre RCT). <span class="mono">via Consensus</span></li>
-        <li><a href="https://consensus.app/papers/details/f13eee269d615a74984de66437bde15c/?utm_source=claude_desktop">The effectiveness of enhanced evidence-based care for depressive disorders: a meta-analysis of RCTs</a> — Xiao et al., 2021, Translational Psychiatry. <span class="mono">via Consensus</span></li>
-        <li><a href="https://consensus.app/papers/details/912c722a0fae58cfbf62d38eb805d09e/?utm_source=claude_desktop">Routine use of patient-reported outcome measures for improving treatment of common mental health disorders</a> — Kendrick et al., 2016, Cochrane Database Syst Rev. <span class="mono">via Consensus</span></li>
-        <li><a href="https://doi.org/10.1016/S0140-6736(16)31589-6">The Healthy Activity Program (HAP), a lay counsellor-delivered brief psychological treatment for severe depression in primary care in India: an RCT</a> — Patel et al., The Lancet. <span class="mono">via PubMed · DOI 10.1016/S0140-6736(16)31589-6</span></li>
-        <li><a href="https://doi.org/10.1016/S0140-6736(10)61508-5">Effectiveness of an intervention led by lay health counsellors for depressive and anxiety disorders in primary care in Goa, India (MANAS): a cluster RCT</a> — Patel et al., 2010, The Lancet. <span class="mono">via PubMed · DOI 10.1016/S0140-6736(10)61508-5</span></li>
-        <li><a href="https://doi.org/10.4103/indianjpsychiatry_640_25">Bridging the mental health treatment gap in India: a policy-oriented framework using the care cascade approach</a> — Debnath, Sagar &amp; Salve, 2025, Indian J Psychiatry. <span class="mono">via PubMed · DOI 10.4103/indianjpsychiatry_640_25</span></li>
+        <li><a href="https://consensus.app/papers/details/d3e353bcc2645d8594e5f2fc249641c0/?utm_source=claude_desktop">The PHQ-9: validity of a brief depression severity measure</a> — Kroenke, Spitzer &amp; Williams, 2001, J Gen Intern Med. <span class="mono">via Consensus · <a href="https://pubmed.ncbi.nlm.nih.gov/11556941/" target="_blank" rel="noopener">PMID 11556941</a></span></li>
+        <li><a href="https://consensus.app/papers/details/41c86a797089561cb20840f667ca9221/?utm_source=claude_desktop">Accuracy of PHQ-9 for screening to detect major depression: individual participant data meta-analysis</a> — Levis et al., 2019, The BMJ. <span class="mono">via Consensus · <a href="https://pubmed.ncbi.nlm.nih.gov/30967483/" target="_blank" rel="noopener">PMID 30967483</a></span></li>
+        <li><a href="https://consensus.app/papers/details/00aa770758d357b3abbe43f5395be920/?utm_source=claude_desktop">Accuracy of the PHQ-9: updated systematic review and IPD meta-analysis</a> — Negeri et al., 2021, The BMJ. <span class="mono">via Consensus · <a href="https://pubmed.ncbi.nlm.nih.gov/34610915/" target="_blank" rel="noopener">PMID 34610915</a></span></li>
+        <li><a href="https://consensus.app/papers/details/487cffa920e451a097391ae0ad070134/?utm_source=claude_desktop">Screening for depression in primary care with PHQ-9: a systematic review</a> — Costantini et al., 2020, J Affective Disorders. <span class="mono">via Consensus · <a href="https://pubmed.ncbi.nlm.nih.gov/33126078/" target="_blank" rel="noopener">PMID 33126078</a></span></li>
+        <li><a href="https://consensus.app/papers/details/59920917692f55458f77a1bfe1ec5035/?utm_source=claude_desktop">Reliability and validity of PHQ-9 when administered by health workers for depression screening among women in primary care</a> — Indu et al., 2018, Asian J Psychiatry (Kerala, India). <span class="mono">via Consensus · <a href="https://pubmed.ncbi.nlm.nih.gov/30096447/" target="_blank" rel="noopener">PMID 30096447</a></span></li>
+        <li><a href="https://doi.org/10.25259/IJPC_96_2023">Cultural adaptation of PHQ-9 in Hindi for use with patients with cancer in community palliative care settings</a> — Bhardwaj et al., 2023, Indian J Palliative Care. <span class="mono">via PubMed · DOI 10.25259/IJPC_96_2023 · <a href="https://pubmed.ncbi.nlm.nih.gov/37700900/" target="_blank" rel="noopener">PMID 37700900</a></span></li>
+        <li><a href="https://doi.org/10.1001/archinte.166.10.1092">A brief measure for assessing generalized anxiety disorder: the GAD-7</a> — Spitzer, Kroenke, Williams &amp; Löwe, 2006, Arch Intern Med. <span class="mono">via PubMed · DOI 10.1001/archinte.166.10.1092 · <a href="https://pubmed.ncbi.nlm.nih.gov/16717171/" target="_blank" rel="noopener">PMID 16717171</a></span></li>
+        <li><a href="https://consensus.app/papers/details/7d7b8dc07550508e84476caf2042c541/?utm_source=claude_desktop">Screening for anxiety disorders with the GAD-7 and GAD-2: systematic review and diagnostic meta-analysis</a> — Plummer et al., 2016, Gen Hosp Psychiatry. <span class="mono">via Consensus · <a href="https://pubmed.ncbi.nlm.nih.gov/26719105/" target="_blank" rel="noopener">PMID 26719105</a></span></li>
+        <li><a href="https://consensus.app/papers/details/6070436168555086a1d80f7da3d7739e/?utm_source=claude_desktop">GAD-7 and GAD-2 scales for detecting anxiety disorders in adults</a> — Aktürk et al., 2025, Cochrane Database Syst Rev. <span class="mono">via Consensus · <a href="https://pubmed.ncbi.nlm.nih.gov/40130828/" target="_blank" rel="noopener">PMID 40130828</a></span></li>
+        <li><a href="https://consensus.app/papers/details/7d9b04ebef045156ae6201d4f5aa86b4/?utm_source=claude_desktop">Anxiety screening: evidence report for the US Preventive Services Task Force</a> — O'Connor et al., 2023, JAMA. <span class="mono">via Consensus · <a href="https://pubmed.ncbi.nlm.nih.gov/37338868/" target="_blank" rel="noopener">PMID 37338868</a></span></li>
+        <li><a href="https://consensus.app/papers/details/e951551e37995799ac387b838912a7e8/?utm_source=claude_desktop">A systematic review of validated screening tools for anxiety disorders and PTSD in low- to middle-income countries</a> — Mughal et al., 2020, BMC Psychiatry. <span class="mono">via Consensus · <a href="https://pubmed.ncbi.nlm.nih.gov/32605551/" target="_blank" rel="noopener">PMID 32605551</a></span></li>
+        <li><a href="https://doi.org/10.1176/appi.psy.50.6.613">An ultra-brief screening scale for anxiety and depression: the PHQ-4</a> — Kroenke et al., 2009, Psychosomatics. <span class="mono">via PubMed · DOI 10.1176/appi.psy.50.6.613 · <a href="https://pubmed.ncbi.nlm.nih.gov/19996233/" target="_blank" rel="noopener">PMID 19996233</a></span></li>
+        <li><a href="https://consensus.app/papers/details/6ceb082f92f259f59c2fa9d8fa960712/?utm_source=claude_desktop">Accuracy of the PHQ-2 alone and in combination with the PHQ-9: systematic review and meta-analysis</a> — Levis et al., 2020, JAMA. <span class="mono">via Consensus · <a href="https://pubmed.ncbi.nlm.nih.gov/32515813/" target="_blank" rel="noopener">PMID 32515813</a></span></li>
+        <li><a href="https://consensus.app/papers/details/6852943a14a1589c97870ab0f861a680/?utm_source=claude_desktop">Validation of PHQ-2 and PHQ-9 to screen for major depression in the primary care population</a> — Arroll et al., 2010, Ann Fam Med. <span class="mono">via Consensus · <a href="https://pubmed.ncbi.nlm.nih.gov/20644190/" target="_blank" rel="noopener">PMID 20644190</a></span></li>
+        <li><a href="https://doi.org/10.1001/archinte.158.16.1789">The AUDIT alcohol consumption questions (AUDIT-C): an effective brief screening test for problem drinking</a> — Bush et al., 1998, Arch Intern Med. <span class="mono">via PubMed · DOI 10.1001/archinte.158.16.1789 · <a href="https://pubmed.ncbi.nlm.nih.gov/9738608/" target="_blank" rel="noopener">PMID 9738608</a></span></li>
+        <li><a href="https://consensus.app/papers/details/e9ec41b7402558b992846482b80f62f8/?utm_source=claude_desktop">Measurement-based care versus standard care for major depression: a randomized controlled trial with blind raters</a> — Guo et al., 2015, Am J Psychiatry. <span class="mono">via Consensus · <a href="https://pubmed.ncbi.nlm.nih.gov/26315978/" target="_blank" rel="noopener">PMID 26315978</a></span></li>
+        <li><a href="https://consensus.app/papers/details/29132b061cdd50ca91cb526aeff7cd27/?utm_source=claude_desktop">The efficacy of measurement-based care for depressive disorders: systematic review and meta-analysis of RCTs</a> — Zhu et al., 2021, J Clin Psychiatry. <span class="mono">via Consensus · <a href="https://pubmed.ncbi.nlm.nih.gov/34587377/" target="_blank" rel="noopener">PMID 34587377</a></span></li>
+        <li><a href="https://consensus.app/papers/details/a1c9a0c859d9550798a1521751b660e4/?utm_source=claude_desktop">Measurement-based care to enhance antidepressant treatment outcomes in major depressive disorder</a> — Husain et al., 2025, JAMA Network Open (Pakistan, multicentre RCT). <span class="mono">via Consensus · <a href="https://pubmed.ncbi.nlm.nih.gov/40892412/" target="_blank" rel="noopener">PMID 40892412</a></span></li>
+        <li><a href="https://consensus.app/papers/details/f13eee269d615a74984de66437bde15c/?utm_source=claude_desktop">The effectiveness of enhanced evidence-based care for depressive disorders: a meta-analysis of RCTs</a> — Xiao et al., 2021, Translational Psychiatry. <span class="mono">via Consensus · <a href="https://pubmed.ncbi.nlm.nih.gov/34657142/" target="_blank" rel="noopener">PMID 34657142</a></span></li>
+        <li><a href="https://consensus.app/papers/details/912c722a0fae58cfbf62d38eb805d09e/?utm_source=claude_desktop">Routine use of patient-reported outcome measures for improving treatment of common mental health disorders</a> — Kendrick et al., 2016, Cochrane Database Syst Rev. <span class="mono">via Consensus · <a href="https://pubmed.ncbi.nlm.nih.gov/27409972/" target="_blank" rel="noopener">PMID 27409972</a></span></li>
+        <li><a href="https://doi.org/10.1016/S0140-6736(16)31589-6">The Healthy Activity Program (HAP), a lay counsellor-delivered brief psychological treatment for severe depression in primary care in India: an RCT</a> — Patel et al., 2017, The Lancet. <span class="mono">via PubMed · DOI 10.1016/S0140-6736(16)31589-6 · <a href="https://pubmed.ncbi.nlm.nih.gov/27988143/" target="_blank" rel="noopener">PMID 27988143</a></span></li>
+        <li><a href="https://doi.org/10.1016/S0140-6736(10)61508-5">Effectiveness of an intervention led by lay health counsellors for depressive and anxiety disorders in primary care in Goa, India (MANAS): a cluster RCT</a> — Patel et al., 2010, The Lancet. <span class="mono">via PubMed · DOI 10.1016/S0140-6736(10)61508-5 · <a href="https://pubmed.ncbi.nlm.nih.gov/21159375/" target="_blank" rel="noopener">PMID 21159375</a></span></li>
+        <li><a href="https://doi.org/10.4103/indianjpsychiatry_640_25">Bridging the mental health treatment gap in India: a policy-oriented framework using the care cascade approach</a> — Debnath, Sagar &amp; Salve, 2025, Indian J Psychiatry. <span class="mono">via PubMed · DOI 10.4103/indianjpsychiatry_640_25 · <a href="https://pubmed.ncbi.nlm.nih.gov/41019263/" target="_blank" rel="noopener">PMID 41019263</a></span></li>
       </ol>
     </div>
   </div>
 </section>
 
+</main>
+
 <footer>
   <div class="wrap">
-    <p>Literature sourced through the Consensus research engine and PubMed (U.S. National Library of Medicine). Links lead to the papers or their DOIs; figures are quoted from the cited studies and should be re-verified against the originals before clinical or formal use. This page is education, not medical advice.</p>
+    <p>Literature sourced through the Consensus research engine and PubMed (U.S. National Library of Medicine). Links lead to the papers or their DOIs, and every entry carries its PubMed ID; all 23 were checked against their PubMed records in September 2026; figures are quoted from the cited studies and should be re-verified against the originals before clinical or formal use. This page is education, not medical advice.</p>
     <p style="margin-top:14px;padding-top:14px;border-top:1px solid var(--line);font-family:var(--font-ui);font-size:12.5px;">
       <strong style="color:var(--ink);">Built by Aryan Manhas</strong> ·
       <a href="https://github.com/aryanmanhas12/Psych" style="color:var(--heal);">github.com/aryanmanhas12/Psych</a> ·

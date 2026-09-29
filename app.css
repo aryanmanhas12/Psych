@@ -37,6 +37,12 @@ footer .byline a{color:var(--heal);}
   padding:.7rem 1.1rem;font-weight:700;text-decoration:none;border-radius:999px;
 }
 .skip:focus{left:.5rem;top:.5rem;}
+/* it sits inside the helpline strip (so it is inside a landmark), where the
+   strip's gold link styles would otherwise dress it as a see-through number
+   floating over the crisis text; keep it a solid pill of its own */
+.topstrip a.skip,.topstrip a.skip:hover,.topstrip a.skip:focus,.topstrip a.skip:focus-visible{
+  background:var(--ink);color:var(--paper);text-decoration:none;box-shadow:0 0 0 3px var(--stamp);
+}
 
 /* ── settings popover ── */
 .setbtn{
@@ -695,7 +701,7 @@ details.notice .inner{padding-top:.7rem;animation:slidedown .35s var(--e-out2);}
   font-family:var(--font-ui);font-size:.74rem;font-weight:800;letter-spacing:.1em;
   color:#1B1030;background:#FFD166;padding:.2rem .6rem;border-radius:999px;white-space:nowrap;
 }
-.tokenbar .tkname{font-family:var(--font-ui);font-size:.84rem;font-weight:700;opacity:.92;margin-right:auto;}
+.tokenbar .tkname{font-family:var(--font-ui);font-size:.84rem;font-weight:700;line-height:inherit;margin:0 auto 0 0;opacity:.92;}
 .tokenbar .tkclock{font-family:var(--font-ui);font-size:.75rem;opacity:.7;font-variant-numeric:tabular-nums;}
 .pbar{height:.4rem;background:rgba(255,246,238,.14);border-radius:999px;width:100%;margin-top:.55rem;overflow:hidden;}
 .pfill{height:100%;background:linear-gradient(90deg,#8B5CF6,#FF3D8B,#FFD166);border-radius:999px;width:0%;transition:width .5s var(--e-spring);
@@ -719,7 +725,7 @@ details.notice .inner{padding-top:.7rem;animation:slidedown .35s var(--e-out2);}
   background:radial-gradient(closest-side,rgba(255,209,102,.3),transparent);pointer-events:none;
 }
 .safenow[hidden]{display:none;}
-.safenow h2{font-size:1.3rem;font-weight:800;line-height:1.3;margin-bottom:.55rem;position:relative;}
+.safenow h1{font-size:1.3rem;font-weight:800;line-height:1.3;margin-bottom:.55rem;position:relative;}
 .safenow p{font-size:.95rem;line-height:1.6;margin-bottom:.9rem;position:relative;}
 .safenow-lines{display:flex;flex-direction:column;gap:.5rem;margin-bottom:1.1rem;position:relative;}
 .safenow-lines a{
@@ -740,7 +746,7 @@ details.notice .inner{padding-top:.7rem;animation:slidedown .35s var(--e-out2);}
 }
 .primer::before{content:"";position:absolute;left:0;right:0;top:0;height:4px;background:var(--grad-bloom);}
 .primer[hidden]{display:none;}
-.primer h2{font-size:1.4rem;font-weight:800;line-height:1.3;margin-bottom:.9rem;}
+.primer h1{font-size:1.4rem;font-weight:800;line-height:1.3;margin-bottom:.9rem;}
 .primer ul{list-style:none;display:flex;flex-direction:column;gap:.7rem;margin-bottom:1.3rem;}
 .primer li{font-size:.95rem;color:var(--muted);line-height:1.5;padding-left:1.5rem;position:relative;}
 .primer li::before{content:"";position:absolute;left:0;top:.45em;width:.7rem;height:.7rem;border-radius:50%;background:var(--grad-bloom);}
@@ -906,7 +912,7 @@ details.acc li::marker{color:var(--pink);}
   background:var(--stamp-bg);color:var(--on-stamp);padding:1.5rem 1.5rem;margin-bottom:1.5rem;
   border-radius:var(--r-xl);box-shadow:0 24px 50px -24px rgba(194,24,91,.7);max-width:48rem;
 }
-.safety h3{font-weight:800;font-size:1.3rem;margin-bottom:.65rem;letter-spacing:.01em;}
+.safety h2{font-weight:800;font-size:1.3rem;margin-bottom:.65rem;letter-spacing:.01em;line-height:inherit;}
 .safety p{font-size:.98rem;margin-bottom:.55rem;line-height:1.55;}
 .safety a{color:#fff;font-weight:700;text-decoration:underline;text-underline-offset:2px;}
 .safety .lines{font-family:var(--font-ui);font-size:.9rem;margin-top:.7rem;line-height:2.1;}
@@ -1030,7 +1036,7 @@ table.histtable td:nth-child(2){font-variant-numeric:tabular-nums;font-weight:70
   background:var(--card);border:1px solid var(--line);border-radius:var(--r-lg);padding:1rem 1.15rem;margin:.7rem 0;
   box-shadow:var(--shadow-subtle);max-width:48rem;
 }
-.res h3{font-size:1.02rem;font-weight:800;margin-bottom:.3rem;}
+.res h2,.res h3{font-size:1.02rem;font-weight:800;margin-bottom:.3rem;line-height:inherit;}
 .res p{font-size:.92rem;line-height:1.6;}
 .res a{font-weight:700;}
 .regiontabs{display:flex;gap:.4rem;flex-wrap:wrap;margin:1.3rem 0 .8rem;}

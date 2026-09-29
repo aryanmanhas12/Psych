@@ -82,6 +82,11 @@
    where the sun rises, Ooh and the name below), Ooh on the Begin screen,
    the "Less motion" switch, library effects ported to vanilla CSS/JS
    (spotlight, tilt, word reveal, moving border), guideline fixes. */
+/* v33: an accessibility pass with axe-core (0 WCAG 2.2 AA violations on
+   every screen, six languages, both themes): one h1 per screen, the
+   helpline strip and main content as landmarks, labels, contrast on the
+   manifesto; English UI copy without em dashes; every Evidence reference
+   checked against PubMed and linked by PMID. */
 /* ── the release number, in one place ──
    The page's own CSS and JS moved out of index.html into app.css and
    app.js, and every page now asks for its shared files by versioned URL
@@ -91,7 +96,7 @@
    script still in this cache for one load. A new version is a new URL,
    which this cache has never seen, so it is always fetched. When a release
    changes any of those files: bump REL here AND the ?v= in every page. */
-const REL = "32";
+const REL = "33";
 const CACHE = "ronak-v" + REL;
 const ASSETS = [
   "./", "./index.html", "./helplines.js", "./nav.js?v=" + REL,
