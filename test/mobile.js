@@ -1145,24 +1145,52 @@ const OVERFLOW = `(()=>{
           playing: !document.getElementById('overture').hidden && !!document.querySelector('#otCam.push, #otRoom.on') }));
         m.music && m.playing ? ok('Begin starts the music and the sunrise in the same tap')
                              : fail(`Begin: music ${m.music}, scene ${m.playing}`);
-        /* the opening on an upright phone is composed in 9:16, and its art
-           (the name and Ooh) always ends above the language buttons */
+        /* the opening on an upright phone is a full-bleed vertical story:
+           the picture fills the screen under the helpline strip, the two
+           people are drawn large, Skip sits at the top, and the art (the
+           name and Ooh) always ends above the caption and languages */
         await p.waitForTimeout(7300);
         const o = await p.evaluate(()=>{
           const ov = document.getElementById('overture'), sc = ov.querySelector('.ot-scene').getBoundingClientRect();
+          const strip = document.querySelector('.topstrip').getBoundingClientRect();
           const mark = document.getElementById('otMark').getBoundingClientRect();
           const cap = ov.querySelector('.ot-cap').getBoundingClientRect();
-          return { portrait: ov.classList.contains('ot-portrait'), ratio: sc.width / sc.height,
+          const head = document.querySelector('#otSit .hd').getBoundingClientRect();
+          const skip = document.getElementById('skipIntro').getBoundingClientRect();
+          return { portrait: ov.classList.contains('ot-portrait'),
+                   bleed: sc.left <= 0.5 && sc.right >= innerWidth - 0.5 && Math.abs(sc.top - strip.bottom) <= 2 && sc.bottom >= innerHeight - 1,
+                   head: head.width, skipTop: skip.top - sc.top < sc.height * 0.2,
                    clear: mark.bottom <= cap.top, ooh: document.getElementById('otOohSvg').childElementCount > 0 &&
                    document.getElementById('otOoh').classList.contains('on'),
                    gateOoh: !!document.querySelector('.ot-gate-ooh svg, .ot-gate-ooh [data-mood]') };
         });
-        o.portrait && o.ratio <= 0.5625 + 0.02 ? ok(`the opening is a 9:16 frame on an upright phone (${o.ratio.toFixed(3)})`)
-                                               : fail(`opening frame not 9:16 (portrait ${o.portrait}, ratio ${o.ratio.toFixed(3)})`);
+        o.portrait && o.bleed ? ok('the opening fills the upright phone edge to edge, under the helpline strip')
+                              : fail(`opening not full-bleed on an upright phone (portrait ${o.portrait}, bleed ${o.bleed})`);
+        o.head >= 44 ? ok(`the two people are drawn large on a phone (a head is ${Math.round(o.head)}px across)`)
+                     : fail(`the people are too small on a phone (head ${Math.round(o.head)}px, want 44+)`);
+        o.skipTop ? ok('Skip sits at the top of the story, where a thumb expects it') : fail('Skip is not at the top of the opening');
         o.clear ? ok('the name ends above the caption and language buttons') : fail('the name sits under the language buttons');
         o.ooh ? ok('Ooh arrives with the name at the end of the opening') : fail('Ooh did not arrive in the opening');
         o.gateOoh ? ok('Ooh greets on the Begin screen') : fail('no Ooh on the Begin screen');
       }
+      await ctx.close();
+    }
+    /* a phone on its side: the picture beside the controls, the name whole */
+    {
+      const ctx = await b.newContext({ viewport:{width:844,height:390}, isMobile:true, hasTouch:true }); const p = await ctx.newPage();
+      p.on('pageerror', e=>PAGE_ERRORS.push(e.message));
+      await p.goto(URL);
+      await p.evaluate(()=>['psych-seen-overture','psych-seen-tour','psych-seen-intro'].forEach(k=>localStorage.setItem(k,'2')));
+      await p.goto(URL,{waitUntil:'networkidle'}); await p.waitForTimeout(900);
+      await p.click('#otBegin'); await p.waitForTimeout(9000);
+      const l = await p.evaluate(()=>{
+        const m = document.getElementById('otMark').getBoundingClientRect(), f = document.querySelector('.ot-frame').getBoundingClientRect();
+        const sk = document.getElementById('skipIntro').getBoundingClientRect();
+        return { whole: m.top >= f.top - 1 && m.bottom <= f.bottom + 1, skip: sk.bottom <= innerHeight && sk.height > 0,
+                 wide: document.documentElement.scrollWidth <= innerWidth };
+      });
+      l.whole && l.skip && l.wide ? ok('on a phone turned sideways the whole picture shows, name included, and Skip is reachable')
+                                  : fail(`sideways opening: name whole ${l.whole}, skip ${l.skip}, no sideways scroll ${l.wide}`);
       await ctx.close();
     }
     const ctx = await b.newContext(phone()); const p = await ctx.newPage();

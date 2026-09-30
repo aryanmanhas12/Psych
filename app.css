@@ -1194,49 +1194,74 @@ table.lines td a{font-weight:800;white-space:nowrap;display:inline-flex;align-it
   }
   .ot-langs button{padding:.4rem .3rem;font-size:.82rem;}
 }
-/* ── the opening in 9:16, on a phone held upright ──
-   The scene is composed for a portrait frame, the shape a phone story
-   is: the room in the middle, the night sky above it where the sun will
-   rise, the name and Ooh below, and the caption and the six languages
-   laid over the foot of the frame on a dark fade, the way a story's
-   controls sit on the picture. The frame is 9:16 at most; on a taller
-   phone it is 9:16 and centred, on a shorter one it fills what there is.
-   otFit (app.js) sets the drawing's viewBox from the frame's real size
-   so the art always ends just above the controls, whatever the phone. */
+/* ── the opening on a phone held upright: a vertical story ──
+   Composed the way a phone story is, full-bleed: the picture fills the
+   whole screen under the helpline strip, with no box and no side gutters,
+   whatever the phone's height. A thin progress line runs across the top
+   and Skip sits under its right end, where a thumb expects to leave a
+   story; the caption and the six languages lie over a dark fade at the
+   foot, clear of the home indicator.
+   The drawing itself is recomposed for portrait rather than letterboxed:
+   the camera frames the two people, not the whole room. The window moves
+   up above them, the door stands at the right edge so the one who comes
+   in walks in from beyond the frame, the walls give way to open night,
+   and the sun rises into that sky. otFit (app.js) sets the viewBox from
+   the frame's real size: the art (sky to name) fits between the top line
+   and the controls, the people are as large as the width allows, and any
+   spare height becomes more sky. */
 #overture.ot-portrait{grid-template-rows:auto minmax(0,1fr) auto;padding-top:var(--ot-strip,0px);}
 #overture.ot-portrait > .ot-top{display:none;}
-#overture.ot-portrait .ot-stage{padding:0;align-self:stretch;display:grid;place-items:center;min-height:0;
+#overture.ot-portrait .ot-stage{padding:0;align-self:stretch;display:grid;min-height:0;
   grid-template-rows:minmax(0,1fr);grid-template-columns:minmax(0,1fr);}
 #overture.ot-portrait .ot-scene{
-  position:relative;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:.65rem;
-  height:min(100%, calc(100vw * 16 / 9));width:auto;aspect-ratio:9 / 16;max-width:100%;max-height:100%;
-  padding:0 0 .9rem;overflow:hidden;
+  position:relative;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:.7rem;
+  width:100%;height:100%;max-width:none;max-height:none;aspect-ratio:auto;
+  padding:0 0 calc(1rem + env(safe-area-inset-bottom,0px));overflow:hidden;
 }
 #overture.ot-portrait .ot-frame{
   position:absolute;inset:0;width:auto;aspect-ratio:auto;border:0;border-radius:0;box-shadow:none;
   background:linear-gradient(180deg,#07040F 0%,#140B2E 40%,#1E0E3A 70%,#0B0616 100%);
 }
-#overture.ot-portrait .ot-frame > svg{width:100%;height:100%;max-height:none;}
-/* a short phone: a strict 9:16 frame would be a narrow strip, so the frame
-   takes the whole stage and the art adapts through the viewBox instead */
-#overture.ot-portrait.ot-fill .ot-scene{width:100%;height:100%;aspect-ratio:auto;}
+#overture.ot-portrait .ot-frame > svg{width:100%;height:100%;max-width:none;max-height:none;}
 /* Ooh's own box inside the scene: 120 units, never the frame rule above */
 #otOohSvg{width:120px;height:120px;max-width:none;max-height:none;overflow:visible;}
 #overture.ot-portrait #otTall,#overture.ot-portrait #otStars{display:inline;}
-#overture.ot-portrait #otBand{display:none;}
-/* the fade the controls sit on */
+#overture.ot-portrait #otBand,#overture.ot-portrait .wall{display:none;}
+/* the fade the caption and languages sit on */
 #overture.ot-portrait .ot-scene::after{
-  content:"";position:absolute;left:0;right:0;bottom:0;height:var(--ot-foot,32%);pointer-events:none;z-index:0;
-  background:linear-gradient(180deg,rgba(11,6,22,0) 0%,rgba(11,6,22,.78) 38%,#0B0616 100%);
+  content:"";position:absolute;left:0;right:0;bottom:0;height:var(--ot-foot,34%);pointer-events:none;z-index:0;
+  background:linear-gradient(180deg,rgba(11,6,22,0) 0%,rgba(11,6,22,.8) 34%,#0B0616 100%);
 }
-#overture.ot-portrait .ot-cap,#overture.ot-portrait .ot-langs,#overture.ot-portrait .ot-progress{position:relative;z-index:1;}
-#overture.ot-portrait .ot-cap{font-size:.8rem;}
-/* in portrait the sun rises out of the room into the sky above it, and
-   opens larger there; --ot-sun-y and --ot-sun-s come from otFit */
-#overture.ot-portrait #otBloom{transform:translate(305px,110px) scale(.8);transition:transform 2.6s cubic-bezier(.2,.8,.2,1);}
-#overture.ot-portrait #otBloom.on{transform:translate(305px,var(--ot-sun-y,-40px)) scale(var(--ot-sun-s,1.25));}
-#overture.ot-portrait #otMark{transform:translate(262px,346px) scale(.3);}
-#overture.ot-portrait #otOoh{transform:translate(172px,314px) scale(.74);}
+#overture.ot-portrait .ot-cap,#overture.ot-portrait .ot-langs{position:relative;z-index:1;}
+#overture.ot-portrait .ot-cap{font-size:.84rem;line-height:1.45;color:rgba(255,246,238,.82);max-width:30ch;}
+#overture.ot-portrait .ot-langs{max-width:26rem;}
+/* the story line across the top */
+#overture.ot-portrait .ot-progress{
+  position:absolute;z-index:2;top:.7rem;left:max(1rem,env(safe-area-inset-left,0px));
+  right:max(1rem,env(safe-area-inset-right,0px));width:auto;height:3px;
+  background:rgba(255,246,238,.18);
+}
+/* Skip under the right end of that line, lying on the picture */
+#overture.ot-portrait > .ot-bottom{
+  grid-row:2;grid-column:1;align-self:start;justify-self:end;z-index:3;
+  padding:1.35rem max(.8rem,env(safe-area-inset-right,0px)) 0 0;
+}
+#overture.ot-portrait > .ot-bottom .wrap{width:auto;max-width:none;padding:0;margin:0;}
+#overture.ot-portrait #skipIntro{
+  min-height:44px;padding:.45rem 1.1rem;font-size:.84rem;
+  background:rgba(11,6,22,.42);border-color:rgba(255,246,238,.5);
+  -webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);
+}
+/* the portrait composition: moves only, nothing redrawn */
+#overture.ot-portrait #otWindow,#overture.ot-portrait #otPass{transform:translate(85.6px,12.8px) scale(.8);}
+#overture.ot-portrait #otDoorway,#overture.ot-portrait #otDoorLight{transform:translateX(-66px);}
+/* the sun rises from behind the two of them into the night above; its
+   height and size (--ot-sun-y, --ot-sun-s) come from otFit */
+#overture.ot-portrait #otBloom{transform:translate(284px,150px) scale(.5);transition:transform 2.6s cubic-bezier(.2,.8,.2,1);}
+#overture.ot-portrait #otBloom.on{transform:translate(284px,var(--ot-sun-y,34px)) scale(var(--ot-sun-s,1.1));}
+/* the ending: Ooh waving beside the bloom and the name, under the floor */
+#overture.ot-portrait #otOoh{transform:translate(176px,262px) scale(.56);}
+#overture.ot-portrait #otMark{transform:translate(252px,276px) scale(.3);}
 @media (prefers-reduced-motion: reduce){ #overture.ot-portrait #otBloom{transition:none;} }
 
 /* a phone turned sideways, and anything else short: height is the
@@ -1247,6 +1272,25 @@ table.lines td a{font-weight:800;white-space:nowrap;display:inline-flex;align-it
   .ot-scene{gap:.5rem;}
   .ot-cap{font-size:.72rem;}
   .ot-bottom{padding:.4rem 0 .6rem;}
+}
+/* A phone on its side: stacked, the picture was squeezed to a strip and
+   the name at its foot was cut off. Side by side instead, the way a
+   landscape video player lays out: the picture on the left at the full
+   height there is, the caption, languages and progress beside it. */
+@media (max-height:560px) and (orientation:landscape){
+  .ot-stage{padding:.4rem 0;place-items:stretch;
+    grid-template-rows:minmax(0,1fr);grid-template-columns:minmax(0,1fr);}
+  .ot-scene{display:grid;width:100%;max-width:none;height:100%;max-height:none;
+    grid-template-columns:minmax(0,1.55fr) minmax(0,1fr);grid-template-rows:1fr auto auto auto 1fr;
+    column-gap:1.2rem;row-gap:.6rem;align-items:center;
+    padding:0 max(1rem,env(safe-area-inset-right,0px)) 0 max(1rem,env(safe-area-inset-left,0px));}
+  .ot-frame{grid-column:1;grid-row:1 / 6;height:100%;min-height:0;border-radius:var(--r-lg);}
+  .ot-stage svg{width:100%;height:100%;max-width:none;max-height:none;}
+  .ot-cap{grid-column:2;grid-row:2;}
+  .ot-langs{grid-column:2;grid-row:3;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.4rem;width:100%;padding:0;}
+  .ot-langs button{padding:.3rem .2rem;font-size:.8rem;}
+  .ot-progress{grid-column:2;grid-row:4;justify-self:center;}
+  .ot-bottom{padding:.2rem 0 calc(.5rem + env(safe-area-inset-bottom,0px));}
 }
 
 /* ── scene ──
@@ -1335,6 +1379,8 @@ table.lines td a{font-weight:800;white-space:nowrap;display:inline-flex;align-it
 /* the tall sky exists only in the 9:16 phone frame */
 #otTall,#otStars{display:none;}
 #otMark.on{opacity:1;translate:0 0;}
+/* the lowercase wordmark, as in the nav and in Arun */
+.ot-word{font-family:"Ronak Wordmark","Karla",var(--font-ui);font-weight:700;font-size:118px;letter-spacing:-3.5px;fill:#FFF6EE;}
 
 @media (prefers-reduced-motion: reduce){
   #overture{display:none!important;}

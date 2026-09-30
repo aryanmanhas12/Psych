@@ -21,7 +21,7 @@
 <meta name="author" content="Aryan Manhas">
 <meta name="theme-color" content="#140A26">
 <link rel="manifest" href="manifest.webmanifest">
-<script src="nav.js?v=33" defer></script>
+<script src="nav.js?v=34" defer></script>
 <!-- The 192px PNG was fetched as the favicon on every page: 11.4KB gzip
      on the critical path, for something drawn at 16px. The SVG is 1.6KB
      and sharp at every size. No PNG fallback link: Chromium fetches every
@@ -90,7 +90,7 @@
     (function go(){
       var s = document.createElement("script");
       /* versioned like every other file this page loads — see REL in sw.js */
-      s.src = "i18n." + code + ".js?v=33";
+      s.src = "i18n." + code + ".js?v=34";
       s.async = false;
       s.onload  = function(){ settle(window.I18N && window.I18N[code] ? code : null); };
       s.onerror = function(){ if(++tries < 2) go(); else settle(null); };
@@ -112,8 +112,8 @@
 })();
 </script>
 <link rel="apple-touch-icon" href="icon-192.png">
-<link rel="stylesheet" href="site.css?v=33">
-<link rel="stylesheet" href="app.css?v=33">
+<link rel="stylesheet" href="site.css?v=34">
+<link rel="stylesheet" href="app.css?v=34">
 </head>
 <body>
 
@@ -203,21 +203,27 @@
              a person on the floor of a room, with the night visible through
              a window and the world carrying on without them. -->
         <g id="otRoom" class="ot-room">
-          <rect class="win" x="108" y="104" width="96" height="72" rx="2"/>
-          <circle class="moon" cx="184" cy="121" r="7"/>
-          <circle class="wstar" cx="124" cy="117" r="1.4"/>
-          <circle class="wstar" cx="143" cy="162" r="1.1"/>
-          <circle class="wstar" cx="171" cy="152" r="1.2"/>
+          <!-- window and door are groups so the upright phone can move them
+               into a portrait composition (app.css, #overture.ot-portrait) -->
+          <g id="otWindow">
+            <rect class="win" x="108" y="104" width="96" height="72" rx="2"/>
+            <circle class="moon" cx="184" cy="121" r="7"/>
+            <circle class="wstar" cx="124" cy="117" r="1.4"/>
+            <circle class="wstar" cx="143" cy="162" r="1.1"/>
+            <circle class="wstar" cx="171" cy="152" r="1.2"/>
+            <rect class="rl" x="108" y="104" width="96" height="72" rx="2"/>
+            <path class="rl" d="M156 104 V176 M108 140 H204"/>
+          </g>
           <path class="rl" d="M60 250 H540"/>
-          <path class="rl" d="M60 250 V70"/>
-          <path class="rl" d="M540 250 V70"/>
-          <path class="rl" d="M60 70 H540"/>
-          <rect class="rl" x="108" y="104" width="96" height="72" rx="2"/>
-          <path class="rl" d="M156 104 V176 M108 140 H204"/>
+          <path class="rl wall" d="M60 250 V70"/>
+          <path class="rl wall" d="M540 250 V70"/>
+          <path class="rl wall" d="M60 70 H540"/>
           <!-- the door, which will open onto light -->
-          <rect id="otDoorGlow" x="430" y="120" width="72" height="128" fill="url(#otDoorG)"/>
-          <rect class="rl" x="428" y="118" width="76" height="132" rx="2"/>
-          <circle class="rl dot" cx="440" cy="188" r="3.5"/>
+          <g id="otDoorway">
+            <rect id="otDoorGlow" x="430" y="120" width="72" height="128" fill="url(#otDoorG)"/>
+            <rect class="rl" x="428" y="118" width="76" height="132" rx="2"/>
+            <circle class="rl dot" cx="440" cy="188" r="3.5"/>
+          </g>
         </g>
         <!-- light spilling across the floor from the open door -->
         <polygon id="otDoorLight" points="430,250 502,250 470,316 330,316" fill="url(#otDoorG)"/>
@@ -286,15 +292,13 @@
            app.js from ooh.mjs; the scene stays wordless. -->
       <g id="otOoh" transform="translate(194 258) scale(.33)"><svg id="otOohSvg" width="120" height="120" viewBox="0 0 120 120" overflow="visible"></svg></g>
 
-      <!-- the name, last: a signature under the scene, not a caption over it -->
+      <!-- the name, last: a signature under the scene, not a caption over it.
+           The same lockup as the nav: the bloom beside "ronak" in lowercase
+           Karla 700 (the "Ronak Wordmark" subset in site.css), as Arun
+           writes "arun". About 450 x 110 units before its scale. -->
       <g id="otMark" transform="translate(237 270) scale(.28)">
-        <g fill="none" stroke="#FFF6EE" stroke-width="17" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M10 100 V10 H40 A25 25 0 0 1 40 60 H10 M36 60 L64 100"/>
-            <path d="M210 100 V10 L268 100 V10"/>
-            <path d="M294 100 L328 10 L362 100 M306 70 H350"/>
-            <path d="M390 10 V100 M442 10 L392 62 M411 42 L446 100"/>
-          </g>
-        <g transform="translate(136 55) scale(.56)"><g fill="url(#rkGo)"><use href="#rkRay" transform="rotate(30)"/><use href="#rkRay" transform="rotate(90)"/><use href="#rkRay" transform="rotate(150)"/><use href="#rkRay" transform="rotate(210)"/><use href="#rkRay" transform="rotate(270)"/><use href="#rkRay" transform="rotate(330)"/></g><g style="mix-blend-mode:screen"><use href="#rkPetal" fill="url(#rkPk)" transform="rotate(0)"/><use href="#rkPetal" fill="url(#rkVi)" transform="rotate(60)"/><use href="#rkPetal" fill="url(#rkPk)" transform="rotate(120)"/><use href="#rkPetal" fill="url(#rkVi)" transform="rotate(180)"/><use href="#rkPetal" fill="url(#rkPk)" transform="rotate(240)"/><use href="#rkPetal" fill="url(#rkVi)" transform="rotate(300)"/></g><circle r="30" fill="url(#rkCore)"/></g>
+        <g transform="translate(55 58) scale(.52)"><g fill="url(#rkGo)"><use href="#rkRay" transform="rotate(30)"/><use href="#rkRay" transform="rotate(90)"/><use href="#rkRay" transform="rotate(150)"/><use href="#rkRay" transform="rotate(210)"/><use href="#rkRay" transform="rotate(270)"/><use href="#rkRay" transform="rotate(330)"/></g><g style="mix-blend-mode:screen"><use href="#rkPetal" fill="url(#rkPk)" transform="rotate(0)"/><use href="#rkPetal" fill="url(#rkVi)" transform="rotate(60)"/><use href="#rkPetal" fill="url(#rkPk)" transform="rotate(120)"/><use href="#rkPetal" fill="url(#rkVi)" transform="rotate(180)"/><use href="#rkPetal" fill="url(#rkPk)" transform="rotate(240)"/><use href="#rkPetal" fill="url(#rkVi)" transform="rotate(300)"/></g><circle r="30" fill="url(#rkCore)"/></g>
+        <text x="122" y="94" class="ot-word">ronak</text>
       </g>
     </svg>
     </div>
@@ -969,9 +973,9 @@
 </footer>
 
 <!-- before app.js: the opening asks it whether to wait for Begin -->
-<script src="music.js?v=33"></script>
-<script src="app.js?v=33"></script>
+<script src="music.js?v=34"></script>
+<script src="app.js?v=34"></script>
 <!-- not deferred: Ooh's first line has to be in the page before the first paint -->
-<script src="companion.js?v=33"></script>
+<script src="companion.js?v=34"></script>
 </body>
 </html>
