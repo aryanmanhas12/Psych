@@ -129,6 +129,13 @@ a bud opening), never an illustration of the problem.
 - **Ooh:** speaks in the page under the heading in a cream comic bubble
   (3px plum border, 4px offset shadow, a sun-gold name plate); tucks into the
   corner above the tab bar; see companion.js for every rule.
+- **Opening (phones):** a full-bleed vertical story, never a letterboxed
+  box. Upright: the picture fills the screen under the crisis strip, the
+  camera frames the two people (window above them, door at the right edge,
+  open night for the sun), a thin progress line across the top with Skip
+  under its right end, caption and the six languages on a fade at the foot.
+  Sideways: picture left at full height, controls right. Ends on Ooh beside
+  the bloom and lowercase "ronak". Geometry lives in `otFit` (app.js).
 - **Tab bar (phones):** a floating pill at the bottom that slides away while
   scrolling down.
 - **Settings:** a popover, never under the tab bar; "Sound and feel" is a

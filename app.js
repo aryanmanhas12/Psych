@@ -2422,14 +2422,17 @@ function otReplay(){
 }
 
 const OT_SVG = ot.querySelector(".ot-stage svg");
-/* A phone held upright gets the 9:16 composition (see app.css). The
-   drawing's window is worked out from the frame it actually has:
-   the art (room, name, Ooh) ends at y=402 in scene units, and that line
-   is put just above the caption and language buttons laid over the foot
-   of the frame; whatever height is left above the room becomes sky, and
-   the sun is placed and sized in that sky. So a tall phone gets a big
-   sky and a big sunrise, a short one a smaller sun, and nothing is ever
-   under the buttons. */
+/* A phone held upright gets the vertical-story composition (see app.css).
+   The picture is full-bleed, and the drawing's window is worked out from
+   the frame it actually has. In scene units the portrait art runs from the
+   sky just above the sun (y -20) to the foot of the name (y 330), and the
+   two people and the door between them want about 240 units of width,
+   centred on x 284. That art is fitted between the story line and Skip at
+   the top and the caption and languages at the foot: as large as the
+   width allows, bottom-aligned on the controls, with any spare height
+   going to the night above. The sun is then sized and placed in whatever
+   sky there is, always clear of the window below it. */
+const OT_ART = { top:-20, bottom:330, width:240, cx:284, sunFloor:90 };
 function otFit(){
   if(!OT_SVG) return;
   const portrait = innerWidth <= 640 && innerHeight > innerWidth * 1.25;
@@ -2440,31 +2443,28 @@ function otFit(){
   }
   if(ot.hidden) return;
   /* The page's own crisis strip is pinned above everything, the opening
-     included, so the frame starts where that strip ends; the opening's
+     included, so the picture starts where that strip ends; the opening's
      copy of the strip would only sit hidden underneath it. */
   const pageStrip = document.querySelector(".topstrip");
   ot.style.setProperty("--ot-strip", (pageStrip ? Math.ceil(pageStrip.getBoundingClientRect().bottom) : 0) + "px");
   const scene = ot.querySelector(".ot-scene"), cap = ot.querySelector(".ot-cap");
-  const stage = ot.querySelector(".ot-stage").getBoundingClientRect();
-  ot.classList.toggle("ot-fill", stage.height * 9 / 16 < Math.min(stage.width, 330));
   const f = scene.getBoundingClientRect();
   if(!f.width || !f.height) return;
-  const foot = Math.max(0, f.bottom - cap.getBoundingClientRect().top) + 14;
-  const avail = Math.max(120, f.height - foot);
-  const ART_BOTTOM = 402, SKY_MIN = -60;
-  /* the room is cropped to x 90..520 (430 wide), centred on x 305 */
-  const unit = Math.min(f.width / 430, avail / (ART_BOTTOM - SKY_MIN));
+  const skip = document.getElementById("skipIntro").getBoundingClientRect();
+  const top = skip.height ? Math.max(0, skip.bottom - f.top) + 6 : 64;
+  const foot = Math.max(0, f.bottom - cap.getBoundingClientRect().top) + 10;
+  const artPx = Math.max(160, f.height - top - foot);
+  const unit = Math.min(f.width / OT_ART.width, artPx / (OT_ART.bottom - OT_ART.top));
   const W = f.width / unit, H = f.height / unit;
-  const x0 = 305 - W / 2, y0 = ART_BOTTOM - avail / unit;
-  OT_SVG.setAttribute("viewBox", [x0, y0, W, H].map(n=> n.toFixed(1)).join(" "));
-  const sky = 70 - y0;                               /* room top is y=70 */
-  /* the open bloom is about 52 units in radius at scale 1: keep all of it
-     in the sky, clear of the frame top and of the room */
-  const sun = Math.min(1.55, Math.max(0.5, sky / 250));
-  const sunY = Math.min(70 - 52 * sun - 6, Math.max(y0 + 52 * sun + 8, y0 + sky * 0.47));
-  ot.style.setProperty("--ot-sun-y", sunY.toFixed(1) + "px");
+  const y0 = OT_ART.bottom - (f.height - foot) / unit;
+  OT_SVG.setAttribute("viewBox", [OT_ART.cx - W / 2, y0, W, H].map(n=> n.toFixed(1)).join(" "));
+  /* the open bloom is about 52 units in radius at scale 1: its lowest ray
+     stays above the window (y 96), its top below the story line */
+  const skyTop = y0 + top / unit;
+  const sun = Math.min(1.15, Math.max(0.6, (OT_ART.sunFloor - skyTop - 6) / 104));
+  ot.style.setProperty("--ot-sun-y", (OT_ART.sunFloor - 52 * sun).toFixed(1) + "px");
   ot.style.setProperty("--ot-sun-s", sun.toFixed(3));
-  ot.style.setProperty("--ot-foot", Math.round(foot + 40) + "px");
+  ot.style.setProperty("--ot-foot", Math.round(foot + 56) + "px");
 }
 otFit();
 addEventListener("resize", otFit);

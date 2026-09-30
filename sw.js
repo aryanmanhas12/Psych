@@ -87,6 +87,11 @@
    helpline strip and main content as landmarks, labels, contrast on the
    manifesto; English UI copy without em dashes; every Evidence reference
    checked against PubMed and linked by PMID. */
+/* v34: the opening as a full-bleed vertical story on upright phones (the
+   picture fills the screen, the two people framed large, progress line
+   and Skip at the top, languages on a fade at the foot), side by side on
+   a phone turned sideways (the name was being cut off), and the lowercase
+   "ronak" lockup with Ooh at the end. */
 /* ── the release number, in one place ──
    The page's own CSS and JS moved out of index.html into app.css and
    app.js, and every page now asks for its shared files by versioned URL
@@ -96,7 +101,7 @@
    script still in this cache for one load. A new version is a new URL,
    which this cache has never seen, so it is always fetched. When a release
    changes any of those files: bump REL here AND the ?v= in every page. */
-const REL = "33";
+const REL = "34";
 const CACHE = "ronak-v" + REL;
 const ASSETS = [
   "./", "./index.html", "./helplines.js", "./nav.js?v=" + REL,
