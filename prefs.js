@@ -34,6 +34,23 @@
      the guarantee nav.js was written to make in the first place. */
   root.className += (root.className ? " " : "") + "js";
 
+  /* lite and "Less motion", decided before the first paint, exactly as
+     index.html's own head script does. The static pages used to learn
+     about either only when companion.js ran, after they had already
+     painted and started their motion. */
+  try{
+    var nv = navigator, cn = nv.connection || {};
+    if((nv.deviceMemory && nv.deviceMemory <= 2) || cn.saveData) root.className += " lite";
+  }catch(e){}
+  try{ if((JSON.parse(localStorage.getItem("ronak-feel")) || {}).still) root.className += " lite still"; }catch(e){}
+
+  /* Moving between pages cross-fades (site.css, @view-transition) except
+     where motion is unwelcome: lite and "Less motion" skip it on both the
+     page being left and the page arriving. */
+  function noPageFade(e){ if(e.viewTransition && /\blite\b/.test(root.className)) e.viewTransition.skipTransition(); }
+  addEventListener("pageswap", noPageFade);
+  addEventListener("pagereveal", noPageFade);
+
   var p;
   try{ p = JSON.parse(localStorage.getItem("psych-prefs")) || {}; }
   catch(e){ return; }              /* storage blocked — defaults are fine */

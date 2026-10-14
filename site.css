@@ -218,6 +218,23 @@ p,li{text-wrap:pretty;}
   *,*::before,*::after{animation:none!important;transition:none!important;}
   html{scroll-behavior:auto;}
 }
+/* ── moving between screens and pages ──
+   One calm cross-fade for both: the old screen settles back as the new one
+   rises into place (app.js goView for the app's four places; the browser
+   itself for page-to-page links, via @view-transition). The helpline strip
+   and the nav carry names of their own, so they hold still instead of
+   fading out and back. Never under reduced motion; lite and "Less motion"
+   skip it in script (prefs.js, index.html). Browsers without view
+   transitions simply navigate as before. */
+@media (prefers-reduced-motion: no-preference){
+  @view-transition{navigation:auto;}
+}
+::view-transition-old(root){animation:vt-out .2s ease both;}
+::view-transition-new(root){animation:vt-in .38s var(--e-spring) both;}
+@keyframes vt-out{to{opacity:0;transform:scale(.985);}}
+@keyframes vt-in{from{opacity:0;transform:translateY(14px);}}
+.topstrip{view-transition-name:rk-strip;}
+nav.site{view-transition-name:rk-nav;}
 a{color:var(--heal);text-underline-offset:.18em;}
 a:hover{text-decoration-thickness:2px;}
 :where(a,button,select,input,[tabindex]):focus-visible{
@@ -326,7 +343,7 @@ img,svg{max-width:100%;}
 .topstrip{
   background:var(--night-0);color:var(--on-deep);
   font-family:var(--font-ui);
-  font-size:.76rem;padding:.5rem 0;letter-spacing:.03em;
+  font-size:.8rem;padding:.5rem 0;letter-spacing:.03em;
   position:relative;
 }
 .topstrip::after{
@@ -498,7 +515,7 @@ header.hero::after{
 }
 .eyebrow{
   display:inline-flex;align-items:center;gap:.45rem;font-family:var(--font-ui);
-  font-size:.76rem;font-weight:700;letter-spacing:.08em;
+  font-size:.8rem;font-weight:700;letter-spacing:.08em;
   color:var(--heal);padding:.3rem .8rem;margin-bottom:1.1rem;border-radius:999px;
   background:color-mix(in srgb,var(--heal) 10%,transparent);
   border:1px solid color-mix(in srgb,var(--heal) 28%,transparent);
@@ -517,10 +534,10 @@ h3{font-family:var(--font-display);font-weight:700;}
 section{padding:2.8rem 0 .3rem;}
 .sec-label{
   font-family:var(--font-ui);font-weight:700;
-  font-size:.76rem;letter-spacing:.14em;
+  font-size:.8rem;letter-spacing:.14em;
   color:var(--stamp);margin-bottom:.6rem;
 }
-.sec-sub{max-width:66ch;color:var(--muted);font-size:.95rem;margin-bottom:1.4rem;}
+.sec-sub{max-width:66ch;color:var(--muted);font-size:1rem;margin-bottom:1.4rem;}
 
 /* ── the panel: the site's single repeating content block ── */
 .panel{
@@ -528,13 +545,13 @@ section{padding:2.8rem 0 .3rem;}
   padding:1.2rem 1.4rem;margin-bottom:.9rem;box-shadow:var(--shadow-card);
 }
 .panel h3{font-size:1.14rem;font-weight:700;margin-bottom:.4rem;}
-.panel p{font-size:.94rem;margin-bottom:.5rem;}
+.panel p{font-size:1rem;margin-bottom:.5rem;}
 .panel p:last-child{margin-bottom:0;}
 .panel.warn{border-left:4px solid var(--marigold);}
 .panel.hard{border-left:4px solid var(--stamp);}
 .panel .tag{
   font-family:var(--font-ui);font-weight:700;
-  font-size:.7rem;letter-spacing:.09em;
+  font-size:.76rem;letter-spacing:.09em;
   color:var(--heal);margin-bottom:.35rem;display:inline-block;
 }
 
@@ -553,7 +570,7 @@ section{padding:2.8rem 0 .3rem;}
 :lang(hi) .fig .n,:lang(mr) .fig .n,:lang(bn) .fig .n,:lang(ta) .fig .n,:lang(te) .fig .n{
   font-family:system-ui,'Noto Sans',sans-serif;font-weight:700;
 }
-.fig .l{font-size:.83rem;line-height:1.45;margin-top:.45rem;opacity:.93;}
+.fig .l{font-size:.9rem;line-height:1.45;margin-top:.45rem;opacity:.93;}
 /* same reasoning as the screener's stat band: high contrast is a request
    not to dim anything, least of all the source line under a figure */
 :root[data-contrast="high"] .fig .l,
@@ -561,20 +578,37 @@ section{padding:2.8rem 0 .3rem;}
 :root[data-contrast="high"] .fig .n{color:#FFC64D;}
 .fig .s{
   font-family:var(--font-ui);
-  font-size:.64rem;opacity:.66;margin-top:.45rem;display:block;
+  font-size:.7rem;opacity:.66;margin-top:.45rem;display:block;
 }
 
 /* ── tables ── */
 .scroll{overflow-x:auto;}
-table.data{border-collapse:separate;border-spacing:0;width:100%;font-size:.88rem;background:var(--card);margin-bottom:.9rem;
+table.data{border-collapse:separate;border-spacing:0;width:100%;font-size:.94rem;background:var(--card);margin-bottom:.9rem;
   border:1px solid var(--line);border-radius:var(--r-md);overflow:hidden;}
 table.data th,table.data td{border-bottom:1px solid var(--line);padding:.65rem .8rem;text-align:left;vertical-align:top;}
 table.data tr:last-child td{border-bottom:0;}
 table.data th{
   font-family:var(--font-ui);font-weight:700;
-  font-size:.7rem;letter-spacing:.06em;background:color-mix(in srgb,var(--heal) 7%,var(--card));
+  font-size:.76rem;letter-spacing:.06em;background:color-mix(in srgb,var(--heal) 7%,var(--card));
 }
 table.data td.ok{color:var(--heal);font-weight:700;}
+/* A three-column table on a phone either scrolls sideways or crushes its
+   longest column into a word per line. Under 560px a .stack table reads as
+   a list of small cards instead: one row per card, each value under its
+   column's name (data-label, written from the table's own headers). The
+   explicit roles in the markup keep it a table to a screen reader. */
+@media (max-width:560px){
+  table.stack,table.stack tbody,table.stack tr,table.stack td{display:block;width:auto;}
+  table.stack thead{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;}
+  table.stack tr{padding:.75rem .95rem;border-bottom:1px solid var(--line);}
+  table.stack tr:last-child{border-bottom:0;}
+  table.stack tr td,table.stack tr td:first-child{border:0;padding:0;width:auto;}
+  table.stack tr td::before{
+    content:attr(data-label);display:block;margin-top:.5rem;
+    font:700 .76rem/1.4 var(--font-ui);letter-spacing:.05em;color:var(--muted);
+  }
+  table.stack tr td:first-child::before{margin-top:0;}
+}
 
 /* ── buttons ──
    Primary is a pill of light: violet into magenta, dark enough end to end
@@ -584,7 +618,7 @@ table.data td.ok{color:var(--heal);font-weight:700;}
    check, which reads the colour, not the image. */
 button,.btn{border-radius:999px;
   font-weight:700;letter-spacing:.02em;font-family:inherit;
-  font-size:.95rem;background-color:#6D28D9;background-image:var(--grad-cta);color:#fff;border:none;
+  font-size:1rem;background-color:#6D28D9;background-image:var(--grad-cta);color:#fff;border:none;
   padding:.78rem 1.4rem;cursor:pointer;
   text-decoration:none;display:inline-block;min-height:2.75rem;
   transition:transform .18s var(--e-spring),box-shadow .25s var(--e-out2),background-color .15s ease,border-color .15s ease,color .15s ease;
@@ -609,15 +643,15 @@ button:disabled{opacity:.45;cursor:not-allowed;transform:none;box-shadow:none;}
 
 /* ── reference lists ── */
 .reflist ol{margin-left:1.4rem;}
-.reflist li{font-size:.87rem;margin-bottom:.6rem;color:var(--muted);}
+.reflist li{font-size:.94rem;margin-bottom:.6rem;color:var(--muted);}
 .reflist li a{color:var(--ink);font-weight:600;}
 /* A DOI is one unbroken string; at 320px and the largest text size three
    of them ran 47px past the screen edge and dragged the whole page sideways. */
-.reflist li .mono{font-size:.72rem;color:var(--heal);overflow-wrap:anywhere;}
+.reflist li .mono{font-size:.78rem;color:var(--heal);overflow-wrap:anywhere;}
 
 /* ── footer: where the page reaches its sunrise ── */
 footer{
-  padding:2.8rem 0 3.5rem;font-size:.87rem;color:var(--muted);
+  padding:2.8rem 0 3.5rem;font-size:.94rem;color:var(--muted);
   margin-top:2.6rem;position:relative;
 }
 footer::before{
@@ -629,9 +663,9 @@ footer p{max-width:72ch;}
 footer .byline{
   margin-top:1.1rem;padding-top:1rem;border-top:1px solid var(--line);
   display:flex;gap:.8rem;flex-wrap:wrap;align-items:baseline;
-  font-family:var(--font-ui);font-size:.78rem;
+  font-family:var(--font-ui);font-size:.84rem;
 }
-footer .byline strong{color:var(--ink);font-size:.85rem;}
+footer .byline strong{color:var(--ink);font-size:.92rem;}
 
 /* ── anything narrower than a laptop: the links live behind the button ──
    Nine top-level links, a wordmark and a settings control need about
@@ -731,7 +765,7 @@ footer .byline strong{color:var(--ink);font-size:.85rem;}
   header.hero{padding:2.1rem 0 1.7rem;}
   section{padding:2rem 0 .3rem;}
   h1{font-size:clamp(1.75rem,8vw,2.3rem);}
-  .lede{font-size:.97rem;}
+  .lede{font-size:1.03rem;}
   /* ── the numbers stay on the screen ──
      Sticky, and above the tour's dimming layer rather than behind it: the
      walkthrough is allowed to dim the page and swallow taps, but not
@@ -740,7 +774,7 @@ footer .byline strong{color:var(--ink);font-size:.85rem;}
      about half the height it once took. */
   .topstrip{
     position:sticky;top:0;z-index:950;
-    font-size:.62rem;padding:.35rem 0;line-height:1.38;letter-spacing:.02em;
+    font-size:.62rem;padding:.35rem 0;line-height:1.38;letter-spacing:0;
   }
   /* Two flex items on a narrow screen means two blocks, each wrapping
      inside its own column — three lines to say what fits in two. Letting
@@ -752,9 +786,15 @@ footer .byline strong{color:var(--ink);font-size:.85rem;}
      padding and number padding is what lets the directory link share the
      second line on a 390px phone instead of taking a third — the 44px
      number targets below are untouched. */
-  .topstrip .wrap,.topstrip .wrap-wide{padding-inline:.85rem;}
-  .topstrip a,.topstrip a.dial{padding-inline:.16rem;}
+  .topstrip .wrap,.topstrip .wrap-wide{padding-inline:.6rem;}
+  .topstrip a,.topstrip a.dial{padding-inline:.1rem;}
   .strip-tail{display:none;}
+  /* The numbers are the point of the strip: 30% larger than the words
+     around them (14.5px against 11.2px), so a shaking hand finds them
+     first. The words lose their tracking and the strip a little side
+     padding to pay for it, which keeps the strip exactly the height it was
+     (two lines at 390px) - measured at 360, 390 and 412. */
+  .topstrip a.dial{font-size:1.3em;font-weight:800;letter-spacing:0;}
   .panel{padding:1rem 1.1rem;}
 }
 
@@ -894,12 +934,12 @@ html.ooh-off .ooh-slot{display:none!important;}
 .ooh-name{
   position:absolute;top:-13px;left:12px;padding:2px 10px 1px;
   border:2.5px solid #2A1636;border-radius:999px;background:#FFC857;color:#2A1636;
-  font:700 .82rem/1.2 var(--font-display);letter-spacing:.03em;
+  font:700 .88rem/1.2 var(--font-display);letter-spacing:.03em;
 }
 .ooh-text{display:block;}
 .ooh-rest{color:transparent;}
 .ooh-next{
-  display:block;margin-top:6px;text-align:right;font-size:.8rem;font-weight:700;color:#7A2748;
+  display:block;margin-top:6px;text-align:right;font-size:.86rem;font-weight:700;color:#7A2748;
   opacity:0;transition:opacity .2s;
 }
 .ooh-next[data-ready="true"]{opacity:1;animation:ooh-nudge 1.6s ease-in-out infinite;}

@@ -6,8 +6,8 @@
 <title>Global Frameworks — WHO and UN Alignment | Ronak</title>
 <meta name="description" content="How Ronak maps to WHO's Comprehensive Mental Health Action Plan 2013-2030, SDG target 3.4, mhGAP task-sharing and QualityRights.">
 <meta name="author" content="Aryan Manhas">
-<script src="nav.js?v=34" defer></script>
-<script src="companion.js?v=34" defer></script>
+<script src="nav.js?v=35" defer></script>
+<script src="companion.js?v=35" defer></script>
 <!-- The 192px PNG was fetched as the favicon on every page: 11.4KB gzip
      on the critical path, for something drawn at 16px. The SVG is 1.6KB
      and sharp at every size. No PNG fallback link: Chromium fetches every
@@ -36,30 +36,30 @@
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="icon-192.png">
 <script src="prefs.js"></script>
-<link rel="stylesheet" href="site.css?v=34">
+<link rel="stylesheet" href="site.css?v=35">
 <style>
 /* the notice that has to be unmissable */
 .disclaim{
   border:1px solid var(--stamp);border-left:.45rem solid var(--stamp);border-radius:var(--r-md);background:var(--card);
-  box-shadow:var(--shadow-subtle);padding:16px 20px;margin-top:26px;max-width:66ch;font-size:14.5px;
+  box-shadow:var(--shadow-subtle);padding:16px 20px;margin-top:26px;max-width:66ch;font-size:.92rem;
 }
-.disclaim b{display:block;font-family:var(--font-ui);font-size:12px;
+.disclaim b{display:block;font-family:var(--font-ui);font-size:.78rem;
   letter-spacing:.05em;color:var(--stamp);margin-bottom:6px;}
 /* framework cards */
 .fw{background:var(--card);border:1px solid var(--line);border-left:.45rem solid var(--heal);border-radius:var(--r-md);
   box-shadow:var(--shadow-card);padding:20px 24px;margin-bottom:14px;}
-.fw .tag{font-family:var(--font-ui);font-size:11.5px;letter-spacing:.05em;
+.fw .tag{font-family:var(--font-ui);font-size:.76rem;letter-spacing:.05em;
   color:var(--heal);margin-bottom:6px;font-weight:600;}
-.fw h3{font-size:19px;font-weight:700;margin-bottom:8px;color:var(--ink);}
-.fw p{font-size:15px;margin-bottom:10px;line-height:1.55;}
+.fw h3{font-size:1.16rem;font-weight:700;margin-bottom:8px;color:var(--ink);}
+.fw p{font-size:1rem;margin-bottom:10px;line-height:1.55;}
 .fw p:last-child{margin-bottom:0;}
-.fw .q{border-left:3px solid var(--line);padding-left:14px;font-style:italic;color:var(--muted);font-size:14.5px;}
-table.map{border-collapse:collapse;width:100%;font-size:14.5px;background:var(--card);margin-bottom:14px;}
+.fw .q{border-left:3px solid var(--line);padding-left:14px;font-style:italic;color:var(--muted);font-size:.92rem;}
+table.map{border-collapse:collapse;width:100%;font-size:.92rem;background:var(--card);margin-bottom:14px;}
 table.map th,table.map td{border:1px solid var(--line);padding:11px 13px;text-align:left;vertical-align:top;}
-table.map th{font-family:var(--font-ui);font-size:11.5px;
+table.map th{font-family:var(--font-ui);font-size:.76rem;
   letter-spacing:.05em;background:var(--paper);}
 table.map td:first-child{font-weight:600;width:32%;}
-table.map td .src{display:block;font-family:var(--font-ui);font-size:11px;color:var(--muted);margin-top:4px;}
+table.map td .src{display:block;font-family:var(--font-ui);font-size:.76rem;color:var(--muted);margin-top:4px;}
 table.map .ok{color:var(--heal);font-weight:700;}
 </style>
 </head>
@@ -160,46 +160,46 @@ table.map .ok{color:var(--heal);font-weight:700;}
     <p class="sec-sub">Claiming to advance a WHO objective is easy. The table below states the specific mechanism in each case, and marks plainly where a screening tool contributes nothing. Overclaiming here would undermine the project's only real asset, which is that its claims can be checked.</p>
 
     <div class="scroll">
-      <table class="map">
+      <table class="map stack" role="table">
         <caption class="visually-hidden">Mapping of global framework commitments to this project's features</caption>
-        <thead>
-          <tr><th scope="col">Commitment</th><th scope="col">What this project actually does</th><th scope="col">Contribution</th></tr>
+        <thead role="rowgroup">
+          <tr role="row"><th scope="col" role="columnheader">Commitment</th><th scope="col" role="columnheader">What this project actually does</th><th scope="col" role="columnheader">Contribution</th></tr>
         </thead>
-        <tbody>
-          <tr>
-            <td>Community-based access to care<span class="src">WHO Action Plan, Objective 2</span></td>
-            <td>Validated screening delivered free on any phone, offline-capable, in six languages, with no account, cost or clinic visit required to begin.</td>
-            <td class="ok">Direct</td>
+        <tbody role="rowgroup">
+          <tr role="row">
+            <td role="cell" data-label="Commitment">Community-based access to care<span class="src">WHO Action Plan, Objective 2</span></td>
+            <td role="cell" data-label="What this project actually does">Validated screening delivered free on any phone, offline-capable, in six languages, with no account, cost or clinic visit required to begin.</td>
+            <td class="ok" role="cell" data-label="Contribution">Direct</td>
           </tr>
-          <tr>
-            <td>Prevention and early identification<span class="src">WHO Action Plan, Objective 3</span></td>
-            <td>Targets the pre-clinical window. Peak age of onset is 14.5 years and 48% of conditions begin before 18, yet first contact with services typically lags onset by years.</td>
-            <td class="ok">Direct</td>
+          <tr role="row">
+            <td role="cell" data-label="Commitment">Prevention and early identification<span class="src">WHO Action Plan, Objective 3</span></td>
+            <td role="cell" data-label="What this project actually does">Targets the pre-clinical window. Peak age of onset is 14.5 years and 48% of conditions begin before 18, yet first contact with services typically lags onset by years.</td>
+            <td class="ok" role="cell" data-label="Contribution">Direct</td>
           </tr>
-          <tr>
-            <td>Task-sharing with non-specialists<span class="src">WHO mhGAP</span></td>
-            <td>Uses the same instruments (PHQ-9, GAD-7, AUDIT-C) that mhGAP-aligned primary care and lay-counsellor programmes use, so a result is legible to a non-specialist and to the clinician they refer on to.</td>
-            <td class="ok">Direct</td>
+          <tr role="row">
+            <td role="cell" data-label="Commitment">Task-sharing with non-specialists<span class="src">WHO mhGAP</span></td>
+            <td role="cell" data-label="What this project actually does">Uses the same instruments (PHQ-9, GAD-7, AUDIT-C) that mhGAP-aligned primary care and lay-counsellor programmes use, so a result is legible to a non-specialist and to the clinician they refer on to.</td>
+            <td class="ok" role="cell" data-label="Contribution">Direct</td>
           </tr>
-          <tr>
-            <td>Rights, dignity, non-coercion<span class="src">WHO QualityRights</span></td>
-            <td>No account, no data collection, no engagement mechanics, no diagnosis asserted. The user can export or destroy their record at any time. Refusals are documented publicly.</td>
-            <td class="ok">Direct</td>
+          <tr role="row">
+            <td role="cell" data-label="Commitment">Rights, dignity, non-coercion<span class="src">WHO QualityRights</span></td>
+            <td role="cell" data-label="What this project actually does">No account, no data collection, no engagement mechanics, no diagnosis asserted. The user can export or destroy their record at any time. Refusals are documented publicly.</td>
+            <td class="ok" role="cell" data-label="Contribution">Direct</td>
           </tr>
-          <tr>
-            <td>Reduce suicide mortality by one third<span class="src">SDG 3.4 / indicator 3.4.2</span></td>
-            <td>Surfaces crisis helplines on every page in every language, and triggers a crisis panel on any positive response to the PHQ-9 self-harm item, before the score is shown.</td>
-            <td>Contributory only</td>
+          <tr role="row">
+            <td role="cell" data-label="Commitment">Reduce suicide mortality by one third<span class="src">SDG 3.4 / indicator 3.4.2</span></td>
+            <td role="cell" data-label="What this project actually does">Surfaces crisis helplines on every page in every language, and triggers a crisis panel on any positive response to the PHQ-9 self-harm item, before the score is shown.</td>
+            <td role="cell" data-label="Contribution">Contributory only</td>
           </tr>
-          <tr>
-            <td>Information systems and research<span class="src">WHO Action Plan, Objective 4</span></td>
-            <td>Nothing. The privacy architecture means no data is collected, so this project generates no population-level evidence by design. That is a deliberate trade, and it is a real cost.</td>
-            <td>None — by design</td>
+          <tr role="row">
+            <td role="cell" data-label="Commitment">Information systems and research<span class="src">WHO Action Plan, Objective 4</span></td>
+            <td role="cell" data-label="What this project actually does">Nothing. The privacy architecture means no data is collected, so this project generates no population-level evidence by design. That is a deliberate trade, and it is a real cost.</td>
+            <td role="cell" data-label="Contribution">None — by design</td>
           </tr>
-          <tr>
-            <td>Leadership, governance, financing<span class="src">WHO Action Plan, Objective 1</span></td>
-            <td>Nothing a website can do. Budgets, workforce and legislation are state functions. The <a href="manifesto.html">manifesto</a> argues for them; the tool cannot deliver them.</td>
-            <td>None</td>
+          <tr role="row">
+            <td role="cell" data-label="Commitment">Leadership, governance, financing<span class="src">WHO Action Plan, Objective 1</span></td>
+            <td role="cell" data-label="What this project actually does">Nothing a website can do. Budgets, workforce and legislation are state functions. The <a href="manifesto.html">manifesto</a> argues for them; the tool cannot deliver them.</td>
+            <td role="cell" data-label="Contribution">None</td>
           </tr>
         </tbody>
       </table>

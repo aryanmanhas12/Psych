@@ -6,8 +6,8 @@
 <title>Ethics &amp; Privacy — What Ronak Stores and What It Claims</title>
 <meta name="description" content="What Ronak stores, what it sends (nothing), what it claims, and how to verify each claim yourself. Written to be checkable rather than reassuring.">
 <meta name="author" content="Aryan Manhas">
-<script src="nav.js?v=34" defer></script>
-<script src="companion.js?v=34" defer></script>
+<script src="nav.js?v=35" defer></script>
+<script src="companion.js?v=35" defer></script>
 <!-- The 192px PNG was fetched as the favicon on every page: 11.4KB gzip
      on the critical path, for something drawn at 16px. The SVG is 1.6KB
      and sharp at every size. No PNG fallback link: Chromium fetches every
@@ -36,17 +36,17 @@
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="icon-192.png">
 <script src="prefs.js"></script>
-<link rel="stylesheet" href="site.css?v=34">
+<link rel="stylesheet" href="site.css?v=35">
 <style>
 .rule{background:var(--card);border:1px solid var(--line);border-radius:var(--r-md);box-shadow:var(--shadow-card);padding:18px 22px;margin-bottom:14px;max-width:860px;}
-  .rule h3{font-size:18px;font-weight:700;margin-bottom:6px;color:var(--ink);}
-  .rule p{font-size:15px;margin-bottom:8px;line-height:1.6;}
+  .rule h3{font-size:1.1rem;font-weight:700;margin-bottom:6px;color:var(--ink);}
+  .rule p{font-size:1rem;margin-bottom:8px;line-height:1.6;}
   .rule p:last-child{margin-bottom:0;}
   .rule.warn{border-left-color:var(--marigold);}
   .rule.hard{border-left-color:var(--stamp);}
-  .rule .check{font-family:var(--font-ui);font-size:12.5px;color:var(--heal);margin-top:8px;display:block;font-weight:600;}
+  .rule .check{font-family:var(--font-ui);font-size:.8rem;color:var(--heal);margin-top:8px;display:block;font-weight:600;}
 
-  .pill{display:inline-block;font-family:var(--font-ui);font-size:11.5px;letter-spacing:.06em;border:1.5px solid var(--heal);color:var(--heal);padding:2px 8px;margin-bottom:8px;border-radius:var(--r-sm);}
+  .pill{display:inline-block;font-family:var(--font-ui);font-size:.76rem;letter-spacing:.06em;border:1.5px solid var(--heal);color:var(--heal);padding:2px 8px;margin-bottom:8px;border-radius:var(--r-sm);}
   .pill.no{border-color:var(--stamp);color:var(--stamp);}
 </style>
 </head>
@@ -89,16 +89,16 @@
     <p class="sec-sub">Not "anonymised". Not "aggregated". Nothing. There is no server to send data to — this is a static site, and every feature runs inside your browser.</p>
 
     <div class="scroll">
-    <table class="data">
+    <table class="data stack" role="table">
       <caption class="visually-hidden">Data practices</caption>
-      <thead><tr><th scope="col">Practice</th><th scope="col">This site</th><th scope="col">How to verify</th></tr></thead>
-      <tbody>
-        <tr><td>Accounts or sign-in</td><td class="no">None</td><td>There is no login anywhere in the interface.</td></tr>
-        <tr><td>Analytics or tracking</td><td class="no">None</td><td>Open DevTools → Network, use the whole site. No analytics requests.</td></tr>
-        <tr><td>Cookies</td><td class="no">None</td><td>DevTools → Application → Cookies is empty.</td></tr>
-        <tr><td>Third-party requests</td><td class="no">None</td><td>Fonts are self-hosted. DevTools → Network shows requests only to this domain.</td></tr>
-        <tr><td>Your answers</td><td class="no">Never transmitted</td><td>Screening runs in JavaScript on your device. Disconnect from the internet — everything still works.</td></tr>
-        <tr><td>Where scores live</td><td>Your browser's localStorage</td><td>DevTools → Application → Local Storage. You can read, export, or delete it.</td></tr>
+      <thead role="rowgroup"><tr role="row"><th scope="col" role="columnheader">Practice</th><th scope="col" role="columnheader">This site</th><th scope="col" role="columnheader">How to verify</th></tr></thead>
+      <tbody role="rowgroup">
+        <tr role="row"><td role="cell" data-label="Practice">Accounts or sign-in</td><td class="no" role="cell" data-label="This site">None</td><td role="cell" data-label="How to verify">There is no login anywhere in the interface.</td></tr>
+        <tr role="row"><td role="cell" data-label="Practice">Analytics or tracking</td><td class="no" role="cell" data-label="This site">None</td><td role="cell" data-label="How to verify">Open DevTools → Network, use the whole site. No analytics requests.</td></tr>
+        <tr role="row"><td role="cell" data-label="Practice">Cookies</td><td class="no" role="cell" data-label="This site">None</td><td role="cell" data-label="How to verify">DevTools → Application → Cookies is empty.</td></tr>
+        <tr role="row"><td role="cell" data-label="Practice">Third-party requests</td><td class="no" role="cell" data-label="This site">None</td><td role="cell" data-label="How to verify">Fonts are self-hosted. DevTools → Network shows requests only to this domain.</td></tr>
+        <tr role="row"><td role="cell" data-label="Practice">Your answers</td><td class="no" role="cell" data-label="This site">Never transmitted</td><td role="cell" data-label="How to verify">Screening runs in JavaScript on your device. Disconnect from the internet — everything still works.</td></tr>
+        <tr role="row"><td role="cell" data-label="Practice">Where scores live</td><td role="cell" data-label="This site">Your browser's localStorage</td><td role="cell" data-label="How to verify">DevTools → Application → Local Storage. You can read, export, or delete it.</td></tr>
       </tbody>
     </table>
     </div>
