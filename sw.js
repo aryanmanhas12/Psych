@@ -92,6 +92,12 @@
    and Skip at the top, languages on a fade at the foot), side by side on
    a phone turned sideways (the name was being cut off), and the lowercase
    "ronak" lockup with Ooh at the end. */
+/* v35: a readability pass. Reading text is 18px on a phone (it was 15px),
+   small labels no smaller than about 13.7px, the reading pages sized in rem
+   so the text-size setting reaches them, helpline numbers 30% larger in a
+   strip that keeps its height, wide tables stacked as cards on phones, the
+   primer's Start kept clear of the tab bar, and a calm cross-fade between
+   pages as well as between the app's own screens. */
 /* ── the release number, in one place ──
    The page's own CSS and JS moved out of index.html into app.css and
    app.js, and every page now asks for its shared files by versioned URL
@@ -101,7 +107,7 @@
    script still in this cache for one load. A new version is a new URL,
    which this cache has never seen, so it is always fetched. When a release
    changes any of those files: bump REL here AND the ?v= in every page. */
-const REL = "34";
+const REL = "35";
 const CACHE = "ronak-v" + REL;
 const ASSETS = [
   "./", "./index.html", "./helplines.js", "./nav.js?v=" + REL,

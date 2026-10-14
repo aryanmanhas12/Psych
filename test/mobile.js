@@ -1230,6 +1230,56 @@ const OVERFLOW = `(()=>{
     await ctx.close();
   }
 
+  /* 20 ── readable text. The reading pages sized their paragraphs in px
+         (15px on a phone, and deaf to the text-size setting), the crisis
+         numbers were 11px, and the primer's Start button was focused into
+         the space behind the floating tab bar. Each is held here. */
+  head('20. READABLE TEXT ON A PHONE');
+  {
+    const ctx = await b.newContext(phone({ serviceWorkers:'block', reducedMotion:'reduce' })); const p = await ctx.newPage();
+    p.on('pageerror', e=>PAGE_ERRORS.push(e.message));
+    await p.addInitScript(()=>{ ['psych-seen-overture','psych-seen-tour','psych-seen-intro'].forEach(k=>localStorage.setItem(k,'2'));
+                                sessionStorage.setItem('ronak-visit-opened','1'); });
+    const BASE = URL.replace(/[^/]*$/, '');
+    for(const [pg, sel] of [['evidence','.claim .body p'],['ethics','.rule p'],['global','.fw p:not(.tag):not(.q)'],['manifesto','.sol p']]){
+      await p.goto(BASE+pg+'.html',{waitUntil:'networkidle'}); await p.waitForTimeout(300);
+      const fs = await p.evaluate(sel=>{ const e = document.querySelector(sel); return e ? parseFloat(getComputedStyle(e).fontSize) : 0; }, sel);
+      fs >= 17 ? ok(`${pg}: reading text is ${fs.toFixed(1)}px on a phone`) : fail(`${pg}: reading text ${fs.toFixed(1)}px (want 17+)`);
+    }
+    /* the reading pages follow the text-size setting (rem, not px) */
+    await p.evaluate(()=>localStorage.setItem('psych-prefs', JSON.stringify({scale:1.35})));
+    await p.goto(BASE+'evidence.html',{waitUntil:'networkidle'}); await p.waitForTimeout(300);
+    const big = await p.evaluate(()=>parseFloat(getComputedStyle(document.querySelector('.claim .body p')).fontSize));
+    big >= 23 ? ok(`the Evidence page grows with the text-size setting (${big.toFixed(1)}px at the largest size)`)
+              : fail(`the Evidence page ignores the text-size setting (${big.toFixed(1)}px at 1.35)`);
+    await p.evaluate(()=>localStorage.removeItem('psych-prefs'));
+    await p.goto(URL,{waitUntil:'networkidle'}); await p.waitForTimeout(1200);
+    const home = await p.evaluate(()=>{
+      const dial = parseFloat(getComputedStyle(document.querySelector('.topstrip a.dial')).fontSize);
+      let min = 99, where = '';
+      const tw = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT); let n;
+      while((n = tw.nextNode())){
+        if(n.textContent.trim().length < 2) continue;
+        /* the strip's words stay compact so its numbers can be large; the
+           numbers have their own check above */
+        const el = n.parentElement; if(!el || el.closest('[hidden],[aria-hidden="true"],.visually-hidden,.topstrip,#overture,#tour,#intro')) continue;
+        const r = el.getBoundingClientRect(); if(!r.width || !r.height || r.bottom < 0 || r.top > innerHeight) continue;
+        const f = parseFloat(getComputedStyle(el).fontSize); if(f < min){ min = f; where = el.className || el.tagName; }
+      }
+      return { dial, min, where };
+    });
+    home.dial >= 14 ? ok(`the helpline numbers are ${home.dial.toFixed(1)}px, a step above the strip's words`)
+                    : fail(`helpline numbers only ${home.dial.toFixed(1)}px`);
+    home.min >= 12 ? ok(`no visible text on the home screen is under 12px (smallest ${home.min.toFixed(1)}px)`)
+                   : fail(`text at ${home.min.toFixed(1)}px on the home screen (${home.where})`);
+    await p.evaluate(()=>startTest('phq9')); await p.waitForTimeout(700);
+    const st = await p.evaluate(()=>{ const s = document.getElementById('primerStart').getBoundingClientRect(),
+                                         t = document.querySelector('.tabbar').getBoundingClientRect();
+                                      return { visible: s.bottom <= Math.min(innerHeight, t.top) + 1 && s.top >= 0 }; });
+    st.visible ? ok('the primer’s Start button is on screen, clear of the tab bar') : fail('the primer’s Start button is hidden behind the tab bar');
+    await ctx.close();
+  }
+
   /* 19 ── axe-core, the accessibility engine, on every screen that matters:
          home, settings, the guide, history, resources, the primer, a
          question, the self-harm safety step, a risk result, the doctor's

@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>The Waiting Room — Why Ronak Exists</title>
 <meta name="description" content="India's mental health treatment gap is 70-92%. The argument for why a five-minute screening, done early and privately, is worth building.">
-<script src="nav.js?v=34" defer></script>
-<script src="companion.js?v=34" defer></script>
+<script src="nav.js?v=35" defer></script>
+<script src="companion.js?v=35" defer></script>
 <!-- The 192px PNG was fetched as the favicon on every page: 11.4KB gzip
      on the critical path, for something drawn at 16px. The SVG is 1.6KB
      and sharp at every size. No PNG fallback link: Chromium fetches every
@@ -35,11 +35,11 @@
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="icon-192.png">
 <script src="prefs.js"></script>
-<link rel="stylesheet" href="site.css?v=34">
+<link rel="stylesheet" href="site.css?v=35">
 <style>
 /* ── hero ── */
   .hero{padding:64px 0 48px;border-bottom:3px solid var(--ink);}
-  .hero p.lede{max-width:620px;font-size:19px;margin-top:22px;}
+  .hero p.lede{max-width:620px;font-size:1.16rem;margin-top:22px;}
 
   /* dot grid signature */
   .dotfield{margin:40px 0 8px;}
@@ -55,15 +55,15 @@
     animation:pulse 2.2s ease-in-out infinite;
   }
   @keyframes pulse{0%,100%{box-shadow:0 0 0 3px rgba(230,161,28,.35);}50%{box-shadow:0 0 0 7px rgba(230,161,28,.12);}}
-  .dotcaption{font-family:var(--font-ui);font-size:13px;margin-top:14px;color:var(--muted);max-width:640px;}
+  .dotcaption{font-family:var(--font-ui);font-size:.82rem;margin-top:14px;color:var(--muted);max-width:640px;}
   .dotcaption b{color:var(--ink);}
 
   /* ── crisis stats ── */
   .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(210px,100%),1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:var(--r-md);overflow:hidden;}
   .stat{padding:22px 20px;background:var(--card);}
-  .stat .num{font-weight:700;font-size:44px;line-height:1;color:var(--stamp);}
-  .stat .lbl{font-size:14.5px;margin-top:8px;}
-  .stat .src{font-family:var(--font-ui);font-size:11px;color:var(--muted);margin-top:10px;}
+  .stat .num{font-weight:700;font-size:2.5rem;line-height:1;color:var(--stamp);}
+  .stat .lbl{font-size:.92rem;margin-top:8px;}
+  .stat .src{font-family:var(--font-ui);font-size:.76rem;color:var(--muted);margin-top:10px;}
   .crisis-copy{max-width:660px;margin-top:30px;}
   .crisis-copy p{margin-bottom:16px;line-height:1.6;}
 
@@ -76,10 +76,10 @@
   }
   .declaration:last-of-type{border-bottom:1px solid rgba(246,244,238,.18);}
   .declaration .roman{
-    font-weight:700;font-size:34px;color:var(--marigold);line-height:1;
+    font-weight:700;font-size:1.95rem;color:var(--marigold);line-height:1;
   }
-  .declaration h3{font-weight:700;font-size:22px;letter-spacing:.02em;margin-bottom:8px;}
-  .declaration p{font-size:16px;color:rgba(246,244,238,.85);max-width:640px;line-height:1.6;}
+  .declaration h3{font-weight:700;font-size:1.3rem;letter-spacing:.02em;margin-bottom:8px;}
+  .declaration p{font-size:1.02rem;color:rgba(246,244,238,.85);max-width:640px;line-height:1.6;}
   @media(max-width:560px){.declaration{grid-template-columns:1fr;gap:6px;}}
 
   /* ── solutions ── */
@@ -89,12 +89,12 @@
     background:var(--card);border:1px solid var(--line);border-left:.45rem solid var(--heal);
     border-radius:var(--r-md);box-shadow:var(--shadow-card);padding:22px 24px;margin-bottom:16px;
   }
-  .sol h3{font-size:19px;font-weight:700;margin-bottom:6px;color:var(--ink);}
+  .sol h3{font-size:1.16rem;font-weight:700;margin-bottom:6px;color:var(--ink);}
   .sol .who{
-    font-family:var(--font-ui);font-size:12px;letter-spacing:.05em;
+    font-family:var(--font-ui);font-size:.78rem;letter-spacing:.05em;
     color:var(--heal);margin-bottom:8px;font-weight:600;
   }
-  .sol p{font-size:15.5px;line-height:1.6;}
+  .sol p{font-size:1rem;line-height:1.6;}
 
   /* ── pledge ── */
   .pledge{background:var(--marigold);border-top:1px solid var(--line);border-bottom:1px solid var(--line);}
@@ -102,28 +102,28 @@
   .pledge .sec-label{color:var(--on-marigold);}
   .pledge-card{background:var(--paper);border:1px solid var(--line);border-radius:var(--r-lg);box-shadow:var(--shadow-soft);padding:28px;max-width:640px;}
   .pledge-lines{list-style:none;margin:0 0 22px;}
-  .pledge-lines li{padding:8px 0;border-bottom:1px dashed var(--line);font-size:16px;display:flex;gap:10px;line-height:1.5;}
-  .pledge-lines li::before{content:"☐";color:var(--heal);font-size:18px;}
+  .pledge-lines li{padding:8px 0;border-bottom:1px dashed var(--line);font-size:1.02rem;display:flex;gap:10px;line-height:1.5;}
+  .pledge-lines li::before{content:"☐";color:var(--heal);font-size:1.1rem;}
   .pledge-lines li.done::before{content:"☑";}
   button:hover{transform:translateY(-1px);box-shadow:var(--shadow-soft);}
   button:active{transform:scale(0.985);}
   button:focus-visible{outline:3px solid var(--stamp);outline-offset:3px;}
-  .pledge-count{font-family:var(--font-ui);font-size:14px;margin-top:14px;}
+  .pledge-count{font-family:var(--font-ui);font-size:.9rem;margin-top:14px;}
   .sharebox{
     display:none;margin-top:18px;background:var(--card);border:1.5px dashed var(--line);
-    border-radius:var(--r-md);padding:16px;font-size:14.5px;
+    border-radius:var(--r-md);padding:16px;font-size:.92rem;
   }
   .sharebox.show{display:block;}
-  .sharebox .mono{font-size:12px;color:var(--heal);margin-top:10px;display:block;}
+  .sharebox .mono{font-size:.78rem;color:var(--heal);margin-top:10px;display:block;}
 
   /* ── screener banner ── */
   .screenerlink{background:var(--heal);color:var(--paper);padding:34px 0;}
   .screenerlink .wrap{display:flex;justify-content:space-between;align-items:center;gap:18px;flex-wrap:wrap;}
-  .screenerlink h3{font-weight:700;font-size:24px;letter-spacing:.02em;}
-  .screenerlink p{font-size:15px;opacity:.92;max-width:520px;line-height:1.55;}
+  .screenerlink h3{font-weight:700;font-size:1.4rem;letter-spacing:.02em;}
+  .screenerlink p{font-size:1rem;opacity:.92;max-width:520px;line-height:1.55;}
   .screenerlink a{
     font-weight:700;letter-spacing:.03em;border-radius:var(--r-sm);
-    font-size:17px;background:var(--paper);color:var(--ink);text-decoration:none;
+    font-size:1.06rem;background:var(--paper);color:var(--ink);text-decoration:none;
     padding:13px 26px;display:inline-block;transition:transform .12s, box-shadow .12s;
   }
   .screenerlink a:hover{transform:translateY(-1px);box-shadow:var(--shadow-soft);}
@@ -131,7 +131,7 @@
   .stampmark{
     display:inline-block;font-weight:700;border-radius:var(--r-sm);
     border:2px solid var(--stamp);color:var(--stamp);padding:6px 14px;
-    transform:rotate(-2deg);font-size:15px;letter-spacing:.05em;margin-bottom:16px;
+    transform:rotate(-2deg);font-size:1rem;letter-spacing:.05em;margin-bottom:16px;
   }
 </style>
 </head>
@@ -301,7 +301,7 @@
         <strong>Spread it.</strong> Copy this and post it:
         <em>"India has ~0.75 psychiatrists per 100,000 people. The waiting room is full. I've pledged to name the system, not blame the people in it. #TheWaitingRoomIsFull"</em>
         <span class="mono" id="copyStatus"></span>
-        <button style="font-size:14px;padding:8px 16px;margin-top:10px;" onclick="copyShare()">Copy text</button>
+        <button style="font-size:.9rem;padding:8px 16px;margin-top:10px;" onclick="copyShare()">Copy text</button>
       </div>
     </div>
   </div>
@@ -313,7 +313,7 @@
   <div class="wrap">
     <span class="stampmark">Urgent — For Public Circulation</span>
     <p>If you or someone you know is struggling, call <strong>Tele-MANAS: 14416</strong> (toll-free, 24×7, multiple Indian languages). Figures cited from the National Mental Health Survey 2015–16 and published workforce estimates; verify current numbers before formal use.</p>
-    <p style="margin-top:14px;padding-top:14px;border-top:1px solid var(--line);font-family:var(--font-ui);font-size:12.5px;">
+    <p style="margin-top:14px;padding-top:14px;border-top:1px solid var(--line);font-family:var(--font-ui);font-size:.8rem;">
       <strong style="color:var(--ink);">Built by Aryan Manhas</strong> ·
       <a href="https://github.com/aryanmanhas12/Psych" style="color:var(--heal);">github.com/aryanmanhas12/Psych</a> ·
       <a href="index.html" style="color:var(--heal);">Open the screener</a> ·

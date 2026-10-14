@@ -21,7 +21,7 @@
 <meta name="author" content="Aryan Manhas">
 <meta name="theme-color" content="#140A26">
 <link rel="manifest" href="manifest.webmanifest">
-<script src="nav.js?v=34" defer></script>
+<script src="nav.js?v=35" defer></script>
 <!-- The 192px PNG was fetched as the favicon on every page: 11.4KB gzip
      on the critical path, for something drawn at 16px. The SVG is 1.6KB
      and sharp at every size. No PNG fallback link: Chromium fetches every
@@ -43,6 +43,10 @@
   }catch(e){}
   /* "Less motion" chosen in Settings: the same still page as lite */
   try{ if((JSON.parse(localStorage.getItem("ronak-feel")) || {}).still) root.className += " lite still"; }catch(e){}
+  /* page-to-page cross-fade (site.css) is skipped where motion is unwelcome */
+  function noPageFade(e){ if(e.viewTransition && /\blite\b/.test(root.className)) e.viewTransition.skipTransition(); }
+  addEventListener("pageswap", noPageFade);
+  addEventListener("pagereveal", noPageFade);
   /* Ooh switched off: his space on the home screen is not reserved */
   try{ if((JSON.parse(localStorage.getItem("ronak-ooh")) || {}).on === false) root.className += " ooh-off"; }catch(e){}
   var p;
@@ -90,7 +94,7 @@
     (function go(){
       var s = document.createElement("script");
       /* versioned like every other file this page loads — see REL in sw.js */
-      s.src = "i18n." + code + ".js?v=34";
+      s.src = "i18n." + code + ".js?v=35";
       s.async = false;
       s.onload  = function(){ settle(window.I18N && window.I18N[code] ? code : null); };
       s.onerror = function(){ if(++tries < 2) go(); else settle(null); };
@@ -112,8 +116,8 @@
 })();
 </script>
 <link rel="apple-touch-icon" href="icon-192.png">
-<link rel="stylesheet" href="site.css?v=34">
-<link rel="stylesheet" href="app.css?v=34">
+<link rel="stylesheet" href="site.css?v=35">
+<link rel="stylesheet" href="app.css?v=35">
 </head>
 <body>
 
@@ -731,25 +735,25 @@
       <p style="margin-top:.6rem;" data-i18n="safety3"></p>
 
       <details class="safetyplan-acc" style="margin-top:1.1rem;background:rgba(0,0,0,0.18);padding:.9rem 1.1rem;border-radius:var(--r-md);border:1px solid rgba(255,255,255,0.25);">
-        <summary style="cursor:pointer;font-weight:700;color:#fff;font-size:.95rem;" data-i18n="spTitle">Make a safety plan</summary>
-        <div style="margin-top:.85rem;font-size:.88rem;line-height:1.55;color:#fff;">
+        <summary style="cursor:pointer;font-weight:700;color:#fff;font-size:1rem;" data-i18n="spTitle">Make a safety plan</summary>
+        <div style="margin-top:.85rem;font-size:.96rem;line-height:1.55;color:#fff;">
           <p style="margin-bottom:.7rem;" data-i18n="spIntro">A short private list you write for yourself now, so that a worse hour later has something to follow. It is saved only on this phone.</p>
           <div style="display:flex;flex-direction:column;gap:.7rem;">
-            <label style="font-size:.85rem;display:flex;flex-direction:column;gap:4px;"><span data-i18n="sp1">1. Warning signs — what it feels like when it starts</span>
-              <input type="text" id="spWarning" name="safety-warning" autocomplete="off" spellcheck="false" data-i18n-placeholder="spPh1" placeholder="restless, not sleeping, shutting people out…" style="width:100%;padding:.5rem;border-radius:4px;border:none;background:#fff;color:#1c2033;font-size:.88rem;">
+            <label style="font-size:.94rem;display:flex;flex-direction:column;gap:4px;"><span data-i18n="sp1">1. Warning signs — what it feels like when it starts</span>
+              <input type="text" id="spWarning" name="safety-warning" autocomplete="off" spellcheck="false" data-i18n-placeholder="spPh1" placeholder="restless, not sleeping, shutting people out…" style="width:100%;padding:.5rem;border-radius:4px;border:none;background:#fff;color:#1c2033;font-size:.96rem;">
             </label>
-            <label style="font-size:.85rem;display:flex;flex-direction:column;gap:4px;"><span data-i18n="sp2">2. What helps me on my own</span>
-              <input type="text" id="spCoping" name="safety-coping" autocomplete="off" spellcheck="false" data-i18n-placeholder="spPh2" placeholder="a walk, a warm shower, slow breathing, music…" style="width:100%;padding:.5rem;border-radius:4px;border:none;background:#fff;color:#1c2033;font-size:.88rem;">
+            <label style="font-size:.94rem;display:flex;flex-direction:column;gap:4px;"><span data-i18n="sp2">2. What helps me on my own</span>
+              <input type="text" id="spCoping" name="safety-coping" autocomplete="off" spellcheck="false" data-i18n-placeholder="spPh2" placeholder="a walk, a warm shower, slow breathing, music…" style="width:100%;padding:.5rem;border-radius:4px;border:none;background:#fff;color:#1c2033;font-size:.96rem;">
             </label>
-            <label style="font-size:.85rem;display:flex;flex-direction:column;gap:4px;"><span data-i18n="sp3">3. Places and people that steady me</span>
-              <input type="text" id="spSocial" name="safety-social" autocomplete="off" spellcheck="false" data-i18n-placeholder="spPh3" placeholder="the terrace, the park, my sister's place…" style="width:100%;padding:.5rem;border-radius:4px;border:none;background:#fff;color:#1c2033;font-size:.88rem;">
+            <label style="font-size:.94rem;display:flex;flex-direction:column;gap:4px;"><span data-i18n="sp3">3. Places and people that steady me</span>
+              <input type="text" id="spSocial" name="safety-social" autocomplete="off" spellcheck="false" data-i18n-placeholder="spPh3" placeholder="the terrace, the park, my sister's place…" style="width:100%;padding:.5rem;border-radius:4px;border:none;background:#fff;color:#1c2033;font-size:.96rem;">
             </label>
-            <label style="font-size:.85rem;display:flex;flex-direction:column;gap:4px;"><span data-i18n="sp4">4. Someone I can call</span>
-              <input type="text" id="spTrusted" name="safety-trusted" autocomplete="off" spellcheck="false" data-i18n-placeholder="spPh4" placeholder="a name and a number…" style="width:100%;padding:.5rem;border-radius:4px;border:none;background:#fff;color:#1c2033;font-size:.88rem;">
+            <label style="font-size:.94rem;display:flex;flex-direction:column;gap:4px;"><span data-i18n="sp4">4. Someone I can call</span>
+              <input type="text" id="spTrusted" name="safety-trusted" autocomplete="off" spellcheck="false" data-i18n-placeholder="spPh4" placeholder="a name and a number…" style="width:100%;padding:.5rem;border-radius:4px;border:none;background:#fff;color:#1c2033;font-size:.96rem;">
             </label>
             <div style="display:flex;align-items:center;gap:.8rem;margin-top:.3rem;">
-              <button type="button" id="spSaveBtn" data-i18n="spSave" style="padding:.6rem 1.1rem;min-height:44px;background:#fff;color:#80161a;border:none;font-weight:700;border-radius:4px;cursor:pointer;font-size:.88rem;">Save plan</button>
-              <span id="spMsg" style="font-size:.82rem;color:#ffe6e6;"></span>
+              <button type="button" id="spSaveBtn" data-i18n="spSave" style="padding:.6rem 1.1rem;min-height:44px;background:#fff;color:#80161a;border:none;font-weight:700;border-radius:4px;cursor:pointer;font-size:.96rem;">Save plan</button>
+              <span id="spMsg" style="font-size:.88rem;color:#ffe6e6;"></span>
             </div>
           </div>
         </div>
@@ -765,7 +769,7 @@
         <p class="bandlead" id="resBandLead"></p>
         <span class="band" id="resBand"></span>
         <p id="resMeaning"></p>
-        <p class="mono noprint" style="font-size:.78rem;margin-top:.6rem;"><a href="evidence.html" style="color:var(--heal);" data-i18n="whyTrust"></a></p>
+        <p class="mono noprint" style="font-size:.84rem;margin-top:.6rem;"><a href="evidence.html" style="color:var(--heal);" data-i18n="whyTrust"></a></p>
       </div>
     </div>
 
@@ -855,7 +859,7 @@
 
     <div class="sheet" id="sheetBody"></div>
 
-    <p class="lede noprint" style="font-size:.9rem;color:var(--muted);margin-top:1.4rem;"
+    <p class="lede noprint" style="font-size:.96rem;color:var(--muted);margin-top:1.4rem;"
        data-i18n="sheetPatientNote"></p>
   </div>
 </section>
@@ -877,9 +881,9 @@
       <h3 data-i18n="breatheTitle">Slow breathing</h3>
       <p data-i18n="breatheNote"></p>
       <div style="display:flex;gap:.5rem;margin-bottom:1rem;flex-wrap:wrap;">
-        <button type="button" class="breathe-proto" id="protoVagal" style="padding:5px 13px;min-height:44px;font-size:.82rem;font-weight:600;border-radius:6px;border:1px solid var(--heal);background:color-mix(in srgb, var(--heal) 15%, var(--card));color:var(--ink);cursor:pointer;" data-proto="vagal" data-i18n="protoVagal" data-i18n-title="protoVagalT" title="4-7-8 breathing (vagal reset): in for 4, hold 7, out 8">4-7-8 · calming</button>
-        <button type="button" class="breathe-proto" id="protoBox" style="padding:5px 13px;min-height:44px;font-size:.82rem;border-radius:6px;border:1px solid var(--line);background:var(--card);color:var(--muted);cursor:pointer;" data-proto="box" data-i18n="protoBox" data-i18n-title="protoBoxT" title="Box breathing: 4 in, 4 hold, 4 out, 4 hold">Box · steady</button>
-        <button type="button" class="breathe-proto" id="protoCoh" style="padding:5px 13px;min-height:44px;font-size:.82rem;border-radius:6px;border:1px solid var(--line);background:var(--card);color:var(--muted);cursor:pointer;" data-proto="coh" data-i18n="protoCoh" data-i18n-title="protoCohT" title="Resonance breathing at 5.5 seconds each way">5.5 · even</button>
+        <button type="button" class="breathe-proto" id="protoVagal" style="padding:5px 13px;min-height:44px;font-size:.88rem;font-weight:600;border-radius:6px;border:1px solid var(--heal);background:color-mix(in srgb, var(--heal) 15%, var(--card));color:var(--ink);cursor:pointer;" data-proto="vagal" data-i18n="protoVagal" data-i18n-title="protoVagalT" title="4-7-8 breathing (vagal reset): in for 4, hold 7, out 8">4-7-8 · calming</button>
+        <button type="button" class="breathe-proto" id="protoBox" style="padding:5px 13px;min-height:44px;font-size:.88rem;border-radius:6px;border:1px solid var(--line);background:var(--card);color:var(--muted);cursor:pointer;" data-proto="box" data-i18n="protoBox" data-i18n-title="protoBoxT" title="Box breathing: 4 in, 4 hold, 4 out, 4 hold">Box · steady</button>
+        <button type="button" class="breathe-proto" id="protoCoh" style="padding:5px 13px;min-height:44px;font-size:.88rem;border-radius:6px;border:1px solid var(--line);background:var(--card);color:var(--muted);cursor:pointer;" data-proto="coh" data-i18n="protoCoh" data-i18n-title="protoCohT" title="Resonance breathing at 5.5 seconds each way">5.5 · even</button>
       </div>
       <div class="breathestage">
         <div class="orb" id="orb" aria-hidden="true"><span id="orbLabel"></span></div>
@@ -901,7 +905,7 @@
     <h1 class="display" id="histH1" style="font-size:clamp(1.6rem,4.5vw,2.8rem);" data-i18n="histTitle"></h1>
     <p class="lede" data-i18n="histLede"></p>
     <div id="histContent"></div>
-    <p class="mono" id="ioMsg" style="font-size:.8rem;color:var(--heal);" aria-live="polite"></p>
+    <p class="mono" id="ioMsg" style="font-size:.86rem;color:var(--heal);" aria-live="polite"></p>
     <div class="histctl noprint">
       <button class="secondary" id="exportBtn" data-i18n="exportBtn"></button>
       <button class="secondary" id="importBtn" data-i18n="importBtn"></button>
@@ -973,9 +977,9 @@
 </footer>
 
 <!-- before app.js: the opening asks it whether to wait for Begin -->
-<script src="music.js?v=34"></script>
-<script src="app.js?v=34"></script>
+<script src="music.js?v=35"></script>
+<script src="app.js?v=35"></script>
 <!-- not deferred: Ooh's first line has to be in the page before the first paint -->
-<script src="companion.js?v=34"></script>
+<script src="companion.js?v=35"></script>
 </body>
 </html>

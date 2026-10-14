@@ -67,6 +67,12 @@ typography:
     fontFamily: "system UI stack (-apple-system, Segoe UI, Noto Sans, Roboto)"
     body: "1rem / 1.6"
   rule: Every string exists in six languages; layouts must survive Tamil and Telugu at 135% text size.
+  readability:
+    body: "18px (1rem) everywhere, phones included; reading pages use rem, never px, so the text-size setting reaches them"
+    secondary: ">= .9rem (16px): ledes, panel copy, footers, table cells"
+    labels: ">= .76rem (13.7px) for captions, sources, caps labels; tab-bar labels .68rem under their icons"
+    crisis-numbers: "1.3em of the strip (14.5px on a phone), bold; the strip keeps its two-line height"
+    tables: "3+ columns stack into labelled cards under 560px (table.stack + data-label)"
 
 spacing:
   gutter: 1.3rem each side (no horizontal page scroll at 320px)
@@ -138,6 +144,9 @@ a bud opening), never an illustration of the problem.
   the bloom and lowercase "ronak". Geometry lives in `otFit` (app.js).
 - **Tab bar (phones):** a floating pill at the bottom that slides away while
   scrolling down.
+- **Moving around:** one calm cross-fade for the app's four places and for
+  page-to-page links (`@view-transition`); the helpline strip and the nav
+  hold still. Skipped for reduced motion, lite and "Less motion".
 - **Settings:** a popover, never under the tab bar; "Sound and feel" is a
   2x2 grid of switches (Music, Sounds, Haptics, Ooh).
 
