@@ -113,6 +113,11 @@ const ASSETS = [
   "./", "./index.html", "./helplines.js", "./nav.js?v=" + REL,
   "./app.js?v=" + REL, "./app.css?v=" + REL, "./site.css?v=" + REL,
   "./companion.js?v=" + REL, "./ooh.mjs?v=" + REL, "./music.js?v=" + REL,
+  /* the motion layer every page loads (the heavier vendor files, the 3D
+     flock and smooth scrolling among them, are cached on first use by
+     the versioned rule below, so only devices that use them pay for them) */
+  "./motion.js?v=" + REL, "./valley.js?v=" + REL, "./vendor/gsap.min.js?v=" + REL,
+  "./vendor/CustomEase.min.js?v=" + REL, "./vendor/SplitText.min.js?v=" + REL,
   "./i18n.en.js?v=" + REL, "./i18n.hi.js?v=" + REL, "./i18n.mr.js?v=" + REL,
   "./i18n.bn.js?v=" + REL, "./i18n.ta.js?v=" + REL, "./i18n.te.js?v=" + REL,
   "./ethics.html", "./evidence.html", "./manifesto.html", "./404.html",
