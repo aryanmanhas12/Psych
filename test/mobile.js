@@ -1324,7 +1324,7 @@ const OVERFLOW = `(()=>{
     !v.lenis ? ok('a phone keeps native touch scrolling (no Lenis)') : fail('Lenis started on a phone');
     /* open water: the lake, on the side of the screen away from the shikara
        (a tap on the boat lights its lantern instead) */
-    const kvBox = await p.evaluate(()=>{ const k = document.getElementById('kv'); k.scrollIntoView({block:'center'}); const r = k.getBoundingClientRect(),
+    const kvBox = await p.evaluate(()=>{ const k = document.getElementById('kv'); k.scrollIntoView({block:'center', behavior:'instant'}); const r = k.getBoundingClientRect(),
       s = document.getElementById('kvShikara').getBoundingClientRect(), left = (s.left + s.right) / 2 < r.width / 2;
       return { x: r.left + r.width * (left ? .85 : .3), y: r.top + r.height * .9 }; });
     await p.waitForTimeout(400); await p.touchscreen.tap(kvBox.x, kvBox.y); await p.waitForTimeout(250);
