@@ -288,12 +288,17 @@ function hash(str){
   return (h >>> 0) / 4294967296;
 }
 function readJSON(k, d){ try{ return JSON.parse(localStorage.getItem(k)) || d; }catch(e){ return d; } }
-/* where the words are, so a star is never drawn behind them */
-function wordBoxes(hr){
+/* where the words are, so a star is never drawn behind them. Read from
+   the layout (offsets), not from the screen: when this runs the words may
+   be mid-entrance or lifted by the scroll, and both are transforms. The
+   stars' box sits at the sky's top left, so the two share an origin. */
+function wordBoxes(){
   var out = [];
   sky.querySelectorAll(".hs-copy > *").forEach(function(el){
-    var r = el.getBoundingClientRect();
-    if(r.width && r.height) out.push({ l: r.left - hr.left - 12, t: r.top - hr.top - 10, r: r.right - hr.left + 12, b: r.bottom - hr.top + 10 });
+    if(!el.offsetWidth) return;
+    var l = 0, t = 0, n = el;
+    while(n && n !== sky){ l += n.offsetLeft; t += n.offsetTop; n = n.offsetParent; }
+    if(n === sky) out.push({ l: l - 12, t: t - 10, r: l + el.offsetWidth + 12, b: t + el.offsetHeight + 10 });
   });
   return out;
 }
@@ -307,21 +312,25 @@ function drawStars(freshKind){
       .forEach(function(e, i){ items.push({ k: "c" + e.date + (e.inst || "") + i, ck: true, d: e.date }); });
   host.textContent = "";
   if(!items.length) return;
-  var hr = host.getBoundingClientRect(), W = hr.width || 1, H = hr.height || 1, words = wordBoxes(hr);
+  var W = host.offsetWidth || 1, H = host.offsetHeight || 1, words = wordBoxes(), lowest = 0;
+  words.forEach(function(w){ if(w.b > lowest) lowest = w.b; });
   function free(x, y){
     for(var i=0;i<words.length;i++){ var w = words[i]; if(x > w.l && x < w.r && y > w.t && y < w.b) return false; }
     return true;
   }
   var newest = null;
   items.forEach(function(it){
-    /* the same place every visit: the first of a dozen candidate spots,
-       all drawn from the entry's own date, that is clear of the words */
-    var x, y;
-    for(var n=0;n<12;n++){
+    /* the same place every visit: the first of two dozen candidate spots,
+       all drawn from the entry's own date, that is clear of the words; on a
+       phone, where the words fill the sky, failing that, the band of sky
+       between the last line and the mountains */
+    var x, y, ok = false;
+    for(var n=0;n<24 && !ok;n++){
       x = W * (.03 + hash(it.k + "x" + n) * .94);
       y = H * (.05 + hash(it.k + "y" + n) * .9);
-      if(free(x, y)) break;
+      ok = free(x, y);
     }
+    if(!ok && lowest < H - 8) y = lowest + (H - lowest) * (.15 + hash(it.k + "f") * .75);
     var s = document.createElement("i");
     if(it.ck) s.className = "ck";
     s.style.left = (x / W * 100).toFixed(2) + "%";
@@ -351,14 +360,13 @@ document.addEventListener("rk:sky", function(e){
   drawStars(d.kind);
   spark(d.x, d.y);
 });
-/* the words reflow with the width (and the language): place the stars again */
-var lastW = window.innerWidth, restar = 0;
-window.addEventListener("resize", function(){
-  if(window.innerWidth === lastW) return;
-  lastW = window.innerWidth;
-  clearTimeout(restar); restar = setTimeout(function(){ drawStars(); }, 250);
-});
-document.addEventListener("rk:lang", function(){ setTimeout(function(){ drawStars(); }, 60); });
+/* the words reflow with the width, the language and the fonts arriving:
+   whenever their block changes size, place the stars again */
+var restar = 0;
+function restarSoon(){ clearTimeout(restar); restar = setTimeout(function(){ drawStars(); }, 200); }
+var copy = sky.querySelector(".hs-copy");
+if(window.ResizeObserver && copy) new ResizeObserver(restarSoon).observe(copy);
+else window.addEventListener("resize", restarSoon);
 
 /* ════════ start ════════ */
 drawStars();

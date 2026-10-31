@@ -216,7 +216,6 @@ function setLang(code, after){
   if(lastResult && document.getElementById("view-results").classList.contains("active")) renderResults(false);
   hideMissing();
   if(window.Ooh) Ooh.lang();
-  document.dispatchEvent(new CustomEvent("rk:lang", { detail:code }));
   if(after) after();
 }
 

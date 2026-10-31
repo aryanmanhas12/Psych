@@ -3,8 +3,8 @@
    ──────────────────────────────────────────────────────────────
    Loaded deferred on every page, after vendor/gsap.min.js and its two
    small plugins (CustomEase, SplitText). Everything heavier (Lenis,
-   ScrollTrigger, Flip, DrawSVG, three.js, Vanta) is fetched only by the
-   page and the device that needs it, through Motion.load().
+   three.js, Vanta) is fetched only by the page and the device that
+   needs it, through Motion.load().
 
    The rules this file keeps, because Ronak is for people who may be
    struggling, on phones that may be cheap:
@@ -67,7 +67,10 @@ function revealLines(el, opts){
   if(!text || text.length > 180) return null;
   el.__rkSplit = true;
   var split;
-  try{ split = SplitText.create(el, { type: "lines", mask: "lines", linesClass: "rk-line", aria: "auto" }); }
+  /* aria "auto" names a heading by its own text while its lines are
+     hidden from a reader; a figure (a generic box, which may not carry a
+     name) keeps its words readable in the lines instead: aria "none" */
+  try{ split = SplitText.create(el, { type: "lines", mask: "lines", linesClass: "rk-line", aria: opts.aria || "auto" }); }
   catch(e){ el.__rkSplit = false; return null; }
   return G.from(split.lines, {
     yPercent: 108, duration: opts.duration || 0.95, ease: "rk-dawn",
@@ -77,25 +80,40 @@ function revealLines(el, opts){
   });
 }
 
-/* reveal each marked heading once, as it comes into view */
-function watchHeadings(sel){
+/* Play something once, as it comes into view. Whatever is already on
+   screen when the page paints is left exactly as painted. Whatever is
+   further down is hidden in advance (.rk-pre: it is off screen, so nobody
+   sees it go) and handed back in the same task that starts its animation,
+   so the words never flash up before they rise. */
+function watch(sel, play){
   if(still() || !G || !("IntersectionObserver" in window)) return;
   var io = new IntersectionObserver(function(es){
     es.forEach(function(e){
       if(!e.isIntersecting) return;
       io.unobserve(e.target);
-      revealLines(e.target);
+      try{ if(!still()) play(e.target); }
+      finally{ e.target.classList.remove("rk-pre"); }
     });
   }, { rootMargin: "0px 0px -12% 0px" });
-  document.querySelectorAll(sel).forEach(function(h){
-    /* calm inside: no heading in a check-in, a result, Get Help, the
-       guide or History ever rises; only the home screen's do */
-    if(h.closest(".view:not(#view-home),#safeNow,.safety")) return;
-    /* already on screen at load: leave it as painted (no flash of hiding) */
-    var r = h.getBoundingClientRect();
-    if(r.top < window.innerHeight && r.bottom > 0) return;
-    io.observe(h);
+  document.querySelectorAll(sel).forEach(function(el){
+    /* calm inside: nothing in a check-in, a result, Get Help, the guide or
+       History ever rises; only the home screen and the reading pages */
+    if(el.closest(".view:not(#view-home),#safeNow,.safety")) return;
+    var r = el.getBoundingClientRect();
+    if(r.height && r.top < window.innerHeight && r.bottom > 0) return;
+    el.classList.add("rk-pre");
+    io.observe(el);
   });
+}
+function watchHeadings(sel){ watch(sel, function(h){ revealLines(h); }); }
+
+/* the reading pages' figures: each number rises out of its own line, its
+   caption settles in after it */
+function riseFigures(group){
+  var nums = group.querySelectorAll(".num, .n"), caps = group.querySelectorAll(".lbl, .src, .cap, .l, .s");
+  nums.forEach(function(n, i){ revealLines(n, { delay: i * .12, duration: 1.05, aria: "none" }); });
+  if(caps.length) G.from(caps, { opacity: 0, y: 12, duration: .8, ease: "rk-out", stagger: .06,
+    delay: .2, clearProps: "transform,opacity" });
 }
 
 /* ── Lenis: a laptop's wheel glides, outside the check-ins ──
@@ -123,7 +141,6 @@ function startLenis(){
       virtualScroll: function(){ return lenisWanted(); }
     });
     G.ticker.add(function(t){ if(lenis) lenis.raf(t * 1000); });
-    if(window.ScrollTrigger) lenis.on("scroll", window.ScrollTrigger.update);
   }).catch(function(){});
 }
 function stopLenis(){ if(lenis){ lenis.destroy(); lenis = null; } }
@@ -138,12 +155,16 @@ window.Motion = {
   still: still,
   load: load,
   revealLines: revealLines,
+  watch: watch,
   watchHeadings: watchHeadings,
   lenis: function(){ return lenis; },
+  glides: lenisWanted,
   fine: function(){ return fineMQ.matches; }
 };
 
-/* every page: section headings rise into view; laptops glide */
+/* every page: section headings rise into view, the reading pages' figures
+   after them; laptops glide */
 watchHeadings("main h2.display, .homesec > h2, section > .wrap > h2");
+watch(".stats, .figs, .claim .stat", riseFigures);
 startLenis();
 })();

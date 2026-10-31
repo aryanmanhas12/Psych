@@ -98,6 +98,14 @@
    strip that keeps its height, wide tables stacked as cards on phones, the
    primer's Start kept clear of the tab bar, and a calm cross-fade between
    pages as well as between the app's own screens. */
+/* v36: the home sky becomes the Kashmir valley at the end of the night
+   (Harmukh, the lake, a shikara, a chinar), its dawn played by the scroll,
+   with depth, small surprises on tap and a small flock on strong devices;
+   your stars, one per check-in and per day's mood, in that sky and as
+   "Your sky" in History; the streak becomes days lit; headlines and
+   figures rise line by line on the outside pages; a laptop's wheel glides
+   outside the check-ins. GSAP, Lenis, three and Vanta self-hosted in
+   vendor/; the heavy parts load only where they are wanted. */
 /* ── the release number, in one place ──
    The page's own CSS and JS moved out of index.html into app.css and
    app.js, and every page now asks for its shared files by versioned URL
@@ -107,7 +115,7 @@
    script still in this cache for one load. A new version is a new URL,
    which this cache has never seen, so it is always fetched. When a release
    changes any of those files: bump REL here AND the ?v= in every page. */
-const REL = "35";
+const REL = "36";
 const CACHE = "ronak-v" + REL;
 const ASSETS = [
   "./", "./index.html", "./helplines.js", "./nav.js?v=" + REL,
