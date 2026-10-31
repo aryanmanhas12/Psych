@@ -13,7 +13,8 @@
       lantern flares, a peak catches the sun, a star falls across the sky.
    3. The flock (Vanta birds, three.js), on laptops and strong phones
       only, fetched after the page is usable, and only ever running while
-      the sky is on screen and the tab is visible.
+      the sky is on screen, the tab is visible and someone is there: it
+      settles 15 seconds after the last cursor move, touch or scroll.
    4. Your stars: one for every check-in and every day's mood, from this
       device's own history; nothing is read from anywhere else and
       nothing leaves the phone.
@@ -123,24 +124,38 @@ function ripple(x, y){
   sfx("wake", .72); tick();
 }
 var LEAF_FILL = ["#C2364F", "#E9A23B", "#B4532A", "#D9573A", "#8E2440"];
-var leafCount = 0;
+var leafCount = 0, leafTpl = null;
 function dropLeaf(x, y, far){
   if(leafCount > 22) return;
   leafCount++;
   var p = at(leaves, x, y);
-  var s = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-  s.setAttribute("viewBox", "-20 -20 40 40"); s.setAttribute("class", "kv-leaf");
-  s.innerHTML = '<use href="#kvLeaf" fill="' + LEAF_FILL[(Math.random()*LEAF_FILL.length)|0] + '"/>';
+  /* one leaf built once and cloned after: no markup parsed per leaf */
+  if(!leafTpl){
+    leafTpl = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    leafTpl.setAttribute("viewBox", "-20 -20 40 40"); leafTpl.setAttribute("class", "kv-leaf");
+    leafTpl.appendChild(document.createElementNS("http://www.w3.org/2000/svg", "use")).setAttribute("href", "#kvLeaf");
+  }
+  var s = leafTpl.cloneNode(true);
+  s.firstChild.setAttribute("fill", LEAF_FILL[(Math.random()*LEAF_FILL.length)|0]);
   s.style.left = p.x + "px"; s.style.top = p.y + "px";
   leaves.appendChild(s);
+  /* The fall runs on the compositor (Web Animations, transform and
+     opacity): a leaf lets go on its own every few seconds while the valley
+     is on screen, and a script-driven fall kept a frame loop running the
+     whole way down. The drop gathers speed, the drift sways, the leaf
+     turns over and flips edge-on as it goes. */
   var fall = Math.max(60, p.h - p.y - 8) * (far ? .9 : 1);
-  var drift = (Math.random() - .5) * 120, dur = 3.4 + Math.random() * 2.4;
-  var tl = G.timeline({ onComplete: function(){ s.remove(); leafCount--; } });
-  tl.to(s, { y: fall, duration: dur, ease: "power1.in" }, 0)
-    .to(s, { x: drift, duration: dur, ease: "sine.inOut" }, 0)
-    .to(s, { rotation: (Math.random() < .5 ? -1 : 1) * (240 + Math.random() * 300), duration: dur, ease: "none" }, 0)
-    .to(s, { keyframes: { scaleX: [1, .25, 1, .3, 1] }, duration: dur, ease: "none" }, 0)
-    .to(s, { opacity: 0, duration: .7 }, dur - .7);
+  var dx = (Math.random() - .5) * 120, dur = 3400 + Math.random() * 2400;
+  var rot = (Math.random() < .5 ? -1 : 1) * (240 + Math.random() * 300);
+  var kf = function(f, sway, sx, o){
+    return { transform: "translate(" + (dx * sway).toFixed(1) + "px," + (fall * f).toFixed(1) + "px) rotate("
+      + (rot * f).toFixed(1) + "deg) scaleX(" + sx + ")", opacity: o };
+  };
+  var done = function(){ s.remove(); leafCount--; };
+  if(!s.animate){ done(); return; }
+  var a = s.animate([kf(0, 0, 1, 1), kf(.06, .45, .25, 1), kf(.22, .95, 1, 1), kf(.45, .6, .3, 1), kf(.72, .85, 1, .9), kf(1, 1, .6, 0)],
+                    { duration: dur, easing: "linear" });
+  a.onfinish = done; a.oncancel = done;
 }
 function shakeChinar(x, y){
   var r = document.getElementById("kvChinar").getBoundingClientRect();
@@ -204,7 +219,7 @@ sky.addEventListener("click", function(e){
 /* now and then a single leaf lets go on its own, only while the sky is
    in view and the page is not asked to be still */
 function idleLeaf(){
-  setTimeout(idleLeaf, 9000 + Math.random() * 9000);
+  setTimeout(idleLeaf, 14000 + Math.random() * 12000);
   if(!G || still() || !onScreen || document.hidden || !homeUp()) return;
   var r = document.getElementById("kvChinar").getBoundingClientRect();
   if(r.bottom < 0 || r.top > window.innerHeight) return;
