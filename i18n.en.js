@@ -91,7 +91,9 @@
     moodTitle: "Daily one-tap mood check-in",
     moodPrivate: "· private · this device only",
     moodPrompt: "How are you feeling today? One tap builds a 14-day picture you can show a doctor.",
-    moodLogged: "Logged for today · {n}-day streak. A daily record beats a memory in any consultation.",
+    moodLogged: "Logged for today. Tonight's star is lit: {n} in your sky this month. A daily record beats a memory in any consultation.",
+    skyTitle: "Your sky",
+    skySummary: "Check-ins: {c} · Days with a mood: {m} · last four months. Each one is a star here, and none of it leaves your phone.",
     moods: ["Very low", "Low", "Okay", "Good", "Great"],
 
     chooseScreener: "Choose a check-in",

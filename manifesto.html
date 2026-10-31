@@ -5,8 +5,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>The Waiting Room — Why Ronak Exists</title>
 <meta name="description" content="India's mental health treatment gap is 70-92%. The argument for why a five-minute screening, done early and privately, is worth building.">
-<script src="nav.js?v=35" defer></script>
-<script src="companion.js?v=35" defer></script>
+<script src="nav.js?v=36" defer></script>
+<script src="companion.js?v=36" defer></script>
+<script src="vendor/gsap.min.js?v=36" defer></script>
+<script src="vendor/CustomEase.min.js?v=36" defer></script>
+<script src="vendor/SplitText.min.js?v=36" defer></script>
+<script src="motion.js?v=36" defer></script>
 <!-- The 192px PNG was fetched as the favicon on every page: 11.4KB gzip
      on the critical path, for something drawn at 16px. The SVG is 1.6KB
      and sharp at every size. No PNG fallback link: Chromium fetches every
@@ -35,7 +39,7 @@
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="icon-192.png">
 <script src="prefs.js"></script>
-<link rel="stylesheet" href="site.css?v=35">
+<link rel="stylesheet" href="site.css?v=36">
 <style>
 /* ── hero ── */
   .hero{padding:64px 0 48px;border-bottom:3px solid var(--ink);}
@@ -55,6 +59,13 @@
     animation:pulse 2.2s ease-in-out infinite;
   }
   @keyframes pulse{0%,100%{box-shadow:0 0 0 3px rgba(230,161,28,.35);}50%{box-shadow:0 0 0 7px rgba(230,161,28,.12);}}
+  /* the waiting room fills (script at the foot): the psychiatrist first,
+     then the people, outward from them, once, when the field is in view */
+  .dotgrid.wave .dot{animation:dot-in .7s var(--e-spring) both;animation-delay:calc(var(--dd, 0s) + .35s);animation-play-state:paused;}
+  .dotgrid.wave .dot.psy{animation:dot-in .9s var(--e-spring) both, pulse 2.2s ease-in-out 1.6s infinite;animation-delay:.1s, 1.6s;animation-play-state:paused;}
+  .dotgrid.wave.go .dot{animation-play-state:running;}
+  .lite .dotgrid.wave .dot{animation:none;}
+  @keyframes dot-in{from{opacity:0;transform:scale(.2);}}
   .dotcaption{font-family:var(--font-ui);font-size:.82rem;margin-top:14px;color:var(--muted);max-width:640px;}
   .dotcaption b{color:var(--ink);}
 
@@ -343,13 +354,32 @@
     }
     grid.appendChild(d);
   }
+  // ── the waiting room fills, outward from its one psychiatrist ──
+  // Each dot's delay is its distance from the gold dot. Opacity and
+  // transform only; nothing plays under reduced motion, lite or Less motion.
+  if('IntersectionObserver' in window && !document.documentElement.classList.contains('lite')
+     && !matchMedia('(prefers-reduced-motion: reduce)').matches){
+    const dots = grid.children, p = dots[psyIndex], px = p.offsetLeft, py = p.offsetTop, dist = [];
+    let far = 1;
+    for(let i=0;i<dots.length;i++){
+      const v = Math.hypot(dots[i].offsetLeft - px, dots[i].offsetTop - py);
+      dist.push(v); if(v > far) far = v;
+    }
+    for(let i=0;i<dots.length;i++) dots[i].style.setProperty('--dd', (dist[i] / far * 1.6).toFixed(3) + 's');
+    grid.classList.add('wave');
+    const seen = new IntersectionObserver(es=>{
+      if(es.some(e=>e.isIntersecting)){ grid.classList.add('go'); seen.disconnect(); }
+    }, { rootMargin:'0px 0px -15% 0px' });
+    seen.observe(grid);
+  }
 
-  // ── token ticker ──
+  // ── token ticker (only where the page still has one: the element went
+  //    in an earlier redesign and the timer kept throwing every 3s) ──
+  const ticker = document.getElementById('tokenTicker');
   let token = 1;
-  setInterval(()=>{
+  if(ticker) setInterval(()=>{
     token = token >= 120 ? 1 : token + 1;
-    document.getElementById('tokenTicker').textContent =
-      'TOKEN NO. ' + String(token).padStart(3,'0') + ' — NOW SERVING';
+    ticker.textContent = 'TOKEN NO. ' + String(token).padStart(3,'0') + ' — NOW SERVING';
   }, 3000);
 
   // ── pledge: shared storage when available (artifact runtime), localStorage fallback ──

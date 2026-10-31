@@ -123,7 +123,12 @@ let current = null, lastResult = null, advancing = false;
 function prefs(){ try{ return JSON.parse(localStorage.getItem(PREF_KEY)) || {}; }catch(e){ return {}; } }
 function savePrefs(p){ try{ localStorage.setItem(PREF_KEY, JSON.stringify(p)); }catch(e){} }
 function loadHistory(){ try{ return JSON.parse(localStorage.getItem(STORE_KEY)) || []; }catch(e){ return []; } }
-function saveEntry(e){ const h = loadHistory(); h.push(e); try{ localStorage.setItem(STORE_KEY, JSON.stringify(h)); }catch(err){} }
+function saveEntry(e){
+  const h = loadHistory(); h.push(e);
+  try{ localStorage.setItem(STORE_KEY, JSON.stringify(h)); }catch(err){}
+  /* a check-in is a new star in the home sky (valley.js) */
+  document.dispatchEvent(new CustomEvent("rk:sky", { detail:{ kind:"checkin" } }));
+}
 function esc(s){ return String(s).replace(/[&<>"']/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
 function fmt(str, vals){ return String(str).replace(/\{(\w+)\}/g, (m,k)=> k in vals ? vals[k] : m); }
 function localeOf(){ return LANG === "en" ? "en-IN" : LANG + "-IN"; }
@@ -200,8 +205,10 @@ function setLang(code, after){
   const codeTag = document.getElementById("setLangCode");
   if(codeTag) codeTag.textContent = code.toUpperCase();
   const setBtn = document.getElementById("setBtn");
+  /* the name starts with what the button shows ("EN Settings"), so a
+     voice-control user who says what they see reaches it (WCAG 2.5.3) */
   if(setBtn) setBtn.setAttribute("aria-label",
-    (T.ui.settings || "Settings") + " — " + (T.ui.langLabel || "Language") + ": " + T.label);
+    code.toUpperCase() + " " + (T.ui.settings || "Settings") + " — " + (T.ui.langLabel || "Language") + ": " + T.label);
 
   renderCards(); renderMood(); renderResources();
   if(document.getElementById("transcript").childElementCount) guideStart();
@@ -282,7 +289,7 @@ function showView(name){
   v.classList.add("active");
   document.querySelectorAll("nav a[data-view]").forEach(a=>
     a.setAttribute("aria-current", a.dataset.view === name ? "page" : "false"));
-  if(name === "history") renderHistory();
+  if(name === "history") renderHistory(true);
   if(name === "home") requestAnimationFrame(deckPaint);
   if(name === "summary") renderSummary();
   if(name === "guide" && !document.getElementById("transcript").childElementCount) guideStart();
@@ -290,6 +297,8 @@ function showView(name){
   window.scrollTo(0,0);
   v.focus();
   observeReveals();
+  /* for motion.js (the wheel glide must not carry on past a screen change) */
+  document.dispatchEvent(new CustomEvent("rk:view", { detail:name }));
   /* Music is a known mood-induction method, so it fades out for the
      questions themselves and comes back after: it must not colour
      anyone's answers. */
@@ -581,10 +590,10 @@ addEventListener("resize", deckPaint, { passive:true });
   let ticking = false;
   function paint(){
     ticking = false;
-    /* 0 while the top of the sky is still on screen, 1 once all of it has
-       scrolled past — the same span as the CSS "exit" range */
-    const r = sky.getBoundingClientRect();
-    const p = Math.min(1, Math.max(0, -r.top / (r.height || 1)));
+    /* the CSS "exit" range: 0 while the foot of the sky is still at or
+       below the foot of the screen, 1 once it has scrolled off the top */
+    const r = sky.getBoundingClientRect(), vh = innerHeight || 1;
+    const p = Math.min(1, Math.max(0, (vh - r.bottom) / vh));
     sky.style.setProperty("--rise", p.toFixed(3));
   }
   addEventListener("scroll", ()=>{ if(!ticking){ ticking = true; requestAnimationFrame(paint); } }, { passive:true });
@@ -1261,12 +1270,56 @@ function renderSummary(){
 }
 
 /* ════════ history ════════ */
-function renderHistory(){
+/* ════════ your sky ════════
+   The home screen's night again, laid out by date: each check-in of the
+   last four months a bright star, joined to the one before like a
+   constellation, and each day's mood a small one. The sentence under it
+   carries the counts; the picture is aria-hidden. It draws itself in from
+   the left when History opens (a mask sliding on the compositor: two
+   transforms, nothing inside the drawing moves), and is simply there under
+   reduced motion or Less motion. */
+function skyHash(s){
+  let h = 2166136261;
+  for(let i=0;i<s.length;i++){ h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); }
+  h ^= h >>> 16; h = Math.imul(h, 0x85ebca6b); h ^= h >>> 13; h = Math.imul(h, 0xc2b2ae35); h ^= h >>> 16;
+  return (h >>> 0) / 4294967296;
+}
+function skyPanel(h, play){
+  const now = Date.now(), since = now - 864e5 * 120, m = loadMood();
+  const cks = h.filter(e=> e && e.date && new Date(e.date).getTime() > since)
+               .sort((a,b)=> new Date(a.date) - new Date(b.date));
+  const moods = Object.keys(m).filter(d=> new Date(d + "T12:00:00").getTime() > since);
+  if(!cks.length && !moods.length) return null;
+  const x = t => (4 + 92 * Math.min(1, Math.max(0, (t - since) / (now - since)))).toFixed(2);
+  const pts = cks.map((e,i)=> [x(new Date(e.date).getTime()), (16 + 68 * skyHash("c" + e.date + i)).toFixed(2)]);
+  /* the lines and the small stars ride the wipe; each bright star lights
+     as the wipe reaches it */
+  let art = '<div class="skywipe"><div class="skywipe-in">';
+  if(pts.length > 1) art += '<svg viewBox="0 0 100 100" preserveAspectRatio="none" focusable="false"><polyline points="'
+    + pts.map(p=> p.join(",")).join(" ") + '"/></svg>';
+  moods.forEach(d=>{
+    art += '<i style="left:' + x(new Date(d + "T12:00:00").getTime()) + '%;top:' + (8 + 84 * skyHash("m" + d)).toFixed(2)
+      + '%;opacity:' + (.45 + .5 * skyHash("o" + d)).toFixed(2) + '"></i>';
+  });
+  art += '</div></div>';
+  pts.forEach(p=>{ art += '<i class="ck" style="left:' + p[0] + '%;top:' + p[1] + '%;--d:' + (.1 + p[0] / 100 * 1.25).toFixed(2) + 's"></i>'; });
+  const box = document.createElement("div");
+  box.className = "skypanel";
+  box.innerHTML = '<h2 class="skyhead">' + esc(T.ui.skyTitle || "Your sky") + '</h2>'
+    + '<div class="skyart' + (play ? " play" : "") + '" aria-hidden="true">' + art + '</div>'
+    + '<p class="skysum">' + esc(fmt(T.ui.skySummary || "Check-ins: {c} · Days with a mood: {m}", { c: cks.length, m: moods.length })) + '</p>';
+  return box;
+}
+
+function renderHistory(play){
   const h = loadHistory(), el = document.getElementById("histContent");
-  if(!h.length){ el.innerHTML = '<p class="histempty">'+esc(T.ui.histEmpty)+'</p>'; return; }
+  const sky = skyPanel(h, play === true && !document.documentElement.classList.contains("lite")
+    && !window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+  if(!h.length){ el.innerHTML = '<p class="histempty">'+esc(T.ui.histEmpty)+'</p>'; if(sky) el.prepend(sky); return; }
   const by = {};
   h.forEach(e=>{ (by[e.inst] = by[e.inst] || []).push(e); });
   el.innerHTML = "";
+  if(sky) el.appendChild(sky);
   ORDER.filter(id=>by[id]).forEach(id=>{
     const t = T.inst[id], meta = META[id];
     const entries = by[id].sort((a,b)=> new Date(a.date) - new Date(b.date));
@@ -1454,10 +1507,14 @@ function moodFace(i){
 }
 function loadMood(){ try{ return JSON.parse(localStorage.getItem(MOOD_KEY)) || {}; }catch(e){ return {}; } }
 function dkey(d){ return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0"); }
-function setMood(v){
-  const m = loadMood(); m[dkey(new Date())] = v;
+function setMood(v, from){
+  const m = loadMood(), first = !m[dkey(new Date())]; m[dkey(new Date())] = v;
   try{ localStorage.setItem(MOOD_KEY, JSON.stringify(m)); }catch(e){}
   renderMood();
+  /* the day's first tap lights tonight's star (valley.js), and a spark
+     rises from the face that was tapped toward the sky it joins */
+  if(first) document.dispatchEvent(new CustomEvent("rk:sky", { detail:{ kind:"mood",
+    x: from ? from.left + from.width / 2 : null, y: from ? from.top + from.height / 2 : null } }));
 }
 function renderMood(){
   const m = loadMood(), today = dkey(new Date());
@@ -1469,7 +1526,7 @@ function renderMood(){
     b.title = T.ui.moods[i];
     b.setAttribute("aria-label", T.ui.moods[i]);
     b.setAttribute("aria-pressed", String(m[today] === i+1));
-    b.addEventListener("click", ()=> setMood(i+1));
+    b.addEventListener("click", ()=> setMood(i+1, b.getBoundingClientRect()));
     btns.appendChild(b);
   });
   const strip = document.getElementById("moodStrip");
@@ -1483,13 +1540,18 @@ function renderMood(){
     c.title = dkey(d) + (v ? " — "+T.ui.moods[v-1] : "");
     strip.appendChild(c);
   }
-  let streak = 0;
-  for(let i=0;;i++){
+  /* Stars, not a streak. A streak resets to zero after one missed day,
+     which is the day someone is struggling; the trial evidence is that
+     this kind of mechanic loses people (Liu et al., JAMA Psychiatry 2025:
+     lower dropout without gamification). So this counts the days lit in
+     the last 30, and a missed day simply stays dark. */
+  let lit = 0;
+  for(let i=0;i<30;i++){
     const d = new Date(); d.setDate(d.getDate()-i);
-    if(m[dkey(d)]) streak++; else break;
+    if(m[dkey(d)]) lit++;
   }
   document.getElementById("moodMsg").textContent =
-    m[today] ? fmt(T.ui.moodLogged,{n:streak}) : T.ui.moodPrompt;
+    m[today] ? fmt(T.ui.moodLogged,{n:lit}) : T.ui.moodPrompt;
 }
 
 /* ════════ resources: directories first, then region, then India detail ════════ */

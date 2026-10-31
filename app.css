@@ -179,7 +179,9 @@ select.langsel{
   --rise:0;
 }
 .hero-sky .wrap{position:relative;z-index:3;}
-.hs-copy{padding-bottom:7.5rem;}
+.hs-copy{padding-bottom:calc(var(--kv-h) * .62);pointer-events:none;}
+/* taps between the words reach the valley; the words and buttons keep theirs */
+.hs-copy > *{pointer-events:auto;}
 .hero-sky .panel{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.2);color:#FFF6EE;box-shadow:none;}
 .hero-sky .panel .tag{color:#FFD166;}
 .hero-sky .eyebrow{color:#FFD166;background:rgba(255,209,102,.1);border-color:rgba(255,209,102,.35);}
@@ -296,7 +298,7 @@ select.langsel{
 /* the mist the sun rises out of, which is also where the night hands
    over to the page's own colour */
 .hs-mist{
-  position:absolute;left:0;right:0;bottom:-1px;height:20%;z-index:2;pointer-events:none;
+  position:absolute;left:0;right:0;bottom:-1px;height:8%;z-index:2;pointer-events:none;
   background:linear-gradient(180deg,transparent 0%,color-mix(in srgb,var(--paper) 40%,transparent) 50%,var(--paper) 100%);
 }
 .hs-cue{
@@ -316,19 +318,23 @@ select.langsel{
    a JS fallback writes --rise on the hero where it doesn't. */
 @supports (animation-timeline: view()){
   .hero-sky{view-timeline-name:--sky;}
-  .hs-sun{animation:hs-rise linear both;animation-timeline:--sky;animation-range:exit 0% exit 100%;}
-  .hs-stars{animation:hs-fade linear both;animation-timeline:--sky;animation-range:exit 0% exit 70%;}
+  /* exit 0% is the moment the foot of the sky reaches the foot of the
+     screen: the valley is then wholly in view, and the dawn plays while
+     it stays there (by exit ~40% its peaks reach the helpline strip) */
+  .hs-sun{animation:hs-rise linear both;animation-timeline:--sky;animation-range:exit 0% exit 38%;}
+  .hs-stars{animation:hs-fade linear both;animation-timeline:--sky;animation-range:exit 0% exit 35%;}
   .hs-cue{animation:hs-fade linear both;animation-timeline:--sky;animation-range:exit 0% exit 20%;}
   .hs-copy{animation:hs-lift linear both;animation-timeline:--sky;animation-range:exit 0% exit 100%;}
 }
 @supports not (animation-timeline: view()){
-  .hs-sun{transform:translate(-50%,calc(44% - var(--rise) * 56%)) scale(calc(1 + var(--rise) * .16));}
+  .hs-sun{transform:translate(-50%,calc(44% - min(1, var(--rise) / .38) * 76%)) scale(calc(1 + min(1, var(--rise) / .38) * .08));}
+  .hs-stars{opacity:clamp(0, calc(1 - var(--rise) / .35), 1);}
   .hs-cue{opacity:calc(1 - var(--rise) * 4);}
   .hs-copy{opacity:calc(1 - var(--rise) * .9);transform:translateY(calc(var(--rise) * -40px));}
 }
 @keyframes hs-rise{
   from{transform:translate(-50%,44%) scale(1);}
-  to{transform:translate(-50%,-12%) scale(1.16);}
+  to{transform:translate(-50%,-32%) scale(1.08);}
 }
 @keyframes hs-fade{to{opacity:0;}}
 @keyframes hs-lift{to{opacity:.1;transform:translateY(-40px);}}
@@ -338,6 +344,140 @@ select.langsel{
 :root[data-contrast="high"] .hero-sky h1 .accent{background:none;-webkit-text-fill-color:#FFE27A;color:#FFE27A;}
 :root[data-contrast="high"] .hs-cue{border-color:#000;}
 :root[data-contrast="high"] .hs-copy{padding-bottom:3.5rem;}
+/* ══════════ the valley: Kashmir at the end of the night ══════════
+   The sky above becomes a place. Layers, back to front: the Pir Panjal
+   with Harmukh's twin summits (snow moonlit, catching the dawn as you
+   scroll), the flock (valley.js, strong devices only), ridge mist, the
+   forested ridges, the lake with its poplar shore, lit houseboats and the
+   mountains upside down, a shikara crossing, a chinar in front.
+   Every moving part is an HTML box: scroll parallax and the dawn are
+   scroll-timeline animations on transform/opacity (the compositor), the
+   pointer and tilt parallax is a transform written by valley.js. Nothing
+   inside the drawings ever animates. */
+.hero-sky{--kv-h:clamp(22rem, 78vw + 6rem, 33rem);--sun-x:50%;}
+.hs-sun{left:var(--sun-x);}
+/* On a phone the bloom is the size of a sun behind a mountain range, not a
+   flower in front of a hill. */
+@media(max-width:959px){ .hs-sun{width:min(84vw,24rem);} }
+.kv{position:absolute;left:0;right:0;bottom:0;height:var(--kv-h);z-index:1;pointer-events:none;}
+.kv-defs{position:absolute;width:0;height:0;overflow:hidden;}
+.kv-l{position:absolute;inset:0;}
+.kv-p{position:absolute;inset:0 -3%;}
+/* The panorama is aimed, not just cropped: whatever the screen, the saddle
+   between Harmukh's twin summits (x 1030 of 1600) sits right under
+   --sun-x, so the sun always rises between them. The width is the
+   drawing's own 2.5:1 at this height, or the full width if that is wider;
+   the clamp keeps an edge from ever showing. */
+.kv{--kv-w:max(100%, calc(var(--kv-h) * 2.5));}
+.kv-l svg,.kv-glow svg{position:absolute;top:0;height:100%;display:block;max-width:none;
+  width:var(--kv-w);left:clamp(calc(100% - var(--kv-w)), calc((var(--sun-x) + 3%) / 1.06 - var(--kv-w) * .644), 0px);}
+.kv-glow{position:absolute;inset:0;opacity:0;}
+.kv-rim{stroke:#FFD27A;stroke-width:1.6;stroke-linejoin:round;vector-effect:non-scaling-stroke;}
+.kv-snow{opacity:.9;}
+.kv-snowrefl{fill:#CDBDF2;opacity:.16;}
+.kv-mid1{fill:#2B1850;}
+.kv-mid2{fill:#1D0F3B;}
+.kv-shore{fill:#140A2C;}
+.kv-win{fill:#FFC857;opacity:.9;}
+.kv-shimmer{stroke:#FFF6EE;stroke-opacity:.12;stroke-width:1.3;stroke-linecap:round;vector-effect:non-scaling-stroke;}
+/* the mist drifts on its own drawing; its box (.kv-p) is the one the
+   cursor and the tilt lean, and one transform cannot serve both */
+.kv-mist svg{animation:kv-drift 38s ease-in-out infinite alternate;}
+@keyframes kv-drift{from{transform:translateX(-1.6%);}to{transform:translateX(1.6%);}}
+/* the sun's path on the water, under wherever the sun is */
+.kv-sunpath{position:absolute;left:var(--sun-x);bottom:0;width:min(30%,13rem);height:19%;transform:translateX(-50%);opacity:0;}
+.kv-sunpath svg{width:100%;height:100%;display:block;}
+.kv-sunpath path{stroke:#FFC857;stroke-width:2.2;stroke-linecap:round;vector-effect:non-scaling-stroke;}
+.kv-ripples,.kv-leaves{position:absolute;inset:0;pointer-events:none;overflow:hidden;}
+/* the shikara crosses the lake, slowly, the whole time the sky is on screen */
+.kv-shikara{position:absolute;left:0;bottom:7.5%;width:clamp(5.5rem,11vw,9.5rem);aspect-ratio:200/64;
+  animation:kv-glide 84s linear infinite;animation-delay:-30s;}
+.kv-shikara-art{display:block;width:100%;height:100%;overflow:visible;animation:kv-bob 4.2s ease-in-out infinite alternate;}
+@keyframes kv-glide{from{transform:translateX(-12rem);}to{transform:translateX(calc(100vw + 2rem));}}
+@keyframes kv-bob{from{transform:translateY(0) rotate(-.6deg);}to{transform:translateY(2px) rotate(.6deg);}}
+.kv-boat{fill:#0E061D;}
+.kv-lamp{fill:#FFC857;}
+/* the chinar, in front of everything, on the side away from the words */
+.kv-chinar{position:absolute;bottom:-2%;left:-22%;width:min(70vw,23rem);aspect-ratio:460/560;}
+.kv-chinar-art{display:block;width:100%;height:100%;overflow:visible;}
+.kv-trunk{fill:#110720;}
+.kv-crown use{fill:#170A2B;}
+.kv-crown use.w{fill:#6E1A38;}
+.kv-birds{position:absolute;left:0;right:0;top:-34%;height:78%;}
+.kv-birds canvas{display:block;}
+/* your stars: a check-in is a bright four-point star, a day's mood a small one */
+.hs-mystars{position:absolute;inset:0 0 auto 0;height:calc(100% - var(--kv-h) * .55);z-index:0;pointer-events:none;}
+.hs-mystars i{position:absolute;display:block;border-radius:50%;background:#FFF6EE;width:3px;height:3px;
+  box-shadow:0 0 6px 1px rgba(255,214,140,.55);}
+.hs-mystars i.ck{width:auto;height:auto;background:none;box-shadow:none;}
+.hs-mystars i.ck::before{content:"";display:block;width:14px;height:14px;
+  background:radial-gradient(circle,#FFF8E1 0 18%,rgba(255,200,87,.9) 19% 26%,transparent 27%),
+    conic-gradient(from 45deg,transparent 0 10%,rgba(255,236,190,.95) 12.5%,transparent 15% 35%,rgba(255,236,190,.95) 37.5%,transparent 40% 60%,rgba(255,236,190,.95) 62.5%,transparent 65% 85%,rgba(255,236,190,.95) 87.5%,transparent 90%);
+  filter:drop-shadow(0 0 4px rgba(255,200,87,.8));transform:translate(-50%,-50%);}
+.hs-mystars i.new{animation:my-born 2.4s var(--e-spring) both;}
+@keyframes my-born{from{opacity:0;transform:scale(.2);}60%{opacity:1;transform:scale(1.6);}to{opacity:1;transform:scale(1);}}
+/* a laptop: the words on the left, the mountains rise high on the right,
+   the sun comes up between Harmukh and Kolahoi, the chinar stands left */
+@media(min-width:960px){
+  .hero-sky{--kv-h:clamp(26rem, 80vh, 44rem);--sun-x:70%;}
+  .kv-chinar{left:auto;right:-5%;width:min(25vw,23rem);bottom:-3%;}
+  .kv-birds{left:42%;top:-40%;height:92%;}
+}
+/* scroll: the far range drifts slowest, the chinar fastest; the dawn
+   reaches the snow, then the water */
+@supports (animation-timeline: view()){
+  .kv-far{animation:kv-par-far linear both;animation-timeline:--sky;animation-range:exit 0% exit 100%;}
+  .kv-mist{animation:kv-par-mist linear both;animation-timeline:--sky;animation-range:exit 0% exit 100%;}
+  .kv-mid{animation:kv-par-mid linear both;animation-timeline:--sky;animation-range:exit 0% exit 100%;}
+  .kv-chinar{animation:kv-par-near linear both;animation-timeline:--sky;animation-range:exit 0% exit 100%;}
+  .kv-glow{animation:kv-dawn linear both;animation-timeline:--sky;animation-range:exit 0% exit 30%;}
+  .kv-sunpath{animation:kv-dawn linear both;animation-timeline:--sky;animation-range:exit 8% exit 38%;}
+  .hs-mystars{animation:hs-fade linear both;animation-timeline:--sky;animation-range:exit 5% exit 40%;}
+}
+@supports not (animation-timeline: view()){
+  .kv-far{transform:translateY(calc(var(--rise) * 18%));}
+  .kv-mist{transform:translateY(calc(var(--rise) * 12%));}
+  .kv-mid{transform:translateY(calc(var(--rise) * 7%));}
+  .kv-chinar{transform:translateY(calc(var(--rise) * -8%));}
+  .kv-glow{opacity:clamp(0, calc(var(--rise) / .3), 1);}
+  .kv-sunpath{opacity:clamp(0, calc((var(--rise) - .08) / .3), 1);}
+  .hs-mystars{opacity:clamp(0, calc(1 - (var(--rise) - .05) / .35), 1);}
+}
+@keyframes kv-par-far{to{transform:translateY(18%);}}
+@keyframes kv-par-mist{to{transform:translateY(12%);}}
+@keyframes kv-par-mid{to{transform:translateY(7%);}}
+@keyframes kv-par-near{to{transform:translateY(-8%);}}
+@keyframes kv-dawn{from{opacity:0;}to{opacity:1;}}
+/* still: the same valley, nothing moving (the dawn is shown, not played) */
+.lite .kv-mist svg,.lite .kv-shikara,.lite .kv-shikara-art,.hero-sky.rest .kv-mist svg,
+.hero-sky.rest .kv-shikara,.hero-sky.rest .kv-shikara-art{animation-play-state:paused;}
+.lite .kv-shikara{animation:none;transform:translateX(56vw);}
+@media (prefers-reduced-motion: reduce){
+  .kv-mist svg,.kv-shikara,.kv-shikara-art{animation:none!important;}
+  .kv-shikara{transform:translateX(56vw);}
+  .kv-glow{opacity:.55;}
+}
+/* the surprises (valley.js): each is an HTML box moved by transform and
+   opacity, created on the tap and removed when it ends */
+.kv-ripple{position:absolute;width:11rem;height:2.3rem;margin:-1.15rem 0 0 -5.5rem;border-radius:50%;
+  border:1.5px solid rgba(255,246,238,.62);box-shadow:0 0 14px rgba(255,200,87,.22);}
+.kv-leaf{position:absolute;width:20px;height:20px;margin:-10px 0 0 -10px;overflow:visible;
+  filter:drop-shadow(0 1px 1px rgba(20,8,40,.5));}
+.kv-flash{position:absolute;width:15rem;height:15rem;margin:-7.5rem 0 0 -7.5rem;border-radius:50%;
+  background:radial-gradient(closest-side,rgba(255,230,160,.9),rgba(255,150,190,.38) 46%,rgba(255,150,190,0) 72%);}
+.kv-fall{position:absolute;z-index:1;width:5.5rem;height:2px;margin:-1px 0 0 -5.5rem;border-radius:2px;pointer-events:none;
+  background:linear-gradient(90deg,transparent,rgba(255,246,238,.95));transform-origin:100% 50%;}
+/* the shikara's lantern, softly lit all night; a tap makes it flare */
+.kv-lampglow{position:absolute;left:34%;top:48%;width:1.6rem;height:1.6rem;margin:-.8rem 0 0 -.8rem;border-radius:50%;
+  background:radial-gradient(closest-side,rgba(255,212,120,.95),rgba(255,180,90,.35) 55%,transparent);opacity:.7;}
+.kv-shikara.flare .kv-lampglow{animation:kv-flare 2.6s var(--e-out2);}
+@keyframes kv-flare{0%{opacity:.7;transform:scale(1);}18%{opacity:1;transform:scale(3.2);}100%{opacity:.7;transform:scale(1);}}
+.kv-birds{opacity:0;transition:opacity 2.4s ease;}
+.kv-birds.on{opacity:1;}
+.lite .kv-birds.on{opacity:0;transition-duration:.6s;}
+@media(max-width:959px){ .kv-birds{top:-6%;height:70%;} }
+:root[data-contrast="high"] .kv,:root[data-contrast="high"] .hs-mystars{display:none;}
+
 
 /* ══════════ the check-ins: each one its own place ══════════
    Five scenes, stacked like cards in a hand. Each one sticks as it
@@ -536,8 +676,8 @@ select.langsel{
 
 /* On a wide screen the sun rises beside the headline, not under it. */
 @media(min-width:960px){
-  .hs-sun{left:74%;width:min(44vw,38rem);}
-  .hs-copy{padding-bottom:5.5rem;}
+  .hs-sun{left:var(--sun-x);width:min(34vw,30rem);}
+  .hs-copy{padding-bottom:calc(var(--kv-h) * .34);}
 }
 @media(min-width:860px){
   .card{grid-template-rows:none;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);min-height:min(66vh,29rem);}
@@ -993,6 +1133,39 @@ details.acc li::marker{color:var(--pink);}
 .guidebar{display:flex;gap:.6rem;flex-wrap:wrap;margin-bottom:1rem;}
 
 /* ══════════ HISTORY ══════════ */
+/* your sky (app.js skyPanel): the home screen's night, laid out by date */
+.skypanel{max-width:48rem;margin:1.2rem 0 1.5rem;}
+.skyhead{font-size:1.1rem;font-weight:800;margin-bottom:.5rem;}
+.skyart{position:relative;height:clamp(7.5rem, 24vw, 11rem);border-radius:var(--r-xl);overflow:hidden;
+  background:radial-gradient(90% 80% at 82% 118%, rgba(232,96,140,.42), transparent 62%),
+    linear-gradient(180deg,#110A24,#26133F 78%,#3A1A4C);
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.07);}
+.skyart i{position:absolute;display:block;width:3px;height:3px;border-radius:50%;background:#FFF6EE;
+  box-shadow:0 0 6px 1px rgba(255,214,140,.5);}
+.skyart > i.ck{width:0;height:0;background:none;box-shadow:none;}
+.skyart > i.ck::before{content:"";position:absolute;left:-8px;top:-8px;width:16px;height:16px;
+  background:radial-gradient(circle,#FFF8E1 0 18%,rgba(255,200,87,.9) 19% 26%,transparent 27%),
+    conic-gradient(from 45deg,transparent 0 10%,rgba(255,236,190,.95) 12.5%,transparent 15% 35%,rgba(255,236,190,.95) 37.5%,transparent 40% 60%,rgba(255,236,190,.95) 62.5%,transparent 65% 85%,rgba(255,236,190,.95) 87.5%,transparent 90%);
+  filter:drop-shadow(0 0 4px rgba(255,200,87,.8));}
+.skywipe,.skywipe-in{position:absolute;inset:0;overflow:hidden;}
+.skywipe svg{position:absolute;inset:0;width:100%;height:100%;display:block;}
+.skywipe polyline{fill:none;stroke:rgba(255,226,170,.55);stroke-width:1.2;stroke-dasharray:2 5;stroke-linecap:round;
+  stroke-linejoin:round;vector-effect:non-scaling-stroke;}
+/* the draw: the window slides in from the left while its contents slide
+   back by the same amount, so the drawing stays put and appears */
+.skyart.play .skywipe{animation:sky-wipe-o 1.6s var(--e-out2) both;}
+.skyart.play .skywipe-in{animation:sky-wipe-i 1.6s var(--e-out2) both;}
+@keyframes sky-wipe-o{from{transform:translateX(-100%);}to{transform:none;}}
+@keyframes sky-wipe-i{from{transform:translateX(100%);}to{transform:none;}}
+.skyart.play > i.ck{animation:sky-pop .8s var(--e-spring) both;animation-delay:var(--d,0s);}
+@keyframes sky-pop{from{opacity:0;transform:scale(.25);}to{opacity:1;transform:none;}}
+.skysum{color:var(--muted);font-size:.95rem;margin-top:.55rem;}
+:root[data-contrast="high"] .skyart{background:#000;box-shadow:inset 0 0 0 2px #fff;}
+/* the spark a day's first mood tap sends up toward the sky (valley.js) */
+.my-spark{position:fixed;z-index:40;width:18px;height:18px;margin:-9px 0 0 -9px;pointer-events:none;
+  background:radial-gradient(circle,#FFF8E1 0 18%,rgba(255,190,70,.95) 19% 27%,transparent 28%),
+    conic-gradient(from 45deg,transparent 0 10%,rgba(255,214,140,1) 12.5%,transparent 15% 35%,rgba(255,214,140,1) 37.5%,transparent 40% 60%,rgba(255,214,140,1) 62.5%,transparent 65% 85%,rgba(255,214,140,1) 87.5%,transparent 90%);
+  filter:drop-shadow(0 0 1px rgba(140,70,10,.55)) drop-shadow(0 0 6px rgba(255,190,70,.9));}
 .histempty{
   max-width:40rem;padding:1.4rem 1.3rem;border-radius:var(--r-xl);border:1.5px dashed color-mix(in srgb,var(--heal) 35%,var(--line));
   color:var(--muted);background:color-mix(in srgb,var(--heal) 4%,var(--card));margin:1.2rem 0;
@@ -1733,7 +1906,7 @@ body.tour-in-panel .setpanel{z-index:902;}
   #view-home{padding-top:0;}
   .hero-sky{padding-top:1.6rem;}
   .hs-cue{display:none;}
-  .hs-copy{padding-bottom:6.8rem;}
+  .hs-copy{padding-bottom:calc(var(--kv-h) * .72);}
   .hero-sky .eyebrow{margin-bottom:.8rem;}
   .hero-sky .lede{font-size:1rem;margin:.9rem 0 1.2rem;}
   .lede{font-size:1rem;}

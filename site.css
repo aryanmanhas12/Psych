@@ -218,6 +218,17 @@ p,li{text-wrap:pretty;}
   *,*::before,*::after{animation:none!important;transition:none!important;}
   html{scroll-behavior:auto;}
 }
+/* Lenis (motion.js, laptops only): while it eases the wheel, the browser's
+   own smooth scrolling must not ease the same scroll a second time; a box
+   that scrolls sideways keeps its own sideways swipe. */
+html.lenis,html.lenis body{height:auto;}
+.lenis.lenis-smooth{scroll-behavior:auto!important;}
+.lenis.lenis-smooth [data-lenis-prevent],.lenis.lenis-smooth [data-lenis-prevent-horizontal]{overscroll-behavior:contain;}
+.lenis.lenis-stopped{overflow:clip;}
+/* motion.js: a heading or a figure further down the page waits, unseen,
+   for its moment to rise; on paper it is simply there */
+.rk-pre{opacity:0;}
+@media print{ .rk-pre{opacity:1!important;} }
 /* ── moving between screens and pages ──
    One calm cross-fade for both: the old screen settles back as the new one
    rises into place (app.js goView for the app's four places; the browser

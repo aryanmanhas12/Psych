@@ -1280,6 +1280,116 @@ const OVERFLOW = `(()=>{
     await ctx.close();
   }
 
+  /* 21 ── the valley, your stars and the motion layer (v36). The picture is
+         decoration and must stay out of the way: aria-hidden, nothing
+         focusable, no star behind the words. Your stars come only from this
+         device's own history. Still means still: under reduced motion and
+         "Less motion" no flock, nothing waiting hidden, no glide. The
+         laptop's glide stops at the door of a check-in. And on the reading
+         pages, everything that waits to rise has risen by the end. */
+  head('21. THE VALLEY, YOUR STARS AND THE MOTION LAYER');
+  {
+    const BASE = URL.replace(/[^/]*$/, '');
+    const seed = ()=>{
+      ['psych-seen-overture','psych-seen-tour','psych-seen-intro'].forEach(k=>localStorage.setItem(k,'2'));
+      sessionStorage.setItem('ronak-visit-opened','1');
+      const d = new Date(), key = x=> x.getFullYear()+'-'+String(x.getMonth()+1).padStart(2,'0')+'-'+String(x.getDate()).padStart(2,'0'), m = {};
+      for(let i=1;i<=10;i++){ const x = new Date(d); x.setDate(d.getDate()-i); m[key(x)] = 1 + i % 5; }
+      localStorage.setItem('psych-mood', JSON.stringify(m));
+      localStorage.setItem('psych-screener-history', JSON.stringify([3,17,31,45].map(n=>{ const x = new Date(d); x.setDate(d.getDate()-n);
+        return { inst:'phq9', score:6, sev:'mild', bandIdx:1, safetyFlag:false, date:x.toISOString(), ans:[] }; })));
+    };
+    const starsClear = ()=>{
+      const words = [...document.querySelectorAll('.hs-copy > *')].map(e=>e.getBoundingClientRect()).filter(r=>r.width);
+      return [...document.querySelectorAll('#hsMyStars i')].filter(s=>{ const r = s.getBoundingClientRect(), x = r.left + r.width/2, y = r.top + r.height/2;
+        return words.some(w=> x > w.left && x < w.right && y > w.top && y < w.bottom); }).length;
+    };
+
+    /* a phone, motion allowed */
+    let ctx = await b.newContext(phone({ serviceWorkers:'block' })); let p = await ctx.newPage();
+    p.on('pageerror', e=>PAGE_ERRORS.push(e.message));
+    await p.addInitScript(seed);
+    await p.goto(URL,{waitUntil:'networkidle'}); await p.waitForTimeout(2500);
+    const v = await p.evaluate(starsClear=>({
+      hidden: document.getElementById('kv').getAttribute('aria-hidden') === 'true',
+      focusable: document.querySelectorAll('#kv a,#kv button,#kv input,#kv [tabindex]:not([tabindex="-1"])').length,
+      stars: document.querySelectorAll('#hsMyStars i').length, ck: document.querySelectorAll('#hsMyStars i.ck').length,
+      over: eval('('+starsClear+')')(), motion: !!(window.gsap && window.Motion),
+      lenis: !!(window.Motion && Motion.lenis()) || document.documentElement.classList.contains('lenis')
+    }), starsClear.toString());
+    v.hidden && !v.focusable ? ok('the valley is decoration: aria-hidden, nothing in it can take focus') : fail(`valley aria-hidden=${v.hidden}, focusable inside: ${v.focusable}`);
+    v.stars === 14 && v.ck === 4 ? ok('your stars: 4 check-ins and 10 days of mood make 14 stars, 4 of them bright') : fail(`your stars: ${v.stars} stars, ${v.ck} bright (want 14 and 4)`);
+    v.over === 0 ? ok('no star is drawn behind the words') : fail(`${v.over} star(s) behind the words`);
+    v.motion ? ok('the motion layer loaded (GSAP and motion.js, self-hosted)') : fail('the motion layer did not load');
+    !v.lenis ? ok('a phone keeps native touch scrolling (no Lenis)') : fail('Lenis started on a phone');
+    /* open water: the lake, on the side of the screen away from the shikara
+       (a tap on the boat lights its lantern instead) */
+    const kvBox = await p.evaluate(()=>{ const k = document.getElementById('kv'); k.scrollIntoView({block:'center', behavior:'instant'}); const r = k.getBoundingClientRect(),
+      s = document.getElementById('kvShikara').getBoundingClientRect(), left = (s.left + s.right) / 2 < r.width / 2;
+      return { x: r.left + r.width * (left ? .85 : .3), y: r.top + r.height * .9 }; });
+    await p.waitForTimeout(400); await p.touchscreen.tap(kvBox.x, kvBox.y); await p.waitForTimeout(250);
+    (await p.evaluate(()=>document.querySelectorAll('.kv-ripple').length)) > 0 ? ok('a tap on the lake ripples it') : fail('a tap on the lake did nothing');
+    await p.evaluate(()=>document.getElementById('moodBtns').scrollIntoView({block:'center'})); await p.waitForTimeout(300);
+    await p.click('#moodBtns button:nth-child(3)'); await p.waitForTimeout(300);
+    const sp = await p.evaluate(()=>({ spark: document.querySelectorAll('.my-spark').length, fresh: document.querySelectorAll('#hsMyStars i.new').length,
+                                       stars: document.querySelectorAll('#hsMyStars i').length }));
+    sp.spark === 1 && sp.fresh === 1 && sp.stars === 15 ? ok('the day’s first mood lights a new star, and a spark rises from the tap')
+      : fail(`first mood of the day: spark ${sp.spark}, new star ${sp.fresh}, stars ${sp.stars} (want 1, 1, 15)`);
+    await p.waitForTimeout(2200);
+    (await p.evaluate(()=>document.querySelectorAll('.my-spark').length)) === 0 ? ok('the spark is gone once it has risen') : fail('the spark stayed on the page');
+    await p.evaluate(()=>showView('history')); await p.waitForTimeout(400);
+    const sky = await p.evaluate(()=>{ const s = document.querySelector('#histContent .skypanel'); if(!s) return null;
+      return { ck: s.querySelectorAll('.skyart > i.ck').length, aria: s.querySelector('.skyart').getAttribute('aria-hidden'),
+               sum: s.querySelector('.skysum').textContent }; });
+    sky && sky.ck === 4 && sky.aria === 'true' && /4/.test(sky.sum) && /11/.test(sky.sum)
+      ? ok('History shows "Your sky": 4 bright stars, with the counts in words beside the picture')
+      : fail('History sky wrong: ' + JSON.stringify(sky));
+    await ctx.close();
+
+    /* still: reduced motion, then "Less motion" */
+    for(const [name, opts, extra] of [['reduced motion', { reducedMotion:'reduce' }, null], ['Less motion', {}, '{"still":true}']]){
+      ctx = await b.newContext(phone({ serviceWorkers:'block', ...opts })); p = await ctx.newPage();
+      p.on('pageerror', e=>PAGE_ERRORS.push(e.message));
+      await p.addInitScript(seed);
+      if(extra) await p.addInitScript(f=>localStorage.setItem('ronak-feel', f), extra);
+      await p.goto(URL,{waitUntil:'networkidle'}); await p.waitForTimeout(2500);
+      const s = await p.evaluate(()=>({ canvas: document.querySelectorAll('#kvBirds canvas').length, pre: document.querySelectorAll('.rk-pre').length,
+                                        stars: document.querySelectorAll('#hsMyStars i').length }));
+      await p.evaluate(()=>showView('history')); await p.waitForTimeout(300);
+      const play = await p.evaluate(()=>document.querySelectorAll('.skyart.play').length);
+      !s.canvas && !s.pre && s.stars === 14 && !play ? ok(`${name}: the same sky, standing still (no flock, nothing waiting hidden, no drawing in)`)
+        : fail(`${name}: canvas ${s.canvas}, hidden ${s.pre}, stars ${s.stars}, sky drawing ${play}`);
+      await ctx.close();
+    }
+
+    /* a laptop: the wheel glides on the home screen and never inside a check-in */
+    ctx = await b.newContext({ viewport:{width:1280,height:800}, serviceWorkers:'block' }); p = await ctx.newPage();
+    p.on('pageerror', e=>PAGE_ERRORS.push(e.message));
+    await p.addInitScript(seed);
+    await p.goto(URL,{waitUntil:'networkidle'}); await p.waitForTimeout(2500);
+    const home = await p.evaluate(()=>!!(window.Motion && Motion.lenis()) && Motion.glides());
+    await p.evaluate(()=>startTest('phq9')); await p.waitForTimeout(500);
+    const inside = await p.evaluate(()=>window.Motion && Motion.glides());
+    home && !inside ? ok('a laptop’s wheel glides on the home screen and scrolls natively inside a check-in')
+      : fail(`Lenis: home ${home}, inside a check-in ${inside} (want true, false)`);
+    await ctx.close();
+
+    /* the reading pages: everything that waited to rise has risen, every
+       split line is put back as it was */
+    ctx = await b.newContext(phone({ serviceWorkers:'block' })); p = await ctx.newPage();
+    p.on('pageerror', e=>PAGE_ERRORS.push(e.message));
+    for(const pg of ['evidence','global','ethics','manifesto']){
+      await p.goto(BASE+pg+'.html',{waitUntil:'networkidle'}); await p.waitForTimeout(400);
+      const H = await p.evaluate(()=>document.documentElement.scrollHeight);
+      for(let y=0; y<H; y+=350){ await p.evaluate(v=>scrollTo(0,v), y); await p.waitForTimeout(90); }
+      await p.waitForTimeout(1600);
+      const r = await p.evaluate(()=>({ pre: document.querySelectorAll('.rk-pre').length, lines: document.querySelectorAll('.rk-line').length }));
+      !r.pre && !r.lines ? ok(`${pg}: every heading and figure has risen and been put back as written`)
+        : fail(`${pg}: ${r.pre} still hidden, ${r.lines} split lines left after a full scroll`);
+    }
+    await ctx.close();
+  }
+
   /* 19 ── axe-core, the accessibility engine, on every screen that matters:
          home, settings, the guide, history, resources, the primer, a
          question, the self-harm safety step, a risk result, the doctor's
