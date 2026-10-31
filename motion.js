@@ -135,12 +135,26 @@ function startLenis(){
   if(lenis || still() || !fineMQ.matches || !G) return;
   load("lenis.min.js").then(function(){
     if(lenis || still() || !window.Lenis) return;
+    /* The glide borrows GSAP's clock only while it is gliding. Left on the
+       clock for good, it kept a frame loop alive on a still page, and every
+       frame cost the page a style pass (~90ms a second on a laptop, for
+       nothing). Woken by the wheel, it lets go half a second after the
+       scroll has settled, and GSAP's clock then sleeps on its own. */
+    var gliding = false, calm = 0;
+    var glide = function(t){
+      if(lenis) lenis.raf(t * 1000);
+      calm = lenis && lenis.isScrolling ? 0 : calm + 1;
+      if(calm > 30){ G.ticker.remove(glide); gliding = false; calm = 0; }
+    };
     lenis = new window.Lenis({
       autoRaf: false, anchors: false, smoothWheel: true,
       lerp: 0.09, wheelMultiplier: 0.95,
-      virtualScroll: function(){ return lenisWanted(); }
+      virtualScroll: function(){
+        var ok = lenisWanted();
+        if(ok && !gliding){ gliding = true; calm = 0; G.ticker.add(glide); }
+        return ok;
+      }
     });
-    G.ticker.add(function(t){ if(lenis) lenis.raf(t * 1000); });
   }).catch(function(){});
 }
 function stopLenis(){ if(lenis){ lenis.destroy(); lenis = null; } }

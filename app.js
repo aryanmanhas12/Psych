@@ -205,8 +205,10 @@ function setLang(code, after){
   const codeTag = document.getElementById("setLangCode");
   if(codeTag) codeTag.textContent = code.toUpperCase();
   const setBtn = document.getElementById("setBtn");
+  /* the name starts with what the button shows ("EN Settings"), so a
+     voice-control user who says what they see reaches it (WCAG 2.5.3) */
   if(setBtn) setBtn.setAttribute("aria-label",
-    (T.ui.settings || "Settings") + " — " + (T.ui.langLabel || "Language") + ": " + T.label);
+    code.toUpperCase() + " " + (T.ui.settings || "Settings") + " — " + (T.ui.langLabel || "Language") + ": " + T.label);
 
   renderCards(); renderMood(); renderResources();
   if(document.getElementById("transcript").childElementCount) guideStart();

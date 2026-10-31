@@ -234,9 +234,36 @@ function flock(on){
   if(still()) on = false;
   flockWanted = on;
   if(!fx) return;
+  if(resting) on = false;
   if(on && !running){ running = true; fx.prevNow = 0; fx.animationLoop(); }
   else if(!on && running){ running = false; window.cancelAnimationFrame(fx.req); }
 }
+/* A flock passes over; it does not circle for ever. It flies while someone
+   is here (a cursor, a touch, a scroll or a tilt in the last 15 seconds),
+   then fades out and its loop stops, so a page left open on a laptop or a
+   phone costs nothing. The next sign of someone brings it back. */
+var resting = false, lastStir = Date.now(), restTimer = 0;
+function birdsEl(){ return document.getElementById("kvBirds"); }
+function rest(){
+  if(!fx || resting) return;
+  resting = true;
+  birdsEl().classList.remove("on");
+  setTimeout(function(){ if(resting) flock(false); }, 2500);
+}
+function stir(){
+  lastStir = Date.now();
+  if(!fx || still()) return;
+  if(resting){ resting = false; birdsEl().classList.add("on"); }
+  flock(onScreen && !document.hidden);
+  if(!restTimer) restTimer = setTimeout(restCheck, 15000);
+}
+function restCheck(){
+  var quiet = Date.now() - lastStir;
+  restTimer = quiet >= 14900 ? (rest(), 0) : setTimeout(restCheck, 15000 - quiet);
+}
+["pointermove", "pointerdown", "scroll", "keydown"].forEach(function(t){
+  window.addEventListener(t, function(){ if(fx && (resting || !restTimer || Date.now() - lastStir > 1000)) stir(); }, { passive: true });
+});
 function startFlock(){
   if(fx || !M || !strong() || !webgl()) return;
   var phone = !fineMQ.matches;
@@ -273,7 +300,7 @@ function startFlock(){
     running = false;
     window.cancelAnimationFrame(fx.req);
     el.classList.add("on");
-    flock(flockWanted || (onScreen && !document.hidden));
+    stir();
   }).catch(function(){});
 }
 
