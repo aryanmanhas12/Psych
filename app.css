@@ -143,6 +143,18 @@ select.langsel{
 .vt .view.active{animation:none;}
 /* the cross-fade itself (::view-transition-old/new) lives in site.css,
    shared with the page-to-page transition */
+/* a check-in card grows into the screen it opens (app.js openCheckin):
+   the box travels and resizes; the card fades out in the first third and
+   the panel fades in after it, each kept at its own proportions so no
+   word is ever stretched on the way */
+::view-transition-group(rk-open){animation-duration:.46s;animation-timing-function:cubic-bezier(.2,0,0,1);
+  border-radius:22px;overflow:clip;}
+::view-transition-old(rk-open),::view-transition-new(rk-open){width:100%;height:100%;object-fit:cover;
+  object-position:50% 0;animation-duration:.46s;animation-timing-function:linear;}
+::view-transition-old(rk-open){animation-name:rk-open-out;}
+::view-transition-new(rk-open){animation-name:rk-open-in;}
+@keyframes rk-open-out{0%{opacity:1;}35%,100%{opacity:0;}}
+@keyframes rk-open-in{0%,25%{opacity:0;}100%{opacity:1;}}
 @media(max-width:640px){
   .tabbar{view-transition-name:rk-tabbar;}
 }
