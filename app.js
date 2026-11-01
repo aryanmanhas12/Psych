@@ -1013,7 +1013,7 @@ function renderResults(animate){
 
   renderSevScale(r.inst, r.score);
   applyIntroTailoring();
-  if(animate) animateScore(r.score); else document.getElementById("resScore").textContent = r.score;
+  if(animate){ animateScore(r.score); sweepMarker(); } else document.getElementById("resScore").textContent = r.score;
 
   const wp = document.getElementById("wellbeingsPanel");
   if(WELLBEINGS_URL){
@@ -1033,6 +1033,22 @@ function renderSevScale(id, score){
     '<div class="sevmarker" style="left:'+pos.toFixed(2)+'%;"><span>'+score+'</span><div class="sevtri"></div></div>' +
     '<div class="sevtrack">'+segs.map(s=>'<div class="sevseg s'+s.sev+'" style="width:'+s.w.toFixed(2)+'%"></div>').join("")+'</div>' +
     '<div class="sevlabels">'+segs.map(s=>'<div style="width:'+s.w.toFixed(2)+'%">'+s.lo+'–'+s.hi+'</div>').join("")+'</div>';
+}
+
+/* The marker on the severity scale travels from the start of the scale to
+   the score while the number counts up: the same 650 ms and the same
+   curve, so the number and its place on the scale arrive together. One
+   move, the same for every result: nothing bounces or sparkles, least of
+   all on a high band. The `translate` property, on the compositor, so the
+   marker's own centring transform is left alone. */
+function sweepMarker(){
+  const m = document.querySelector("#sevScale .sevmarker"), sc = document.getElementById("sevScale");
+  if(!m || !m.animate || window.matchMedia("(prefers-reduced-motion: reduce)").matches ||
+     document.documentElement.classList.contains("lite")) return;
+  const from = -(parseFloat(m.style.left) || 0) / 100 * sc.clientWidth;
+  if(Math.abs(from) < 2) return;
+  m.animate([{ translate: from.toFixed(1) + "px 0" }, { translate: "0 0" }],
+            { duration: 650, easing: "cubic-bezier(.33,1,.68,1)" });
 }
 
 function animateScore(target){
@@ -2361,10 +2377,45 @@ function onboardMark(key){
 
 const OT_KEY = "psych-seen-overture";
 const ot = document.getElementById("overture");
-let otTimers = [];
-
-function otClear(){ otTimers.forEach(clearTimeout); otTimers = []; }
-function otAt(ms, fn){ otTimers.push(setTimeout(fn, ms)); }
+/* One clock for the whole scene. The eight beats used to be eight
+   setTimeouts, which kept firing while the phone was in a pocket: someone
+   who glanced at a notification came back to a scene that had run on, or
+   ended, without them, and out of step with its music (which fades and
+   pauses while the page is hidden). Now the beats are cues on one
+   timeline driven by animation frames, which the browser stops while the
+   page is hidden; on return it carries on from the same frame, the
+   scene's own CSS motion is paused and resumed with it, and the progress
+   bar is drawn from the same clock (a transform, not a width). The bar's
+   "run" class still marks a scene in play. */
+const OT_LEN = 9600;
+const otTL = { cues: [], next: 0, t: 0, last: 0, raf: 0 };
+function otClear(){
+  cancelAnimationFrame(otTL.raf);
+  otTL.cues = []; otTL.next = 0; otTL.t = 0; otTL.raf = 0;
+  const bar = document.getElementById("otBar");
+  if(bar) bar.classList.remove("run");
+}
+function otAt(ms, fn){ otTL.cues.push([ms, fn]); }
+function otRun(){
+  const bar = document.getElementById("otBar");
+  otTL.cues.sort((a, b)=> a[0] - b[0]);
+  otTL.last = performance.now();
+  if(bar){ bar.style.transform = "scaleX(0)"; bar.classList.add("run"); }
+  const step = now=>{
+    /* a long gap is the page coming back from hidden: resume, do not jump */
+    otTL.t += Math.min(100, Math.max(0, now - otTL.last));
+    otTL.last = now;
+    while(otTL.next < otTL.cues.length && otTL.cues[otTL.next][0] <= otTL.t) otTL.cues[otTL.next++][1]();
+    if(!otTL.cues.length) return;               /* a cue ended the scene */
+    if(bar) bar.style.transform = "scaleX(" + Math.min(1, otTL.t / OT_LEN).toFixed(4) + ")";
+    if(otTL.next < otTL.cues.length) otTL.raf = requestAnimationFrame(step);
+  };
+  otTL.raf = requestAnimationFrame(step);
+}
+document.addEventListener("visibilitychange", ()=>{
+  if(!otTL.raf || ot.hidden || !ot.getAnimations) return;
+  ot.getAnimations({ subtree: true }).forEach(a=>{ try{ document.hidden ? a.pause() : a.play(); }catch(e){} });
+});
 
 /* set when the opening was asked for on purpose, rather than happening
    to a first-time visitor — a deliberate replay should always run the
@@ -2392,6 +2443,7 @@ function otEnd(skipped){
 }
 
 function otPlay(){
+  otClear();          /* one scene on the clock at a time, from frame zero */
   ot.hidden = false;
   ot.classList.remove("closing");
   otBuildLangs();
@@ -2409,9 +2461,7 @@ function otPlay(){
   set("otPa","passer"); set("otPb","passer");
   set("otDoorGlow",""); set("otDoorLight",""); set("otCam","");
   set("otBloom",""); set("otSparks",""); set("otMark",""); set("otOoh","");
-  $("otBar").classList.remove("run");
-  $("otBar").style.width = "";
-  requestAnimationFrame(()=> $("otBar").classList.add("run"));
+  $("otBar").style.transform = "scaleX(0)";
 
   /* ── under ten seconds, eight beats ──
      1  a room, at night
@@ -2446,7 +2496,8 @@ function otPlay(){
     set("otOoh","on");
   });
 
-  otAt(9600, ()=> otEnd(false));
+  otAt(OT_LEN, ()=> otEnd(false));
+  otRun();
 }
 
 /* The scene is authored on a 600×320 canvas with wide margins that suit a

@@ -111,6 +111,10 @@
    motion); every check-in card is named by its own words, not a summary
    that never matched what it shows (WCAG 2.5.3, which also dropped a
    doubled full stop); CI's axe-core goes to 4.14, which checks that. */
+/* v38: the opening runs on one clock: its eight beats and its progress
+   bar are cues on a frame-driven timeline that stops while the page is
+   hidden and carries on from the same frame (it used to run on, or end,
+   in a pocket); a result's marker travels to the score with the count. */
 /* ── the release number, in one place ──
    The page's own CSS and JS moved out of index.html into app.css and
    app.js, and every page now asks for its shared files by versioned URL
@@ -120,7 +124,7 @@
    script still in this cache for one load. A new version is a new URL,
    which this cache has never seen, so it is always fetched. When a release
    changes any of those files: bump REL here AND the ?v= in every page. */
-const REL = "37";
+const REL = "38";
 const CACHE = "ronak-v" + REL;
 const ASSETS = [
   "./", "./index.html", "./helplines.js", "./nav.js?v=" + REL,

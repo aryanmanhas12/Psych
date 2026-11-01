@@ -1391,6 +1391,48 @@ const OVERFLOW = `(()=>{
     op.named ? ok('every check-in card is named by its own words (WCAG 2.5.3)') : fail('a check-in card still carries a summary label');
     await ctx.close();
 
+    /* v38: the opening runs on one clock (its beats and its bar), pauses
+       with the page and resumes from the same frame; a result's marker
+       travels to the score as the number counts, once, and stops */
+    ctx = await b.newContext(phone({ serviceWorkers:'block' })); p = await ctx.newPage();
+    p.on('pageerror', e=>PAGE_ERRORS.push(e.message));
+    await p.addInitScript(()=>{ ['psych-seen-overture','psych-seen-tour','psych-seen-intro'].forEach(k=>localStorage.setItem(k,'2'));
+                                localStorage.setItem('ronak-feel', JSON.stringify({ sfx:false })); });
+    await p.goto(URL,{waitUntil:'networkidle'}); await p.waitForTimeout(500);
+    if(await p.evaluate(()=>!document.getElementById('otGate').hidden)) await p.click('#otQuiet');
+    await p.waitForTimeout(2500);
+    const clk = await p.evaluate(()=>{ const m = /scaleX\(([\d.]+)\)/.exec(document.getElementById('otBar').style.transform);
+      return { t: otTL.t, bar: m ? +m[1] : -1 }; });
+    clk.t > 1500 && clk.t < 4000 && Math.abs(clk.bar - clk.t / 9600) < .03
+      ? ok(`the opening runs on one clock: ${Math.round(clk.t)}ms in, its bar at ${Math.round(clk.bar * 100)}%`)
+      : fail('the opening clock and its bar disagree: ' + JSON.stringify(clk));
+    const hold = await p.evaluate(()=>{
+      Object.defineProperty(document, 'hidden', { configurable:true, get:()=>true }); document.dispatchEvent(new Event('visibilitychange'));
+      const paused = ot.getAnimations({ subtree:true }).filter(a=> a.playState === 'paused').length;
+      Object.defineProperty(document, 'hidden', { configurable:true, get:()=>false }); document.dispatchEvent(new Event('visibilitychange'));
+      return { paused, after: ot.getAnimations({ subtree:true }).filter(a=> a.playState === 'paused').length };
+    });
+    hold.paused > 0 && hold.after === 0 ? ok('the opening holds still while the page is hidden and carries on when it is back')
+      : fail('the opening did not pause with the page: ' + JSON.stringify(hold));
+    await p.waitForTimeout(8000);
+    const done = await p.evaluate(()=>({ up: !document.getElementById('overture').hidden, raf: otTL.raf }));
+    !done.up && !done.raf ? ok('the opening ends on its own clock and leaves nothing running') : fail('the opening is still running: ' + JSON.stringify(done));
+    await p.evaluate(()=>{ ['tour','intro'].forEach(i=>{ const e = document.getElementById(i); if(e) e.hidden = true; });
+                           localStorage.setItem('psych-seen-primer', JSON.stringify({ phq4:1 })); startTest('phq4'); });
+    await p.waitForTimeout(400);
+    for(let i=0;i<8;i++){
+      const s = await p.evaluate(()=>{ const st = document.getElementById('primerStart');
+        if(st && !document.getElementById('primer').hidden){ st.click(); return 'primer'; }
+        const bs = [...document.querySelectorAll('#qcard .bigopts button')]; if(!bs.length) return 'none'; bs[1].click(); return 'a'; });
+      if(s === 'none') break; await p.waitForTimeout(450);
+    }
+    const sweep = await p.evaluate(()=>{ const m = document.querySelector('#sevScale .sevmarker');
+      return { results: document.getElementById('view-results').classList.contains('active'), moving: m ? m.getAnimations().length : -1 }; });
+    await p.waitForTimeout(900);
+    const still = await p.evaluate(()=>{ const m = document.querySelector('#sevScale .sevmarker'); return m ? m.getAnimations().length : -1; });
+    sweep.results && still === 0 ? ok('a result’s marker travels to its score with the count, then rests') : fail('result marker: ' + JSON.stringify({ sweep, still }));
+    await ctx.close();
+
     /* the reading pages: everything that waited to rise has risen, every
        split line is put back as it was */
     ctx = await b.newContext(phone({ serviceWorkers:'block' })); p = await ctx.newPage();
