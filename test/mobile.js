@@ -1374,6 +1374,23 @@ const OVERFLOW = `(()=>{
       : fail(`Lenis: home ${home}, inside a check-in ${inside} (want true, false)`);
     await ctx.close();
 
+    /* opening a check-in (v37): the card grows into it and leaves nothing
+       behind; every card is named by its own words, so what a screen
+       reader announces and what voice control answers to is what is on
+       the card (WCAG 2.5.3) */
+    ctx = await b.newContext(phone({ serviceWorkers:'block' })); p = await ctx.newPage();
+    p.on('pageerror', e=>PAGE_ERRORS.push(e.message));
+    await p.addInitScript(seed);
+    await p.goto(URL,{waitUntil:'networkidle'}); await p.waitForTimeout(800);
+    await p.evaluate(()=>document.querySelectorAll('#cardGrid .card')[1].click()); await p.waitForTimeout(900);
+    const op = await p.evaluate(()=>({ test: document.getElementById('view-test').classList.contains('active'),
+      left: document.querySelectorAll('[style*="view-transition-name"]').length, vt: document.documentElement.classList.contains('vt'),
+      named: [...document.querySelectorAll('#cardGrid .card')].every(c=> !c.hasAttribute('aria-label') && !!c.querySelector('.sc-num[aria-hidden="true"]')) }));
+    op.test && !op.left && !op.vt ? ok('a check-in card grows into its check-in and leaves nothing behind')
+      : fail('opening a check-in from its card: ' + JSON.stringify(op));
+    op.named ? ok('every check-in card is named by its own words (WCAG 2.5.3)') : fail('a check-in card still carries a summary label');
+    await ctx.close();
+
     /* the reading pages: everything that waited to rise has risen, every
        split line is put back as it was */
     ctx = await b.newContext(phone({ serviceWorkers:'block' })); p = await ctx.newPage();

@@ -38,7 +38,7 @@ jobs:
       # dependencies, which is the point. Playwright is a test-time tool only.
       - name: Install Playwright and its Chromium
         run: |
-          npm install --no-save playwright@1.47.2 axe-core@4.13.0
+          npm install --no-save playwright@1.47.2 axe-core@4.14.0
           npx playwright install --with-deps chromium
 
       - name: Serve the site

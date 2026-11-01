@@ -106,6 +106,11 @@
    figures rise line by line on the outside pages; a laptop's wheel glides
    outside the check-ins. GSAP, Lenis, three and Vanta self-hosted in
    vendor/; the heavy parts load only where they are wanted. */
+/* v37: a check-in card grows into the screen it opens (a view transition,
+   under half a second; instant under reduced motion, lite and Less
+   motion); every check-in card is named by its own words, not a summary
+   that never matched what it shows (WCAG 2.5.3, which also dropped a
+   doubled full stop); CI's axe-core goes to 4.14, which checks that. */
 /* ── the release number, in one place ──
    The page's own CSS and JS moved out of index.html into app.css and
    app.js, and every page now asks for its shared files by versioned URL
@@ -115,7 +120,7 @@
    script still in this cache for one load. A new version is a new URL,
    which this cache has never seen, so it is always fetched. When a release
    changes any of those files: bump REL here AND the ?v= in every page. */
-const REL = "36";
+const REL = "37";
 const CACHE = "ronak-v" + REL;
 const ASSETS = [
   "./", "./index.html", "./helplines.js", "./nav.js?v=" + REL,

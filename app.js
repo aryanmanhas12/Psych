@@ -462,13 +462,18 @@ function renderCards(){
        questionnaire and tells a clinician exactly which one was used. */
     const about = (t.about || "");
     const tagParts = String(t.tag).split(/\s+·\s+/);
-    card.setAttribute("aria-label", t.tag + (about ? " — " + about : "") + ". " + t.meta + ". " + T.ui.start);
-    /* spans throughout, not h3/p: a <button> may only hold phrasing
-       content, and the aria-label above already names the whole card */
+    /* The card is named by what it shows. It used to carry an aria-label
+       summary, which a screen reader announced but which never matched
+       the words on the card (WCAG 2.5.3, Label in Name): someone using
+       voice control who says "Quick Check" or "PHQ-4" must reach it, and
+       the summary also left out the instrument and doubled a full stop.
+       Its own words, in reading order, are the better name; the running
+       number and the arrow are drawing, not words, and are hidden.
+       Spans throughout, not h3/p: a <button> holds phrasing content only. */
     card.innerHTML =
       '<span class="sc-art" aria-hidden="true" data-scene="'+id+'"></span>'+
       '<span class="sc-body">'+
-        '<span class="sc-num">'+String(i+1).padStart(2,"0")+'</span>'+
+        '<span class="sc-num" aria-hidden="true">'+String(i+1).padStart(2,"0")+'</span>'+
         /* "Quick Check · Start Here": the part after the dot is advice,
            not the name, so it becomes a small gold badge above the title
            rather than a second line of it */
@@ -477,11 +482,11 @@ function renderCards(){
         (about ? '<span class="about">'+esc(about)+'</span>' : '')+
         '<span class="sc-foot">'+
           '<span class="credit">'+esc(t.name)+' · '+esc(t.meta)+'</span>'+
-          '<span class="go">'+esc(T.ui.start)+' →</span>'+
+          '<span class="go">'+esc(T.ui.start)+' <span aria-hidden="true">→</span></span>'+
         '</span>'+
       '</span>'+
       '<span class="sc-dim" aria-hidden="true"></span>';
-    card.addEventListener("click", ()=> startTest(id));
+    card.addEventListener("click", ()=> openCheckin(card, id));
     grid.appendChild(card);
   });
   observeReveals();
@@ -1990,6 +1995,31 @@ if(new URLSearchParams(location.search).get("ref") === "wellbeings"){
    view to be on screen already, and a view transition applies its change
    a frame later. Skipped for reduced motion and in lite mode, where it is
    the same instant switch it always was. */
+/* Opening a check-in: the card you tapped grows into the screen it opens,
+   the primer the first time and the first question after that, so the
+   place you were and the place you are stay joined. The card and the
+   panel share one view-transition-name for the length of the move (under
+   half a second); after it, everything inside is as still as it always
+   was. Reduced motion, lite and Less motion get the instant switch, as
+   goView below does. startTest itself is untouched: everything else that
+   opens a check-in still does so at once. */
+function openCheckin(card, id){
+  const root = document.documentElement;
+  if(!document.startViewTransition || document.hidden || root.classList.contains("lite") ||
+     window.matchMedia("(prefers-reduced-motion: reduce)").matches){ startTest(id); return; }
+  let to = null;
+  card.style.viewTransitionName = "rk-open";
+  root.classList.add("vt");
+  const t = document.startViewTransition(()=>{
+    card.style.viewTransitionName = "";
+    startTest(id);
+    const pr = document.getElementById("primer");
+    to = pr && !pr.hidden ? pr : document.getElementById("qcard");
+    if(to) to.style.viewTransitionName = "rk-open";
+  });
+  t.finished.finally(()=>{ root.classList.remove("vt"); card.style.viewTransitionName = ""; if(to) to.style.viewTransitionName = ""; });
+}
+
 function goView(name){
   const root = document.documentElement;
   if(!document.startViewTransition || document.hidden || root.classList.contains("lite") ||
