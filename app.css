@@ -1345,8 +1345,10 @@ table.lines td a{font-weight:800;white-space:nowrap;display:inline-flex;align-it
   height:4px;flex:none;width:min(100%,14rem);border-radius:999px;overflow:hidden;
   background:rgba(255,246,238,.14);
 }
-.ot-progress i{display:block;height:100%;width:0;background:linear-gradient(90deg,#8B5CF6,#FF3D8B,#FFD166);}
-.ot-progress i.run{width:100%;transition:width 9.6s linear;}
+/* drawn from the scene's own clock (app.js otRun): a transform, so it
+   costs no layout, and it stops with the scene when the page is hidden */
+.ot-progress i{display:block;height:100%;width:100%;transform:scaleX(0);transform-origin:0 50%;
+  background:linear-gradient(90deg,#8B5CF6,#FF3D8B,#FFD166);}
 
 /* ── the opening, on a phone ──
    The scene is a landscape drawing, so on a portrait screen it can only
