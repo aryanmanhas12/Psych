@@ -1310,13 +1310,15 @@ const OVERFLOW = `(()=>{
     p.on('pageerror', e=>PAGE_ERRORS.push(e.message));
     await p.addInitScript(seed);
     await p.goto(URL,{waitUntil:'networkidle'}); await p.waitForTimeout(2500);
-    const v = await p.evaluate(starsClear=>({
+    /* the star check is passed as the function itself (no eval: the page's
+       content security policy refuses code built from strings) */
+    const v = { ...(await p.evaluate(()=>({
       hidden: document.getElementById('kv').getAttribute('aria-hidden') === 'true',
       focusable: document.querySelectorAll('#kv a,#kv button,#kv input,#kv [tabindex]:not([tabindex="-1"])').length,
       stars: document.querySelectorAll('#hsMyStars i').length, ck: document.querySelectorAll('#hsMyStars i.ck').length,
-      over: eval('('+starsClear+')')(), motion: !!(window.gsap && window.Motion),
+      motion: !!(window.gsap && window.Motion),
       lenis: !!(window.Motion && Motion.lenis()) || document.documentElement.classList.contains('lenis')
-    }), starsClear.toString());
+    }))), over: await p.evaluate(starsClear) };
     v.hidden && !v.focusable ? ok('the valley is decoration: aria-hidden, nothing in it can take focus') : fail(`valley aria-hidden=${v.hidden}, focusable inside: ${v.focusable}`);
     v.stars === 14 && v.ck === 4 ? ok('your stars: 4 check-ins and 10 days of mood make 14 stars, 4 of them bright') : fail(`your stars: ${v.stars} stars, ${v.ck} bright (want 14 and 4)`);
     v.over === 0 ? ok('no star is drawn behind the words') : fail(`${v.over} star(s) behind the words`);
@@ -1509,7 +1511,10 @@ const OVERFLOW = `(()=>{
       };
       let screens = 0;
       for(const [theme, lang] of [['light','en'],['dark','en'],['dark','hi'],['light','ta']]){
-        const ctx = await b.newContext(phone({ colorScheme:theme, reducedMotion:'reduce', serviceWorkers:'block' }));
+        /* bypassCSP: axe-core is test tooling injected into the page, and it
+           builds functions from strings, which the pages' own policy (v40)
+           rightly refuses; the policy itself is tested in section 21 */
+        const ctx = await b.newContext(phone({ colorScheme:theme, reducedMotion:'reduce', serviceWorkers:'block', bypassCSP:true }));
         const p = await ctx.newPage();
         await p.addInitScript(l=>{
           ['psych-seen-overture','psych-seen-tour','psych-seen-intro'].forEach(k=>localStorage.setItem(k,'2'));
@@ -1543,7 +1548,10 @@ const OVERFLOW = `(()=>{
         await ctx.close();
       }
       for(const theme of ['light','dark']){
-        const ctx = await b.newContext(phone({ colorScheme:theme, reducedMotion:'reduce', serviceWorkers:'block' }));
+        /* bypassCSP: axe-core is test tooling injected into the page, and it
+           builds functions from strings, which the pages' own policy (v40)
+           rightly refuses; the policy itself is tested in section 21 */
+        const ctx = await b.newContext(phone({ colorScheme:theme, reducedMotion:'reduce', serviceWorkers:'block', bypassCSP:true }));
         const p = await ctx.newPage();
         for(const pg of ['evidence','global','ethics','manifesto','poster','404']){
           await p.goto(BASE+pg+'.html',{waitUntil:'networkidle'}); await p.waitForTimeout(700);
