@@ -1433,6 +1433,39 @@ const OVERFLOW = `(()=>{
     sweep.results && still === 0 ? ok('a result’s marker travels to its score with the count, then rests') : fail('result marker: ' + JSON.stringify({ sweep, still }));
     await ctx.close();
 
+    /* v40: "nothing you answer leaves your phone", enforced by the browser:
+       every page refuses a request to another server, and nothing in
+       normal use trips the policy. And a still device (reduced motion, or
+       Less motion) is never sent the motion layer at all. */
+    ctx = await b.newContext(phone({ serviceWorkers:'block' })); p = await ctx.newPage();
+    p.on('pageerror', e=>PAGE_ERRORS.push(e.message));
+    await p.addInitScript(()=>{ window.__csp = [];
+      document.addEventListener('securitypolicyviolation', e=> window.__csp.push(e.violatedDirective + ' ' + e.blockedURI)); });
+    await p.addInitScript(seed);
+    const cspBad = [];
+    for(const pg of ['index','evidence','global','ethics','manifesto','poster','404']){
+      await p.goto(BASE + pg + '.html', {waitUntil:'networkidle'}); await p.waitForTimeout(500);
+      const r = await p.evaluate(async()=>{
+        let sent = false; try{ await fetch('https://example.com/ronak-csp-probe'); sent = true; }catch(e){}
+        await new Promise(res=> setTimeout(res, 100));
+        return { sent, refused: window.__csp.some(x=> /^connect-src https:\/\/example\.com/.test(x)),
+                 other: window.__csp.filter(x=> !/example\.com/.test(x)) }; });
+      if(r.sent || !r.refused || r.other.length) cspBad.push(pg + ' ' + JSON.stringify(r));
+    }
+    !cspBad.length ? ok('every page refuses a request to another server, and nothing in normal use trips the policy')
+      : fail('content security policy: ' + cspBad.join(' | '));
+    await ctx.close();
+    for(const [name, opts, feel] of [['reduced motion', { reducedMotion:'reduce' }, null], ['Less motion', {}, '{"still":true}']]){
+      ctx = await b.newContext(phone({ serviceWorkers:'block', ...opts })); p = await ctx.newPage();
+      p.on('pageerror', e=>PAGE_ERRORS.push(e.message));
+      const asked = []; p.on('request', q=>{ if(/vendor\/(gsap|CustomEase|SplitText)|\/motion\.js/.test(q.url())) asked.push(q.url()); });
+      await p.addInitScript(seed);
+      if(feel) await p.addInitScript(f=> localStorage.setItem('ronak-feel', f), feel);
+      await p.goto(URL, {waitUntil:'networkidle'}); await p.goto(BASE + 'evidence.html', {waitUntil:'networkidle'}); await p.waitForTimeout(300);
+      !asked.length ? ok(`${name}: the motion layer is not downloaded at all`) : fail(`${name}: ${asked.length} motion files downloaded`);
+      await ctx.close();
+    }
+
     /* the reading pages: everything that waited to rise has risen, every
        split line is put back as it was */
     ctx = await b.newContext(phone({ serviceWorkers:'block' })); p = await ctx.newPage();
