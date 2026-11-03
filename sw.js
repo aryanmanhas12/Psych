@@ -115,6 +115,12 @@
    bar are cues on a frame-driven timeline that stops while the page is
    hidden and carries on from the same frame (it used to run on, or end,
    in a pocket); a result's marker travels to the score with the count. */
+/* v39: an audit against the web interface guidelines and DESIGN.md: the
+   houseboats read as houseboats (they had merged into the tree line and
+   only their windows showed, as a dotted line); the dawn's rim light
+   fades before the words on a laptop instead of crossing "Watch the
+   intro"; no tap highlight painted over the sky; headings measured in
+   one pass; the valley's generator is in tools/valley and CI checks it. */
 /* ── the release number, in one place ──
    The page's own CSS and JS moved out of index.html into app.css and
    app.js, and every page now asks for its shared files by versioned URL
@@ -124,7 +130,7 @@
    script still in this cache for one load. A new version is a new URL,
    which this cache has never seen, so it is always fetched. When a release
    changes any of those files: bump REL here AND the ?v= in every page. */
-const REL = "38";
+const REL = "39";
 const CACHE = "ronak-v" + REL;
 const ASSETS = [
   "./", "./index.html", "./helplines.js", "./nav.js?v=" + REL,

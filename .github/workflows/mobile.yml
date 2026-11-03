@@ -36,6 +36,12 @@ jobs:
 
       # No package.json in the repo: the site itself has no build step and no
       # dependencies, which is the point. Playwright is a test-time tool only.
+      # The Kashmir valley in index.html is generated art (tools/valley): a
+      # hand edit to the fragment would be lost at the next rebuild, and an
+      # edit to the generator that was never applied would never ship.
+      - name: The valley matches its source
+        run: node tools/valley/apply.js --check
+
       - name: Install Playwright and its Chromium
         run: |
           npm install --no-save playwright@1.47.2 axe-core@4.14.0

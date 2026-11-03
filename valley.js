@@ -188,6 +188,7 @@ function fallingStar(x, y){
   var p = at(sky, x, y);
   var o = document.createElement("i");
   o.className = "kv-fall";
+  o.setAttribute("aria-hidden", "true");
   o.style.left = p.x + "px"; o.style.top = p.y + "px";
   sky.appendChild(o);
   var dx = (p.x > p.w / 2 ? -1 : 1) * (180 + Math.random() * 160);
