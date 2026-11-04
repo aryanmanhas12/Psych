@@ -143,6 +143,19 @@ const OVERFLOW = `(()=>{
 (async () => {
   const b = await chromium.launch(EXE ? { executablePath: EXE } : {});
   const phone = extra => ({ viewport:{width:390,height:844}, isMobile:true, hasTouch:true, ...extra });
+  /* Wait until something is true in the page, polling through evaluate.
+     Not page.waitForFunction: Playwright 1.47 (the version CI pins) rebuilds
+     its predicate inside the page with eval, once per animation frame, and
+     the pages' content security policy (v40) rightly refuses that, so every
+     poll became an uncaught page error. evaluate runs the function itself. */
+  const waitIn = async (p, fn, arg, timeout = 3000) => {
+    const end = Date.now() + timeout;
+    while(Date.now() < end){
+      if(await p.evaluate(fn, arg).catch(()=>false)) return true;
+      await p.waitForTimeout(50);
+    }
+    return false;
+  };
 
   /* ── the guard that was missing ──
      The speaker button on every question threw a ReferenceError on every
@@ -312,8 +325,8 @@ const OVERFLOW = `(()=>{
         /* worst answers endorse the self-harm item, which is meant to stop
            the questionnaire right there */
         if(id === 'phq9') await pastSafeNow(p, null);
-        await p.waitForFunction(x=>document.getElementById('view-results').classList.contains('active')||
-          (current&&current.idx!==x), before,{timeout:3000}).catch(()=>{});
+        await waitIn(p, x=>document.getElementById('view-results').classList.contains('active')||
+          (current&&current.idx!==x), before);
       }
       const r = await p.evaluate(()=>({done:document.getElementById('view-results').classList.contains('active'),
         safety:getComputedStyle(document.getElementById('safetyBox')).display!=='none'}));
@@ -530,8 +543,8 @@ const OVERFLOW = `(()=>{
           .filter(x=>x.getBoundingClientRect().height<44).length);
         const before=await p.evaluate(()=>current?current.idx:-1);
         await p.evaluate(()=>{const bs=[...document.querySelectorAll('#qcard .bigopts button')];if(bs.length)bs[0].click();});
-        await p.waitForFunction(x=>document.getElementById('view-results').classList.contains('active')||
-          (current&&current.idx!==x),before,{timeout:3000}).catch(()=>{});
+        await waitIn(p, x=>document.getElementById('view-results').classList.contains('active')||
+          (current&&current.idx!==x), before);
       }
       const bad=[];
       if(worst>321) bad.push(`sideways scroll ${worst}>320`);
