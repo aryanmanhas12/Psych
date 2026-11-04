@@ -586,6 +586,11 @@ select.langsel{
   color:#1B1030;background:#FFD166;border-radius:999px;padding:.18rem .65rem;margin:.15rem 0 .1rem;
   box-shadow:0 0 18px rgba(255,209,102,.55);
 }
+/* due again (app.js nextDue): the same gold chip, on the card and in History;
+   a note, never an alarm, so it does not move or pulse */
+.histnext .due-chip{display:inline-block;font-family:var(--font-ui);font-size:.76rem;font-weight:800;letter-spacing:.06em;
+  color:#1B1030;background:#FFD166;border-radius:999px;padding:.12rem .6rem;}
+:root[data-contrast="high"] .sc-due,:root[data-contrast="high"] .histnext .due-chip{background:#FFE27A;color:#000;box-shadow:none;}
 .sc-title{
   display:block;font-family:var(--font-display);font-weight:800;
   font-size:clamp(1.65rem,6.4vw,2.5rem);line-height:1.08;color:#fff;text-wrap:balance;

@@ -126,6 +126,10 @@
    to, anywhere but this site; and a lite, Less-motion or reduced-motion
    phone is no longer sent the motion layer it would only switch off
    (about 39 KB compressed; no longer precached for everyone either). */
+/* v41: the reminder the home page always promised. A check-in whose last
+   result's interval has passed (28, 14 or 7 days by band, the same figure
+   the result screen gives) says "Due again" on its card, and History
+   shows the next date; taking it clears it. Local only, no streaks. */
 /* ── the release number, in one place ──
    The page's own CSS and JS moved out of index.html into app.css and
    app.js, and every page now asks for its shared files by versioned URL
@@ -135,7 +139,7 @@
    script still in this cache for one load. A new version is a new URL,
    which this cache has never seen, so it is always fetched. When a release
    changes any of those files: bump REL here AND the ?v= in every page. */
-const REL = "40";
+const REL = "41";
 const CACHE = "ronak-v" + REL;
 const ASSETS = [
   "./", "./index.html", "./helplines.js", "./nav.js?v=" + REL,

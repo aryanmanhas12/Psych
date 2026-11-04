@@ -94,6 +94,7 @@
     moodLogged: "Logged for today. Tonight's star is lit: {n} in your sky this month. A daily record beats a memory in any consultation.",
     skyTitle: "Your sky",
     skySummary: "Check-ins: {c} · Days with a mood: {m} · last four months. Each one is a star here, and none of it leaves your phone.",
+    dueAgain: "Due again",
     moods: ["Very low", "Low", "Okay", "Good", "Great"],
 
     chooseScreener: "Choose a check-in",
