@@ -27,7 +27,7 @@
 <meta name="author" content="Aryan Manhas">
 <meta name="theme-color" content="#140A26">
 <link rel="manifest" href="manifest.webmanifest">
-<script src="nav.js?v=40" defer></script>
+<script src="nav.js?v=41" defer></script>
 <!-- The 192px PNG was fetched as the favicon on every page: 11.4KB gzip
      on the critical path, for something drawn at 16px. The SVG is 1.6KB
      and sharp at every size. No PNG fallback link: Chromium fetches every
@@ -100,7 +100,7 @@
     (function go(){
       var s = document.createElement("script");
       /* versioned like every other file this page loads — see REL in sw.js */
-      s.src = "i18n." + code + ".js?v=40";
+      s.src = "i18n." + code + ".js?v=41";
       s.async = false;
       s.onload  = function(){ settle(window.I18N && window.I18N[code] ? code : null); };
       s.onerror = function(){ if(++tries < 2) go(); else settle(null); };
@@ -122,8 +122,8 @@
 })();
 </script>
 <link rel="apple-touch-icon" href="icon-192.png">
-<link rel="stylesheet" href="site.css?v=40">
-<link rel="stylesheet" href="app.css?v=40">
+<link rel="stylesheet" href="site.css?v=41">
+<link rel="stylesheet" href="app.css?v=41">
 </head>
 <body>
 
@@ -1040,10 +1040,10 @@
 </footer>
 
 <!-- before app.js: the opening asks it whether to wait for Begin -->
-<script src="music.js?v=40"></script>
-<script src="app.js?v=40"></script>
+<script src="music.js?v=41"></script>
+<script src="app.js?v=41"></script>
 <!-- not deferred: Ooh's first line has to be in the page before the first paint -->
-<script src="companion.js?v=40"></script>
+<script src="companion.js?v=41"></script>
 <!-- the motion layer, after everything above has run: GSAP and two small
      plugins, the shared motion core, then the valley's interactions. All
      self-hosted (vendor/README.md); heavier pieces load on demand. It is
@@ -1056,8 +1056,8 @@
 (function(){
   var still = document.documentElement.classList.contains("lite") ||
     !!(window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches);
-  (still ? [] : ["vendor/gsap.min.js?v=40", "vendor/CustomEase.min.js?v=40", "vendor/SplitText.min.js?v=40", "motion.js?v=40"])
-    .concat("valley.js?v=40").forEach(function(f){
+  (still ? [] : ["vendor/gsap.min.js?v=41", "vendor/CustomEase.min.js?v=41", "vendor/SplitText.min.js?v=41", "motion.js?v=41"])
+    .concat("valley.js?v=41").forEach(function(f){
       var s = document.createElement("script"); s.src = f; s.async = false; document.body.appendChild(s);
     });
 })();

@@ -1481,6 +1481,51 @@ const OVERFLOW = `(()=>{
       await ctx.close();
     }
 
+    /* v41: the reminder the home page promises. A check-in is "Due again"
+       once its last result's own interval has passed (PHQ-9 mild: 14
+       days), not before (GAD-7 minimal: 28); History gives the next date;
+       taking the due one clears it. */
+    ctx = await b.newContext(phone({ serviceWorkers:'block' })); p = await ctx.newPage();
+    p.on('pageerror', e=>PAGE_ERRORS.push(e.message));
+    await p.addInitScript(()=>{
+      ['psych-seen-overture','psych-seen-tour','psych-seen-intro'].forEach(k=>localStorage.setItem(k,'2'));
+      sessionStorage.setItem('ronak-visit-opened','1');
+      localStorage.setItem('psych-seen-primer', JSON.stringify({ phq9:1, gad7:1, phq4:1 }));
+      if(!sessionStorage.getItem('due-seeded')){
+        sessionStorage.setItem('due-seeded', '1');
+        const ago = n=>{ const d = new Date(); d.setDate(d.getDate() - n); return d.toISOString(); };
+        localStorage.setItem('psych-screener-history', JSON.stringify([
+          { inst:'phq9', score:7, sev:1, bandIdx:1, safetyFlag:false, date:ago(20), ans:[1,1,1,1,1,1,1,0,0] },
+          { inst:'gad7', score:2, sev:0, bandIdx:0, safetyFlag:false, date:ago(3), ans:[0,0,1,0,1,0,0] } ]));
+      }
+    });
+    await p.goto(URL,{waitUntil:'networkidle'}); await p.waitForTimeout(600);
+    const dueCards = await p.evaluate(()=>{ const c = [...document.querySelectorAll('#cardGrid .card')];
+      const of = s=> c.find(x=> x.classList.contains('sc-' + s));
+      return { phq9: !!of('phq9').querySelector('.sc-due'), gad7: !!of('gad7').querySelector('.sc-due'),
+               phq4: !!of('phq4').querySelector('.sc-badge:not(.sc-due)'), text: (of('phq9').querySelector('.sc-due') || {}).textContent }; });
+    dueCards.phq9 && !dueCards.gad7 && dueCards.phq4
+      ? ok(`a check-in whose interval has passed says "${dueCards.text}"; one that is not due, and one never taken, do not`)
+      : fail('due again on the cards: ' + JSON.stringify(dueCards));
+    await p.evaluate(()=>showView('history')); await p.waitForTimeout(300);
+    const dueHist = await p.evaluate(()=>[...document.querySelectorAll('#histContent .histblock')].map(b=>({
+      h: b.querySelector('h3').textContent, due: !!b.querySelector('.histnext .due-chip'), next: (b.querySelector('.histnext') || {}).textContent || '' })));
+    const hPhq9 = dueHist.find(x=> /PHQ-9/.test(x.h)), hGad7 = dueHist.find(x=> /GAD-7/.test(x.h));
+    hPhq9 && hPhq9.due && hGad7 && !hGad7.due && /\d/.test(hGad7.next)
+      ? ok('History shows "due again" for one, and the date of the next for the other')
+      : fail('due again in History: ' + JSON.stringify(dueHist));
+    await p.evaluate(()=>startTest('phq9')); await p.waitForTimeout(400);
+    for(let i=0;i<12;i++){
+      const before = await p.evaluate(()=> current ? current.idx : -1);
+      const s = await p.evaluate(()=>{ const bs = [...document.querySelectorAll('#qcard .bigopts button')]; if(!bs.length) return 0; bs[0].click(); return 1; });
+      if(!s) break;
+      await waitIn(p, x=> document.getElementById('view-results').classList.contains('active') || (current && current.idx !== x), before);
+    }
+    await p.evaluate(()=>showView('home')); await p.waitForTimeout(300);
+    const after = await p.evaluate(()=> !!document.querySelector('#cardGrid .card.sc-phq9 .sc-due'));
+    !after ? ok('taking the due check-in clears its reminder') : fail('the PHQ-9 card still says due after taking it');
+    await ctx.close();
+
     /* the reading pages: everything that waited to rise has risen, every
        split line is put back as it was */
     ctx = await b.newContext(phone({ serviceWorkers:'block' })); p = await ctx.newPage();

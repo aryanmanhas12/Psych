@@ -126,6 +126,8 @@ function loadHistory(){ try{ return JSON.parse(localStorage.getItem(STORE_KEY)) 
 function saveEntry(e){
   const h = loadHistory(); h.push(e);
   try{ localStorage.setItem(STORE_KEY, JSON.stringify(h)); }catch(err){}
+  /* the card just taken is no longer due: redraw before home is seen again */
+  renderCards();
   /* a check-in is a new star in the home sky (valley.js) */
   document.dispatchEvent(new CustomEvent("rk:sky", { detail:{ kind:"checkin" } }));
 }
@@ -442,11 +444,33 @@ const SCENES = {
       '<svg viewBox="-12 -15 24 36" focusable="false"><path d="M0 -14 C7 -3 11 4 11 9 A11 11 0 0 1 -11 9 C-11 4 -7 -3 0 -14Z" fill="#CFFAF4"/></svg>')
 };
 
+/* ════════ due again ════════
+   The home page has always said this app "reminds you when it's time to
+   check again", and until now it never did: the date lived on the result
+   screen and in a calendar file, and someone coming back saw nothing.
+   Reminders are one of the few things shown to keep people in these apps
+   (Liu, Torous et al., JAMA Psychiatry 2026), so the promise is kept here,
+   from this device's history only. A check-in is due once the interval its
+   own last result recommended has passed: the same RESCREEN_DAYS the
+   result screen states, so the advice and the reminder can never disagree.
+   It is a quiet note, never a count of days missed. */
+function nextDue(id, h){
+  let last = null;
+  (h || loadHistory()).forEach(e=>{ if(e && e.inst === id && e.date && (!last || new Date(e.date) > new Date(last.date))) last = e; });
+  if(!last) return null;
+  const d = new Date(last.date);
+  d.setDate(d.getDate() + (RESCREEN_DAYS[last.sev] || 28));
+  return d;
+}
+function isDue(d){ return !!d && d.getTime() <= Date.now(); }
+
 function renderCards(){
   const grid = document.getElementById("cardGrid");
   grid.innerHTML = "";
+  const hist = loadHistory();
   ORDER.forEach((id,i)=>{
     const t = T.inst[id];
+    const due = isDue(nextDue(id, hist));
     const card = document.createElement("button");
     card.type = "button";
     card.className = "card reveal sc-" + id;
@@ -477,7 +501,10 @@ function renderCards(){
         /* "Quick Check · Start Here": the part after the dot is advice,
            not the name, so it becomes a small gold badge above the title
            rather than a second line of it */
-        (tagParts.length > 1 ? '<span class="sc-badge">'+esc(tagParts.slice(1).join(" · "))+'</span>' : '')+
+        /* due again outranks "Start Here": advice for a first visit is not
+           news to someone who has taken this one before */
+        (due ? '<span class="sc-badge sc-due">'+esc(T.ui.dueAgain || "Due again")+'</span>'
+          : tagParts.length > 1 ? '<span class="sc-badge">'+esc(tagParts.slice(1).join(" · "))+'</span>' : '')+
         '<span class="sc-title">'+esc(tagParts[0])+'</span>'+
         (about ? '<span class="about">'+esc(about)+'</span>' : '')+
         '<span class="sc-foot">'+
@@ -1362,6 +1389,10 @@ function renderHistory(play){
     block.innerHTML =
       "<h3>"+esc(fmt(T.ui.histLatest,{name:t.name,score:latest.score,max:meta.max,label:lastLabel}))+"</h3>" +
       '<p class="sub">'+esc(fmt(T.ui.histCount,{n:entries.length}))+(trend ? " · "+esc(trend) : "")+"</p>" +
+      /* when the next one is due, in the result screen's own words */
+      (()=>{ const nd = nextDue(id, h); if(!nd) return "";
+        return '<p class="sub histnext">' + (isDue(nd) ? '<span class="due-chip">' + esc(T.ui.dueAgain || "Due again") + '</span>'
+          : esc(fmt(T.ui.rescreenOn, { date: dateStr(nd, { weekday:"long", day:"numeric", month:"long" }) }))) + '</p>'; })() +
       (entries.length > 1 ? '<div class="chartwrap">'+chartSVG(entries,id)+'<div class="ctip"></div></div>' : "") +
       historyTable(entries,id) +
       /* A sheet is only useful if you can produce one on the morning of the

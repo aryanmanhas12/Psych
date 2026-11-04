@@ -7,15 +7,15 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>The Waiting Room — Why Ronak Exists</title>
 <meta name="description" content="India's mental health treatment gap is 70-92%. The argument for why a five-minute screening, done early and privately, is worth building.">
-<script src="nav.js?v=40" defer></script>
-<script src="companion.js?v=40" defer></script>
+<script src="nav.js?v=41" defer></script>
+<script src="companion.js?v=41" defer></script>
 <!-- the motion layer, only where it will move (index.html says why);
      after parsing, as defer was, once prefs.js has set lite and Less motion -->
 <script>
 document.addEventListener("DOMContentLoaded", function(){
   if(document.documentElement.classList.contains("lite") ||
      (window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches)) return;
-  ["vendor/gsap.min.js?v=40", "vendor/CustomEase.min.js?v=40", "vendor/SplitText.min.js?v=40", "motion.js?v=40"].forEach(function(f){
+  ["vendor/gsap.min.js?v=41", "vendor/CustomEase.min.js?v=41", "vendor/SplitText.min.js?v=41", "motion.js?v=41"].forEach(function(f){
     var s = document.createElement("script"); s.src = f; s.async = false; document.head.appendChild(s);
   });
 });
@@ -48,7 +48,7 @@ document.addEventListener("DOMContentLoaded", function(){
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="icon-192.png">
 <script src="prefs.js"></script>
-<link rel="stylesheet" href="site.css?v=40">
+<link rel="stylesheet" href="site.css?v=41">
 <style>
 /* ── hero ── */
   .hero{padding:64px 0 48px;border-bottom:3px solid var(--ink);}
