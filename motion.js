@@ -95,15 +95,18 @@ function watch(sel, play){
       finally{ e.target.classList.remove("rk-pre"); }
     });
   }, { rootMargin: "0px 0px -12% 0px" });
+  /* every box is read first and every class written after, so the page
+     lays out once, not once per heading */
+  var wait = [], vh = window.innerHeight;
   document.querySelectorAll(sel).forEach(function(el){
     /* calm inside: nothing in a check-in, a result, Get Help, the guide or
        History ever rises; only the home screen and the reading pages */
     if(el.closest(".view:not(#view-home),#safeNow,.safety")) return;
     var r = el.getBoundingClientRect();
-    if(r.height && r.top < window.innerHeight && r.bottom > 0) return;
-    el.classList.add("rk-pre");
-    io.observe(el);
+    if(r.height && r.top < vh && r.bottom > 0) return;
+    wait.push(el);
   });
+  wait.forEach(function(el){ el.classList.add("rk-pre"); io.observe(el); });
 }
 function watchHeadings(sel){ watch(sel, function(h){ revealLines(h); }); }
 

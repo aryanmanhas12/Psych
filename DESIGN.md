@@ -25,6 +25,11 @@ colors:
   coral: "#FF7A59"
   deep: "#140A26"           # the always-night surface: nav, crisis strip, stat bands
   on-deep: "#FFF6EE"
+  stamp-bg: "#C2185B"       # filled magenta chips and badges
+  on-stamp: "#FFFFFF"
+  on-marigold: "#1B1030"    # text on gold fills
+  bar: "#FFC83D"            # progress fills
+  aqua: "#22D3C5"           # one accent in the check-in scenes only
   night-0: "#0B0616"
   night-1: "#140A26"
   night-2: "#241046"
@@ -37,6 +42,36 @@ colors:
     heal: "#C3A6FF"
     stamp: "#FF6FA8"
     marigold: "#FFC83D"
+    deep: "#110A21"
+    stamp-bg: "#B3124F"
+    on-marigold: "#0C0717"
+  high-contrast:            # Settings > High contrast: black on white, no glows, no valley
+    ink: "#000000"
+    paper: "#FFFFFF"
+    card: "#FFFFFF"
+    line: "#000000"
+    muted: "#1A1A1A"
+    heal: "#4B0FA8"
+    stamp: "#8E0B45"
+    stamp-bg: "#8E0B45"
+    marigold: "#8A5D00"
+    bar: "#8A5D00"
+    deep: "#000000"
+    on-deep: "#FFFFFF"
+    on-marigold: "#FFFFFF"
+  valley:                   # the home sky's Kashmir art (tools/valley, app.css .kv-*); art, not UI
+    mid-ridge: "#2B1850"
+    far-ridge: "#1D0F3B"
+    shore: "#140A2C"        # tree line and poplars
+    houseboat: "#251140"    # a shade lighter than the shore so the shape reads
+    houseboat-roof: "#0E061D"
+    window: "#FFC857"       # lit panes; halo "#FFB347" at .2, reflection at .34
+    rim: "#FFD27A"          # dawn rim light on the range (faded away from the sun)
+    snow-reflection: "#CDBDF2"
+    chinar-crown: "#170A2B" # warm leaves "#6E1A38"; trunk "#110720"
+    chinar-leaves: ["#C2364F", "#E9A23B", "#B4532A", "#D9573A", "#8E2440"]
+    star: "#FFF6EE"         # your stars; check-in stars "#FFF8E1" with a gold glow
+    flock: ["#E9A3BD", "#FFE0A8"]   # dusk rose to pale gold, never confetti
   ooh:                      # the shared guide, from ooh.mjs (do not change here; change in Arun)
     ink: "#2A1636"
     sun: "#FFC857"
@@ -94,16 +129,35 @@ elevation:
   comic: "4px 4px 0 #2A1636"   # Ooh's speech bubble only
 
 motion:
-  easing:
-    out: "cubic-bezier(.215,.61,.355,1)"
-    spring: "cubic-bezier(.16,1,.3,1)"
+  easing:                     # CSS --e-*; the same curves are named in GSAP by motion.js
+    out: "cubic-bezier(.215,.61,.355,1)"      # --e-out2, GSAP "rk-out"
+    out-soft: "cubic-bezier(.25,.46,.45,.94)" # --e-out1
+    spring: "cubic-bezier(.16,1,.3,1)"        # --e-spring, GSAP "rk-dawn": arrives, then settles
+    breath: "cubic-bezier(.45,0,.55,1)"       # GSAP "rk-breath": in and out
   breath: 11s                 # the sky's glow cycle: about 5.5 breaths a minute
+  durations:
+    view-fade: ".2s out, .38s in"     # the app's places and page-to-page links
+    card-open: .46s                   # a check-in card grows into what it opens
+    line-rise: .95s                   # a headline's lines, staggered .09s
+    score: 650ms                      # the count and the scale marker arrive together
+    opening: 9.6s                     # eight beats on one clock
+    flock-settle: 15s                 # after the last cursor move, touch or scroll
+    idle-leaf: "14-26s apart"
   dials: { DESIGN_VARIANCE: 4, MOTION_INTENSITY: 5, VISUAL_DENSITY: 3 }   # design-taste-frontend
+  libraries:                  # self-hosted in vendor/, never a CDN
+    gsap: "3.15 core + CustomEase + SplitText, every page (motion.js)"
+    lenis: "1.3.27, laptops only, home and reading pages only"
+    vanta-birds: "0.5.24 on three r134, strong devices only, after load"
   rules:
-    - Animate transform and opacity of HTML layers only; never groups inside an SVG.
-    - Idle loops run only while on screen; everything stops under prefers-reduced-motion and html.lite.
+    - Animate transform and opacity of HTML layers only; never groups inside an SVG. A drawing changes only by being regenerated (tools/valley), never by animating its parts.
+    - Idle loops run only while on screen; everything stops under prefers-reduced-motion, html.lite and Less motion.
     - Nothing moves under a thumb; reserve space; layout shift stays at 0.
-    - Pointer effects (spotlight, tilt) only for hover-capable fine pointers.
+    - Pointer effects (depth, spotlight, tilt) only for hover-capable fine pointers, or a strong Android phone's tilt.
+    - Cinematic outside, calm inside: the home sky and the reading pages move; a check-in, a result, Get Help and the crisis step do not.
+    - Split text by lines or words, never letters (Indic conjuncts break).
+    - A scene of several beats runs on one clock that stops while the page is hidden; never a chain of timeouts.
+    - Heavy layers fly only while someone is there, then settle; a still page costs nothing.
+    - Decorative light never crosses words: fade it out before it reaches them.
 ---
 
 # Ronak design language
@@ -111,9 +165,10 @@ motion:
 ## The idea
 Light arriving. The opening is a room at night; a door opens; someone sits
 beside the person on the floor; the head lifts; the bloom-sun opens. The home
-page repeats it in scroll: a night sky whose sun rises as you move down, and
-check-ins that are each a small scene of the moment *after* (a spark lighting,
-a bud opening), never an illustration of the problem.
+page repeats it in scroll: the Kashmir valley at the end of the night, whose
+sun rises between Harmukh's twin peaks as you move down, and check-ins that
+are each a small scene of the moment *after* (a spark lighting, a bud
+opening), never an illustration of the problem.
 
 ## Surfaces
 - **Night (always):** the crisis strip, the nav, the opening, stat bands, the
@@ -142,6 +197,28 @@ a bud opening), never an illustration of the problem.
   under its right end, caption and the six languages on a fade at the foot.
   Sideways: picture left at full height, controls right. Ends on Ooh beside
   the bloom and lowercase "ronak". Geometry lives in `otFit` (app.js).
+- **The valley (home sky):** back to front, the Pir Panjal with Harmukh's
+  twin summits and Kolahoi (snow moonlit, catching the alpenglow as you
+  scroll), the flock, ridge mist, forested ridges, the lake with a poplar
+  shore, lit houseboats and the mountains upside down, a shikara crossing,
+  a chinar in front on the side away from the words. The panorama is aimed
+  so the saddle between Harmukh's summits sits under `--sun-x`. It answers
+  taps (ripples, falling leaves, the lantern, a peak in sunlight, a falling
+  star) and leans with the cursor; all of it is aria-hidden decoration.
+  Generated by `tools/valley` (`node tools/valley/apply.js`); CI fails if
+  index.html and its source disagree.
+- **Your stars:** one bright four-point star per check-in and a small one
+  per day's mood, from this device's history only, placed by a hash of the
+  date and never behind the words. History repeats them as "Your sky", laid
+  out by date with the check-ins joined like a constellation, the counts
+  in words beside it. The day's first mood tap sends a spark up toward it.
+  Stars, not a streak: a missed day simply stays dark.
+- **Headlines and figures:** on the home screen and the reading pages they
+  rise out of their own lines once, as they come into view; whatever is on
+  screen at load is left as painted.
+- **Opening a check-in:** the card grows into the screen it opens; the
+  result's marker travels to the score as the number counts. Neither
+  celebrates a high band.
 - **Tab bar (phones):** a floating pill at the bottom that slides away while
   scrolling down.
 - **Moving around:** one calm cross-fade for the app's four places and for
@@ -162,4 +239,8 @@ not diagnosis" stays wherever it appears. No em dashes in Ooh's lines.
 ## Don't
 - Don't put anything playful on the self-harm safety step or a risk result.
 - Don't add motion that never stops, or sound before a tap.
+- Don't add streaks, points or badges: apps without gamification lose fewer
+  people (Liu, Torous et al., JAMA Psychiatry 2026).
+- Don't edit the valley by hand in index.html; change `tools/valley` and run
+  `node tools/valley/apply.js`.
 - Don't paste another brand's DESIGN.md tokens in here (see the design-md skill).

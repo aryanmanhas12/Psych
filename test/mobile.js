@@ -143,6 +143,19 @@ const OVERFLOW = `(()=>{
 (async () => {
   const b = await chromium.launch(EXE ? { executablePath: EXE } : {});
   const phone = extra => ({ viewport:{width:390,height:844}, isMobile:true, hasTouch:true, ...extra });
+  /* Wait until something is true in the page, polling through evaluate.
+     Not page.waitForFunction: Playwright 1.47 (the version CI pins) rebuilds
+     its predicate inside the page with eval, once per animation frame, and
+     the pages' content security policy (v40) rightly refuses that, so every
+     poll became an uncaught page error. evaluate runs the function itself. */
+  const waitIn = async (p, fn, arg, timeout = 3000) => {
+    const end = Date.now() + timeout;
+    while(Date.now() < end){
+      if(await p.evaluate(fn, arg).catch(()=>false)) return true;
+      await p.waitForTimeout(50);
+    }
+    return false;
+  };
 
   /* ── the guard that was missing ──
      The speaker button on every question threw a ReferenceError on every
@@ -312,8 +325,8 @@ const OVERFLOW = `(()=>{
         /* worst answers endorse the self-harm item, which is meant to stop
            the questionnaire right there */
         if(id === 'phq9') await pastSafeNow(p, null);
-        await p.waitForFunction(x=>document.getElementById('view-results').classList.contains('active')||
-          (current&&current.idx!==x), before,{timeout:3000}).catch(()=>{});
+        await waitIn(p, x=>document.getElementById('view-results').classList.contains('active')||
+          (current&&current.idx!==x), before);
       }
       const r = await p.evaluate(()=>({done:document.getElementById('view-results').classList.contains('active'),
         safety:getComputedStyle(document.getElementById('safetyBox')).display!=='none'}));
@@ -530,8 +543,8 @@ const OVERFLOW = `(()=>{
           .filter(x=>x.getBoundingClientRect().height<44).length);
         const before=await p.evaluate(()=>current?current.idx:-1);
         await p.evaluate(()=>{const bs=[...document.querySelectorAll('#qcard .bigopts button')];if(bs.length)bs[0].click();});
-        await p.waitForFunction(x=>document.getElementById('view-results').classList.contains('active')||
-          (current&&current.idx!==x),before,{timeout:3000}).catch(()=>{});
+        await waitIn(p, x=>document.getElementById('view-results').classList.contains('active')||
+          (current&&current.idx!==x), before);
       }
       const bad=[];
       if(worst>321) bad.push(`sideways scroll ${worst}>320`);
@@ -1310,13 +1323,15 @@ const OVERFLOW = `(()=>{
     p.on('pageerror', e=>PAGE_ERRORS.push(e.message));
     await p.addInitScript(seed);
     await p.goto(URL,{waitUntil:'networkidle'}); await p.waitForTimeout(2500);
-    const v = await p.evaluate(starsClear=>({
+    /* the star check is passed as the function itself (no eval: the page's
+       content security policy refuses code built from strings) */
+    const v = { ...(await p.evaluate(()=>({
       hidden: document.getElementById('kv').getAttribute('aria-hidden') === 'true',
       focusable: document.querySelectorAll('#kv a,#kv button,#kv input,#kv [tabindex]:not([tabindex="-1"])').length,
       stars: document.querySelectorAll('#hsMyStars i').length, ck: document.querySelectorAll('#hsMyStars i.ck').length,
-      over: eval('('+starsClear+')')(), motion: !!(window.gsap && window.Motion),
+      motion: !!(window.gsap && window.Motion),
       lenis: !!(window.Motion && Motion.lenis()) || document.documentElement.classList.contains('lenis')
-    }), starsClear.toString());
+    }))), over: await p.evaluate(starsClear) };
     v.hidden && !v.focusable ? ok('the valley is decoration: aria-hidden, nothing in it can take focus') : fail(`valley aria-hidden=${v.hidden}, focusable inside: ${v.focusable}`);
     v.stars === 14 && v.ck === 4 ? ok('your stars: 4 check-ins and 10 days of mood make 14 stars, 4 of them bright') : fail(`your stars: ${v.stars} stars, ${v.ck} bright (want 14 and 4)`);
     v.over === 0 ? ok('no star is drawn behind the words') : fail(`${v.over} star(s) behind the words`);
@@ -1433,6 +1448,39 @@ const OVERFLOW = `(()=>{
     sweep.results && still === 0 ? ok('a result’s marker travels to its score with the count, then rests') : fail('result marker: ' + JSON.stringify({ sweep, still }));
     await ctx.close();
 
+    /* v40: "nothing you answer leaves your phone", enforced by the browser:
+       every page refuses a request to another server, and nothing in
+       normal use trips the policy. And a still device (reduced motion, or
+       Less motion) is never sent the motion layer at all. */
+    ctx = await b.newContext(phone({ serviceWorkers:'block' })); p = await ctx.newPage();
+    p.on('pageerror', e=>PAGE_ERRORS.push(e.message));
+    await p.addInitScript(()=>{ window.__csp = [];
+      document.addEventListener('securitypolicyviolation', e=> window.__csp.push(e.violatedDirective + ' ' + e.blockedURI)); });
+    await p.addInitScript(seed);
+    const cspBad = [];
+    for(const pg of ['index','evidence','global','ethics','manifesto','poster','404']){
+      await p.goto(BASE + pg + '.html', {waitUntil:'networkidle'}); await p.waitForTimeout(500);
+      const r = await p.evaluate(async()=>{
+        let sent = false; try{ await fetch('https://example.com/ronak-csp-probe'); sent = true; }catch(e){}
+        await new Promise(res=> setTimeout(res, 100));
+        return { sent, refused: window.__csp.some(x=> /^connect-src https:\/\/example\.com/.test(x)),
+                 other: window.__csp.filter(x=> !/example\.com/.test(x)) }; });
+      if(r.sent || !r.refused || r.other.length) cspBad.push(pg + ' ' + JSON.stringify(r));
+    }
+    !cspBad.length ? ok('every page refuses a request to another server, and nothing in normal use trips the policy')
+      : fail('content security policy: ' + cspBad.join(' | '));
+    await ctx.close();
+    for(const [name, opts, feel] of [['reduced motion', { reducedMotion:'reduce' }, null], ['Less motion', {}, '{"still":true}']]){
+      ctx = await b.newContext(phone({ serviceWorkers:'block', ...opts })); p = await ctx.newPage();
+      p.on('pageerror', e=>PAGE_ERRORS.push(e.message));
+      const asked = []; p.on('request', q=>{ if(/vendor\/(gsap|CustomEase|SplitText)|\/motion\.js/.test(q.url())) asked.push(q.url()); });
+      await p.addInitScript(seed);
+      if(feel) await p.addInitScript(f=> localStorage.setItem('ronak-feel', f), feel);
+      await p.goto(URL, {waitUntil:'networkidle'}); await p.goto(BASE + 'evidence.html', {waitUntil:'networkidle'}); await p.waitForTimeout(300);
+      !asked.length ? ok(`${name}: the motion layer is not downloaded at all`) : fail(`${name}: ${asked.length} motion files downloaded`);
+      await ctx.close();
+    }
+
     /* the reading pages: everything that waited to rise has risen, every
        split line is put back as it was */
     ctx = await b.newContext(phone({ serviceWorkers:'block' })); p = await ctx.newPage();
@@ -1476,7 +1524,10 @@ const OVERFLOW = `(()=>{
       };
       let screens = 0;
       for(const [theme, lang] of [['light','en'],['dark','en'],['dark','hi'],['light','ta']]){
-        const ctx = await b.newContext(phone({ colorScheme:theme, reducedMotion:'reduce', serviceWorkers:'block' }));
+        /* bypassCSP: axe-core is test tooling injected into the page, and it
+           builds functions from strings, which the pages' own policy (v40)
+           rightly refuses; the policy itself is tested in section 21 */
+        const ctx = await b.newContext(phone({ colorScheme:theme, reducedMotion:'reduce', serviceWorkers:'block', bypassCSP:true }));
         const p = await ctx.newPage();
         await p.addInitScript(l=>{
           ['psych-seen-overture','psych-seen-tour','psych-seen-intro'].forEach(k=>localStorage.setItem(k,'2'));
@@ -1510,7 +1561,10 @@ const OVERFLOW = `(()=>{
         await ctx.close();
       }
       for(const theme of ['light','dark']){
-        const ctx = await b.newContext(phone({ colorScheme:theme, reducedMotion:'reduce', serviceWorkers:'block' }));
+        /* bypassCSP: axe-core is test tooling injected into the page, and it
+           builds functions from strings, which the pages' own policy (v40)
+           rightly refuses; the policy itself is tested in section 21 */
+        const ctx = await b.newContext(phone({ colorScheme:theme, reducedMotion:'reduce', serviceWorkers:'block', bypassCSP:true }));
         const p = await ctx.newPage();
         for(const pg of ['evidence','global','ethics','manifesto','poster','404']){
           await p.goto(BASE+pg+'.html',{waitUntil:'networkidle'}); await p.waitForTimeout(700);

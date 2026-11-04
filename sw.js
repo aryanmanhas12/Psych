@@ -115,6 +115,17 @@
    bar are cues on a frame-driven timeline that stops while the page is
    hidden and carries on from the same frame (it used to run on, or end,
    in a pocket); a result's marker travels to the score with the count. */
+/* v39: an audit against the web interface guidelines and DESIGN.md: the
+   houseboats read as houseboats (they had merged into the tree line and
+   only their windows showed, as a dotted line); the dawn's rim light
+   fades before the words on a laptop instead of crossing "Watch the
+   intro"; no tap highlight painted over the sky; headings measured in
+   one pass; the valley's generator is in tools/valley and CI checks it. */
+/* v40: "nothing you answer leaves your phone" is enforced by the browser:
+   a Content-Security-Policy on every page lets nothing load from, or go
+   to, anywhere but this site; and a lite, Less-motion or reduced-motion
+   phone is no longer sent the motion layer it would only switch off
+   (about 39 KB compressed; no longer precached for everyone either). */
 /* ── the release number, in one place ──
    The page's own CSS and JS moved out of index.html into app.css and
    app.js, and every page now asks for its shared files by versioned URL
@@ -124,17 +135,17 @@
    script still in this cache for one load. A new version is a new URL,
    which this cache has never seen, so it is always fetched. When a release
    changes any of those files: bump REL here AND the ?v= in every page. */
-const REL = "38";
+const REL = "40";
 const CACHE = "ronak-v" + REL;
 const ASSETS = [
   "./", "./index.html", "./helplines.js", "./nav.js?v=" + REL,
   "./app.js?v=" + REL, "./app.css?v=" + REL, "./site.css?v=" + REL,
   "./companion.js?v=" + REL, "./ooh.mjs?v=" + REL, "./music.js?v=" + REL,
-  /* the motion layer every page loads (the heavier vendor files, the 3D
-     flock and smooth scrolling among them, are cached on first use by
-     the versioned rule below, so only devices that use them pay for them) */
-  "./motion.js?v=" + REL, "./valley.js?v=" + REL, "./vendor/gsap.min.js?v=" + REL,
-  "./vendor/CustomEase.min.js?v=" + REL, "./vendor/SplitText.min.js?v=" + REL,
+  /* the valley (your stars are drawn by it on every device). The motion
+     layer (GSAP, its plugins, motion.js) is not precached: a lite or
+     reduced-motion phone is never sent it, so it is cached on first use
+     by the versioned rule below, like the flock and smooth scrolling */
+  "./valley.js?v=" + REL,
   "./i18n.en.js?v=" + REL, "./i18n.hi.js?v=" + REL, "./i18n.mr.js?v=" + REL,
   "./i18n.bn.js?v=" + REL, "./i18n.ta.js?v=" + REL, "./i18n.te.js?v=" + REL,
   "./ethics.html", "./evidence.html", "./manifesto.html", "./404.html",

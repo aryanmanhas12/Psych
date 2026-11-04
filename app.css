@@ -181,6 +181,9 @@ select.langsel{
 .hero-sky{
   position:relative;isolation:isolate;overflow:clip;
   color:#FFF6EE;
+  /* the sky answers taps (valley.js), so a phone would paint its tap
+     highlight, the page's violet, over the whole picture on each one */
+  -webkit-tap-highlight-color:transparent;
   min-height:clamp(33rem, calc(100vh - 9rem), 52rem);
   min-height:clamp(33rem, calc(100svh - 9rem), 52rem);
   padding:2.4rem 0 0;
@@ -391,6 +394,13 @@ select.langsel{
 .kv-mid2{fill:#1D0F3B;}
 .kv-shore{fill:#140A2C;}
 .kv-win{fill:#FFC857;opacity:.9;}
+/* the houseboats (tools/valley/gen.js): a cabin a shade lighter than the
+   tree line so its shape reads, a darker roof and canopy, a halo round
+   each lit pane and its broken reflection on the water */
+.kv-hb{fill:#251140;}
+.kv-hbroof{fill:#0E061D;}
+.kv-winglow{fill:#FFB347;opacity:.2;}
+.kv-winrefl{fill:#FFC857;opacity:.34;}
 .kv-shimmer{stroke:#FFF6EE;stroke-opacity:.12;stroke-width:1.3;stroke-linecap:round;vector-effect:non-scaling-stroke;}
 /* the mist drifts on its own drawing; its box (.kv-p) is the one the
    cursor and the tilt lean, and one transform cannot serve both */
@@ -432,6 +442,12 @@ select.langsel{
    the sun comes up between Harmukh and Kolahoi, the chinar stands left */
 @media(min-width:960px){
   .hero-sky{--kv-h:clamp(26rem, 80vh, 44rem);--sun-x:70%;}
+  /* the dawn's rim light falls off away from the sun: on a laptop the
+     words sit over the left of the range, and the bright line ran
+     straight through "Watch the intro"; here it fades out before it
+     reaches them (a still mask; the layer's own dawn fade is unchanged) */
+  .kv-glow{-webkit-mask-image:linear-gradient(90deg,transparent 0,transparent 30%,#000 52%);
+    mask-image:linear-gradient(90deg,transparent 0,transparent 30%,#000 52%);}
   .kv-chinar{left:auto;right:-5%;width:min(25vw,23rem);bottom:-3%;}
   .kv-birds{left:42%;top:-40%;height:92%;}
 }
